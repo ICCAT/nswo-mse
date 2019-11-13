@@ -8,10 +8,6 @@ strategy evaluation (MSE) for the North Atlantic Swordfish fishery.
 The `SWOMSE` R package has been developed to conduct a management strategy 
 evaluation (MSE) for the Atlantic swordfish fishery.
 
-The package includes a collection of swordfish operating models (OMs), 
-a swordfish data object, and management procedures (MPs) that can be evaluated
-with closed-loop simulation testing, and applied to the data object for management advice.
-
 ### Installation 
 
 The `SWOMSE` package can be installed from this GitHub repository using the `devtools` 
@@ -32,14 +28,6 @@ the package locally with RStudio.
 The `SWOMSE` user manual can be accessed with:
 ```
 SWO_userguide()
-```
-The `SWOMSE` package depends on the [`DLMtool`](https://github.com/DLMtool/DLMtool)
-and [`MSEtool`](https://github.com/tcarruth/MSEtool) R packages. All functions and 
-features from these packages are available in `SWOMSE`. Help documentation for 
-these packages and can accessed with:
-```
-DLMtool::userguide()
-MSEtool::userguide()
 ```
 
 ### Shiny App
