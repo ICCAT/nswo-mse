@@ -56,7 +56,7 @@ A list of proposed management procedures and performance metrics will be develop
 in this Google Sheet as they are proposed by the SWO Group. 
 
 All users have Edit privileges. Details and/or proposed MPs/performance 
-metrics as they are discussed.
+metrics to be added as they are discussed/agreed upon.
 
 ## Bug Reports
 Please report bugs and other issues relating to the code using the 
