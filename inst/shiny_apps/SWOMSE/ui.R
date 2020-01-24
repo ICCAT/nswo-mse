@@ -65,7 +65,12 @@ shinyUI(
                                        DT::dataTableOutput('PTable2'))
                        ),
                        tabPanel(h5("Zeh plots",style = "color:black"),
-                                h5("< under construction >",style="color:grey")
+                                column(6,
+                                       h5('OM Set 1'),
+                                       plotOutput('zehplot1')),
+                                column(6,
+                                       h5('OM Set 2'),
+                                       plotOutput('zehplot2'))
                        ),
                        tabPanel(h5("Worm plots",style = "color:black"),
                                 column(6,

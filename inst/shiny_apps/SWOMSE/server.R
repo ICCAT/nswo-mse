@@ -154,6 +154,14 @@ shinyServer(function(input, output, session) {
   output$PTable2 <- DT::renderDataTable(makeTable(getOM_2()),
                                         options = list(dom = 't'))
   # Zeh plots
+  # Wormplots
+  makeZehPlot <- function(names) {
+    MSE <- SubMSE(SWO_MSE, names)
+    DLMtool::DFO_bar(MSE)
+  }
+
+  output$zehplot1<-renderPlot(makeZehPlot(getOM_1()))
+  output$zehplot2<-renderPlot(makeZehPlot(getOM_2()))
 
   # Wormplots
   makeWormPlot <- function(names) {
