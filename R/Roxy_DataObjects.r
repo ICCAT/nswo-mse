@@ -17,6 +17,10 @@ NULL
 
 
 #' @rdname SWO-OMs
+"OMs_DF"
+
+
+#' @rdname SWO-OMs
 "OM_base_case"
 
 
@@ -712,7 +716,7 @@ NULL
 "OM_288"
 
 
-#' @name SWO-Data
+#' @name SWO_Data
 #' @docType data
 #' @title Operating models
 #' @description Swordfish Data Object
@@ -726,5 +730,21 @@ NULL
 #' @description Example Swordish MSE Object
 #'  
  "SWO_MSE"
+
+
+#' @name OMs_DF
+#' @docType data
+#' @title Overview of OM Parameters
+#' @description A dataframe of OM Parameters
+#'  
+ "OMs_DF"
+
+
+#' @name Like_List
+#' @docType data
+#' @title OM Likelihoods
+#' @description A list of likelihood values for each OM
+#'  
+ "Like_List"
 
 

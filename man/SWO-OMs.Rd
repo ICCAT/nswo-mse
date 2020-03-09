@@ -4,6 +4,7 @@
 \name{SWO-OMs}
 \alias{SWO-OMs}
 \alias{SWOM}
+\alias{OMs_DF}
 \alias{OM_base_case}
 \alias{OM_19}
 \alias{OM_20}
@@ -182,6 +183,8 @@
 \format{An object of class \code{OM} of length 1.}
 \usage{
 SWOM
+
+OMs_DF
 
 OM_base_case
 
