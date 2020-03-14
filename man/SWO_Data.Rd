@@ -5,7 +5,9 @@
 \alias{SWO_Data}
 \alias{SWOData}
 \title{Operating models}
-\format{An object of class \code{Data} of length 1.}
+\format{
+An object of class \code{Data} of length 1.
+}
 \usage{
 SWOData
 }

@@ -1,0 +1,556 @@
+---
+title: "Operating Models Summary"
+subtitle: 'North Atlantic Swordfish MSE ' 
+author: "Adrian Hordyk <adrian@bluematterscience.com>"
+date:  "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true 
+params:
+  OM.n: 1 
+    
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+knitr::opts_chunk$set(echo = FALSE)
+
+
+fig.num <- tab.num <- 0
+fig.cap <- function() {
+  fig.num <<- fig.num +1
+  paste0('Figure ',  fig.num, '.')
+
+} 
+tab.cap <- function() {
+  tab.num <<- tab.num +1
+  paste0('Table ',  tab.num, '.')
+}
+
+```
+
+# Operating Model Scenarios
+
+
+## Base Case Model
+`r tab.cap()` Key parameter values for the base case analysis. The column names are: Natural mortality (M) - fixed parameter; standard error of recruitment deviations (sigmaR) - fixed parameter; Steepness (h) - estimated in the base case model; Coefficient of variation for the indices (CPUE CV) - varied between indices and years (range of values shown here); Effective sample size of length composition (Len. Comp. Eff. Samp. Size) - fixed; Q Increase assumed for indices (Q increase); Environmental covariate included for some indices (Env. Covariate).
+
+```{r, results="asis"}
+
+df <- SWOMSE::basecase_DF[,1:7] %>% dplyr::arrange(se_log)
+vals <- df$se_log %>% round(2)
+df$se_log <- paste(vals, sep='', collapse=" - ")
+rownames(df) <- NULL
+colnames(df) <- c("M", 'sigmaR', 'h', 'CPUE CV', 'Len. Comp. Eff. Samp. Size', 'Q increase', 'Env. Covariate')
+df <- df[1,]
+df$`Q increase` <- FALSE
+
+df %>% knitr::kable(format='html', escape=FALSE) %>%
+  kableExtra::kable_styling() 
+
+```
+
+## Uncertainty Grid
+`r tab.cap()`  The uncertainty grid is a full factorial design with the following 7 factors, resulting in `r nrow(SWOMSE::OMs_DF) ` OMs. M and h were fixed in the uncertainty grid. CPUE CV was fixed for all indices. 
+
+```{r, results="asis"}
+# Make summary table
+dat <- apply(SWOMSE::OMs_DF[,1:7], 2, unique)
+maxlen <- lapply(dat, length) %>% unlist() %>% max()
+dat$env <- as.logical(dat$env)
+for (i in seq_along(dat)) {
+  tt <- dat[[i]]
+  if (length(tt) < maxlen) {
+    tt <- c(tt, rep(NA, maxlen - length(tt)))
+  }
+  dat[[i]] <- tt
+}
+df <- data.frame(matrix(unlist(dat), ncol=length(dat), byrow=FALSE))
+names(df) <- names(dat)
+df$env <- as.logical(df$env)
+df[is.na(df)] <- ''
+df$llq[df$llq == '1'] <- 'FALSE'
+
+rownames(df) <- NULL
+df2 <- df
+col.names <- c("M", 'sigmaR', 'h', 'CPUE CV', 'Len. Comp. Eff. Samp. Size', 'Q increase', 'Env. Covariate')
+colnames(df2) <- col.names
+
+df2 %>% knitr::kable(format='html', escape=FALSE) %>%
+  kableExtra::kable_styling() 
+ 
+```
+
+
+# OM Parameter Table
+
+`r tab.cap()` The parameters for the base case and 288 models from the uncertainty grid. Filters at the top of each column can be used to subset the results.
+
+```{r}
+# Summary of OM 
+basecase_DF <- SWOMSE::basecase_DF
+basecase_DF$n <- as.character(basecase_DF$n)
+basecase_DF$dir <- as.character(basecase_DF$dir)
+
+basecase_DF$se_log <- mean(basecase_DF$se_log)
+basecase_DF <- basecase_DF %>% dplyr::distinct()
+basecase_DF$llq <- 1.00
+
+OMs_DF <- SWOMSE::OMs_DF
+OMs_DF$n <- as.character(OMs_DF$n)
+OMs_DF$dir <- as.character(OMs_DF$dir)
+allOMs <- dplyr::bind_rows(basecase_DF, OMs_DF) 
+
+OMdf <- allOMs %>% dplyr::select(OM=n, M, sigmaR, h, se_log, L_ESS, llq, env, conv)
+OMdf <- lapply(OMdf, factor) %>% as.data.frame()
+
+lev.ord <- c(levels(OMdf$OM)[length(OMdf$OM)], sort(as.numeric(levels(OMdf$OM)[1:(length(levels(OMdf$OM))-1)])))
+OMdf$OM<- factor(OMdf$OM, levels=lev.ord, ordered = TRUE)
+
+OMdf$n <- NULL
+OMdf2 <- OMdf
+colnames(OMdf2) <- c("OM", col.names, "Converged")
+DT::datatable(OMdf2, filter='top', options = list(pageLength = 10, autoWidth = TRUE),
+              rownames = FALSE, 
+              escape=FALSE)
+
+```
+
+# Likelihood Value Table
+```{r}
+
+dflist <- list()
+dflist[[1]] <- data.frame(OM='base_case', SWOMSE::basecase_LH[[1]][1,])
+for (i in seq_along(SWOMSE::Like_List)) {
+  dflist[[i+1]] <- data.frame(OM=as.character(i), SWOMSE::Like_List[[i]][[1]][1,])
+}
+DF <- do.call('rbind', dflist)
+rownames(DF) <- NULL
+ind <- which(OMdf$conv == TRUE)
+DF <- DF[ind,]
+DF <- DF %>% dplyr::select(OM, Total=TOTAL, Catch, Survey, Mean_body_wt, Length_comp,
+                           Recruitment)
+
+```
+
+
+
+`r tab.cap()` The total and component likelihood values for the base case model and the `r nrow(DF)-1` converged models from the uncertainty grid. Filters at the top of each column can be used to subset the results.
+
+```{r}
+DT::datatable(DF, filter='top', options = list(pageLength = 10, autoWidth = TRUE),
+              rownames = FALSE, 
+              escape=FALSE)
+```
+
+# Reference Points Table
+
+```{r}
+basecase_RefPoint <- SWOMSE::basecase_RefPoint
+basecase_RefPoint$n <- as.character(basecase_RefPoint$n)
+RefPoint_DF <- SWOMSE::RefPoint_DF
+RefPoint_DF$n <- as.character(RefPoint_DF$n)
+
+ref_pointDF <- dplyr::bind_rows(basecase_RefPoint,
+                                RefPoint_DF)
+ref_pointDF$n <- factor(ref_pointDF$n, levels=c("base_case", 1:288), ordered=TRUE)
+
+col.names <- c("OM", "MSY", "SB<sub>MSY</sub>", 'F<sub>MSY</sub>', 'F/F<sub>MSY</sub>', 
+               'SB/SB<sub>MSY</sub>',
+               'SBM<sub>MSY</sub>/SB<sub>0</sub>', 'Depletion')
+colnames(ref_pointDF) <- col.names
+
+ind <- which(OMdf$conv == TRUE)
+ref_pointDF <- ref_pointDF[ind,]
+ref_pointDF[,-1] <-round(ref_pointDF[,-1],2) #the "-1" excludes column 1
+```
+
+`r tab.cap()` Summary table of the biological reference points for the base case model and the `r nrow(ref_pointDF)-1` converged models from the uncertainty grid.
+
+```{r}
+DT::datatable(ref_pointDF, filter='top', options = list(pageLength = 10, autoWidth = TRUE),
+              rownames = FALSE,
+              escape=FALSE)
+```
+
+# SB/SB~MSY~ Timeseries Plots
+Time-series plots of the spawning biomass (SB) relative to spawning biomass corresponding with maximum sustainable yield (SB~MSY~) for the seven factors examined in the uncertainty grid.
+
+```{r, include=FALSE, warning=FALSE}
+TSBio_List <- SWOMSE::TSBio_List
+
+for (i in seq_along(TSBio_List)) {
+  TSBio_List[[i]]$OM <- as.character(i)
+}
+
+TSBio_DF <- do.call('rbind', TSBio_List)
+TSBio_DF <- dplyr::left_join(TSBio_DF, OMdf, by="OM")
+TSBio_DF <- TSBio_DF %>% dplyr::filter(conv==TRUE, year %in% 1950:2018)
+
+nms <- c('M', 'sigmaR', 'h', 'se_log', 'L_ESS', 'llq', 'env')
+labs <- c('Natural mortality (M)', 'Rec. Var. (sigmaR)', 
+          'Steepness (h)', "CV Indices", 'Len. Comp. ESS', 'Q Inc.', 'Env. Cov.')
+
+```
+
+## Natural Mortality
+
+```{r, fig.width=8, fig.height=6}
+col <- 'M'
+collab <- labs[match(col, nms)]
+ggplot2::ggplot(TSBio_DF, ggplot2::aes(x=year, y= B.Bmsy, 
+                                       color=as.factor(get(col)),
+                                       
+                                       group=OM)) + 
+  ggplot2::geom_hline(yintercept = 1, linetype=2) +
+  ggplot2::geom_line() +
+  ggplot2::expand_limits(y=c(0, 0)) +
+  ggplot2::theme_bw() +
+  ggplot2::labs(x="Year", y=expression(SB/SB[MSY]),
+                color=collab)
+````
+`r fig.cap()` Predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the `r TSBio_DF[[col]] %>% unique() %>% length()` levels of `r collab` shown as coloured lines.
+
+
+## Recruitment Variability
+```{r, fig.width=8, fig.height=6}
+col <- 'sigmaR'
+collab <- labs[match(col, nms)]
+ggplot2::ggplot(TSBio_DF, ggplot2::aes(x=year, y= B.Bmsy, 
+                                       color=as.factor(get(col)),
+                                       
+                                       group=OM)) + 
+  ggplot2::geom_hline(yintercept = 1, linetype=2) +
+  ggplot2::geom_line() +
+  ggplot2::expand_limits(y=c(0, 0)) +
+  ggplot2::theme_bw() +
+  ggplot2::labs(x="Year", y=expression(SB/SB[MSY]),
+                color=collab)
+````
+`r fig.cap()` Predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the `r TSBio_DF[[col]] %>% unique() %>% length()` levels of `r collab` shown as coloured lines.
+
+## Steepness
+```{r, fig.width=8, fig.height=6}
+col <- 'h'
+collab <- labs[match(col, nms)]
+ggplot2::ggplot(TSBio_DF, ggplot2::aes(x=year, y= B.Bmsy, 
+                                       color=as.factor(get(col)),
+                                       
+                                       group=OM)) + 
+  ggplot2::geom_hline(yintercept = 1, linetype=2) +
+  ggplot2::geom_line() +
+  ggplot2::expand_limits(y=c(0, 0)) +
+  ggplot2::theme_bw() +
+  ggplot2::labs(x="Year", y=expression(SB/SB[MSY]),
+                color=collab)
+````
+`r fig.cap()` Predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the `r TSBio_DF[[col]] %>% unique() %>% length()` levels of `r collab` shown as coloured lines.
+
+## CPUE CV
+```{r, fig.width=8, fig.height=6}
+col <- 'se_log'
+collab <- labs[match(col, nms)]
+ggplot2::ggplot(TSBio_DF, ggplot2::aes(x=year, y= B.Bmsy, 
+                                       color=as.factor(get(col)),
+                                       
+                                       group=OM)) + 
+  ggplot2::geom_hline(yintercept = 1, linetype=2) +
+  ggplot2::geom_line() +
+  ggplot2::expand_limits(y=c(0, 0)) +
+  ggplot2::theme_bw() +
+  ggplot2::labs(x="Year", y=expression(SB/SB[MSY]),
+                color=collab)
+````
+`r fig.cap()` Predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the `r TSBio_DF[[col]] %>% unique() %>% length()` levels of `r collab` shown as coloured lines.
+
+## Length Comp. ESS
+```{r, fig.width=8, fig.height=6}
+col <- 'L_ESS'
+collab <- labs[match(col, nms)]
+ggplot2::ggplot(TSBio_DF, ggplot2::aes(x=year, y= B.Bmsy, 
+                                       color=as.factor(get(col)),
+                                       
+                                       group=OM)) + 
+  ggplot2::geom_hline(yintercept = 1, linetype=2) +
+  ggplot2::geom_line() +
+  ggplot2::expand_limits(y=c(0, 0)) +
+  ggplot2::theme_bw() +
+  ggplot2::labs(x="Year", y=expression(SB/SB[MSY]),
+                color=collab)
+````
+`r fig.cap()` Predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the `r TSBio_DF[[col]] %>% unique() %>% length()` levels of `r collab` shown as coloured lines.
+
+
+## Catchability Increase 
+```{r, fig.width=8, fig.height=6}
+col <- 'llq'
+collab <- labs[match(col, nms)]
+ggplot2::ggplot(TSBio_DF, ggplot2::aes(x=year, y= B.Bmsy, 
+                                       color=as.factor(get(col)),
+                                       
+                                       group=OM)) + 
+  ggplot2::geom_hline(yintercept = 1, linetype=2) +
+  ggplot2::geom_line() +
+  ggplot2::expand_limits(y=c(0, 0)) +
+  ggplot2::theme_bw() +
+  ggplot2::labs(x="Year", y=expression(SB/SB[MSY]),
+                color=collab)
+````
+`r fig.cap()` Predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the `r TSBio_DF[[col]] %>% unique() %>% length()` levels of `r collab` shown as coloured lines.
+
+## Environmental Covariate
+```{r, fig.width=8, fig.height=6}
+col <- 'env'
+collab <- labs[match(col, nms)]
+ggplot2::ggplot(TSBio_DF, ggplot2::aes(x=year, y= B.Bmsy, 
+                                       color=as.factor(get(col)),
+                                       
+                                       group=OM)) + 
+  ggplot2::geom_hline(yintercept = 1, linetype=2) +
+  ggplot2::geom_line() +
+  ggplot2::expand_limits(y=c(0, 0)) +
+  ggplot2::theme_bw() +
+  ggplot2::labs(x="Year", y=expression(SB/SB[MSY]),
+                color=collab)
+````
+`r fig.cap()` Predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the `r TSBio_DF[[col]] %>% unique() %>% length()` levels of `r collab` shown as coloured lines.
+
+# Current SB/SB~MSY~ Boxplots
+
+Bivariate boxplots of the spawning biomass (SB) relative to spawning biomass corresponding with maximum sustainable yield (SB~MSY~) for the factors examined in the uncertainty grid.
+
+
+```{r, include=FALSE}
+ind <- which(OMdf$conv == TRUE)
+OMdf2 <- OMdf[ind,]
+OMdf2$M <- OMdf2$M %>% as.character() %>% as.numeric()
+OMdf2$sigmaR <- OMdf2$sigmaR %>% as.character() %>% as.numeric()
+OMdf2$h <- OMdf2$h %>% as.character() %>% as.numeric()
+OMdf2$se_log <- OMdf2$se_log %>% as.character() %>% as.numeric()
+
+combDF <- dplyr::left_join(OMdf2, ref_pointDF, by='OM')
+combDF <- combDF %>% dplyr::filter(OM !='base_case')
+
+gg <- expand.grid(nms, nms)
+gg$check <- TRUE
+gg$check[gg$Var1 == gg$Var2] <- FALSE
+gg <- gg %>% dplyr::filter(check==TRUE)
+gg$check <- NULL
+
+gg <- gg[duplicated(t(apply(gg, 1, sort))),]
+gg <- gg %>% dplyr::arrange(Var1)
+
+combDF$SB_SBMSY <- combDF$`SB/SB<sub>MSY</sub>`
+y <- 'SB_SBMSY'
+ylab <- expression(SB/SB[MSY])
+  
+```
+
+## Natural Mortality 
+
+
+```{r}
+ind <- which(gg$Var1 == "M")
+nrow <- ceiling(length(ind)/2)
+ncol <- ceiling(length(ind)/nrow)
+
+width <- 8
+height <- 2*nrow
+```
+
+```{r, fig.width=width, fig.height=height}
+Plist <- lapply(ind, function(i) {
+  x <- gg$Var1[i] %>% as.character()
+  xlab <- labs[match(x, nms)]
+  fill <- gg$Var2[i] %>% as.character()
+  filllab <- labs[match(fill, nms)]
+  ggplot2::ggplot(combDF,
+                  ggplot2::aes(x=as.factor(get(x)),
+                               y=get(y),
+                               fill=as.factor(get(fill)))) +
+    ggplot2::geom_hline(yintercept = 1, linetype=2)+
+    ggplot2::geom_boxplot() +
+    ggplot2::expand_limits(y=c(0,1)) +
+    ggplot2::theme_classic() +
+    ggplot2::labs(x=xlab, y=ylab, fill=filllab)
+})
+
+cowplot::plot_grid(plotlist=Plist, nrow=nrow, ncol=ncol, align='hv')
+
+```
+`r fig.cap()` Boxplots of predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the 3 levels of Natural Mortality shown as factors on the x-axis and colours indicating the other factors.
+
+
+## Recruitment Variability
+
+```{r}
+ind <- which(gg$Var1 == "sigmaR")
+nrow <- ceiling(length(ind)/2)
+ncol <- ceiling(length(ind)/nrow)
+
+width <- 4*ncol
+height <- 2*nrow
+```
+
+```{r, fig.width=width, fig.height=height}
+
+Plist <- lapply(ind, function(i) {
+  x <- gg$Var1[i] %>% as.character()
+  xlab <- labs[match(x, nms)]
+  fill <- gg$Var2[i] %>% as.character()
+  filllab <- labs[match(fill, nms)]
+  ggplot2::ggplot(combDF,
+                  ggplot2::aes(x=as.factor(get(x)),
+                               y=get(y),
+                               fill=as.factor(get(fill)))) +
+    ggplot2::geom_hline(yintercept = 1, linetype=2)+
+    ggplot2::geom_boxplot() +
+    ggplot2::expand_limits(y=c(0,1)) +
+    ggplot2::theme_classic() +
+    ggplot2::labs(x=xlab, y=ylab, fill=filllab)
+})
+
+cowplot::plot_grid(plotlist=Plist, nrow=nrow, ncol=ncol, align='hv')
+```
+`r fig.cap()` Boxplots of predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the 2 levels of Recruitment Variability shown as factors on the x-axis and colours indicating the other factors.
+
+## Steepness
+
+```{r}
+ind <- which(gg$Var1 == "h")
+nrow <- ceiling(length(ind)/2)
+ncol <- ceiling(length(ind)/nrow)
+
+width <- 4*ncol
+height <- 2*nrow
+```
+
+```{r, fig.width=width, fig.height=height}
+
+Plist <- lapply(ind, function(i) {
+  x <- gg$Var1[i] %>% as.character()
+  xlab <- labs[match(x, nms)]
+  fill <- gg$Var2[i] %>% as.character()
+  filllab <- labs[match(fill, nms)]
+  ggplot2::ggplot(combDF,
+                  ggplot2::aes(x=as.factor(get(x)),
+                               y=get(y),
+                               fill=as.factor(get(fill)))) +
+    ggplot2::geom_hline(yintercept = 1, linetype=2)+
+    ggplot2::geom_boxplot() +
+    ggplot2::expand_limits(y=c(0,1)) +
+    ggplot2::theme_classic() +
+    ggplot2::labs(x=xlab, y=ylab, fill=filllab)
+})
+
+cowplot::plot_grid(plotlist=Plist, nrow=nrow, ncol=ncol, align='hv')
+
+
+```
+`r fig.cap()` Boxplots of predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the 3 levels of Steepness shown as factors on the x-axis and colours indicating the other factors.
+
+## CPUE CV
+
+```{r}
+ind <- which(gg$Var1 == "se_log")
+nrow <- ceiling(length(ind)/2)
+ncol <- ceiling(length(ind)/nrow)
+
+width <- 4*ncol
+height <- 2*nrow
+```
+
+```{r, fig.width=width, fig.height=height}
+
+Plist <- lapply(ind, function(i) {
+  x <- gg$Var1[i] %>% as.character()
+  xlab <- labs[match(x, nms)]
+  fill <- gg$Var2[i] %>% as.character()
+  filllab <- labs[match(fill, nms)]
+  ggplot2::ggplot(combDF,
+                  ggplot2::aes(x=as.factor(get(x)),
+                               y=get(y),
+                               fill=as.factor(get(fill)))) +
+    ggplot2::geom_hline(yintercept = 1, linetype=2)+
+    ggplot2::geom_boxplot() +
+    ggplot2::expand_limits(y=c(0,1)) +
+    ggplot2::theme_classic() +
+    ggplot2::labs(x=xlab, y=ylab, fill=filllab)
+})
+
+cowplot::plot_grid(plotlist=Plist, nrow=nrow, ncol=ncol, align='hv')
+
+
+```
+`r fig.cap()` Boxplots of predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the 2 levels of CV Indices shown as factors on the x-axis and colours indicating the other factors.
+
+## Length Comp. ESS
+
+```{r}
+ind <- which(gg$Var1 == "L_ESS")
+nrow <- ceiling(length(ind)/2)
+ncol <- ceiling(length(ind)/nrow)
+
+width <- 4*ncol
+height <- 2*nrow
+```
+
+```{r, fig.width=width, fig.height=height}
+
+Plist <- lapply(ind, function(i) {
+  x <- gg$Var1[i] %>% as.character()
+  xlab <- labs[match(x, nms)]
+  fill <- gg$Var2[i] %>% as.character()
+  filllab <- labs[match(fill, nms)]
+  ggplot2::ggplot(combDF,
+                  ggplot2::aes(x=as.factor(get(x)),
+                               y=get(y),
+                               fill=as.factor(get(fill)))) +
+    ggplot2::geom_hline(yintercept = 1, linetype=2)+
+    ggplot2::geom_boxplot() +
+    ggplot2::expand_limits(y=c(0,1)) +
+    ggplot2::theme_classic() +
+    ggplot2::labs(x=xlab, y=ylab, fill=filllab)
+})
+
+cowplot::plot_grid(plotlist=Plist, nrow=nrow, ncol=ncol, align='hv')
+
+
+```
+`r fig.cap()` Boxplots of predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the 2 levels of Length Composition Effective Sample Size shown as factors on the x-axis and colours indicating the other factors.
+
+## Catchability Increase
+
+
+```{r}
+ind <- which(gg$Var1 == "llq")
+nrow <- ceiling(length(ind)/2)
+ncol <- ceiling(length(ind)/nrow)
+
+width <- 4*ncol
+height <- 2*nrow
+```
+
+```{r, fig.width=width, fig.height=height}
+Plist <- lapply(ind, function(i) {
+  x <- gg$Var1[i] %>% as.character()
+  xlab <- labs[match(x, nms)]
+  fill <- gg$Var2[i] %>% as.character()
+  filllab <- labs[match(fill, nms)]
+  ggplot2::ggplot(combDF,
+                  ggplot2::aes(x=as.factor(get(x)),
+                               y=get(y),
+                               fill=as.factor(get(fill)))) +
+    ggplot2::geom_hline(yintercept = 1, linetype=2)+
+    ggplot2::geom_boxplot() +
+    ggplot2::expand_limits(y=c(0,1)) +
+    ggplot2::theme_classic() +
+    ggplot2::labs(x=xlab, y=ylab, fill=filllab)
+})
+
+cowplot::plot_grid(plotlist=Plist, nrow=nrow, ncol=ncol, align='hv')
+
+```
+`r fig.cap()` Boxplots of predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the 2 levels of Q Increase shown as factors on the x-axis and colours indicating the other factors.

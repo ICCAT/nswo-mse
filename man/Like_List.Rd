@@ -4,7 +4,9 @@
 \name{Like_List}
 \alias{Like_List}
 \title{OM Likelihoods}
-\format{An object of class \code{list} of length 288.}
+\format{
+An object of class \code{list} of length 288.
+}
 \usage{
 Like_List
 }

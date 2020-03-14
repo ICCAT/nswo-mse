@@ -4,7 +4,9 @@
 \name{OMs_DF}
 \alias{OMs_DF}
 \title{Overview of OM Parameters}
-\format{An object of class \code{data.frame} with 288 rows and 10 columns.}
+\format{
+An object of class \code{data.frame} with 288 rows and 10 columns.
+}
 \usage{
 OMs_DF
 }

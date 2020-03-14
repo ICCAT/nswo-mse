@@ -180,7 +180,359 @@
 \alias{OM_287}
 \alias{OM_288}
 \title{Operating models}
-\format{An object of class \code{OM} of length 1.}
+\format{
+An object of class \code{OM} of length 1.
+
+An object of class \code{data.frame} with 288 rows and 10 columns.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+}
 \usage{
 SWOM
 

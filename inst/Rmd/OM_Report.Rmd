@@ -1,0 +1,434 @@
+---
+title: 'Diagnostic Report for OM #: `r params$OM.n`  ' 
+subtitle: 'North Atlantic Swordfish MSE'  
+author: "Adrian Hordyk <adrian@bluematterscience.com>"
+date:  "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true 
+params:
+  OM.n: 1 
+    
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+knitr::opts_chunk$set(echo = FALSE)
+
+fig.num <- tab.num <- 0
+fig.cap <- function() {
+  fig.num <<- fig.num +1
+  paste0('Figure ',  fig.num, '.')
+
+} 
+tab.cap <- function() {
+  tab.num <<- tab.num +1
+  paste0('Table ',  tab.num, '.')
+}
+
+```
+
+```{r, include=FALSE}
+OM.n <- params$OM.n
+
+if (OM.n =="base_case") {
+  OM_DF <- SWOMSE::basecase_DF
+  dt <- OM_DF %>% dplyr::select(M, sigmaR, h, se_log, L_ESS, llq, env)
+  likelihood <- SWOMSE::basecase_LH
+  CPUE_List <- SWOMSE::basecase_CPUE
+  TSbio_dat <- SWOMSE::basecase_TSbio
+  steep <- dt$h
+  ref_points <- SWOMSE::basecase_RefPoint %>% dplyr::select(!n) %>%  round(2)
+  SelectDat <- SWOMSE::basecase_Select
+  CatchDat <- SWOMSE::basecase_catch %>% dplyr::filter(Obs>0)
+  predLen <- SWOMSE::basecase_LenDat
+  Comps <-  SWOMSE::basecase_LenDat %>% group_by(Name, Bin) %>% summarize(Obs=sum(Obs), Exp=sum(Exp))
+} else {
+  OM.n <- as.numeric(OM.n)
+  OM_DF <- SWOMSE::OMs_DF
+  dt <- OM_DF %>% dplyr::filter(n==OM.n) %>% dplyr::select(M, sigmaR, h, se_log, L_ESS, llq, env)
+  likelihood <- SWOMSE::Like_List[[OM.n]]
+  CPUE_List <- SWOMSE::CPUE_List[[OM.n]]
+  TSbio_dat <- SWOMSE::TSBio_List[[OM.n]]
+  steep <- dt$h
+  ref_points <- SWOMSE::RefPoint_DF %>% dplyr::filter(n==OM.n) %>% dplyr::select(!n) %>%  round(2)
+  SelectDat <- SWOMSE::Select_List[[OM.n]]
+  CatchDat <-  SWOMSE::Catch_List[[OM.n]] %>% dplyr::filter(Obs>0)
+  predLen <- SWOMSE::LenDat_List[[OM.n]]
+  Comps <-  SWOMSE::LenDat_List[[OM.n]] %>% group_by(Name, Bin) %>% summarize(Obs=sum(Obs), Exp=sum(Exp))
+}
+Data_DF <- SWOMSE::Data_DF
+Fleet_DF <- SWOMSE::Fleet_DF
+```
+
+# Operating Model Scenario
+`r tab.cap()` The uncertainty grid is a full factorial design with the following 7 factors, resulting in `r nrow(SWOMSE::OMs_DF) ` OMs. The parameters used in this OM are indicated with bold text in blue boxes.
+
+
+```{r, echo=FALSE, results="asis"}
+# Make summary table
+if (OM.n == "base_case") {
+  
+rownames(dt) <- NULL
+colnames(dt) <- c("M", 'sigmaR', 'h', 'CPUE CV', 'Len. Comp. Eff. Samp. Size', 'Q increase', 'Env. Covariate')
+dt$`Q increase` <- FALSE
+dt <- dt[1,]
+dt %>% knitr::kable(format='html', escape=FALSE) %>%
+  kableExtra::kable_styling() 
+  
+} else {
+  dat <- apply(OM_DF[,1:7], 2, unique)
+  maxlen <- lapply(dat, length) %>% unlist() %>% max()
+  dat$env <- as.logical(dat$env)
+  for (i in seq_along(dat)) {
+    tt <- dat[[i]]
+    if (length(tt) < maxlen) {
+      tt <- c(tt, rep(NA, maxlen - length(tt)))
+    }
+    dat[[i]] <- tt
+  }
+  df <- data.frame(matrix(unlist(dat), ncol=length(dat), byrow=FALSE))
+  names(df) <- names(dat)
+  df$env <- as.logical(df$env)
+  df[is.na(df)] <- ''
+
+  back.col <- 'lightblue'
+  df <- df %>% dplyr::mutate(
+    M = kableExtra::cell_spec(M, 'html', bold=ifelse(df$M==dt$M, TRUE, FALSE), 
+                              background = ifelse(df$M==dt$M, back.col, 'white')),
+    sigmaR = kableExtra::cell_spec(sigmaR, 'html', bold=ifelse(df$sigmaR==dt$sigmaR, TRUE, FALSE), 
+                                   background = ifelse(df$sigmaR==dt$sigmaR, back.col, 'white')),
+    h = kableExtra::cell_spec(h, 'html', bold=ifelse(df$h==dt$h, TRUE, FALSE), 
+                              background = ifelse(df$h==dt$h, back.col, 'white')),
+    se_log = kableExtra::cell_spec(se_log, 'html', bold=ifelse(df$se_log==dt$se_log, TRUE, FALSE), 
+                                background = ifelse(df$se_log==dt$se_log, back.col, 'white')),
+    L_ESS = kableExtra::cell_spec(L_ESS, 'html', bold=ifelse(df$L_ESS==dt$L_ESS, TRUE, FALSE), 
+                                background = ifelse(df$L_ESS==dt$L_ESS, back.col, 'white')),
+    llq = kableExtra::cell_spec(llq, 'html', bold=ifelse(df$llq==dt$llq, TRUE, FALSE), 
+                                background = ifelse(df$llq==dt$llq, back.col, 'white')),
+    env = kableExtra::cell_spec(env, 'html', bold=ifelse(df$env==dt$env, TRUE, FALSE), 
+                                background = ifelse(df$env==dt$env, back.col, 'white'))
+  )
+  rownames(df) <- NULL
+  colnames(df) <- c("M", 'sigmaR', 'h', 'CPUE CV', 'Len. Comp. Eff. Samp. Size', 'Q increase', 'Env. Covariate')
+
+  df %>% knitr::kable(format='html', escape=FALSE) %>%
+    kableExtra::kable_styling() 
+}
+
+ 
+```
+
+# Fleet Information
+`r tab.cap()` The model was fitted to the following `r nrow(Fleet_DF)` indices.
+```{r, echo=FALSE, results="asis"}
+Fleet_DF %>% knitr::kable(format = "html", escape = F) %>%
+  kableExtra::kable_styling("striped", full_width = T)
+
+```
+
+# Data Summary
+
+```{r echo=FALSE, out.width ='100%'}
+DataSummary <- Data_DF %>% dplyr::select(year, Code, Name, Catch, CPUE_Obs,
+                                         Length.Comp, Mean.Weight, year2) %>%
+  tidyr::pivot_longer(cols=c('Catch', 'CPUE_Obs', 'Length.Comp', 'Mean.Weight'),
+                      names_to = 'Data') %>%
+  dplyr::mutate(is.data=ifelse(value>0, TRUE, NA)) %>%
+  na.omit()
+
+Data.Names <- c("Catch", 'CPUE', "Length Composition", "Mean Weight")
+DataSummary$Data <- factor(DataSummary$Data, labels=Data.Names)
+
+ggplot2::ggplot(DataSummary, ggplot2::aes(year2, Code, color=is.data)) +
+  ggplot2::facet_wrap(~Data, ncol=2) +
+  ggplot2::geom_line(size=2) +
+  ggplot2::labs(y="Fleet", x="Year", color='') +
+  ggplot2::scale_color_manual(values='#357DE9') +
+  ggplot2::theme_bw()+
+  ggplot2::guides(color="none") +
+  ggplot2::scale_x_date(breaks=seq.Date(min(DataSummary$year2), max(DataSummary$year2), "5 year"),
+               labels = scales::date_format("%Y")) +
+  ggplot2::theme(axis.text.x= ggplot2::element_text(angle=45, hjust=1),
+        strip.background = ggplot2::element_blank(),
+        strip.text = ggplot2::element_text(size=12))
+ 
+```
+`r fig.cap()` The time periods for the data used in the model.
+
+# Objective Function Values
+
+## Overall
+`r tab.cap()` The total and component overall likelihood values.
+```{r, echo=FALSE, results="asis"}
+
+dt <- likelihood[[1]][1,]
+rownames(dt) <- NULL
+dt %>% t() %>% knitr::kable(format = "html", escape = F) %>%
+  kableExtra::kable_styling("striped", full_width = F)
+
+```
+
+## By Fleet
+`r tab.cap()` The total and component likelihood values for each fleet.
+```{r, echo=FALSE, results="asis"}
+dt <- likelihood[[2]][!grepl("lambda", likelihood[[2]]$Label),]
+rownames(dt) <- NULL
+dt %>% t() %>% knitr::kable(format = "html", escape = F) %>%
+  kableExtra::kable_styling("striped", full_width = T) %>%
+  kableExtra::row_spec(1, bold = T)
+
+```
+
+
+# Model Fits
+
+## Fits to CPUE Indices
+
+```{r}
+# CPUE fitting info
+cpue <- left_join(CPUE_List, Fleet_DF, by='index')
+cpue <- cpue %>% dplyr::group_by(Code) %>% dplyr::group_modify(~SWOMSE:::fit.diagnostics(.x))
+
+```
+
+```{r, echo=FALSE, fig.width=8, fig.height=18,}
+SWOMSE:::cpue.plot(cpue)
+```
+`r fig.cap()` Operating model fits to the indices. Each row corresponds with an index. The left-hand panels show the observed (black dots) and model predicted (blue line) indices. The right-hand panels show the log devitations (the observation model is log-normal). Runs of positive residuals are coloured blue, with darker colours indicating longer runs. Run in negative residuals are colored in grey. 
+
+## Statistical Properties 
+
+`r tab.cap()` The statistical properties of the model fits to the `r cpue$Name %>% unique() %>% length()` indices.
+```{r, echo=FALSE}
+
+# table of fit statistics
+dt <- cpue %>% dplyr::ungroup() %>% dplyr::distinct(index, Fleet=Name, sd, cor, ac, rmse, mean.runs) %>%
+  mutate_if(is.numeric, round, 2)
+dt %>% DT::datatable(class = 'cell-border stripe', rownames = FALSE,
+                     colnames = c('index', 'Fleet', 'Standard Deviation',
+                                  'Correlation',
+                                  'Auto-Correlation', 
+                                  'Root Mean Squared Error',
+                                  'Mean Runs'),
+                     options = list(pageLength = nrow(dt), dom = 'tip'))
+
+```
+
+
+# Spawning Biomass
+
+```{r, echo=FALSE, fig.width=8, fig.height=6}
+
+years <- min(TSbio_dat$year):TSbio_dat$year[which(TSbio_dat$Depletion == TSbio_dat$SS_Depletion)]
+SSB_DF <- TSbio_dat %>% filter(year %in% years)
+
+ggplot2::ggplot(SSB_DF, ggplot2::aes(x=year, y=SSB)) + ggplot2::geom_line(size=1.2) +
+  ggplot2::expand_limits(y=c(0, 0)) +
+  ggplot2::geom_line(ggplot2::aes(x=year, y=SB0), linetype=2) +
+  ggplot2::scale_y_continuous(sec.axis = ggplot2::sec_axis(~ . /SSB_DF$SB0[1], name="Depletion",
+                                         breaks=seq(0, 1, by=0.2)),
+                              expand = ggplot2::expansion(mult=c(0, 0.05))) +
+  ggplot2::scale_x_continuous(breaks=seq(min(SSB_DF$year), max(SSB_DF$year), by=5)) +
+  ggplot2::theme_bw() +
+  ggplot2::labs(x="Year", y="Spawning Stock Biomass")
+```
+`r fig.cap()` Plot of the predicted historical spawning stock biomass for OM: `r OM.n`.
+
+# Recruitment
+
+```{r, echo=FALSE, fig.width=8, fig.height=6}
+ggplot2::ggplot(SSB_DF, ggplot2::aes(x=year, y=Obs_Rec)) + ggplot2::geom_line(size=1.2) +
+  ggplot2::expand_limits(y=c(0, 0)) +
+  ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult=c(0, 0.05)),
+                              sec.axis = ggplot2::sec_axis(~ . /SSB_DF$R0[1], name="Relative Recruitment",
+                                                           breaks=seq(0, 1, by=0.2))) +
+  ggplot2::geom_line(ggplot2::aes(x=year, y=R0), linetype=2) +
+  ggplot2::theme_bw() +
+  ggplot2::labs(y="Recruits", x="Year") +
+  ggplot2::scale_x_continuous(breaks=seq(min(SSB_DF$year), max(SSB_DF$year), by=5))
+```
+`r fig.cap()` Plot of the predicted historical recruitment for OM: `r OM.n`.
+
+```{r, echo=FALSE, fig.width=8, fig.height=6}
+SSB <- seq(0, 1, length.out = 100)
+Rec <- (0.8  * steep * SSB)/(0.2 * (1 - steep) + (steep - 0.2) * SSB) # BH SRR
+srr <- data.frame(SSB=SSB*SSB_DF$SB0[1], Rec=Rec*SSB_DF$R0[1])
+
+ggplot2::ggplot(SSB_DF, ggplot2::aes(x=SSB)) + 
+  ggplot2::geom_point(size=2, ggplot2::aes(y=Obs_Rec)) +
+  ggplot2::expand_limits(y=c(0, 0), x=0) +
+  ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult=c(0, 0.05))) +
+  ggplot2:: scale_x_continuous(expand = ggplot2::expansion(mult=c(0, 0.05))) +
+  ggplot2::geom_line(data=srr, ggplot2::aes(x=SSB, y=Rec), color='blue', size=1.05) +
+  ggplot2::theme_bw() +
+  ggplot2::labs(y="Recruits", x="Spawning Stock Biomass") +
+  ggplot2::geom_text(data=data.frame(x=0, y=Inf, text=paste0('h = ',  steep)),
+                     ggplot2::aes(x=x, y=y, label=text, hjust=-1, vjust=2))
+```
+`r fig.cap()` The expected stock-recruitment relationship (blue line) and predicted historical recruitment (black dots). 
+
+
+```{r, echo=FALSE, fig.width=8, fig.height=6}
+ggplot2::ggplot(SSB_DF, ggplot2::aes(x=SSB)) + 
+  ggplot2::geom_text(ggplot2::aes(y=Obs_Rec, label=year, color=as.factor(year))) +
+  ggplot2::expand_limits(y=c(0, 0), x=0) +
+  ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult=c(0, 0.05))) +
+  ggplot2:: scale_x_continuous(expand = ggplot2::expansion(mult=c(0, 0.05))) +
+  ggplot2::geom_line(data=srr, ggplot2::aes(x=SSB, y=Rec), color='blue', size=1.05) +
+  ggplot2::theme_bw() +
+  ggplot2::guides(color=FALSE) +
+  ggplot2::labs(y="Recruits", x="Spawning Stock Biomass") +
+  ggplot2::geom_text(data=data.frame(x=0, y=Inf, text=paste0('h = ',  steep)),
+                     ggplot2::aes(x=x, y=y, label=text, hjust=-1, vjust=2))
+```
+`r fig.cap()` The expected stock-recruitment relationship (blue line) and predicted historical recruitment with years shown as coloured labels.
+
+```{r, echo=FALSE, fig.width=8, fig.height=6}
+SWOMSE:::recdevs.plot(SSB_DF)
+```
+`r fig.cap()` Recruitment deviations (log). Blue bars represent positive deviations where the estimated recruitment is higher than the mean value predicted from the stock-recruitment curve. Grey bars represent negative deviations. ‘sd’. and ‘ac’. refer to the Standard Deviation and lag-1 autocorrelation in recruitment deviations.
+
+
+
+# Reference Points
+` tab.cap()` The biological reference points from OM: `r OM.n`.
+```{r, echo=FALSE}
+
+col.names <- c("MSY", "SB~MSY~", 'F~MSY~', 'F/F~MSY~', 'SB/SB~MSY~', 
+                          'SB~MSY~/SB~0~', 'Depletion')
+colnames(ref_points) <- col.names
+
+ref_points %>% 
+  knitr::kable(format = "html", 
+               col.names = col.names,
+               escape = F) %>%
+  kableExtra::kable_styling("striped", full_width = T)
+```
+
+# Kobe Plot 
+```{r, echo=FALSE, fig.width=8, fig.height=6}
+col1 <- 'yellow'
+col2 <- 'green'
+col3 <- 'red'
+maxX <- max(2,max(SSB_DF$B.Bmsy))
+maxY <- max(2,max(SSB_DF$F.Fmsy))
+
+fill.df <- data.frame(x=c(0,0,1,1,
+                          1,maxX, maxX, 1,
+                          0,0,1,1,
+                          1,maxX,maxX,1),
+                      y=c(0,1,1,0,
+                          0,0,1,1,
+                          1,maxY, maxY, 1,
+                          1,1, maxY, maxY),
+                      group=c(rep('BL', 4),
+                              rep('BR', 4),
+                              rep('TL', 4),
+                              rep('TR', 4)))
+
+ind <- seq(1, nrow(SSB_DF), by=5)
+labeldata <- SSB_DF[ind,]
+ggplot2::ggplot(SSB_DF) +
+  ggplot2::expand_limits(x=c(0,2), y=c(0,2)) +
+  ggplot2::geom_polygon(data=fill.df, ggplot2::aes(x=x, y=y, fill=group), alpha=0.5) +
+  ggplot2::geom_point(ggplot2::aes(x=B.Bmsy, y=F.Fmsy), size=2) +
+  ggplot2::geom_line(ggplot2::aes(x=B.Bmsy, y=F.Fmsy)) +
+  ggrepel::geom_text_repel(data=labeldata, 
+                           ggplot2::aes(x=B.Bmsy, y=F.Fmsy, label=year)) + 
+  ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult=c(0.01, 0.01))) +
+  ggplot2:: scale_x_continuous(expand = ggplot2::expansion(mult=c(0.01, 0.01))) +
+  ggplot2::theme_classic() +
+  ggplot2::scale_fill_manual(values=c(col1, col2, col3, col1)) +
+  ggplot2::labs(x="SB/SBMSY", y="F/FMSY") + 
+  ggplot2::guides(color=FALSE, fill=FALSE)
+```
+`r fig.cap()` Kobe plot for OM: `r OM.n`. 
+
+# Selectivity
+```{r, echo=FALSE, fig.width=8, fig.height=6}
+
+ggplot2::ggplot(SelectDat, ggplot2::aes(x=Length.Class, y=Select, color=Name)) +
+  ggplot2::geom_line(size=1) +
+  ggplot2::expand_limits(y=c(0, 0), x=0) +
+  ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult=c(0, 0.05))) +
+  ggplot2:: scale_x_continuous(expand = ggplot2::expansion(mult=c(0, 0.05))) +
+  ggplot2::theme_bw() +
+  ggplot2::scale_color_discrete() +
+  ggplot2::labs(x="Length Class (mm)", y="Selectivity", color="Fleet")
+```
+`r fig.cap()` The estimated selectivity-at-length for the 11 fleets.
+
+# Fits to Catch Data
+```{r, echo=FALSE, fig.width=8, fig.height=6}
+
+ggplot2::ggplot(CatchDat, ggplot2::aes(x=year)) +
+  ggplot2::facet_wrap(~Name) +
+  ggplot2::geom_point(ggplot2::aes(y=Obs)) +
+  ggplot2::geom_line(ggplot2::aes(y=Exp)) +
+  ggplot2::theme_bw() +
+  ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult=c(0.01, 0.05))) +
+  ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult=c(0.01, 0.05))) +
+  ggplot2::expand_limits(y=0) +
+  ggplot2::theme(strip.background = ggplot2::element_blank()) +
+  ggplot2::labs(x="Year", y="Catch")
+  
+```
+`r fig.cap()` Fits to the catch data for the `r CatchDat$Name %>% unique() %>% length()` fleets. All panels are shown with the same scale y-axis to indicate the magnitude of catches between fleets.  
+
+
+```{r, echo=FALSE, fig.width=8, fig.height=6}
+ggplot2::ggplot(CatchDat, ggplot2::aes(x=year)) +
+  ggplot2::facet_wrap(~Name, scales='free_y') +
+  ggplot2::geom_point(ggplot2::aes(y=Obs)) +
+  ggplot2::geom_line(ggplot2::aes(y=Exp)) +
+  ggplot2::theme_bw() +
+  ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult=c(0.01, 0.05))) +
+  ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult=c(0.01, 0.05))) +
+  ggplot2::expand_limits(y=0) +
+  ggplot2::theme(strip.background = ggplot2::element_blank()) +
+  ggplot2::labs(x="Year", y="Catch")
+```
+`r fig.cap()` Fits to the catch data for the`r CatchDat$Name %>% unique() %>% length()` fleets with each y-axis is scaled separately.
+
+# Fits to Length Composition
+
+## Residual Plots
+```{r, echo=FALSE, fig.width=8, fig.height=45}
+
+dat <- predLen %>% dplyr::group_by(Code) %>% 
+  dplyr::group_modify(~SWOMSE:::fit.diagnostics(.x))
+  
+
+dat$color <- 'Positive'
+dat$color[dat$res < 0] <- 'Negative'
+dat$size <- dat$Obs^0.5*abs(dat$res)
+dat$color <- as.factor(dat$color)
+dat$Year <- as.Date(paste(dat$year, 1, 1, sep = "-"))
+ggplot2::ggplot(dat, ggplot2::aes(x=Year, y=Bin)) + 
+  ggplot2::facet_wrap(~Name, ncol=1, scales="free_x") + 
+  ggplot2::geom_point(ggplot2::aes(size=size, color=color), alpha=0.8) +
+  ggplot2::guides(fill=FALSE) +
+  ggplot2::theme_classic() +
+  ggplot2::labs(size='Residual Error', color='Residual Sign',
+                y="Length Class")
+
+
+
+```
+`r fig.cap()` Length composition residuals showing residuals over time for each fleet.  Blue circles are positive residuals (observed proportion is higher than expected), red circles are negative residuals. The area of the circle is proportional to the residual error where residual = (observed)^0.5 * (log(observed)-log(predicted)).
+
+## Fits to Aggregated Length Composition
+```{r, echo=FALSE, fig.width=8, fig.height=8}
+
+ggplot2::ggplot(Comps, ggplot2::aes(x=Bin)) +
+  ggplot2::facet_wrap(~Name, scale="free_y") +
+  ggplot2::geom_bar(ggplot2::aes(y=Obs), stat='identity') +
+  ggplot2::geom_line(ggplot2::aes(y=Exp), size=1.2) + 
+  ggplot2::theme_classic() +
+  ggplot2::labs(x="Length Class", y="")
+
+```
+`r fig.cap()` Model predicted length composition (blue line) and observed length composition (grey bars) aggregated over all years for each fleet. 
