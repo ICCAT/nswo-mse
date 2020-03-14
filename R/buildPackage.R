@@ -50,7 +50,7 @@ document_data <- function() {
   }
 
 
-  cat("#' @name SWO-Data",
+  cat("#' @name SWO_Data",
       "\n#' @docType data",
       "\n#' @title Operating models",
       "\n#' @description Swordfish Data Object",
@@ -70,6 +70,188 @@ document_data <- function() {
       sep="", append=TRUE,
       file=file.path('R/', RoxygenFile))
 
+  cat("#' @name OMs_DF",
+      "\n#' @docType data",
+      "\n#' @title Overview of OM Parameters",
+      "\n#' @description A dataframe of OM Parameters",
+      "\n#'  ",
+      '\n "OMs_DF"',
+      "\n\n\n",
+      sep="", append=TRUE,
+      file=file.path('R/', RoxygenFile))
+
+  cat("#' @name basecase_DF",
+      "\n#' @docType data",
+      "\n#' @title Overview of Base Case OM Parameters",
+      "\n#' @description A dataframe of OM Parameters",
+      "\n#'  ",
+      '\n "basecase_DF"',
+      "\n\n\n",
+      sep="", append=TRUE,
+      file=file.path('R/', RoxygenFile))
+
+  cat("#' @name Like_List",
+      "\n#' @docType data",
+      "\n#' @title OM Likelihoods",
+      "\n#' @description A list of likelihood values for each OM",
+      "\n#'  ",
+      '\n "Like_List"',
+      "\n\n\n",
+      sep="", append=TRUE,
+      file=file.path('R/', RoxygenFile))
+
+  cat("#' @name basecase_LH",
+      "\n#' @docType data",
+      "\n#' @title Base Case OM Likelihoods",
+      "\n#' @description A list of likelihood values for base case OM",
+      "\n#'  ",
+      '\n "basecase_LH"',
+      "\n\n\n",
+      sep="", append=TRUE,
+      file=file.path('R/', RoxygenFile))
+
+  cat("#' @name Fleet_DF",
+      "\n#' @docType data",
+      "\n#' @title Fleet Information",
+      "\n#' @description A dataframe of information on fleet names",
+      "\n#'  ",
+      '\n "Fleet_DF"',
+      "\n\n\n",
+      sep="", append=TRUE,
+      file=file.path('R/', RoxygenFile))
+
+
+  cat("#' @name Data_DF",
+      "\n#' @docType data",
+      "\n#' @title Data Information",
+      "\n#' @description A dataframe of fishery data",
+      "\n#'  ",
+      '\n "Data_DF"',
+      "\n\n\n",
+      sep="", append=TRUE,
+      file=file.path('R/', RoxygenFile))
+
+  cat("#' @name CPUE_List",
+      "\n#' @docType data",
+      "\n#' @title CPUE Fitting Information",
+      "\n#' @description A list of fitted CPUE indices for each OM",
+      "\n#'  ",
+      '\n "CPUE_List"',
+      "\n\n\n",
+      sep="", append=TRUE,
+      file=file.path('R/', RoxygenFile))
+
+  cat("#' @name basecase_CPUE",
+      "\n#' @docType data",
+      "\n#' @title CPUE Fitting Information for base case OM",
+      "\n#' @description Fitted CPUE indices for base case OM",
+      "\n#'  ",
+      '\n "basecase_CPUE"',
+      "\n\n\n",
+      sep="", append=TRUE,
+      file=file.path('R/', RoxygenFile))
+
+  cat("#' @name TSBio_List",
+      "\n#' @docType data",
+      "\n#' @title Time-Series Data of Predicted Spawning Biomass and Recruitment",
+      "\n#' @description A list of predicted spawning biomass and recruitment for each OM",
+      "\n#'  ",
+      '\n "TSBio_List"',
+      "\n\n\n",
+      sep="", append=TRUE,
+      file=file.path('R/', RoxygenFile))
+
+  cat("#' @name basecase_TSbio",
+      "\n#' @docType data",
+      "\n#' @title Time-Series Data of Predicted Spawning Biomass and Recruitment",
+      "\n#' @description A list of predicted spawning biomass and recruitment for base case OM",
+      "\n#'  ",
+      '\n "basecase_TSbio"',
+      "\n\n\n",
+      sep="", append=TRUE,
+      file=file.path('R/', RoxygenFile))
+
+  cat("#' @name RefPoint_DF",
+      "\n#' @docType data",
+      "\n#' @title Dataframe of Reference Points for each OM",
+      "\n#' @description None converged OMs have Depletion=NA",
+      "\n#'  ",
+      '\n "RefPoint_DF"',
+      "\n\n\n",
+      sep="", append=TRUE,
+      file=file.path('R/', RoxygenFile))
+
+  cat("#' @name basecase_RefPoint",
+      "\n#' @docType data",
+      "\n#' @title Dataframe of Reference Points for base case OM",
+      "\n#' @description None converged OMs have Depletion=NA",
+      "\n#'  ",
+      '\n "basecase_RefPoint"',
+      "\n\n\n",
+      sep="", append=TRUE,
+      file=file.path('R/', RoxygenFile))
+
+  cat("#' @name Select_List",
+      "\n#' @docType data",
+      "\n#' @title List of estimated selectivity-at-size for each OM",
+      "\n#' @description ",
+      "\n#'  ",
+      '\n "Select_List"',
+      "\n\n\n",
+      sep="", append=TRUE,
+      file=file.path('R/', RoxygenFile))
+
+
+  cat("#' @name basecase_Select",
+      "\n#' @docType data",
+      "\n#' @title List of estimated selectivity-at-size for base case OM",
+      "\n#' @description ",
+      "\n#'  ",
+      '\n "basecase_Select"',
+      "\n\n\n",
+      sep="", append=TRUE,
+      file=file.path('R/', RoxygenFile))
+
+  cat("#' @name Catch_List",
+      "\n#' @docType data",
+      "\n#' @title List of observed and predicted catch for each OM",
+      "\n#' @description ",
+      "\n#'  ",
+      '\n "Catch_List"',
+      "\n\n\n",
+      sep="", append=TRUE,
+      file=file.path('R/', RoxygenFile))
+
+  cat("#' @name basecase_catch",
+      "\n#' @docType data",
+      "\n#' @title List of observed and predicted catch for base case OM",
+      "\n#' @description ",
+      "\n#'  ",
+      '\n "basecase_catch"',
+      "\n\n\n",
+      sep="", append=TRUE,
+      file=file.path('R/', RoxygenFile))
+
+  cat("#' @name LenDat_List",
+      "\n#' @docType data",
+      "\n#' @title List of observed and predicted length data for each OM",
+      "\n#' @description ",
+      "\n#'  ",
+      '\n "LenDat_List"',
+      "\n\n\n",
+      sep="", append=TRUE,
+      file=file.path('R/', RoxygenFile))
+
+  cat("#' @name basecase_LenDat",
+      "\n#' @docType data",
+      "\n#' @title List of observed and predicted length data for base case OM",
+      "\n#' @description ",
+      "\n#'  ",
+      '\n "basecase_LenDat"',
+      "\n\n\n",
+      sep="", append=TRUE,
+      file=file.path('R/', RoxygenFile))
+
 }
 
 # AverageC <- function(x, Data, reps) {
@@ -81,21 +263,21 @@ document_data <- function() {
 
 #' Add the SWO Data Excel file and OM Doc file to the package
 #'
-#' @param redom Logical. Re-build `plot(SWOM)`?
+#' @param redoPlotOM Logical. Re-build `plot(SWOM)`?
 #' @param redoMSE Logical. Re-build MSE object?
 #' @return nothing
 #' @export
 #' @keywords internal
 #' @importFrom dplyr %>% filter summarise mutate group_by select summarize
 #' @importFrom usethis use_data
-BuildData <- function(redoOM=FALSE, redoMSE=FALSE) {
+BuildData <- function(redoPlotOM=FALSE, redoMSE=FALSE) {
   SWOData <- DLMtool::XL2Data("inst/SWO_Data")
   usethis::use_data(SWOData, overwrite = TRUE)
 
   # copy user manual to doc folder
   file.copy("doc/userguide.html", "inst/userguide.html", overwrite =TRUE)
 
-  if (redoOM)
+  if (redoPlotOM)
     plot(SWOM, output_dir="inst", open=FALSE)
 
   if (redoMSE) {
@@ -105,9 +287,8 @@ BuildData <- function(redoOM=FALSE, redoMSE=FALSE) {
 
     SWO_MSE <- runMSE(SWOM, MPs=MPs, parallel = TRUE)
     usethis::use_data(SWO_MSE, overwrite = TRUE)
-
-
   }
+
 
 }
 
@@ -279,6 +460,120 @@ check <- function(array, OMlist, cpar) {
     if (p !=1) stop()
   }
 }
+
+
+#' Read SS output and data
+#'
+#' @param SS.dir Full file path to SS output files
+#' @keywords internal
+#' @return A named list
+#' @export
+#'
+readSS <- function(SS.dir, i='base_case') {
+
+  replist <- suppressWarnings(r4ss::SS_output(SS.dir, verbose = FALSE,
+                                              hidewarn = TRUE,
+                                              printstats=FALSE))
+  data <- r4ss::SS_readdat(file.path(SS.dir, 'data.ss_new'), version='3.24',
+                           verbose = FALSE)
+
+  # Natural mortality
+  tt <- replist$M_at_age %>% filter(Year <= replist$endyr)
+  M <- unique(tt[,4])
+  M <- M[!is.na(M)]
+
+  # sigma R
+  sigmaR <- replist$sigma_R_in
+
+  # steepness
+  h <- replist$parameters[grepl("steep", rownames(replist$parameters)), ]$Value
+
+  # cpue cv
+  cpue_cv <- data$CPUE %>% filter(year>0, year<= replist$endyr) %>%
+    group_by(index, year) %>% summarise(se_log=unique(se_log)) %>%
+    dplyr::ungroup() %>%
+    dplyr::select(se_log) %>% dplyr::distinct()
+
+  if (nrow(cpue_cv)>1) {
+    rng <- range(cpue_cv$se_log)
+    cpue_cv <- cpue_cv %>% dplyr::filter(se_log %in% rng) %>% dplyr::distinct()
+  }
+
+  # ess
+  L_ESS <- data$lencomp$Nsamp %>% unique()
+
+  # llq
+  txt <- strsplit(OM.dirs[i], 'llq')[[1]][2]
+  llq <- strsplit(txt, '_env')[[1]][1] %>% as.numeric()
+
+  # env
+  est_pars <- replist$estimated_non_dev_parameters
+  nms <- rownames(est_pars)
+  env <- FALSE
+  ind <- which(grepl('Q_envlink', rownames(est_pars)))
+  if (length(ind)>0) {
+    flts_env <- gsub('Q_envlink_[[:digit:]]+_', '', nms[ind])
+    env <- TRUE
+  }
+
+  # converge
+  log_det_hessian <- replist$log_det_hessian
+  if (log_det_hessian>0) conv <- TRUE
+  if (log_det_hessian==-1) conv <- FALSE
+
+  return(list(LH=list(replist$likelihoods_used %>% t() %>% data.frame(),
+                      replist$likelihoods_by_fleet),
+              DF=data.frame(M=M, sigmaR=sigmaR, h=h, cpue_cv=cpue_cv,
+                            L_ESS=L_ESS, llq=llq, env=env, dir=basename(SS.dir),
+                            n=i, conv=conv),
+              replist=replist,
+              data=data))
+}
+
+
+#' Import SS objects from uncertainty grid and save to root
+#'
+#' @param OM.dirs
+#'
+#' @return Nothing
+#' @export
+#'
+#' @keywords internal
+saveGridObjects <- function(OM.dirs) {
+  DFlist <- DataList <- RepList <- LHlist <- list()
+  for (i in seq_along(OM.dirs)) {
+    message(i, '/', length(OM.dirs))
+
+    run <- readSS(OM.dirs[i],i=i)
+    DFlist[[i]] <- run$DF
+    DataList[[i]] <- run$data
+    RepList[[i]] <- run$replist
+    LHlist[[i]] <- run$LH
+  }
+  DF <- do.call('rbind', DFlist)
+  saveRDS(DF, 'OM_objects/OM_DF.rda')
+  saveRDS(LHlist, 'OM_objects/LHlist.rda')
+  saveRDS(DataList, 'OM_objects/DataList.rda')
+  saveRDS(RepList, 'OM_objects/RepList.rda')
+}
+
+#' Import base case SS objects and save to root
+#'
+#' @param OMbase.dir
+#'
+#' @return Nothing
+#' @export
+#'
+#' @keywords internal
+saveBaseCaseObjects <- function(OMbase.dir) {
+
+  base.case <- readSS(OMbase.dir)
+  saveRDS(base.case$DF, 'OM_objects/basecase_DF.rda')
+  saveRDS(base.case$LH, 'OM_objects/basecase_LH.rda')
+  saveRDS(base.case$data, 'OM_objects/basecase_data.rda')
+  saveRDS(base.case$replist, 'OM_objects/basecase_replist.rda')
+}
+
 
 
 # Compare <- function(OM, replist) {

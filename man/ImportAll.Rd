@@ -4,8 +4,11 @@
 \alias{ImportAll}
 \title{Loop over directories and import SS OMs}
 \usage{
-ImportAll(rootdir = "C:/Users/Adrian/Dropbox/SWO_MSE/OMs/SS/2018_GRID",
-  Gen = 1:2, overwrite = TRUE)
+ImportAll(
+  rootdir = "C:/Users/Adrian/Dropbox/SWO_MSE/OMs/SS/2018_GRID",
+  Gen = 1:2,
+  overwrite = TRUE
+)
 }
 \arguments{
 \item{rootdir}{root directory containing sub-directories with SS output files}

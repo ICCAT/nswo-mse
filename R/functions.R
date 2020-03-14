@@ -64,3 +64,40 @@ avail <- function (classy, package=c("SWOMSE", 'all'))  {
          call. = FALSE)
   return(temp)
 }
+
+addLabels <- function(p, labelR=NULL, labelT=NULL, font.size=14, plot=FALSE) {
+
+  z <- ggplot2::ggplotGrob(p)
+
+  if (!is.null(labelR)) {
+    # Get the positions of the strips in the gtable: t = top, l = left, ..
+    posR <- subset(z$layout, grepl("strip-r", name), select = t:r)
+    # Add a new column to the right of current right strips,
+    # and a new row on top of current top strips
+    width <- z$widths[max(posR$r)]    # width of current right strips
+    z <- gtable::gtable_add_cols(z, width, max(posR$r))
+    # Construct the new strip grobs
+    stripR <- grid::gTree(name = "Strip_right", children = grid::gList(
+      grid::rectGrob(gp = grid::gpar(col = NA, fill = "white")),
+      grid::textGrob(labelR, rot = -90, gp = grid::gpar(fontsize = font.size, col = "grey10"))))
+    # Position the grobs in the gtable
+    z <- gtable::gtable_add_grob(z, stripR, t = min(posR$t), l = max(posR$r)+1, b = max(posR$b), name = "strip-right")
+
+    # Add small gaps between strips
+    z <- gtable::gtable_add_cols(z, grid::unit(1/5, "line"), max(posR$r))
+  }
+  if (!is.null(labelT)) {
+    posT <- subset(z$layout, grepl("strip-t", name), select = t:r)
+    height <- z$heights[min(posT$t)]  # height of current top strips
+    z <- gtable::gtable_add_rows(z, height, min(posT$t)-1)
+
+    stripT <- grid::gTree(name = "Strip_top", children = grid::gList(
+      grid::rectGrob(gp = grid::gpar(col = NA, fill = "white")),
+      grid::textGrob(labelT, gp = grid::gpar(fontsize = font.size, col = "grey10"))))
+    z <- gtable::gtable_add_grob(z, stripT, t = min(posT$t), l = min(posT$l), r = max(posT$r), name = "strip-top")
+    z <- gtable::gtable_add_rows(z, grid::unit(1/5, "line"), min(posT$t))
+  }
+
+  if (plot) grid.draw(z)
+  return(invisible(z))
+}

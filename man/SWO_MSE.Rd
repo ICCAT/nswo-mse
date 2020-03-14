@@ -4,7 +4,9 @@
 \name{SWO_MSE}
 \alias{SWO_MSE}
 \title{Example Swordish MSE}
-\format{An object of class \code{MSE} of length 1.}
+\format{
+An object of class \code{MSE} of length 1.
+}
 \usage{
 SWO_MSE
 }

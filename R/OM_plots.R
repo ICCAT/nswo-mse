@@ -1,4 +1,3 @@
-
 plot_HistRecDevs <- function() {
   Years <- (SWOM@CurrentYr-SWOM@nyears+1):SWOM@CurrentYr
   png("Figures/HistRecDevs.png")

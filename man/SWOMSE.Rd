@@ -3,7 +3,6 @@
 \docType{package}
 \name{SWOMSE}
 \alias{SWOMSE}
-\alias{SWOMSE-package}
 \title{SWOMSE: A package for conducting management strategy evaluation (MSE) for
 North Atlantic Swordfish}
 \description{

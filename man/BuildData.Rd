@@ -4,12 +4,12 @@
 \alias{BuildData}
 \title{Add the SWO Data Excel file and OM Doc file to the package}
 \usage{
-BuildData(redoOM = FALSE, redoMSE = FALSE)
+BuildData(redoPlotOM = FALSE, redoMSE = FALSE)
 }
 \arguments{
-\item{redoMSE}{Logical. Re-build MSE object?}
+\item{redoPlotOM}{Logical. Re-build `plot(SWOM)`?}
 
-\item{redom}{Logical. Re-build `plot(SWOM)`?}
+\item{redoMSE}{Logical. Re-build MSE object?}
 }
 \value{
 nothing
