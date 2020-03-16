@@ -29,7 +29,7 @@ shinyUI(
                                  is to develop and test a suitable framework for presenting the MSE results.
                                  The MSE results presented here are for testing purposes only.
                                 Please contact'
-                                , a("Adrian Hordyk", href="mailto:ar.hordyk@gmail.com", target="_blank"),
+                                , a("Adrian Hordyk", href="mailto:adrian@bluematterscience.com", target="_blank"),
                                 'for technical questions or bug reports.')
                               ),
                        column(2),

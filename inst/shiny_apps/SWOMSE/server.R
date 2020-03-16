@@ -138,6 +138,7 @@ shinyServer(function(input, output, session) {
     sims <- which(SWOM@Source %in% names)
     MSE <- DLMtool::Sub(SWO_MSE, sims=sims)
     if (MSE@nsim ==1) {
+      MSE@Misc$LatEffort <- array(MSE@Misc$LatEffort, dim=c(1, dim( MSE@Misc$LatEffort)))
       MSE <- joinMSE(list(MSE, MSE)) # temp fix for only 1 sim per OM
     }
     MSE
