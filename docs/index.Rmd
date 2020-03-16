@@ -20,7 +20,7 @@ fls <- fls[!grepl('userguide.html', fls)]
 [SWOMSE User Guide](userguide.html)
 
 ## OM Summary Report
-[OM Summary Report](OMs_Summary.htm)
+[OM Summary Report](OMs_Summary.html)
 
 ## OM Diagnostic Reports
 ```{r, results='asis'}
