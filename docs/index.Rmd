@@ -1,0 +1,31 @@
+---
+title: "North Atlantic Swordfish"
+author: ""
+date: "3/16/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+fls <- list.files(pattern='.html')
+fls <- fls[!grepl('index.html', fls)]
+fls <- fls[!grepl('OMs_Summary.html', fls)]
+fls <- fls[!grepl('userguide.html', fls)]
+
+
+```
+
+## User Guide
+
+[SWOMSE User Guide](userguide.html)
+
+## OM Summary Report
+[OM Summary Report](OMs_Summary.htm)
+
+## OM Diagnostic Reports
+```{r, results='asis'}
+for (fl in fls) {
+  nm <- strsplit(fl, '.html')[[1]][1]
+  cat('\n[',nm,'](',fl,')\n', sep="")
+}
+```
