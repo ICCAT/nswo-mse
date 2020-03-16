@@ -4,7 +4,7 @@
 
 # ImportAll() # import all SS OMs and save as .rda data files
 # BuildOM() # join all imported SS OMs into a single OM
-# BuildData(redoOM=FALSE, redoMSE=FALSE) # add Data file to data directory
+# BuildData(redoPlotOM=FALSE, redoMSE=TRUE) # add Data file to data directory
 # document_data() # add help files for all Data files
 
 
