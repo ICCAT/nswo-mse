@@ -1,31 +1,64 @@
 ---
-title: "North Atlantic Swordfish"
-author: ""
-date: "3/16/2020"
+title: "North Atlantic Swordfish MSE"
+author: "Adrian Hordyk <adrian@bluematterscience.com>"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
 ---
 
+![](img/220px-Xiphias_gladius2.jpg)
+
+<style>
+  .col2 {
+    columns: 2 200px;         /* number of columns and width in pixels*/
+    -webkit-columns: 2 200px; /* chrome, safari */
+    -moz-columns: 2 200px;    /* firefox */
+  }
+  .col3 {
+    columns: 3 100px;
+    -webkit-columns: 3 100px;
+    -moz-columns: 3 100px;
+  }
+  .col4 {
+    columns: 4 100px;
+    -webkit-columns: 4 100px;
+    -moz-columns: 4 100px;
+  }
+</style>
+
 ```{r setup, include=FALSE}
+library(dplyr)
 knitr::opts_chunk$set(echo = FALSE)
-fls <- list.files(pattern='.html')
-fls <- fls[!grepl('index.html', fls)]
-fls <- fls[!grepl('OMs_Summary.html', fls)]
-fls <- fls[!grepl('userguide.html', fls)]
 
 
 ```
 
-## User Guide
-
-[SWOMSE User Guide](userguide.html)
-
 ## OM Summary Report
-[OM Summary Report](OMs_Summary.html)
+[OM Summary Report](Reports/OMs_Summary.html)
+
+## Index Fit Report
+[Index Fit Report](Reports/Index_Report.html)
+
 
 ## OM Diagnostic Reports
+<div class="col4">
+
+```{r, include=FALSE}
+fls <- list.files('Reports/Diagnostics', pattern='.html')
+
+num <- NA
+for (x in seq_along(fls)) num[x] <- strsplit(fls[x], '-')[[1]][2]
+nums <- as.numeric(num[1:(length(num)-1)])
+nums <- c(nums+1, 1)
+df <- data.frame(fl=fls, num=nums, stringsAsFactors = FALSE)
+df <- df %>% dplyr::arrange(num)
+
+```
+
 ```{r, results='asis'}
-for (fl in fls) {
-  nm <- strsplit(fl, '.html')[[1]][1]
+for (i in 1:nrow(df)) {
+  nm <- strsplit(df[i,1], '.html')[[1]][1]
+  fl <- paste0('Reports/Diagnostics/', df[i,1])
   cat('\n[',nm,'](',fl,')\n', sep="")
 }
 ```
+</div>
