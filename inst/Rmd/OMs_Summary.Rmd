@@ -1,5 +1,5 @@
 ---
-title: "Operating Models Summary"
+title: "Operating Models Summary Report"
 subtitle: 'North Atlantic Swordfish MSE ' 
 author: "Adrian Hordyk <adrian@bluematterscience.com>"
 date:  "`r format(Sys.time(), '%B %d, %Y')`"
@@ -13,9 +13,25 @@ params:
     
 ---
 
+```{css, echo=FALSE}
+body .main-container {
+  max-width: 1280px !important;
+  width: 1280px !important;
+  }
+body {
+  max-width: 1280px !important;
+}
+
+```
+
+
+
+
 ```{r setup, include=FALSE}
 library(dplyr)
+library(htmltools)
 knitr::opts_chunk$set(echo = FALSE)
+
 
 
 fig.num <- tab.num <- 0
@@ -71,7 +87,7 @@ df <- data.frame(matrix(unlist(dat), ncol=length(dat), byrow=FALSE))
 names(df) <- names(dat)
 df$env <- as.logical(df$env)
 df[is.na(df)] <- ''
-df$llq[df$llq == '1'] <- 'FALSE'
+# df$llq[df$llq == '1'] <- 'FALSE'
 
 rownames(df) <- NULL
 df2 <- df
@@ -83,10 +99,40 @@ df2 %>% knitr::kable(format='html', escape=FALSE) %>%
  
 ```
 
+# Convergence 
+All 288 OMs in the uncertainty grid converged (invertible hessian).
 
-# OM Parameter Table
+# Check for Parameters at Bounds
 
-`r tab.cap()` The parameters for the base case and 288 models from the uncertainty grid. Filters at the top of each column can be used to subset the results.
+```{r}
+DF_bound <- SWOMSE::DF_bound
+
+n.pars <- DF_bound$Parameter %>% unique() %>% length()
+n.OMs <- DF_bound$OM %>% unique() %>% length()
+
+```
+
+ `r n.OMs` OMs had parameters that were close to the specified bounds (defined here as within 1% of the bounds). This only occurred for `r n.pars` parameters, all related to the size-selectivity parameters of the Japan Early and US fishing fleets.  
+ 
+`r tab.cap()` Table of parameters where the estimated values were within 1% of the specified minimum and maximum bounds. Filters at the top of each column can be used to subset the results. The table can be downloaded as a CSV file using the 'CSV' button.
+
+```{r}
+DF_bound$OM <- as.factor(DF_bound$OM)
+DT::datatable(DF_bound, filter='top', 
+              extensions = 'Buttons',
+              options = list(
+                dom = 'Blfrtip',
+                buttons = list(list(extend = 'csv', filename= 'ParameterBounds')),
+                pageLength = 10,
+                columnDefs = list(list(width = '200px', targets = "_all"))),
+              rownames = FALSE,
+              escape=FALSE
+              )
+```
+
+# Parameter and Likelihood Table
+
+`r tab.cap()` The parameters and the total and component likelihood values for the base case model and the 288 OMs from the uncertainty grid. Filters at the top of each column can be used to subset the results. The table can be downloaded as a CSV file using the 'CSV' button.
 
 ```{r}
 # Summary of OM 
@@ -109,41 +155,68 @@ OMdf <- lapply(OMdf, factor) %>% as.data.frame()
 lev.ord <- c(levels(OMdf$OM)[length(OMdf$OM)], sort(as.numeric(levels(OMdf$OM)[1:(length(levels(OMdf$OM))-1)])))
 OMdf$OM<- factor(OMdf$OM, levels=lev.ord, ordered = TRUE)
 
-OMdf$n <- NULL
 OMdf2 <- OMdf
-colnames(OMdf2) <- c("OM", col.names, "Converged")
-DT::datatable(OMdf2, filter='top', options = list(pageLength = 10, autoWidth = TRUE),
-              rownames = FALSE, 
-              escape=FALSE)
+colnames(OMdf2) <- c("OM", col.names, "conv")
 
-```
-
-# Likelihood Value Table
-```{r}
-
+# likelihood table
 dflist <- list()
 dflist[[1]] <- data.frame(OM='base_case', SWOMSE::basecase_LH[[1]][1,])
 for (i in seq_along(SWOMSE::Like_List)) {
   dflist[[i+1]] <- data.frame(OM=as.character(i), SWOMSE::Like_List[[i]][[1]][1,])
 }
-DF <- do.call('rbind', dflist)
-rownames(DF) <- NULL
+lkDF <- do.call('rbind', dflist)
+rownames(lkDF) <- NULL
 ind <- which(OMdf$conv == TRUE)
-DF <- DF[ind,]
-DF <- DF %>% dplyr::select(OM, Total=TOTAL, Catch, Survey, Mean_body_wt, Length_comp,
+lkDF <- lkDF[ind,]
+lkDF <- lkDF %>% dplyr::select(OM, Total=TOTAL, Survey, Mean_body_wt, Length_comp,
                            Recruitment)
 
+joinedDF <- suppressWarnings(dplyr::left_join(OMdf2, lkDF, by="OM"))
+joinedDF$conv <- NULL
+par_nm <- names(OMdf2)
+par_nm <- par_nm[1:(length(par_nm)-1)]
+lk_nm <- names(lkDF)[2:length(lkDF)]
+
+
+col_groups <- htmltools::withTags(table(
+  class = 'display',
+  thead(
+    tr(
+      th(colspan = length(par_nm), style = "border-right: dashed 2px;", 'Parameter Values'),
+      th(colspan = length(lk_nm), 'Likelihood Values')
+    ),
+    tr(
+      lapply(par_nm[1:(length(par_nm)-1)], th),
+      th(style = "border-right: dashed 2px;", par_nm[length(par_nm)]),
+      lapply(lk_nm, th),
+    )
+  )
+))
+  
+n.col <- 500
+colfun <-  colorRampPalette(c("green", "lightgreen", "yellow", "orange", "red"))
+values <- colfun(n.col)
+rng <- range(joinedDF$Total)
+cuts <- seq(rng[1], rng[2], length.out=n.col-1)
+
+  
+DT::datatable(joinedDF, filter='top', 
+              extensions = 'Buttons',
+              options = list(
+                dom = 'Blfrtip',
+                buttons = list(list(extend = 'csv', filename= 'LikelihoodValues')),
+                pageLength = 10,
+                columnDefs = list(list(width = '200px', targets = "_all"))),
+              rownames = FALSE,
+              escape=FALSE,
+              container = col_groups) %>% 
+  DT::formatStyle('Total', 
+                  backgroundColor = DT::styleInterval(cuts, values),
+                  `border-left` = "dashed 2px")
+  
+
 ```
 
-
-
-`r tab.cap()` The total and component likelihood values for the base case model and the `r nrow(DF)-1` converged models from the uncertainty grid. Filters at the top of each column can be used to subset the results.
-
-```{r}
-DT::datatable(DF, filter='top', options = list(pageLength = 10, autoWidth = TRUE),
-              rownames = FALSE, 
-              escape=FALSE)
-```
 
 # Reference Points Table
 
@@ -157,22 +230,60 @@ ref_pointDF <- dplyr::bind_rows(basecase_RefPoint,
                                 RefPoint_DF)
 ref_pointDF$n <- factor(ref_pointDF$n, levels=c("base_case", 1:288), ordered=TRUE)
 
-col.names <- c("OM", "MSY", "SB<sub>MSY</sub>", 'F<sub>MSY</sub>', 'F/F<sub>MSY</sub>', 
+col.names <- c("OM", "MSY", "SB, sub('MSY')", 'F<sub>MSY</sub>', 'F/F<sub>MSY</sub>', 
                'SB/SB<sub>MSY</sub>',
                'SBM<sub>MSY</sub>/SB<sub>0</sub>', 'Depletion')
 colnames(ref_pointDF) <- col.names
+
 
 ind <- which(OMdf$conv == TRUE)
 ref_pointDF <- ref_pointDF[ind,]
 ref_pointDF[,-1] <-round(ref_pointDF[,-1],2) #the "-1" excludes column 1
 ```
 
-`r tab.cap()` Summary table of the biological reference points for the base case model and the `r nrow(ref_pointDF)-1` converged models from the uncertainty grid.
+`r tab.cap()` Summary table of the biological reference points for the base case model and the `r nrow(ref_pointDF)-1` converged models from the uncertainty grid. Filters at the top of each column can be used to subset the results. The table can be downloaded as a CSV file using the 'CSV' button.
+
 
 ```{r}
-DT::datatable(ref_pointDF, filter='top', options = list(pageLength = 10, autoWidth = TRUE),
+
+joinedDF <- suppressWarnings(dplyr::left_join(OMdf2, ref_pointDF, by="OM"))
+joinedDF$conv <- NULL
+
+ref_nm <- names(ref_pointDF)[2:length(names(ref_pointDF))]
+
+col_groups <- htmltools::withTags(table(
+  class = 'display',
+  thead(
+    tr(
+      th(colspan = length(par_nm), style = "border-right: dashed 2px;", 'Parameter Values'),
+      th(colspan = length(ref_nm), 'Reference Points')
+    ),
+    tr(
+      lapply(par_nm[1:(length(par_nm)-1)], th),
+      th(style = "border-right: dashed 2px;", par_nm[length(par_nm)]),
+      th("MSY"),
+      th(shiny::HTML(paste0("SB", tags$sub("MSY")))),
+      th(shiny::HTML(paste0("F", tags$sub("MSY")))),
+      th(shiny::HTML(paste0("F/F", tags$sub("MSY")))),
+      th(shiny::HTML(paste0("SB/SB", tags$sub("MSY")))),
+      th(shiny::HTML(paste0("SB",tags$sub("MSY"), "/SB", tags$sub("0")))),
+      th("Depletion")
+    )
+  )
+))
+
+DT::datatable(joinedDF, filter='top', 
+              extensions = 'Buttons',
+              options = list(
+                dom = 'Blfrtip',
+                buttons = list(list(extend = 'csv', filename= 'ReferencePoints')),
+                pageLength = 10,
+                columnDefs = list(list(width = '200px', targets = "_all"))),
               rownames = FALSE,
-              escape=FALSE)
+              escape=FALSE,
+              container = col_groups) %>%
+ DT::formatStyle('MSY', `border-left` = "dashed 2px")
+ 
 ```
 
 # SB/SB~MSY~ Timeseries Plots
@@ -186,8 +297,10 @@ for (i in seq_along(TSBio_List)) {
 }
 
 TSBio_DF <- do.call('rbind', TSBio_List)
-TSBio_DF <- dplyr::left_join(TSBio_DF, OMdf, by="OM")
+TSBio_DF <- suppressWarnings(dplyr::left_join(TSBio_DF, OMdf, by="OM"))
 TSBio_DF <- TSBio_DF %>% dplyr::filter(conv==TRUE, year %in% 1950:2018)
+
+BaseCase <- SWOMSE::basecase_TSbio %>% dplyr::filter(year %in% 1950:2018)
 
 nms <- c('M', 'sigmaR', 'h', 'se_log', 'L_ESS', 'llq', 'env')
 labs <- c('Natural mortality (M)', 'Rec. Var. (sigmaR)', 
@@ -198,128 +311,150 @@ labs <- c('Natural mortality (M)', 'Rec. Var. (sigmaR)',
 ## Natural Mortality
 
 ```{r, fig.width=8, fig.height=6}
+bcsize <- 1.1
 col <- 'M'
 collab <- labs[match(col, nms)]
-ggplot2::ggplot(TSBio_DF, ggplot2::aes(x=year, y= B.Bmsy, 
-                                       color=as.factor(get(col)),
-                                       
-                                       group=OM)) + 
+ggplot2::ggplot(TSBio_DF) + 
   ggplot2::geom_hline(yintercept = 1, linetype=2) +
-  ggplot2::geom_line() +
+  ggplot2::geom_line(ggplot2::aes(x=year, y= B.Bmsy, 
+                                       color=as.factor(get(col)),
+                                       group=OM)) +
+   ggplot2::geom_line(data=BaseCase,
+                      ggplot2::aes(x=year, y= B.Bmsy),
+                      color='black', size=bcsize)+
   ggplot2::expand_limits(y=c(0, 0)) +
   ggplot2::theme_bw() +
   ggplot2::labs(x="Year", y=expression(SB/SB[MSY]),
                 color=collab)
 ````
-`r fig.cap()` Predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the `r TSBio_DF[[col]] %>% unique() %>% length()` levels of `r collab` shown as coloured lines.
+
+`r fig.cap()` Predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the `r TSBio_DF[[col]] %>% unique() %>% length()` levels of `r collab` shown as coloured lines. The base case OM is shown as the thick black line. 
 
 
 ## Recruitment Variability
 ```{r, fig.width=8, fig.height=6}
 col <- 'sigmaR'
 collab <- labs[match(col, nms)]
-ggplot2::ggplot(TSBio_DF, ggplot2::aes(x=year, y= B.Bmsy, 
-                                       color=as.factor(get(col)),
-                                       
-                                       group=OM)) + 
+ggplot2::ggplot(TSBio_DF) + 
   ggplot2::geom_hline(yintercept = 1, linetype=2) +
-  ggplot2::geom_line() +
+  ggplot2::geom_line(ggplot2::aes(x=year, y= B.Bmsy, 
+                                       color=as.factor(get(col)),
+                                       group=OM)) +
+   ggplot2::geom_line(data=BaseCase,
+                      ggplot2::aes(x=year, y= B.Bmsy),
+                      color='black', size=bcsize)+
   ggplot2::expand_limits(y=c(0, 0)) +
   ggplot2::theme_bw() +
   ggplot2::labs(x="Year", y=expression(SB/SB[MSY]),
                 color=collab)
 ````
-`r fig.cap()` Predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the `r TSBio_DF[[col]] %>% unique() %>% length()` levels of `r collab` shown as coloured lines.
+
+`r fig.cap()` Predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the `r TSBio_DF[[col]] %>% unique() %>% length()` levels of `r collab` shown as coloured lines. The base case OM is shown as the thick black line. 
 
 ## Steepness
 ```{r, fig.width=8, fig.height=6}
 col <- 'h'
 collab <- labs[match(col, nms)]
-ggplot2::ggplot(TSBio_DF, ggplot2::aes(x=year, y= B.Bmsy, 
-                                       color=as.factor(get(col)),
-                                       
-                                       group=OM)) + 
+ggplot2::ggplot(TSBio_DF) + 
   ggplot2::geom_hline(yintercept = 1, linetype=2) +
-  ggplot2::geom_line() +
+  ggplot2::geom_line(ggplot2::aes(x=year, y= B.Bmsy, 
+                                       color=as.factor(get(col)),
+                                       group=OM)) +
+   ggplot2::geom_line(data=BaseCase,
+                      ggplot2::aes(x=year, y= B.Bmsy),
+                      color='black', size=bcsize)+
   ggplot2::expand_limits(y=c(0, 0)) +
   ggplot2::theme_bw() +
   ggplot2::labs(x="Year", y=expression(SB/SB[MSY]),
                 color=collab)
 ````
+
 `r fig.cap()` Predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the `r TSBio_DF[[col]] %>% unique() %>% length()` levels of `r collab` shown as coloured lines.
 
 ## CPUE CV
 ```{r, fig.width=8, fig.height=6}
 col <- 'se_log'
 collab <- labs[match(col, nms)]
-ggplot2::ggplot(TSBio_DF, ggplot2::aes(x=year, y= B.Bmsy, 
-                                       color=as.factor(get(col)),
-                                       
-                                       group=OM)) + 
+ggplot2::ggplot(TSBio_DF) + 
   ggplot2::geom_hline(yintercept = 1, linetype=2) +
-  ggplot2::geom_line() +
+  ggplot2::geom_line(ggplot2::aes(x=year, y= B.Bmsy, 
+                                       color=as.factor(get(col)),
+                                       group=OM)) +
+   ggplot2::geom_line(data=BaseCase,
+                      ggplot2::aes(x=year, y= B.Bmsy),
+                      color='black', size=bcsize)+
   ggplot2::expand_limits(y=c(0, 0)) +
   ggplot2::theme_bw() +
   ggplot2::labs(x="Year", y=expression(SB/SB[MSY]),
                 color=collab)
 ````
-`r fig.cap()` Predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the `r TSBio_DF[[col]] %>% unique() %>% length()` levels of `r collab` shown as coloured lines.
+
+`r fig.cap()` Predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the `r TSBio_DF[[col]] %>% unique() %>% length()` levels of `r collab` shown as coloured lines. The base case OM is shown as the thick black line. 
 
 ## Length Comp. ESS
 ```{r, fig.width=8, fig.height=6}
 col <- 'L_ESS'
 collab <- labs[match(col, nms)]
-ggplot2::ggplot(TSBio_DF, ggplot2::aes(x=year, y= B.Bmsy, 
-                                       color=as.factor(get(col)),
-                                       
-                                       group=OM)) + 
+ggplot2::ggplot(TSBio_DF) + 
   ggplot2::geom_hline(yintercept = 1, linetype=2) +
-  ggplot2::geom_line() +
+  ggplot2::geom_line(ggplot2::aes(x=year, y= B.Bmsy, 
+                                       color=as.factor(get(col)),
+                                       group=OM)) +
+   ggplot2::geom_line(data=BaseCase,
+                      ggplot2::aes(x=year, y= B.Bmsy),
+                      color='black', size=bcsize)+
   ggplot2::expand_limits(y=c(0, 0)) +
   ggplot2::theme_bw() +
   ggplot2::labs(x="Year", y=expression(SB/SB[MSY]),
                 color=collab)
 ````
-`r fig.cap()` Predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the `r TSBio_DF[[col]] %>% unique() %>% length()` levels of `r collab` shown as coloured lines.
+
+`r fig.cap()` Predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the `r TSBio_DF[[col]] %>% unique() %>% length()` levels of `r collab` shown as coloured lines. The base case OM is shown as the thick black line. 
 
 
 ## Catchability Increase 
 ```{r, fig.width=8, fig.height=6}
 col <- 'llq'
 collab <- labs[match(col, nms)]
-ggplot2::ggplot(TSBio_DF, ggplot2::aes(x=year, y= B.Bmsy, 
-                                       color=as.factor(get(col)),
-                                       
-                                       group=OM)) + 
+ggplot2::ggplot(TSBio_DF) + 
   ggplot2::geom_hline(yintercept = 1, linetype=2) +
-  ggplot2::geom_line() +
+  ggplot2::geom_line(ggplot2::aes(x=year, y= B.Bmsy, 
+                                       color=as.factor(get(col)),
+                                       group=OM)) +
+   ggplot2::geom_line(data=BaseCase,
+                      ggplot2::aes(x=year, y= B.Bmsy),
+                      color='black', size=bcsize)+
   ggplot2::expand_limits(y=c(0, 0)) +
   ggplot2::theme_bw() +
   ggplot2::labs(x="Year", y=expression(SB/SB[MSY]),
                 color=collab)
 ````
-`r fig.cap()` Predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the `r TSBio_DF[[col]] %>% unique() %>% length()` levels of `r collab` shown as coloured lines.
+
+`r fig.cap()` Predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the `r TSBio_DF[[col]] %>% unique() %>% length()` levels of `r collab` shown as coloured lines. The base case OM is shown as the thick black line. 
 
 ## Environmental Covariate
 ```{r, fig.width=8, fig.height=6}
 col <- 'env'
 collab <- labs[match(col, nms)]
-ggplot2::ggplot(TSBio_DF, ggplot2::aes(x=year, y= B.Bmsy, 
-                                       color=as.factor(get(col)),
-                                       
-                                       group=OM)) + 
+ggplot2::ggplot(TSBio_DF) + 
   ggplot2::geom_hline(yintercept = 1, linetype=2) +
-  ggplot2::geom_line() +
+  ggplot2::geom_line(ggplot2::aes(x=year, y= B.Bmsy, 
+                                       color=as.factor(get(col)),
+                                       group=OM)) +
+   ggplot2::geom_line(data=BaseCase,
+                      ggplot2::aes(x=year, y= B.Bmsy),
+                      color='black', size=bcsize)+
   ggplot2::expand_limits(y=c(0, 0)) +
   ggplot2::theme_bw() +
   ggplot2::labs(x="Year", y=expression(SB/SB[MSY]),
                 color=collab)
 ````
+
 `r fig.cap()` Predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the `r TSBio_DF[[col]] %>% unique() %>% length()` levels of `r collab` shown as coloured lines.
 
 # Current SB/SB~MSY~ Boxplots
 
-Bivariate boxplots of the spawning biomass (SB) relative to spawning biomass corresponding with maximum sustainable yield (SB~MSY~) for the factors examined in the uncertainty grid.
+Bivariate boxplots of the spawning biomass (SB) relative to spawning biomass corresponding with maximum sustainable yield (SB~MSY~) for the factors examined in the uncertainty grid.  
 
 
 ```{r, include=FALSE}
@@ -366,6 +501,7 @@ Plist <- lapply(ind, function(i) {
   xlab <- labs[match(x, nms)]
   fill <- gg$Var2[i] %>% as.character()
   filllab <- labs[match(fill, nms)]
+  
   ggplot2::ggplot(combDF,
                   ggplot2::aes(x=as.factor(get(x)),
                                y=get(y),
@@ -380,6 +516,7 @@ Plist <- lapply(ind, function(i) {
 cowplot::plot_grid(plotlist=Plist, nrow=nrow, ncol=ncol, align='hv')
 
 ```
+
 `r fig.cap()` Boxplots of predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the 3 levels of Natural Mortality shown as factors on the x-axis and colours indicating the other factors.
 
 
@@ -414,6 +551,7 @@ Plist <- lapply(ind, function(i) {
 
 cowplot::plot_grid(plotlist=Plist, nrow=nrow, ncol=ncol, align='hv')
 ```
+
 `r fig.cap()` Boxplots of predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the 2 levels of Recruitment Variability shown as factors on the x-axis and colours indicating the other factors.
 
 ## Steepness
@@ -449,6 +587,7 @@ cowplot::plot_grid(plotlist=Plist, nrow=nrow, ncol=ncol, align='hv')
 
 
 ```
+
 `r fig.cap()` Boxplots of predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` converged OMs from the uncertainty grid with the 3 levels of Steepness shown as factors on the x-axis and colours indicating the other factors.
 
 ## CPUE CV

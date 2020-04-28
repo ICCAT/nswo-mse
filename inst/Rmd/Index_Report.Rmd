@@ -1,0 +1,188 @@
+---
+title: 'Index Fit Report' 
+subtitle: 'North Atlantic Swordfish MSE'  
+author: "Adrian Hordyk <adrian@bluematterscience.com>"
+date:  "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true 
+params:
+  OM.n: 1 
+    
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(SWOMSE)
+library(dplyr)
+library(ggplot2)
+```
+
+```{r, include=FALSE}
+OutList <- list()
+OMs_DF <- SWOMSE::OMs_DF
+for (OM in 1:288) {
+  CPUE_List <- SWOMSE::CPUE_List[[OM]]
+  Fleet_DF <- SWOMSE::Fleet_DF
+
+  cpue <- left_join(CPUE_List, Fleet_DF, by='index')
+  cpue <- cpue %>% dplyr::group_by(Code) %>% dplyr::group_modify(~SWOMSE:::fit.diagnostics(.x))
+  cpue$OM <- OM
+  df <- OMs_DF %>% filter(OMs_DF$n ==OM)
+  df$OM <- OM
+  cpue <- dplyr::left_join(cpue, df, by="OM")
+  OutList[[OM]] <- cpue
+}
+CPUE_DF <- do.call("rbind", OutList)
+
+CPUE_DF$Catchability <- CPUE_DF$llq
+CPUE_DF$Catchability[ CPUE_DF$llq==1] <- "Catchability: No Increase"
+CPUE_DF$Catchability[ CPUE_DF$llq!=1] <- "Catchability: 1% Annual Increase"
+CPUE_DF$Catchability <- factor(CPUE_DF$Catchability, 
+                               levels=c("Catchability: No Increase",
+                                        "Catchability: 1% Annual Increase"),
+                               ordered = TRUE)
+Stats <- CPUE_DF %>% 
+  dplyr::distinct(cor, ac, sd, rmse, OM, Name, Catchability, env, llq)
+
+
+Stats_long <- tidyr::pivot_longer(Stats, 1:4)
+
+Rng <- Stats_long %>% dplyr::group_by(name, Catchability) %>% 
+  dplyr::summarise(max=max(value), min=min(value))
+
+dummy <- tidyr::pivot_longer(Rng, 3:4,  names_to="range")
+
+
+
+p1 <- function(Fleet, CPUE_DF, Stats_long) {
+  Data <- CPUE_DF %>% dplyr::filter(Code==Fleet)
+  
+  Obs <- Data %>% dplyr::distinct(year, Catchability, Obs)
+  
+ ggplot() +
+  expand_limits(y=0) + 
+  facet_wrap(~Catchability) + 
+  geom_line(data=Data, aes(x=year, y=Exp, group=as.factor(OM),
+                           color=env), alpha=0.5) +
+  geom_point(data=Obs, aes(x=year, y=Obs), size=2) +
+  theme_classic() +
+  guides(colour = guide_legend(override.aes = list(alpha = 1))) +
+  labs(x="Year", y="Index", color="Environmental Covariate",
+       title=unique(Data$Name)) 
+
+}
+
+p2 <- function(Stats_long, qinc) {
+  
+  ggplot(data=Stats_long %>% filter(llq==qinc), aes(x=value)) +
+    facet_grid(Name~name, scales='free') +
+    geom_histogram(bins=50, aes(fill=env), alpha=0.8) +
+    geom_blank(data=dummy) + 
+    guides(fill = guide_legend(override.aes = list(alpha = 1))) +
+    labs(x="Value", y="Count", fill="Environmental Covariate") +
+    theme_classic()
+}
+
+```
+
+
+# Introduction
+
+This report summarizes the fits across the 288 OMs from the uncertainty grid to 
+the fleet & survey 14 indices from the North Atlantic swordfish. 
+
+It also shows plots of the combined index (see SCRS/2017/137) against the predicted total biomass from each of the OMs. 
+
+# Indices and Fits
+
+## Fleet & Survey Indices
+The following plots show the observed index (black solid dots - left panel) and the 
+observed index adjusted for an assumed 1% annual increase in catchability (black solid dots - right panel) for the 14 fleet and survey indices, with the model fits from each OM shown as colored lines (red = no environmental covariate, blue = an environmental covariate).
+
+
+```{r, fig.height=6, fig.width=9}
+fleets <- CPUE_DF$Code %>% unique()
+for (fl in fleets) {
+  print(p1(fl, CPUE_DF, Stats_long))
+}
+
+```
+
+
+## Combined Index 
+The following plot show the combined index (black solid dots) with the standardized predicted total biomass from each OM shown as colored lines (red = no environmental covariate, blue = an environmental covariate). The OMs that were fitted to fleet & survey indices assuming a 1% annual increase in catchability are shown in the right panel.
+
+```{r, fig.height=6, fig.width=9}
+CombinedIndex$Obs <- CombinedIndex$st.CPUE
+CombinedIndex$Exp <- CombinedIndex$st.bio
+CombinedIndex$year <- CombinedIndex$Year
+
+CombinedIndex$Catchability <- CombinedIndex$llq
+CombinedIndex$Catchability[ CombinedIndex$llq==1] <- "Catchability: No Increase"
+CombinedIndex$Catchability[ CombinedIndex$llq!=1] <- "Catchability: 1% Annual Increase"
+CombinedIndex$Catchability <- factor(CombinedIndex$Catchability, 
+                               levels=c("Catchability: No Increase",
+                                        "Catchability: 1% Annual Increase"),
+                               ordered = TRUE)
+CombinedIndex$qinc <- CombinedIndex$llq
+
+
+ggplot() +
+  expand_limits(y=0) + 
+  facet_wrap(~Catchability) + 
+  geom_line(data=CombinedIndex, aes(x=Year, y=st.bio, group=as.factor(OM), color=env), 
+            alpha=0.5) +
+  geom_point(data=CombinedIndex, aes(x=Year, y=st.CPUE), size=2) +
+  theme_classic() +
+  guides(colour = guide_legend(override.aes = list(alpha = 1))) +
+  labs(x="Year", y="Index", color="Environmental Covariate",
+       title='Combined Index') 
+```
+
+# Summary of Statistical Properties
+
+## Fleet & Survey Indices
+
+### No Increase in Catchability 
+
+Histograms of the statistical properties of the log-deviations from the fits to the 14 indices, including auto-correlation (ac), correlation (cor), root-mean-square-error (rmse), and standard deviation (sd), for the 144 OMs using the observed indices.
+
+
+```{r fig.height=14, fig.width=9}
+p2(Stats_long, qinc=1)
+```
+
+### 1% Annual Increase in Catchability 
+
+Histograms of the statistical properties of the log-deviations from the fits to the 14 fleet & survey indices, including auto-correlation (ac), correlation (cor), root-mean-square-error (rmse), and standard deviation (sd), for the 144 OMs using the observed indices adjusted for an assumed 1% annual increase in catchability.
+
+```{r fig.height=14, fig.width=9}
+p2(Stats_long, qinc=1.01)
+```
+
+
+
+## Combined Index 
+Histograms of the statistical properties of the log-deviations from combined index and the predicted total biomass, including auto-correlation (ac), correlation (cor), root-mean-square-error (rmse), and standard deviation (sd). The bottom row shows the 144 OMs that were fitted to the observed indices that were adjusted for an assumed 1% annual increase in catchability.
+
+
+```{r, fig.height=6, fig.width=9}
+index_stats <- CombinedIndex %>% dplyr::group_by(OM) %>% dplyr::group_modify(~SWOMSE:::fit.diagnostics(.x))
+
+index_stats  <- index_stats %>% dplyr::distinct(cor, ac, sd, rmse, OM, Catchability, env, llq)
+
+Stats_long <- tidyr::pivot_longer(index_stats, 1:4)
+
+ggplot(data=Stats_long, aes(x=value)) +
+  facet_grid(llq~name, scales='free') +
+  geom_histogram(bins=50, aes(fill=env), alpha=0.8) +
+  geom_blank(data=dummy) + 
+  guides(fill = guide_legend(override.aes = list(alpha = 1))) +
+  labs(x="Value", y="Count", fill="Environmental Covariate") +
+  theme_classic()
+```
