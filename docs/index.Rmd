@@ -36,7 +36,8 @@ knitr::opts_chunk$set(echo = FALSE)
 [OM Summary Report](Reports/OMs_Summary.html)
 
 ## Index Fit Report
-[Index Fit Report](Reports/Index_Report.html)
+[Index Fit Report - HTML](Reports/Index_Report.html)
+[Index Fit Report - PDF](Reports/Index_Report.pdf)
 
 
 ## OM Diagnostic Reports
