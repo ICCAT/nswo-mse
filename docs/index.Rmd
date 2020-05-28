@@ -47,7 +47,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ```{r, results='asis'}
 csv.fls <- list.files('Reports/OM_Summary', pattern="csv")
 for (fl in csv.fls) {
-  cat('[', fl, '](', paste0("Reports/OM_Summary", fl), ')\n\n', sep="")
+  cat('[', fl, '](', paste0("Reports/OM_Summary/", fl), ')\n\n', sep="")
 }
 ```
 </div>
