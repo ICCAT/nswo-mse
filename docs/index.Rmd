@@ -33,12 +33,31 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ## OM Summary Report
-[OM Summary Report](Reports/OMs_Summary.html)
+
+**Reports**
+<div class="col2">
+[OM Summary Report (HTML)](Reports/OM_Summary/OMs_Summary.html)
+
+[OM Summary Report (PDF)](Reports/OM_Summary/OMs_Summary.pdf)
+
+</div>
+
+**Tables**
+<div class="col2">
+```{r, results='asis'}
+csv.fls <- list.files('Reports/OM_Summary', pattern="csv")
+for (fl in csv.fls) {
+  cat('[', fl, '](', paste0("Reports/OM_Summary", fl), ')\n\n', sep="")
+}
+```
+</div>
 
 ## Index Fit Report
-[Index Fit Report - HTML](Reports/Index_Report.html)
-[Index Fit Report - PDF](Reports/Index_Report.pdf)
+<div class="col2">
+[Index Fit Report (HTML)](Reports/Indices/Index_Report.html)
 
+[Index Fit Report (PDF)](Reports/Indices/Index_Report.pdf)
+</div>
 
 ## OM Diagnostic Reports
 <div class="col4">
