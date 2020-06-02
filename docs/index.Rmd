@@ -32,6 +32,14 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ```
 
+## SWOMSE Documentation 
+<div class="col2">
+[SWOMSE User Guide](userguide.html)
+
+[SWOMSE Trial Specifications Doc](https://docs.google.com/document/d/1L_1P5L3lcikzNhOSCOdUBSDfsa_NwN0tpIWvzxQ5xWw/edit?usp=sharing)
+
+</div>
+
 ## OM Summary Report
 
 **Reports**
