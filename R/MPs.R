@@ -122,8 +122,14 @@ class(ConstC) <- 'MP'
 #' @examples
 #' AverageC(1, SWOData)
 AverageC <- function(x, Data, reps) {
+
+  ind <- which(Data@Year == Data@LHYear)
+  histCatch <- Data@Cat[x, 1:ind]
+  meanC <- mean(histCatch, na.rm=TRUE)
+  TAC <- rlnorm(reps, log(meanC), 0.2)
+
   Rec <- new("Rec")
-  Rec@TAC <- rep(mean(Data@Cat[x,1:Data@LHYear], na.rm = TRUE), reps)
+  Rec@TAC <- TAC
   Rec
 }
 class(AverageC) <- "MP"
