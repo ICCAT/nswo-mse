@@ -27,11 +27,10 @@ body {
 ```
 
 
-
-
 ```{r setup, include=FALSE}
 library(dplyr)
 library(htmltools)
+library(ggplot2)
 knitr::opts_chunk$set(echo = FALSE)
 
 fig.num <- tab.num <- 0
@@ -111,6 +110,7 @@ DF_bound <- SWOMSE::DF_bound
 
 n.pars <- DF_bound$Parameter %>% unique() %>% length()
 n.OMs <- DF_bound$OM %>% unique() %>% length()
+
 ```
 
  `r n.OMs` OMs had parameters that were close to the specified bounds (defined here as within 1% of the bounds). This only occurred for `r n.pars` parameters, all related to the size-selectivity parameters of the Japan Early and US fishing fleets.  
@@ -140,19 +140,8 @@ DT::datatable(DF_bound, filter='top',
 
 ```
 
-# Parameter and Likelihood Table
+```{r, fig.width=8, fig.height=6}
 
-`r tab.cap()` The parameters and the total and component likelihood values for the base case model and the 288 OMs from the uncertainty grid. Filters at the top of each column can be used to subset the results. The table can be downloaded as a CSV file using the 'CSV' button.
-
-```{r, results='asis'}
-link <- paste0("https://github.com/ICCAT/nswo-mse/raw/master/docs/Reports/OM_Summary/Table", tab.num, ".csv")
-if (knitr::is_latex_output()) {
-  cat('NOTE: Dynamic tables are only available in HTML version of this report. Click [here](', link, ')^[', link, '] to download the table in CSV format (After opening link, right-click and Save As .csv).')
-}
-```
-
-```{r}
-# Summary of OM 
 basecase_DF <- SWOMSE::basecase_DF
 basecase_DF$n <- as.character(basecase_DF$n)
 basecase_DF$dir <- as.character(basecase_DF$dir)
@@ -174,6 +163,68 @@ OMdf$OM<- factor(OMdf$OM, levels=lev.ord, ordered = TRUE)
 
 OMdf2 <- OMdf
 colnames(OMdf2) <- c("OM", col.names, "conv")
+OMdf3 <- OMdf2 
+
+TSBio_List <- SWOMSE::TSBio_List
+
+for (i in seq_along(TSBio_List)) {
+  TSBio_List[[i]]$OM <- as.character(i)
+}
+
+TSBio_DF <- do.call('rbind', TSBio_List)
+TSBio_DF <- suppressWarnings(dplyr::left_join(TSBio_DF, OMdf, by="OM"))
+TSBio_DF <- TSBio_DF %>% dplyr::filter(conv==TRUE, year %in% 1950:2018)
+
+BaseCase <- SWOMSE::basecase_TSbio %>% dplyr::filter(year %in% 1950:2018)
+
+nms <- c('M', 'sigmaR', 'h', 'se_log', 'L_ESS', 'llq', 'env')
+labs <- c('Natural Mortality (M)', 'Rec. Var. (sigmaR)', 
+          'Steepness (h)', "CV Indices", 'Len. Comp. ESS', 'Q Inc.', 'Env. Cov.')
+
+
+
+TSBio_DF$OM_bound <- FALSE
+TSBio_DF$OM_bound[TSBio_DF$OM %in% DF_bound$OM] <- TRUE
+
+Stock_Status <- TSBio_DF %>% dplyr::filter(year==max(year))
+
+ggplot(Stock_Status, aes(x=B.Bmsy, fill=OM_bound)) + 
+  geom_histogram(binwidth =0.1) +
+  labs(x="B/BMSY", fill="OM Parameters near bound") +
+  theme_bw() +
+  ggplot2::expand_limits(x=c(0, 0))
+
+```
+
+`r fig.cap()` Histogram of the estimated stock status (B/BMSY) in 2017 with colours showing the OMs with some selectivity parameters close to the bounds. 
+
+```{r, fig.width=8, fig.height=6}
+ggplot(TSBio_DF, aes(x=year, y=B.Bmsy, group=OM, color=OM_bound)) + 
+  geom_line() +
+  labs(x="Year", y="B/BMSY", color="OM Parameters near bound") +
+  theme_bw() + 
+  geom_hline(yintercept=1, linetype='dashed') + 
+  ggplot2::expand_limits(y=c(0, 0)) 
+  
+```
+
+`r fig.cap()` Time-series plot of B/BMSY with colours showing the OMs with some selectivity parameters close to the bounds.  B/BMSY = 1 is shown as a dashed black line.  
+
+
+# Parameter and Likelihood Table
+
+`r tab.cap()` The parameters and the total and component negative log-likelihood values for the base case model and the 288 OMs from the uncertainty grid. Filters at the top of each column can be used to subset the results. The table can be downloaded as a CSV file using the 'CSV' button.
+
+```{r, results='asis'}
+link <- paste0("https://github.com/ICCAT/nswo-mse/raw/master/docs/Reports/OM_Summary/Table", tab.num, ".csv")
+if (knitr::is_latex_output()) {
+  cat('NOTE: Dynamic tables are only available in HTML version of this report. Click [here](', link, ')^[', link, '] to download the table in CSV format (After opening link, right-click and Save As .csv).')
+}
+```
+
+```{r}
+# Summary of OM 
+
 
 # likelihood table
 dflist <- list()
@@ -247,6 +298,7 @@ ref_pointDF <- dplyr::bind_rows(basecase_RefPoint,
                                 RefPoint_DF)
 ref_pointDF$n <- factor(ref_pointDF$n, levels=c("base_case", 1:288), ordered=TRUE)
 
+ref_pointDF2 <- ref_pointDF
 col.names <- c("OM", "MSY", "SB, sub('MSY')", 'F<sub>MSY</sub>', 'F/F<sub>MSY</sub>', 
                'SB/SB<sub>MSY</sub>',
                'SBM<sub>MSY</sub>/SB<sub>0</sub>', 'Depletion')
@@ -310,27 +362,81 @@ DT::datatable(joinedDF, filter='top',
  
 ```
 
-# SB/SB~MSY~ Timeseries Plots
-Time-series plots of the spawning biomass (SB) relative to spawning biomass corresponding with maximum sustainable yield (SB~MSY~) for the seven factors examined in the uncertainty grid.
+
 
 ```{r, include=FALSE, warning=FALSE}
-TSBio_List <- SWOMSE::TSBio_List
-
-for (i in seq_along(TSBio_List)) {
-  TSBio_List[[i]]$OM <- as.character(i)
-}
-
-TSBio_DF <- do.call('rbind', TSBio_List)
-TSBio_DF <- suppressWarnings(dplyr::left_join(TSBio_DF, OMdf, by="OM"))
-TSBio_DF <- TSBio_DF %>% dplyr::filter(conv==TRUE, year %in% 1950:2018)
-
-BaseCase <- SWOMSE::basecase_TSbio %>% dplyr::filter(year %in% 1950:2018)
-
-nms <- c('M', 'sigmaR', 'h', 'se_log', 'L_ESS', 'llq', 'env')
-labs <- c('Natural mortality (M)', 'Rec. Var. (sigmaR)', 
-          'Steepness (h)', "CV Indices", 'Len. Comp. ESS', 'Q Inc.', 'Env. Cov.')
+TS_LikeDF <- dplyr::left_join(TSBio_DF, lkDF, by="OM")
 
 ```
+
+# Negative Log-Likelihood Plots
+The negative log-likelihood (NLL) values are not directly comparable across the OMs due to different data and assumptions used in the models. 
+
+For example, Figures `r fig.num+1` and `r fig.num+2`  show histograms of the Total NLL and NLL of the length composition data  for the 288 OMs with colours indicating the effective sample size of the length composition. 
+
+
+```{r, fig.width=8, fig.height=6}
+ggplot2::ggplot(TS_LikeDF %>% filter(year==max(year))) +
+  ggplot2::geom_histogram(ggplot2::aes(x=Total, fill=L_ESS), binwidth = 25) +
+  ggplot2::labs(x='Total NLL', fill=labs[match('L_ESS', nms)]) +
+  ggplot2::theme_bw()
+
+```
+
+`r fig.cap()` Histogram of the total negative log-likelihood (NLL) with filled colours
+indicating the two values for the effective sample size for the length composition (Len. Comp. ESS).
+
+```{r, fig.width=8, fig.height=6}
+ggplot2::ggplot(TS_LikeDF %>% filter(year==max(year))) +
+  ggplot2::geom_histogram(ggplot2::aes(x=Length_comp, fill=L_ESS), binwidth = 25) +
+  ggplot2::labs(x='NLL Length Composition', fill=labs[match('L_ESS', nms)]) +
+  ggplot2::theme_bw()
+
+```
+
+`r fig.cap()` Histogram of the NLL for the length composition data with filled colours
+indicating the two values for the effective sample size for the length composition (Len. Comp. ESS).
+
+## Comparing Model Fits to Length Composition Data
+
+To compare the fits to the length composition data the NLL of the length composition with effective sample size 2 was up-weighted by a factor of 10 (Figure `r fig.num+1`). Figure `r fig.num+2` shows a histogram of the estimated 2017 stock status with colours indicating 4 discrete levels of the up-weighted NLL for the length composition.
+
+````{r, fig.width=8, fig.height=6}
+# up-weight comp data 
+TS_LikeDF$Length_comp_weighted <- TS_LikeDF$Length_comp
+TS_LikeDF$Length_comp_weighted[TS_LikeDF$L_ESS==2] <- TS_LikeDF$Length_comp_weighted[TS_LikeDF$L_ESS==2] * 10 
+
+ggplot2::ggplot(TS_LikeDF %>% filter(year==max(year))) +
+  ggplot2::geom_histogram(ggplot2::aes(x=Length_comp_weighted, fill=L_ESS), binwidth = 25) +
+  ggplot2::labs(x='NLL (up-weighted) Length Composition', fill=labs[match('L_ESS', nms)]) +
+  ggplot2::theme_bw()
+
+```
+
+`r fig.cap()` Histogram of the NLL for the length composition data, where NLL for effective sample size 2 was up-weighted by a factor of 10, with filled colours indicating the two values for the effective sample size for the length composition (Len. Comp. ESS).
+
+```{r,  fig.width=8, fig.height=6}
+
+nbins <- 5
+bins <- seq(from=floor(min(TS_LikeDF$Length_comp_weighted)), 
+            to=ceiling(max(TS_LikeDF$Length_comp_weighted)), length.out=nbins)
+TS_LikeDF$Length_comp_NLL_weighted_discrete <- cut(TS_LikeDF$Length_comp_weighted, bins)
+
+ggplot2::ggplot(TS_LikeDF %>% filter(year==max(year))) +
+  ggplot2::geom_histogram(ggplot2::aes(x=B.Bmsy, fill=Length_comp_NLL_weighted_discrete), binwidth = 0.05) +
+  ggplot2::theme_bw() +
+  labs(x="B/BMSY", fill="NLL (up-weighted) Fit to Length Composition")
+
+```
+
+`r fig.cap()` Histogram of estimated stock status (B/BMSY) in 2017 for the length composition data, where NLL for effective sample size 2 was up-weighted by a factor of 10, and NLL values grouped into 4 discrete classes.
+
+
+
+# SB/SB~MSY~ Timeseries Plots
+
+Time-series plots of the spawning biomass (SB) relative to spawning biomass corresponding with maximum sustainable yield (SB~MSY~) for the seven factors examined in the uncertainty grid.
+
 
 ## Natural Mortality
 
@@ -476,7 +582,174 @@ ggplot2::ggplot(TSBio_DF) +
 
 `r fig.cap()` Predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` OMs from the uncertainty grid with the `r TSBio_DF[[col]] %>% unique() %>% length()` levels of `r collab` shown as coloured lines.
 
-# Current SB/SB~MSY~ Boxplots
+# Current SB/SB~MSY~ Histograms
+
+## Natural Mortality
+
+```{r, fig.width=8, fig.height=6}
+Stock_Status <- TSBio_DF %>% dplyr::filter(year==max(year))
+
+col <- 'M'
+collab <- labs[match(col, nms)]
+ggplot2::ggplot(Stock_Status) + 
+  ggplot2::geom_histogram(ggplot2::aes(x= B.Bmsy, 
+                                       fill=as.factor(get(col))
+                                       ), binwidth = 0.1) +
+  ggplot2::geom_vline(xintercept = 1, linetype=2) +
+  ggplot2::expand_limits(x=c(0, 0)) +
+  ggplot2::theme_bw() +
+  ggplot2::labs(x=expression(SB/SB[MSY]- 2017),
+                fill=collab)
+
+n.level <- Stock_Status[col] %>% unique() %>% nrow()
+
+```
+
+`r fig.cap()` Histogram of predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` OMs from the uncertainty grid with the `r n.level` levels of `r collab`.
+
+## Recruitment Variability 
+
+```{r, fig.width=8, fig.height=6}
+Stock_Status <- TSBio_DF %>% dplyr::filter(year==max(year))
+
+col <- 'sigmaR'
+collab <- labs[match(col, nms)]
+ggplot2::ggplot(Stock_Status) + 
+  ggplot2::geom_histogram(ggplot2::aes(x= B.Bmsy, 
+                                       fill=as.factor(get(col))
+                                       ), binwidth = 0.1) +
+  ggplot2::geom_vline(xintercept = 1, linetype=2) +
+  ggplot2::expand_limits(x=c(0, 0)) +
+  ggplot2::theme_bw() +
+  ggplot2::labs(x=expression(SB/SB[MSY]- 2017),
+                fill=collab)
+
+n.level <- Stock_Status[col] %>% unique() %>% nrow()
+
+```
+
+`r fig.cap()` Histogram of predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` OMs from the uncertainty grid with the `r n.level` levels of `r collab`.
+
+## Steepness
+
+```{r, fig.width=8, fig.height=6}
+Stock_Status <- TSBio_DF %>% dplyr::filter(year==max(year))
+
+col <- 'h'
+collab <- labs[match(col, nms)]
+ggplot2::ggplot(Stock_Status) + 
+  ggplot2::geom_histogram(ggplot2::aes(x= B.Bmsy, 
+                                       fill=as.factor(get(col))
+                                       ), binwidth = 0.1) +
+  ggplot2::geom_vline(xintercept = 1, linetype=2) +
+  ggplot2::expand_limits(x=c(0, 0)) +
+  ggplot2::theme_bw() +
+  ggplot2::labs(x=expression(SB/SB[MSY]- 2017),
+                fill=collab)
+
+n.level <- Stock_Status[col] %>% unique() %>% nrow()
+
+```
+
+`r fig.cap()` Histogram of predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` OMs from the uncertainty grid with the `r n.level` levels of `r collab`.
+
+## CPUE CV
+
+
+```{r, fig.width=8, fig.height=6}
+Stock_Status <- TSBio_DF %>% dplyr::filter(year==max(year))
+
+col <- 'se_log'
+collab <- labs[match(col, nms)]
+ggplot2::ggplot(Stock_Status) + 
+  ggplot2::geom_histogram(ggplot2::aes(x= B.Bmsy, 
+                                       fill=as.factor(get(col))
+                                       ), binwidth = 0.1) +
+  ggplot2::geom_vline(xintercept = 1, linetype=2) +
+  ggplot2::expand_limits(x=c(0, 0)) +
+  ggplot2::theme_bw() +
+  ggplot2::labs(x=expression(SB/SB[MSY]- 2017),
+                fill=collab)
+
+n.level <- Stock_Status[col] %>% unique() %>% nrow()
+
+```
+
+`r fig.cap()` Histogram of predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` OMs from the uncertainty grid with the `r n.level` levels of `r collab`.
+
+## Length Comp. ESS
+
+
+```{r, fig.width=8, fig.height=6}
+Stock_Status <- TSBio_DF %>% dplyr::filter(year==max(year))
+
+col <- 'L_ESS'
+collab <- labs[match(col, nms)]
+ggplot2::ggplot(Stock_Status) + 
+  ggplot2::geom_histogram(ggplot2::aes(x= B.Bmsy, 
+                                       fill=as.factor(get(col))
+                                       ), binwidth = 0.1) +
+  ggplot2::geom_vline(xintercept = 1, linetype=2) +
+  ggplot2::expand_limits(x=c(0, 0)) +
+  ggplot2::theme_bw() +
+  ggplot2::labs(x=expression(SB/SB[MSY]- 2017),
+                fill=collab)
+
+n.level <- Stock_Status[col] %>% unique() %>% nrow()
+
+```
+
+`r fig.cap()` Histogram of predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` OMs from the uncertainty grid with the `r n.level` levels of `r collab`.
+
+## Catchability Increase
+
+```{r, fig.width=8, fig.height=6}
+Stock_Status <- TSBio_DF %>% dplyr::filter(year==max(year))
+
+col <- 'llq'
+collab <- labs[match(col, nms)]
+ggplot2::ggplot(Stock_Status) + 
+  ggplot2::geom_histogram(ggplot2::aes(x= B.Bmsy, 
+                                       fill=as.factor(get(col))
+                                       ), binwidth = 0.1) +
+  ggplot2::geom_vline(xintercept = 1, linetype=2) +
+  ggplot2::expand_limits(x=c(0, 0)) +
+  ggplot2::theme_bw() +
+  ggplot2::labs(x=expression(SB/SB[MSY]- 2017),
+                fill=collab)
+
+n.level <- Stock_Status[col] %>% unique() %>% nrow()
+
+```
+
+`r fig.cap()` Histogram of predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` OMs from the uncertainty grid with the `r n.level` levels of `r collab`.
+
+
+## Environmental Covariate
+
+```{r, fig.width=8, fig.height=6}
+Stock_Status <- TSBio_DF %>% dplyr::filter(year==max(year))
+
+col <- 'env'
+collab <- labs[match(col, nms)]
+ggplot2::ggplot(Stock_Status) + 
+  ggplot2::geom_histogram(ggplot2::aes(x= B.Bmsy, 
+                                       fill=as.factor(get(col))
+                                       ), binwidth = 0.1) +
+  ggplot2::geom_vline(xintercept = 1, linetype=2) +
+  ggplot2::expand_limits(x=c(0, 0)) +
+  ggplot2::theme_bw() +
+  ggplot2::labs(x=expression(SB/SB[MSY]- 2017),
+                fill=collab)
+
+n.level <- Stock_Status[col] %>% unique() %>% nrow()
+
+```
+
+`r fig.cap()` Histogram of predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` OMs from the uncertainty grid with the `r n.level` levels of `r collab`.
+
+
+# Current SB/SB~MSY~ Bi-Variate Boxplots
 
 Bivariate boxplots of the spawning biomass (SB) relative to spawning biomass corresponding with maximum sustainable yield (SB~MSY~) for the factors examined in the uncertainty grid.  
 
@@ -720,3 +993,150 @@ cowplot::plot_grid(plotlist=Plist, nrow=nrow, ncol=ncol, align='hv')
 ```
 
 `r fig.cap()` Boxplots of predicted spawning biomass (SB) relative to spawning biomass at maximum sustainable yield (SB~MSY~) for the `r TSBio_DF$OM %>% unique() %>% length()` OMs from the uncertainty grid with the 2 levels of Q Increase shown as factors on the x-axis and colours indicating the other factors.
+
+
+# Impact of M and h on Estimated Parameters
+
+## Unfished Recruitment (R0)
+
+```{r include=FALSE}
+
+colnames(ref_pointDF2)[1] <- "OM"
+DF <- suppressWarnings(dplyr::left_join(OMdf3, ref_pointDF2, by="OM"))
+
+DF2 <- TSBio_DF %>% dplyr::filter(year==max(year))
+
+DF3 <- suppressWarnings(dplyr::left_join(DF, DF2,
+                        by = c("OM", "M", "sigmaR", "h", "conv", "Depletion")))
+
+DF3 <- DF3 %>% dplyr::filter(OM !="base_case")
+
+library(gridExtra)
+library(grid)
+library(gtable)
+
+addLabels <- function(p, labelR=NULL, labelT=NULL, font.size=14, plot=FALSE) {
+  
+  z <- ggplotGrob(p)
+  
+  if (!is.null(labelR)) {
+    # Get the positions of the strips in the gtable: t = top, l = left, ..
+    posR <- subset(z$layout, grepl("strip-r", name), select = t:r)
+    # Add a new column to the right of current right strips, 
+    # and a new row on top of current top strips
+    width <- z$widths[max(posR$r)]    # width of current right strips
+    z <- gtable_add_cols(z, width, max(posR$r))
+    # Construct the new strip grobs
+    stripR <- gTree(name = "Strip_right", children = gList(
+      rectGrob(gp = gpar(col = NA, fill = "white")),
+      textGrob(labelR, rot = -90, gp = gpar(fontsize = font.size, col = "grey10"))))
+    # Position the grobs in the gtable
+    z <- gtable_add_grob(z, stripR, t = min(posR$t), l = max(posR$r)+1, b = max(posR$b), name = "strip-right")
+    
+    # Add small gaps between strips
+    z <- gtable_add_cols(z, unit(1/5, "line"), max(posR$r))
+  }
+  if (!is.null(labelT)) {
+    posT <- subset(z$layout, grepl("strip-t", name), select = t:r)
+    height <- z$heights[min(posT$t)]  # height of current top strips
+    z <- gtable_add_rows(z, height, min(posT$t)-1)
+    
+    stripT <- gTree(name = "Strip_top", children = gList(
+      rectGrob(gp = gpar(col = NA, fill = "white")),
+      textGrob(labelT, gp = gpar(fontsize = font.size, col = "grey10"))))
+    z <- gtable_add_grob(z, stripT, t = min(posT$t), l = min(posT$l), r = max(posT$r), name = "strip-top")
+    z <- gtable_add_rows(z, unit(1/5, "line"), min(posT$t))
+  }
+  
+  if (plot) grid.draw(z)
+  return(invisible(z))
+}
+
+
+```
+
+
+```{r, fig.width=8, fig.height=6}
+p1 <- ggplot(DF3, aes(x=R0)) +
+  facet_grid(M~h, scales="free_y") +
+  geom_histogram(binwidth = 50) + 
+  expand_limits(x=0) +
+  theme_bw() +
+  labs(x="R0")
+
+p1 <- addLabels(p1, "Natural Mortality (M)", "Steepness (h)")
+plot(p1)
+```
+
+`r fig.cap()` Histograms of estimated unfished recruitment (R0) faceted by 3 levels of natural mortality (M) and 3 levels of steepness (h). 
+
+## Depletion
+
+```{r, fig.width=8, fig.height=6}
+p1 <- ggplot(DF3, aes(x=Depletion)) +
+  facet_grid(M~h, scales="free_y") +
+  geom_histogram(binwidth = 0.05) + 
+  expand_limits(x=c(0,1)) +
+  theme_bw() +
+  labs(x="Depletion")
+
+p1 <- addLabels(p1, "Natural Mortality (M)", "Steepness (h)")
+plot(p1)
+```
+
+`r fig.cap()` Histograms of estimated depletion (SB/SB0) faceted by 3 levels of natural mortality (M) and 3 levels of steepness (h). 
+
+## SB~MSY~
+
+```{r, fig.width=8, fig.height=6}
+p1 <- ggplot(DF3, aes(x=SBMSY)) +
+  facet_grid(M~h, scales="free_y") +
+  geom_histogram(binwidth = 10000) + 
+  expand_limits(x=c(0,1)) +
+  theme_bw() +
+  labs(x="SBMSY")
+
+p1 <- addLabels(p1, "Natural Mortality (M)", "Steepness (h)")
+plot(p1)
+```
+
+`r fig.cap()` Histograms of estimated SB~MSY~ faceted by 3 levels of natural mortality (M) and 3 levels of steepness (h). 
+
+
+## SSB
+
+```{r, fig.width=8, fig.height=6}
+p1 <- ggplot(DF3, aes(x=SSB)) +
+  facet_grid(M~h, scales="free_y") +
+  geom_histogram(binwidth = 10000) + 
+  expand_limits(x=c(0,1)) +
+  theme_bw() +
+  labs(x="SSB")
+
+p1 <- addLabels(p1, "Natural Mortality (M)", "Steepness (h)")
+plot(p1)
+```
+
+`r fig.cap()` Histograms of estimated SSB faceted by 3 levels of natural mortality (M) and 3 levels of steepness (h). 
+
+## SB0
+
+```{r, fig.width=8, fig.height=6}
+p1 <- ggplot(DF3, aes(x=SB0)) +
+  facet_grid(M~h, scales="free_y") +
+  geom_histogram(binwidth = 10000) + 
+  expand_limits(x=c(0,1)) +
+  theme_bw() +
+  labs(x="SB0")
+
+p1 <- addLabels(p1, "Natural Mortality (M)", "Steepness (h)")
+plot(p1)
+```
+
+`r fig.cap()` Histograms of estimated SB0 faceted by 3 levels of natural mortality (M) and 3 levels of steepness (h).
+
+
+
+
+
+
