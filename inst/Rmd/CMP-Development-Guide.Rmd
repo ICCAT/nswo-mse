@@ -1,0 +1,320 @@
+---
+title: "Candidate Management Procedure Development Guide"
+author: "Adrian Hordyk <adrian@bluematterscience.com>"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  pdf_document:
+    toc: yes
+  html_document:
+    toc: yes
+    toc_float: yes
+    number_sections: yes
+subtitle: North Atlantic Swordfish MSE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+# Introduction
+This document describes how to develop Candidate Management Procedures (CMPs) and add them to the North Swordfish MSE (SWOMSE) framework. 
+
+SWOMSE is an R package designed to evaluate alternative management policies for the North Atlantic Swordfish fishery. The package is built based on the [DLMtool](https://cran.r-project.org/package=DLMtool) and [MSEtool](https://cran.r-project.org/package=MSEtool) packages, and all functions and features of those packages are available in SWOMSE.
+
+More information on the SWOMSE framework is available in the SWOMSE [user manual](https://iccat.github.io/nswo-mse/userguide.html) and the [Trial Specifications Document](https://docs.google.com/document/d/1L_1P5L3lcikzNhOSCOdUBSDfsa_NwN0tpIWvzxQ5xWw/edit?usp=sharing). All documents relating to the SWOMSE package can be found on the [North Atlantic Swordfish MSE homepage](https://iccat.github.io/nswo-mse/)^[https://iccat.github.io/nswo-mse/]
+
+
+# Installation
+The SWOMSE framework requires the latest version of the R software installed on your system. The R software can be downloaded for Linux, Mac OS X, and Windows from [here](https://cloud.r-project.org/).
+
+We also recommend the latest version of [RStudio](https://rstudio.com/products/rstudio/download/#download).
+
+The `SWOMSE` R package is available in the [ICCAT GitHub repository](https://github.com/ICCAT/nswo-mse). The `devtools` package is required to install the `SWOMSE` package. Install the `devtools` package with:
+
+```{r, eval=FALSE}
+install.packages('devtools')
+```
+
+Then the `SWOMSE` package can be installed with:
+
+```{r, eval=FALSE}
+devtools::install_github("ICCAT/nswo-mse", auth_token='your_personal_access_token')
+```
+
+This will install the `SWOMSE` package and all the dependency packages on your machine.
+
+Note that as this repository is private, you will need to provide a personal access token to download and install from GitHub. See [here](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) for information on creating a personal access token. Please contact me (adrian@bluematterscience.com) or ICCAT if you do not have access to the private SWOMSE repository.
+
+Alternatively, you can clone the repository on your machine and build and install the package locally with RStudio.
+
+Once installed, the package can be loaded into the current R session:
+
+```{r}
+library(SWOMSE)
+```
+
+
+# Operating Models
+The operating models (OMs) for the swordfish MSE are still being finalized. Currently, the 288 OMs from the uncertainty grid are available in the `SWOMSE` package. Each OM has `r OM_1@nsim` simulations. For example:
+
+```{r}
+OM_1@Name
+OM_1@nsim
+```
+
+The OM objects will be updated in the future. The current version is suitable for CMP development and testing.
+
+# Fishery Data
+The Fishery Data object (`SWOData`) contains the indices of abundance and other data that are passed to the CMPs. 
+
+The `SWOData` can be added to the OM using the custom parameters (cpars) feature. This ensures that the historical data in the simulations is exactly matched to the fishery data. The fishery data is also used to condition the observation error for the future projection period.
+
+In this example we are adding the `SWOData` object to the first OM from the uncertainty grid (`OM_1`):
+```{r}
+OM <- OM_1
+OM@cpars$Data <- SWOData
+```
+
+## Index of Abundance
+Currently a single index of abundance, Combined Index, is included in the `SWOData` object. The index is located in the `Ind` slot in the `SWOData` object:
+
+```{r}
+plot(SWOData@Year, SWOData@Ind[1,], type="b", ylim=c(0, 1200),
+     xlab="Year", ylab="Combined Index", bty="l", pch=16)
+```
+
+## Adding Indices
+Additional indices can also be added to the Data object and used by the CMPs. This allows CMPs using different indices to be tested simultaneously. Alternatively, CMPs may be developed that use more than one index of abundance.
+
+More details will be added on this feature at a later date when the additional indices are agreed by the Working Group.
+
+
+### Historical Simulations
+When the OM is conditioned with the Data object, the simulated observed catches and indices of abundance for the historical period exactly match those in the Data object.
+
+Here we first run the simulations for the historical period using the `runMSE` function with the argument `Hist=TRUE`:
+
+```{r, cache=TRUE}
+Hist <- runMSE(OM, Hist=TRUE)
+```
+
+We extract the simulated data for the historical period:
+
+```{r}
+SimHistData <- Hist@Data
+```
+
+Note that there are now `r OM_1@nsim` (`OM_1@nsim`) copies of the historical catch and index of abundance in the simulated Data object: 
+
+```{r}
+# catch data for the first 5 simulations and the first 10 years:
+SimHistData@Cat[1:5, 1:10] # catch data is identical for each simulation
+
+# index of abundance for the first 5 simulations and the first 30 years
+SimHistData@Ind[1:5, 1:30]
+
+```
+
+Here we plot the simulated historical total abundance (generated by the OM) and the index of abundance provided in the Data object. First we standardize both total biomass and the index to make the two comparable:
+
+```{r}
+HistB <- Hist@TSdata$B
+RHistB <- HistB/apply(HistB, 1, mean) # standardize biomass to mean 1
+
+RInd <- SimHistData@Ind[1,]/mean(SimHistData@Ind[1,], na.rm=TRUE) # standardize index to mean 1
+
+# plot
+matplot(SimHistData@Year, t(RHistB), type="l", 
+        ylim=c(0, max(c(RInd, RHistB), na.rm=TRUE)),
+        xlab="Year", ylab="Relative Total Biomass")
+lines(SimHistData@Year, RInd)
+points(SimHistData@Year, RInd)
+
+```
+
+Note that although there are `r OM@nsim` simulations of the historical biomass, the lines all fall on top of each other as in this OM the historical simulations are all identical.
+
+
+### Future Projections
+The statistical properties of the fit between the index of abundance (i.e., `SWOData@Ind`) and the simulated biomass (determined by the OM) are calculated and used to generate the simulated index of abundance for the future years.
+
+The statistical properties include: hyper-stability (beta), auto-correlation (AC), standard deviation (sd), and correlation (cor) of the deviations between the observed index and the simulated index adjusted for hyper-stability:
+
+```{r}
+Hist@Misc$ErrList$Ind_Stat[1:2,1:4]
+```
+
+These values are used to generate the index for the future projection years. Here we run the model with an simple example CMP to demonstrate the simulated index in the projection years:
+
+```{r, cache=TRUE}
+MSE <- runMSE(OM, MPs="AvC") # run MSE with average catch MP
+```
+
+Then we re-standardize and plot the simulated biomass (solid line) and the index of abundance (dashed line) for 3 simulations (showing only the data from 1990): 
+```{r}
+HistB <- Hist@TSdata$B
+RHistB <- HistB/apply(HistB, 1, mean) # standardize biomass to mean 1
+RProjB <- MSE@B[,1,]/apply(HistB, 1, mean) 
+
+AllRB <- cbind(RHistB, RProjB)
+
+
+SimData <- MSE@Misc$Data[[1]] # extract the simulated data 
+RInd <-  SimData@Ind/apply(SimData@Ind[,1:OM@nyears], 1, mean, na.rm=TRUE) # standardize index to mean 1
+
+sims <- 1:3
+years.plot <- 1990:2046
+year.ind <- match(years.plot, SimData@Year)
+
+matplot(SimData@Year[year.ind], t(AllRB[sims,year.ind]), type="l", 
+        ylim=c(0, max(c(AllRB[sims,year.ind], RInd[sims, year.ind]), na.rm=TRUE)),
+        lwd=2, lty=1, bty="n", xlab="Year", ylab="Relative Index")
+
+matplot(SimData@Year[year.ind], t(RInd[sims,year.ind]), type="l",
+        lty=2, add=TRUE)
+
+abline(v=OM@CurrentYr, lty=2, col="gray")
+
+```
+
+
+# Candidate Management Procedures
+The SWOMSE package includes 4 very simple example MPs:
+
+```{r}
+avail('MP')
+```
+
+For example, `ConstC` is a very simple CMP that sets future TACss equal to the catch in the last historical year:
+```{r}
+ConstC
+```
+
+Candidate Management Procedures are functions of class `MP`. All `MP` functions must have at least two arguments `x` - simulation number, and `Data` - the fishery data that the MP operates on, and return an object of class `Rec` that contains the managment recommendations. 
+
+The [SWOMSE user manual](https://iccat.github.io/nswo-mse/userguide.htm) provides more details on the built-in example MPs.
+
+## Developing New CMPs
+New CMP methods can easily be added to the `SWOMSE` framework. 
+
+### Example 1 - Model-based CMPs 
+Model-based CMPs use a stock assessment model to estimate current stock status linked with a harvest control rule (HCR) to set total allowable catch (TAC) limits.
+
+In this example we use a delay-difference stock assessment model from the `MSEtool` package, linked with a 40-10 harvest control rule:
+
+```{r}
+CMP_m1 <- function(x, Data, ...) {
+  runAssess <- MSEtool::DD_TMB(x, Data) # run the delay-difference model
+  Rec <- MSEtool::HCR_ramp(runAssess, LRP=0.1, TRP=0.4) # 40-10 HCR
+  Rec # return Rec object
+}
+class(CMP_m1) <- 'MP'
+```
+
+All assessment methods in the `MSEtool` package are available in the `SWOMSE` framework:
+
+```{r}
+avail("Assess", 'all')
+```
+
+Help documentation on the assessment functions is accessed in the usual way, e.g.,:
+
+```{r, eval=FALSE}
+?DD_TMB
+```
+
+Custom assessment methods can be included by replacing the call to `MSEtool::DD_TMB` with a code for a stock assessment model. This can include calls to external stock assessment software (e.g., SS3). 
+
+### Example 2 - Empirical CMPs
+Empirical CMPs do not include a stock assessment model, and do not estimate stock status. Instead, empirical CMPs typically modify management recommendations in response to an indicator (or indicators) of the trend in stock abundance.
+
+Here we provide examples of CMPs that compare the mean index of abundance from the last `yrsmth` years, to a target index level specified in the `ITarg` argument. The `mc` argument defines the maximum change in TAC between years:
+
+```{r}
+CMP_e1 <- function(x, Data, yrsmth=5, mc=0.05, ITarg=150, ...) {
+  ind <- max(1, (length(Data@Year) - yrsmth + 1)):length(Data@Year) 
+  delta <- mean(Data@Ind[x, ind], na.rm=TRUE)/ITarg # change in TAC
+  if (delta < (1-mc)) delta <- 1-mc 
+  if (delta > (1+mc)) delta <- 1+mc
+  LastCatch <- Data@MPrec[x]
+  
+  Rec <- new("Rec")
+  Rec@TAC <- LastCatch * delta
+  Rec 
+}
+class(CMP_e1) <- 'MP'
+```
+
+To make a second MP based on `CMP_e1` we can simply change the value of the arguments. For example, to test an MP with a different index target
+```{r}
+CMP_e2 <- CMP_e1 
+formals(CMP_e2)$ITarg <- 200
+class(CMP_e2) <- 'MP'
+```
+
+Now `CMP_e2` is ready to use in the model:
+
+```{r}
+CMP_e2
+```
+
+The maximum change and number of years to smooth the index can be changed in a similiar manner:
+```{r}
+CMP_e3 <- CMP_e1 
+formals(CMP_e3)$mc <- 0.1
+formals(CMP_e3)$yrsmth <- 10
+class(CMP_e3) <- 'MP'
+
+CMP_e3
+```
+
+
+# Testing New CMPs
+The newly developed example MPs are now available in the `SWOMSE` environment:
+
+```{r}
+avail("MP")
+```
+
+## Applying CMP to Data
+The empirical CMPs can be applied to the swordfish data to generate TAC recommendations:
+
+```{r}
+runMP(SWOData, MPs=c('CMP_e1', 'CMP_e2', 'CMP_e3'))
+
+```
+
+The model-based CMPs cannot be run on the swordfish data object because they required data (e.g., catch-at-age data) that is not available in the `SWOData` object:
+
+```{r, error=TRUE}
+runMP(SWOData, MPs=c('CMP_m1'))
+```
+
+## Closed-Loop Simulation
+The 5 custom MPs can also be evaluated using closed-loop simulation.
+
+```{r, cache=TRUE}
+MSE <- runMSE(OM, MPs=c(c('CMP_m1', 'CMP_e1', 'CMP_e2', 'CMP_e3')))
+
+sim <- 1
+par(mfrow=c(1,2))
+plot(MSE@Misc$Data[[1]]@Ind[sim,68:97], type="l")
+abline(h=200, lty=3)
+plot(MSE@C[sim,1,], type="l")
+Data <- MSE@Misc$Data[[1]]
+```
+
+And the results plotted as trade-off plots:
+
+```{r}
+TradePlot(MSE)
+```
+
+and projection plots:
+```{r}
+Pplot(MSE)
+```
+
+
+
