@@ -72,6 +72,15 @@ for (fl in csv.fls) {
 [Index Fit Report (PDF)](Reports/Indices/Index_Report.pdf)
 </div>
 
+## Length Compositions
+
+<div class="col2">
+[Length Compositions Plots (HTML)](LengthComps.html)
+
+
+</div>
+
+
 ## Individual OM Diagnostic Reports
 <details>
 <summary>Click to expand</summary>
