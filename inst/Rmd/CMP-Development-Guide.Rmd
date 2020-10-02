@@ -3,12 +3,12 @@ title: "Candidate Management Procedure Development Guide"
 author: "Adrian Hordyk <adrian@bluematterscience.com>"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output:
-  pdf_document:
-    toc: yes
   html_document:
     toc: yes
     toc_float: yes
     number_sections: yes
+  pdf_document:
+    toc: yes
 subtitle: North Atlantic Swordfish MSE
 ---
 
@@ -297,12 +297,6 @@ The 5 custom MPs can also be evaluated using closed-loop simulation.
 ```{r, cache=TRUE}
 MSE <- runMSE(OM, MPs=c(c('CMP_m1', 'CMP_e1', 'CMP_e2', 'CMP_e3')))
 
-sim <- 1
-par(mfrow=c(1,2))
-plot(MSE@Misc$Data[[1]]@Ind[sim,68:97], type="l")
-abline(h=200, lty=3)
-plot(MSE@C[sim,1,], type="l")
-Data <- MSE@Misc$Data[[1]]
 ```
 
 And the results plotted as trade-off plots:

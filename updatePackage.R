@@ -7,10 +7,14 @@ library(SWOMSE)
 
 # ---- Add SS OMs as Data ----
 
-OM.root <- 'G:/My Drive/Projects/Projects_2020/ICCAT_Swordfish/OMs/SS/2018_GRID'
-OMbase.dir <-  file.path(OM.root, "base_case")
-OMgrid.dir <- file.path(OM.root, "grid")
+# OM.root <- 'G:/My Drive/Projects/Projects_2020/ICCAT_Swordfish/OMs/SS/2018_GRID'
+OM.root <- 'G:/My Drive/Projects/Projects_2020/ICCAT_Swordfish/OMs/Grid_2020'
+OMbase.dir <-  file.path(OM.root, "Michael_March2020/NSWO_MSE_SS3_Base_v2")
+OMgrid.dir <- file.path(OM.root, "grid_2020")
 OMgrid.dirs <- list.dirs(OMgrid.dir, recursive = FALSE)
+
+ord <- lapply(strsplit(OMgrid.dirs, 'iter'), '[[', 2) %>% as.numeric() %>% order()
+OMgrid.dirs <- OMgrid.dirs[ord]
 
 library(r4ss); library(dplyr)
 
@@ -71,11 +75,22 @@ CatchDat <- data$catch %>% tidyr::pivot_longer(1:data$Nfleet, 'Fleet', values_to
 CatchDat$Code <- factor(CatchDat$Code, levels=levels(Fleet_DF$Code), ordered = TRUE)
 CatchDat <- left_join(CatchDat, Fleet_DF, by="Code")
 
+
 # CPUE Data
 CPUEDat <- data$CPUE %>% dplyr::filter(year>0) %>%
   dplyr::rename(CPUE_Obs=obs, CPUE_SE_log=se_log) %>%
-  dplyr::select(year, index, CPUE_Obs, CPUE_SE_log)
+  dplyr::select(year, index, CPUE_Obs, CPUE_SE_log) %>%
+  dplyr::mutate(llq=1)
 CPUEDat <- dplyr::left_join(CPUEDat, Fleet_DF, by="index")
+
+# data2 <- DataList[[73]] # CPUE with adjustment for increasing q
+# CPUEDat2 <- data2$CPUE %>% dplyr::filter(year>0) %>%
+#   dplyr::rename(CPUE_Obs=obs, CPUE_SE_log=se_log) %>%
+#   dplyr::select(year, index, CPUE_Obs, CPUE_SE_log) %>%
+#   dplyr::mutate(llq=1.01)
+# CPUEDat2 <- dplyr::left_join(CPUEDat2, Fleet_DF, by="index")
+#
+# CPUEDat <- dplyr::bind_rows(CPUEDat, CPUEDat2)
 
 # Length Comp Data
 LenDat <- data$lencomp %>% dplyr::filter(Yr>0) %>%
@@ -115,6 +130,7 @@ for (OM.n in unique(OMs_DF$n)) {
     select(year, index, Vuln_bio, Obs, Exp, Calc_Q, Eff_Q)
 }
 usethis::use_data(CPUE_List, overwrite = TRUE)
+
 
 basecase_replist <- readRDS('OM_objects/basecase_replist.rda')
 basecase_CPUE <- basecase_replist$cpue %>%
@@ -281,6 +297,55 @@ predLen <- dplyr::left_join(predLen, Fleet_DF, by="index")
 
 basecase_LenDat <- predLen
 usethis::use_data(basecase_LenDat, overwrite = TRUE)
+
+
+
+nbound <- NA
+templist <- list()
+for (i in seq_along(RepList)) {
+  tt <- RepList[[i]]$estimated_non_dev_parameters
+  nbound[i] <- sum((tt$Value<0.99*tt$Min) | (tt$Value>0.99*tt$Max))
+  if (nbound[i] > 0) {
+    ind <- which((tt$Value<0.99*tt$Min) | (tt$Value>0.99*tt$Max))
+    templist[[i]] <- data.frame(OM=i,
+                                Parameter=rownames(tt[ind,]),
+                                Value= tt$Value[ind],
+                                Min=tt$Min[ind],
+                                Max=tt$Max[ind])
+  }
+}
+DF_bound <- do.call('rbind', templist)
+usethis::use_data(DF_bound, overwrite = TRUE)
+
+# --- Combined Index ----
+CombinedIndex <- read.csv('inst/Combined_Index.csv')
+names(CombinedIndex) <- c("Year", "CPUE", "CV")
+CombinedIndex <- CombinedIndex %>% dplyr::filter(Year>=1975) # ignore the first few years with NAs
+
+CombinedIndex$st.CPUE <- CombinedIndex$CPUE/mean(CombinedIndex$CPUE, na.rm=TRUE)
+
+
+yrs <- range(CombinedIndex$Year)
+
+CombinedIndexList <- list()
+for (i in seq_along(RepList)) {
+  replist <- RepList[[i]]
+  dat <- replist$timeseries %>% dplyr::filter(Yr>=yrs[1], Yr<=yrs[2])
+  st.bio <- dat$Bio_all # need to account for selectivity?
+  st.bio <- st.bio/mean(st.bio, na.rm=TRUE)
+
+  temp <- OMs_DF %>% dplyr::filter(n==i)
+  CombinedIndexList[[i]] <- CombinedIndex
+  CombinedIndexList[[i]]$st.bio <- st.bio
+  CombinedIndexList[[i]]$OM <- i
+  CombinedIndexList[[i]]$env <- temp$env
+  CombinedIndexList[[i]]$llq <- temp$llq
+
+}
+CombinedIndex <- do.call('rbind', CombinedIndexList)
+
+usethis::use_data(CombinedIndex, overwrite = TRUE)
+
 
 
 document_data()

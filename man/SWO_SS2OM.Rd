@@ -19,7 +19,7 @@ SWO_SS2OM(
   Source = "No source provided",
   Author = "No author provided",
   Gen = 1:2,
-  AgeRec = 1,
+  meanh = TRUE,
   ...
 )
 }
@@ -53,7 +53,7 @@ SWO_SS2OM(
 \item{Gen}{Genders to import. Numeric. `Gen=1` for first gender (usually female),
 `Gen=2` for second gender (usually male), etc. `Gen=1:2` (default) uses average from both genders}
 
-\item{AgeRec}{Numeric. Age of recruitment. Default is 1 to match MSEtool/DLMtool Operating Model.}
+\item{meanh}{logical. Use mean steepness (TRUE) or sample from a distribution (FALSE)?}
 
 \item{...}{Arguments to pass to \link[r4ss]{SS_output}.}
 }

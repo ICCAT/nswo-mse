@@ -3,12 +3,12 @@ title: "Index Fit Report"
 author: "Adrian Hordyk <adrian@bluematterscience.com>"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output:
-  pdf_document:
-    toc: yes
   html_document:
     toc: yes
     toc_float: yes
     number_sections: yes
+  pdf_document:
+    toc: yes
 subtitle: North Atlantic Swordfish MSE
 params:
   OM.n: 1
@@ -140,6 +140,7 @@ ggplot() +
   geom_line(data=CombinedIndex, aes(x=Year, y=st.bio, group=as.factor(OM), color=env), 
             alpha=0.5) +
   geom_point(data=CombinedIndex, aes(x=Year, y=st.CPUE), size=2) +
+  geom_line(data=CombinedIndex, aes(x=Year, y=st.CPUE), size=1, linetype = "dashed") +
   theme_classic() +
   guides(colour = guide_legend(override.aes = list(alpha = 1))) +
   labs(x="Year", y="Index", color="Environmental Covariate",
