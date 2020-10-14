@@ -2,7 +2,8 @@
 # ---- Install latest version of r4ss ----
 # devtools::install_github("r4ss/r4ss", build_vignettes = TRUE, force=TRUE)
 
-library(r4ss); library(dplyr); library(OMtool); library(SWOMSE);
+library(r4ss); library(dplyr);
+library(OMtool); library(SWOMSE);
 library(usethis)
 
 # -------- Build Package Data ----------
@@ -70,6 +71,7 @@ docOM <- function(OMname) {
 # - Base Case -
 OM_base_case <- SWO_SS2OM(OMbase.dir, nsim=nsim)
 OM_base_case@Name <- 'Base Case'
+OM_base_case@cpars$Data <- SWOData
 usethis::use_data(OM_base_case, overwrite = TRUE)
 
 docOM('OM_base_case')
@@ -78,6 +80,7 @@ docOM('OM_base_case')
 options(warn=2)
 for (i in seq_along(OMgrid.dirs)) {
   OM <- SWO_SS2OM(OMgrid.dirs[i], nsim=nsim)
+  OM@cpars$Data <- SWOData
 
   SS.dir <- OMgrid.dirs[i]
 
@@ -127,150 +130,150 @@ for (i in seq_along(OMgrid.dirs)) {
 
 
 
-
-
-
-# ---- Compare Simulation with SS3 ----
-
-
-i <- 5
-SLSSdir <- OMgrid.dirs[i]
-
-replist <- r4ss::SS_output(dir=SLSSdir)
-
-# Compare SS OM with OMtool::Simulate
-OM <- get(paste0('OM_', i))
-Hist <- Simulate(OM)
-
-mainyrs <- replist$startyr:replist$endyr
-OM_years <- mainyrs
-maxage <- OM@maxage
-
-
-# ---- Catch ----
-SS_Catch <- replist$catch %>% dplyr::filter(Yr%in%mainyrs)
-SS_Catch <- SS_Catch %>% dplyr::group_by(Yr) %>%
-  dplyr::summarise(C=sum(Exp))
-SimCatch <- apply(Hist@TSdata$Landings, c(1,2), sum)
-ylim_SSB <- c(0, 1.1 * max(c(SS_Catch$C, SimCatch)))
-matplot(OM_years, t(SimCatch),
-        xlab = mainyrs, ylab = "Total Catch",
-        ylim = ylim_SSB, pch = 1, col = "black", typ = "o")
-lines(mainyrs, SS_Catch$C, col = "red", lwd = 3)
-abline(h = 0, col = "grey")
-
-
-# ----- Compare_SS_OM ----
-# add to OMtool
-
-Compare_SS_OM <- function(Hist, replist) {
-  if (class(Hist) != 'Hist')
-  stop('Must provide object of class `Hist` (use `Simulate`)')
-  if (class(replist) != 'list')
-    stop('replist must be class `list` (use `r4ss:SS_output`)')
-  if (is.null(replist$endyr))
-    warning("replist doesn't appear to be output from `r4ss::SS_output`")
-
-  season_as_years <- FALSE
-  if(replist$nseasons == 1 && replist$seasduration < 1) {
-    message("Season-as-years detected in SS model. There is one season in the year with duration of ",
-            replist$seasduration, "year.")
-    season_as_years <- TRUE
-    nseas <- 1/replist$seasduration
-    message("DLMtool operating model is an annual model. Since the SS model is seasonal, we need to aggregate over seasons.\n")
-  } else {
-    nseas <- replist$nseasons
-    if(nseas > 1) {
-      message("DLMtool operating model is an annual model. Since the SS model is seasonal, we need to aggregate over seasons.\n")
-    }
-  }
-
-  mainyrs <- replist$startyr:replist$endyr
-
-  if(season_as_years) {
-    OM_years <- seas1_yind_full$assess_year[seas1_yind]
-    year_lab <- "Stock Synthesis Year"
-  } else {
-    OM_years <- mainyrs
-    year_lab <- "Year"
-  }
-
-  # ---- Numbers-at-age ----
-  SS_at_age <- replist$natage %>%
-    dplyr::filter(Yr %in% mainyrs, `Beg/Mid` =="B")
-  ages <- 0:(OM@maxage)
-  ind <- colnames(SS_at_age)[colnames(SS_at_age) %in% ages]
-  SS_at_age <- SS_at_age %>% tidyr::pivot_longer(cols=ind,
-                                                 names_to="Age",
-                                                 values_to="N")
-  SS_at_age$Age <- as.numeric(SS_at_age$Age)
-
-  SS_at_age <- SS_at_age %>% dplyr::group_by(Age, Yr) %>%
-    dplyr::summarise(N=sum(N))
-
-  nyears <- length(mainyrs)
-  nages <- length(ages)
-
-  # check each year
-  yrind <- 68
-  SS <- SS_at_age %>% dplyr::filter(Yr==mainyrs[yrind])
-  Sim <- apply(Hist@AtAge$Number[,,yrind,], c(1,2), sum)
-
-  plot(ages, SS$N, type="b", col="blue", pch=16)
-  matplot(ages, t(Sim), type='l', add=TRUE)
-
-  SS_TSdata <- replist$timeseries %>%
-    dplyr::filter(Yr %in% mainyrs)
-
-  tt = replist$timeseries%>%
-    dplyr::filter(Yr %in% mainyrs) %>%
-    select(Yr, SpawnBio)
-
-  replist$current_depletion
-  replist$SBzero
-  tt$SpawnBio[length(tt$SpawnBio)]/tt$SpawnBio[1]
-
-  # ---- Total Biomass -----
-  SimBiomass <- apply(Hist@TSdata$Biomass, c(1,2), sum)
-  ylim_SSB <- c(0, 1.1 * max(c(SS_TSdata$Bio_all, SimBiomass)))
-  matplot(OM_years, t(SimBiomass),
-          xlab = year_lab, ylab = "Total Biomass",
-          ylim = ylim_SSB, pch = 1, col = "black", typ = "o")
-  lines(mainyrs, SS_TSdata$Bio_all, col = "red", lwd = 3)
-  abline(h = 0, col = "grey")
-
-  # ---- Spawning Biomass ----
-  SimSB <- apply(Hist@TSdata$SBiomass, c(1,2), sum)
-  ylim_SSB <- c(0, 1) # .1 * max(c(SS_TSdata$SpawnBio, SimSB)))
-  matplot(OM_years, t(SimSB/SimSB[,1]),
-          xlab = year_lab, ylab = "Spawning Biomass",
-          ylim = ylim_SSB, pch = 1, col = "black", typ = "o")
-  lines(mainyrs, SS_TSdata$SpawnBio/SS_TSdata$SpawnBio[1], col = "red", lwd = 3)
-  abline(h = 0, col = "grey")
-
-  # ---- Catch ----
-  SS_Catch <- replist$catch %>% dplyr::filter(Yr%in%mainyrs)
-  SS_Catch <- SS_Catch %>% dplyr::group_by(Yr) %>%
-    dplyr::summarise(C=sum(Exp))
-  SimCatch <- apply(Hist@TSdata$Landings, c(1,2), sum)
-  ylim_SSB <- c(0, 1.1 * max(c(SS_Catch$C, SimCatch)))
-  matplot(OM_years, t(SimCatch),
-          xlab = year_lab, ylab = "Total Catch",
-          ylim = ylim_SSB, pch = 1, col = "black", typ = "o")
-  lines(mainyrs, SS_Catch$C, col = "red", lwd = 3)
-  abline(h = 0, col = "grey")
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
+#
+#
+#
+# # ---- Compare Simulation with SS3 ----
+#
+#
+# i <- 5
+# SLSSdir <- OMgrid.dirs[i]
+#
+# replist <- r4ss::SS_output(dir=SLSSdir)
+#
+# # Compare SS OM with OMtool::Simulate
+# OM <- get(paste0('OM_', i))
+# Hist <- Simulate(OM)
+#
+# mainyrs <- replist$startyr:replist$endyr
+# OM_years <- mainyrs
+# maxage <- OM@maxage
+#
+#
+# # ---- Catch ----
+# SS_Catch <- replist$catch %>% dplyr::filter(Yr%in%mainyrs)
+# SS_Catch <- SS_Catch %>% dplyr::group_by(Yr) %>%
+#   dplyr::summarise(C=sum(Exp))
+# SimCatch <- apply(Hist@TSdata$Landings, c(1,2), sum)
+# ylim_SSB <- c(0, 1.1 * max(c(SS_Catch$C, SimCatch)))
+# matplot(OM_years, t(SimCatch),
+#         xlab = mainyrs, ylab = "Total Catch",
+#         ylim = ylim_SSB, pch = 1, col = "black", typ = "o")
+# lines(mainyrs, SS_Catch$C, col = "red", lwd = 3)
+# abline(h = 0, col = "grey")
+#
+#
+# # ----- Compare_SS_OM ----
+# # add to OMtool
+#
+# Compare_SS_OM <- function(Hist, replist) {
+#   if (class(Hist) != 'Hist')
+#   stop('Must provide object of class `Hist` (use `Simulate`)')
+#   if (class(replist) != 'list')
+#     stop('replist must be class `list` (use `r4ss:SS_output`)')
+#   if (is.null(replist$endyr))
+#     warning("replist doesn't appear to be output from `r4ss::SS_output`")
+#
+#   season_as_years <- FALSE
+#   if(replist$nseasons == 1 && replist$seasduration < 1) {
+#     message("Season-as-years detected in SS model. There is one season in the year with duration of ",
+#             replist$seasduration, "year.")
+#     season_as_years <- TRUE
+#     nseas <- 1/replist$seasduration
+#     message("DLMtool operating model is an annual model. Since the SS model is seasonal, we need to aggregate over seasons.\n")
+#   } else {
+#     nseas <- replist$nseasons
+#     if(nseas > 1) {
+#       message("DLMtool operating model is an annual model. Since the SS model is seasonal, we need to aggregate over seasons.\n")
+#     }
+#   }
+#
+#   mainyrs <- replist$startyr:replist$endyr
+#
+#   if(season_as_years) {
+#     OM_years <- seas1_yind_full$assess_year[seas1_yind]
+#     year_lab <- "Stock Synthesis Year"
+#   } else {
+#     OM_years <- mainyrs
+#     year_lab <- "Year"
+#   }
+#
+#   # ---- Numbers-at-age ----
+#   SS_at_age <- replist$natage %>%
+#     dplyr::filter(Yr %in% mainyrs, `Beg/Mid` =="B")
+#   ages <- 0:(OM@maxage)
+#   ind <- colnames(SS_at_age)[colnames(SS_at_age) %in% ages]
+#   SS_at_age <- SS_at_age %>% tidyr::pivot_longer(cols=ind,
+#                                                  names_to="Age",
+#                                                  values_to="N")
+#   SS_at_age$Age <- as.numeric(SS_at_age$Age)
+#
+#   SS_at_age <- SS_at_age %>% dplyr::group_by(Age, Yr) %>%
+#     dplyr::summarise(N=sum(N))
+#
+#   nyears <- length(mainyrs)
+#   nages <- length(ages)
+#
+#   # check each year
+#   yrind <- 68
+#   SS <- SS_at_age %>% dplyr::filter(Yr==mainyrs[yrind])
+#   Sim <- apply(Hist@AtAge$Number[,,yrind,], c(1,2), sum)
+#
+#   plot(ages, SS$N, type="b", col="blue", pch=16)
+#   matplot(ages, t(Sim), type='l', add=TRUE)
+#
+#   SS_TSdata <- replist$timeseries %>%
+#     dplyr::filter(Yr %in% mainyrs)
+#
+#   tt = replist$timeseries%>%
+#     dplyr::filter(Yr %in% mainyrs) %>%
+#     select(Yr, SpawnBio)
+#
+#   replist$current_depletion
+#   replist$SBzero
+#   tt$SpawnBio[length(tt$SpawnBio)]/tt$SpawnBio[1]
+#
+#   # ---- Total Biomass -----
+#   SimBiomass <- apply(Hist@TSdata$Biomass, c(1,2), sum)
+#   ylim_SSB <- c(0, 1.1 * max(c(SS_TSdata$Bio_all, SimBiomass)))
+#   matplot(OM_years, t(SimBiomass),
+#           xlab = year_lab, ylab = "Total Biomass",
+#           ylim = ylim_SSB, pch = 1, col = "black", typ = "o")
+#   lines(mainyrs, SS_TSdata$Bio_all, col = "red", lwd = 3)
+#   abline(h = 0, col = "grey")
+#
+#   # ---- Spawning Biomass ----
+#   SimSB <- apply(Hist@TSdata$SBiomass, c(1,2), sum)
+#   ylim_SSB <- c(0, 1) # .1 * max(c(SS_TSdata$SpawnBio, SimSB)))
+#   matplot(OM_years, t(SimSB/SimSB[,1]),
+#           xlab = year_lab, ylab = "Spawning Biomass",
+#           ylim = ylim_SSB, pch = 1, col = "black", typ = "o")
+#   lines(mainyrs, SS_TSdata$SpawnBio/SS_TSdata$SpawnBio[1], col = "red", lwd = 3)
+#   abline(h = 0, col = "grey")
+#
+#   # ---- Catch ----
+#   SS_Catch <- replist$catch %>% dplyr::filter(Yr%in%mainyrs)
+#   SS_Catch <- SS_Catch %>% dplyr::group_by(Yr) %>%
+#     dplyr::summarise(C=sum(Exp))
+#   SimCatch <- apply(Hist@TSdata$Landings, c(1,2), sum)
+#   ylim_SSB <- c(0, 1.1 * max(c(SS_Catch$C, SimCatch)))
+#   matplot(OM_years, t(SimCatch),
+#           xlab = year_lab, ylab = "Total Catch",
+#           ylim = ylim_SSB, pch = 1, col = "black", typ = "o")
+#   lines(mainyrs, SS_Catch$C, col = "red", lwd = 3)
+#   abline(h = 0, col = "grey")
+#
+#
+# }
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
