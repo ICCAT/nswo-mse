@@ -598,3 +598,147 @@ NULL
 'OM_287'
 #' @rdname SWO-OMs 
 'OM_288'
+#' @name OMs_DF
+#' @docType data
+#' @title Overview of OM Parameters
+#' @description A dataframe of OM Parameters
+#'  
+ "OMs_DF"
+
+
+#' @name basecase_DF
+#' @docType data
+#' @title Overview of Base Case OM Parameters
+#' @description A dataframe of OM Parameters
+#'  
+ "basecase_DF"
+
+
+#' @name Like_List
+#' @docType data
+#' @title OM Likelihoods
+#' @description A list of likelihood values for each OM
+#'  
+ "Like_List"
+
+
+#' @name basecase_LH
+#' @docType data
+#' @title Base Case OM Likelihoods
+#' @description A list of likelihood values for base case OM
+#'  
+ "basecase_LH"
+
+
+#' @name Fleet_DF
+#' @docType data
+#' @title Fleet Information
+#' @description A dataframe of information on fleet names
+#'  
+ "Fleet_DF"
+
+
+#' @name Data_DF
+#' @docType data
+#' @title Data Information
+#' @description A dataframe of fishery data
+#'  
+ "Data_DF"
+
+
+#' @name CPUE_List
+#' @docType data
+#' @title CPUE Fitting Information
+#' @description A list of fitted CPUE indices for each OM
+#'  
+ "CPUE_List"
+
+
+#' @name basecase_CPUE
+#' @docType data
+#' @title CPUE Fitting Information for base case OM
+#' @description Fitted CPUE indices for base case OM
+#'  
+ "basecase_CPUE"
+
+
+#' @name TSBio_List
+#' @docType data
+#' @title Time-Series Data of Predicted Spawning Biomass and Recruitment
+#' @description A list of predicted spawning biomass and recruitment for each OM
+#'  
+ "TSBio_List"
+
+
+#' @name basecase_TSbio
+#' @docType data
+#' @title Time-Series Data of Predicted Spawning Biomass and Recruitment
+#' @description A list of predicted spawning biomass and recruitment for base case OM
+#'  
+ "basecase_TSbio"
+
+
+#' @name RefPoint_DF
+#' @docType data
+#' @title Dataframe of Reference Points for each OM
+#' @description None converged OMs have Depletion=NA
+#'  
+ "RefPoint_DF"
+
+
+#' @name basecase_RefPoint
+#' @docType data
+#' @title Dataframe of Reference Points for base case OM
+#' @description None converged OMs have Depletion=NA
+#'  
+ "basecase_RefPoint"
+
+
+#' @name Select_List
+#' @docType data
+#' @title List of estimated selectivity-at-size for each OM
+#' @description 
+#'  
+ "Select_List"
+
+
+#' @name basecase_Select
+#' @docType data
+#' @title List of estimated selectivity-at-size for base case OM
+#' @description 
+#'  
+ "basecase_Select"
+
+
+#' @name Catch_List
+#' @docType data
+#' @title List of observed and predicted catch for each OM
+#' @description 
+#'  
+ "Catch_List"
+
+
+#' @name basecase_catch
+#' @docType data
+#' @title List of observed and predicted catch for base case OM
+#' @description 
+#'  
+ "basecase_catch"
+
+
+#' @name LenDat_List
+#' @docType data
+#' @title List of observed and predicted length data for each OM
+#' @description 
+#'  
+ "LenDat_List"
+
+
+#' @name basecase_LenDat
+#' @docType data
+#' @title List of observed and predicted length data for base case OM
+#' @description 
+#'  
+ "basecase_LenDat"
+
+
