@@ -5,7 +5,7 @@
 \alias{CPUE_List}
 \title{CPUE Fitting Information}
 \format{
-An object of class \code{list} of length 0.
+An object of class \code{list} of length 288.
 }
 \usage{
 CPUE_List

@@ -1,1 +1,1 @@
-message <- OMtool:::message
+message <- MSEtool:::message
