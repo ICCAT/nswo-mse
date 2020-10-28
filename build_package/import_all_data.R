@@ -3,8 +3,8 @@
 # devtools::install_github("r4ss/r4ss", build_vignettes = TRUE, force=TRUE)
 
 library(r4ss); library(dplyr);
-library(OMtool); library(SWOMSE);
-library(usethis)
+library(MSEtool);
+library(usethis); library(SWOMSE)
 
 # -------- Build Package Data ----------
 
@@ -21,7 +21,7 @@ cat("# This file is automatically built by build_package/import_OMs.r\n",
 
 
 # ---- Add SWO_Data ----
-SWOData <- DLMtool::XL2Data("inst/SWO_Data")
+SWOData <- MSEtool::XL2Data("inst/SWO_Data")
 usethis::use_data(SWOData, overwrite = TRUE)
 
 cat("#' @name SWOData",
@@ -69,7 +69,7 @@ docOM <- function(OMname) {
 
 
 # - Base Case -
-OM_base_case <- SWO_SS2OM(OMbase.dir, nsim=nsim)
+OM_base_case <- SWOMSE::SWO_SS2OM(OMbase.dir, nsim=nsim)
 OM_base_case@Name <- 'Base Case'
 OM_base_case@cpars$Data <- SWOData
 usethis::use_data(OM_base_case, overwrite = TRUE)
@@ -672,11 +672,11 @@ usethis::use_data(CombinedIndex, overwrite = TRUE)
 #             replist$seasduration, "year.")
 #     season_as_years <- TRUE
 #     nseas <- 1/replist$seasduration
-#     message("DLMtool operating model is an annual model. Since the SS model is seasonal, we need to aggregate over seasons.\n")
+#     message("MSEtool operating model is an annual model. Since the SS model is seasonal, we need to aggregate over seasons.\n")
 #   } else {
 #     nseas <- replist$nseasons
 #     if(nseas > 1) {
-#       message("DLMtool operating model is an annual model. Since the SS model is seasonal, we need to aggregate over seasons.\n")
+#       message("MSEtool operating model is an annual model. Since the SS model is seasonal, we need to aggregate over seasons.\n")
 #     }
 #   }
 #

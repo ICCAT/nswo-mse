@@ -1,3 +1,5 @@
+library(dplyr)
+
 readSS <- function(SS.dir, i='base_case') {
 
   replist <- suppressWarnings(r4ss::SS_output(SS.dir, verbose = FALSE,
