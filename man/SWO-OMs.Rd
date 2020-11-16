@@ -3,14 +3,14 @@
 \docType{data}
 \name{SWO-OMs}
 \alias{SWO-OMs}
-\alias{OM_base_case}
-\alias{OM_1}
-\alias{OM_2}
-\alias{OM_3}
 \alias{OM_4}
+\alias{OM_base_case}
 \alias{OM_5}
+\alias{OM_1}
 \alias{OM_6}
+\alias{OM_2}
 \alias{OM_7}
+\alias{OM_3}
 \alias{OM_8}
 \alias{OM_9}
 \alias{OM_10}
@@ -871,101 +871,293 @@ An object of class \code{OM} of length 1.
 An object of class \code{OM} of length 1.
 
 An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
+
+An object of class \code{OM} of length 1.
 }
 \usage{
-OM_base_case
-
-OM_1
-
-OM_2
-
-OM_3
-
 OM_4
+
+OM_base_case
 
 OM_5
 
+OM_1
+
 OM_6
+
+OM_2
 
 OM_7
 
+OM_3
+
 OM_8
+
+OM_4
 
 OM_9
 
+OM_5
+
 OM_10
+
+OM_6
 
 OM_11
 
+OM_7
+
 OM_12
+
+OM_8
 
 OM_13
 
+OM_9
+
 OM_14
+
+OM_10
 
 OM_15
 
+OM_11
+
 OM_16
+
+OM_12
 
 OM_17
 
+OM_13
+
 OM_18
+
+OM_14
 
 OM_19
 
+OM_15
+
 OM_20
+
+OM_16
 
 OM_21
 
+OM_17
+
 OM_22
+
+OM_18
 
 OM_23
 
+OM_19
+
 OM_24
+
+OM_20
 
 OM_25
 
+OM_21
+
 OM_26
+
+OM_22
 
 OM_27
 
+OM_23
+
 OM_28
+
+OM_24
 
 OM_29
 
+OM_25
+
 OM_30
+
+OM_26
 
 OM_31
 
+OM_27
+
 OM_32
+
+OM_28
 
 OM_33
 
+OM_29
+
 OM_34
+
+OM_30
 
 OM_35
 
+OM_31
+
 OM_36
+
+OM_32
 
 OM_37
 
+OM_33
+
 OM_38
+
+OM_34
 
 OM_39
 
+OM_35
+
 OM_40
+
+OM_36
 
 OM_41
 
+OM_37
+
 OM_42
+
+OM_38
 
 OM_43
 
+OM_39
+
 OM_44
+
+OM_40
 
 OM_45
 
+OM_41
+
 OM_46
+
+OM_42
+
+OM_47
+
+OM_43
+
+OM_48
+
+OM_44
+
+OM_49
+
+OM_45
+
+OM_50
+
+OM_46
+
+OM_51
 
 OM_47
 

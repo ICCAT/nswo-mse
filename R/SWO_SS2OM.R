@@ -105,20 +105,23 @@ SWO_SS2OM <- function(SSdir, nsim = 48, proyears = 50, reps = 1, maxF = 3,
   # ---- Stock Parameters ----
   # ---- Stock-recruit relationship ----
   AgeRec <- 0 # recruit to age 0
-  Genders <- replist$natage_annual_1_no_fishery$Gender %>% unique()
-  ind <- which(names(replist$natage_annual_1_no_fishery) == "0")
-  ind2 <- ncol(replist$natage_annual_1_no_fishery)
-  N_at_age <- replist$natage_annual_1_no_fishery %>% tidyr::gather(., "Age", 'N', ind:ind2)
+  # Genders <- replist$natage_annual_1_no_fishery$Gender %>% unique()
+  # ind <- which(names(replist$natage_annual_1_no_fishery) == "0")
+  # ind2 <- ncol(replist$natage_annual_1_no_fishery)
+  # N_at_age <- replist$natage_annual_1_no_fishery %>% tidyr::gather(., "Age", 'N', ind:ind2)
+  #
+  # if (!is.null(N_at_age$Sex)) {
+  #   N_at_age <- N_at_age %>% dplyr::filter(Sex %in% Gen, Yr==min(mainyrs), Age==AgeRec) %>%
+  #     dplyr::summarise(N=sum(N))
+  # } else {
+  #   N_at_age <- N_at_age %>% dplyr::filter(Gender %in% Gen, Year==min(mainyrs), Age==AgeRec) %>%
+  #     dplyr::summarise(N=sum(N))
+  # }
+  # R0 <- N_at_age$N # R0 is unfished recruits to age AgeRec
+  #
+  N_at_age <- replist$natage %>% dplyr::filter(Era=="VIRG", `Beg/Mid`=='B')
+  R0 <-N_at_age %>% dplyr::select(as.character(AgeRec)) %>% sum()
 
-  if (!is.null(N_at_age$Sex)) {
-    N_at_age <- N_at_age %>% dplyr::filter(Sex %in% Gen, Yr==min(mainyrs), Age==AgeRec) %>%
-      dplyr::summarise(N=sum(N))
-  } else {
-    N_at_age <- N_at_age %>% dplyr::filter(Gender %in% Gen, Year==min(mainyrs), Age==AgeRec) %>%
-      dplyr::summarise(N=sum(N))
-  }
-
-  R0 <- N_at_age$N # R0 is unfished recruits to age AgeRec
 
   SR_ind <- match(mainyrs, replist$recruit$Yr)
   SSB <- replist$recruit$SpawnBio[SR_ind]
@@ -210,19 +213,34 @@ SWO_SS2OM <- function(SSdir, nsim = 48, proyears = 50, reps = 1, maxF = 3,
   OM@h <- quantile(hs, c(0.025, 0.975)) %>% as.numeric()
 
   # ---- Maximum Age and M-at-Age ----
-  suppressWarnings(
-  m_at_age <- replist$M_at_age %>%
-    tidyr::gather(., "Age", "M", 4:ncol(replist$M_at_age)) %>%
-    dplyr::mutate(Age=as.numeric(Age)) %>%
-    dplyr::filter(Gender %in% Gen) %>%
-    dplyr::group_by(Year, Age) %>%
-    dplyr::mutate(M=as.numeric(M)) %>%
-    dplyr::summarise(M=mean(M), .groups='keep') # mean M over sexes
-  )
+  if (!is.null(replist$M_at_age$Sex)) {
+    suppressWarnings(
+      m_at_age <- replist$M_at_age %>%
+        tidyr::gather(., "Age", "M", 4:ncol(replist$M_at_age)) %>%
+        dplyr::mutate(Age=as.numeric(Age)) %>%
+        dplyr::filter(Sex %in% Gen) %>%
+        dplyr::group_by(Yr, Age) %>%
+        dplyr::mutate(M=as.numeric(M)) %>%
+        dplyr::summarise(M=mean(M), .groups='keep') # mean M over sexes
+    )
+  } else {
+    suppressWarnings(
+      m_at_age <- replist$M_at_age %>%
+        tidyr::gather(., "Age", "M", 4:ncol(replist$M_at_age)) %>%
+        dplyr::mutate(Age=as.numeric(Age)) %>%
+        dplyr::filter(Gender %in% Gen) %>%
+        dplyr::group_by(Year, Age) %>%
+        dplyr::mutate(M=as.numeric(M)) %>%
+        dplyr::summarise(M=mean(M), .groups='keep') # mean M over sexes
+    )
+  }
+
   if (all(is.na( m_at_age$M[m_at_age$Age==max(m_at_age$Age)]))) {
     # M for last age is assumed same as maxage -1
     m_at_age$M[m_at_age$Age==max(m_at_age$Age)] <-  m_at_age$M[m_at_age$Age==max(m_at_age$Age)-1]
   }
+
+  if (is.null(m_at_age$Year)) m_at_age$Year <- m_at_age$Yr
 
   m_at_age$Year <- as.numeric(m_at_age$Year)
   maxage <- max(m_at_age$Age)
@@ -434,7 +452,7 @@ SWO_SS2OM <- function(SSdir, nsim = 48, proyears = 50, reps = 1, maxF = 3,
 
   # ---- Movement modelling ----
   OM@Frac_area_1 <- OM@Size_area_1 <- OM@Prob_staying <- rep(0.5, 2)
-  if(import_mov && nrow(replist$movement) > 0) {
+  if(import_mov && !is.null(replist$movement) && nrow(replist$movement) > 0) {
     movement <- replist$movement[replist$movement$Seas == 1 & replist$movement$Gpattern == 1, ]
     if(nrow(movement) == 0) movement <- replist$movement[replist$movement$Seas == 1 & replist$movement$GP == 1, ]
 
@@ -554,8 +572,11 @@ SWO_SS2OM <- function(SSdir, nsim = 48, proyears = 50, reps = 1, maxF = 3,
 
   # ---- Calculate exploitation rate by fleet for each year ----
   Expl <- replist$exploitation %>% dplyr::filter(Yr%in%mainyrs)
-  Expl <- Expl[,c(1,4:ncol(Expl))]
-  colnames(Expl) <- c("Yr", 1:11)
+
+  cols <- which(colnames(Expl) %in% replist$FleetNames)
+
+  Expl <- Expl[,c(1,cols)]
+  colnames(Expl) <- c("Yr", 1:(ncol(Expl)-1))
   Expl <- tidyr::pivot_longer(Expl, 2:ncol(Expl), 'Fleet', 'Expl', values_to = 'Exploit')
   Expl$Fleet <- as.numeric(Expl$Fleet)
 

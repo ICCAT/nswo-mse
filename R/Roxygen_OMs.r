@@ -21,99 +21,195 @@ NULL
 
 
 #' @rdname SWO-OMs 
-'OM_base_case'
-#' @rdname SWO-OMs 
-'OM_1'
-#' @rdname SWO-OMs 
-'OM_2'
-#' @rdname SWO-OMs 
-'OM_3'
-#' @rdname SWO-OMs 
 'OM_4'
+#' @rdname SWO-OMs 
+'OM_base_case'
 #' @rdname SWO-OMs 
 'OM_5'
 #' @rdname SWO-OMs 
+'OM_1'
+#' @rdname SWO-OMs 
 'OM_6'
+#' @rdname SWO-OMs 
+'OM_2'
 #' @rdname SWO-OMs 
 'OM_7'
 #' @rdname SWO-OMs 
+'OM_3'
+#' @rdname SWO-OMs 
 'OM_8'
+#' @rdname SWO-OMs 
+'OM_4'
 #' @rdname SWO-OMs 
 'OM_9'
 #' @rdname SWO-OMs 
+'OM_5'
+#' @rdname SWO-OMs 
 'OM_10'
+#' @rdname SWO-OMs 
+'OM_6'
 #' @rdname SWO-OMs 
 'OM_11'
 #' @rdname SWO-OMs 
+'OM_7'
+#' @rdname SWO-OMs 
 'OM_12'
+#' @rdname SWO-OMs 
+'OM_8'
 #' @rdname SWO-OMs 
 'OM_13'
 #' @rdname SWO-OMs 
+'OM_9'
+#' @rdname SWO-OMs 
 'OM_14'
+#' @rdname SWO-OMs 
+'OM_10'
 #' @rdname SWO-OMs 
 'OM_15'
 #' @rdname SWO-OMs 
+'OM_11'
+#' @rdname SWO-OMs 
 'OM_16'
+#' @rdname SWO-OMs 
+'OM_12'
 #' @rdname SWO-OMs 
 'OM_17'
 #' @rdname SWO-OMs 
+'OM_13'
+#' @rdname SWO-OMs 
 'OM_18'
+#' @rdname SWO-OMs 
+'OM_14'
 #' @rdname SWO-OMs 
 'OM_19'
 #' @rdname SWO-OMs 
+'OM_15'
+#' @rdname SWO-OMs 
 'OM_20'
+#' @rdname SWO-OMs 
+'OM_16'
 #' @rdname SWO-OMs 
 'OM_21'
 #' @rdname SWO-OMs 
+'OM_17'
+#' @rdname SWO-OMs 
 'OM_22'
+#' @rdname SWO-OMs 
+'OM_18'
 #' @rdname SWO-OMs 
 'OM_23'
 #' @rdname SWO-OMs 
+'OM_19'
+#' @rdname SWO-OMs 
 'OM_24'
+#' @rdname SWO-OMs 
+'OM_20'
 #' @rdname SWO-OMs 
 'OM_25'
 #' @rdname SWO-OMs 
+'OM_21'
+#' @rdname SWO-OMs 
 'OM_26'
+#' @rdname SWO-OMs 
+'OM_22'
 #' @rdname SWO-OMs 
 'OM_27'
 #' @rdname SWO-OMs 
+'OM_23'
+#' @rdname SWO-OMs 
 'OM_28'
+#' @rdname SWO-OMs 
+'OM_24'
 #' @rdname SWO-OMs 
 'OM_29'
 #' @rdname SWO-OMs 
+'OM_25'
+#' @rdname SWO-OMs 
 'OM_30'
+#' @rdname SWO-OMs 
+'OM_26'
 #' @rdname SWO-OMs 
 'OM_31'
 #' @rdname SWO-OMs 
+'OM_27'
+#' @rdname SWO-OMs 
 'OM_32'
+#' @rdname SWO-OMs 
+'OM_28'
 #' @rdname SWO-OMs 
 'OM_33'
 #' @rdname SWO-OMs 
+'OM_29'
+#' @rdname SWO-OMs 
 'OM_34'
+#' @rdname SWO-OMs 
+'OM_30'
 #' @rdname SWO-OMs 
 'OM_35'
 #' @rdname SWO-OMs 
+'OM_31'
+#' @rdname SWO-OMs 
 'OM_36'
+#' @rdname SWO-OMs 
+'OM_32'
 #' @rdname SWO-OMs 
 'OM_37'
 #' @rdname SWO-OMs 
+'OM_33'
+#' @rdname SWO-OMs 
 'OM_38'
+#' @rdname SWO-OMs 
+'OM_34'
 #' @rdname SWO-OMs 
 'OM_39'
 #' @rdname SWO-OMs 
+'OM_35'
+#' @rdname SWO-OMs 
 'OM_40'
+#' @rdname SWO-OMs 
+'OM_36'
 #' @rdname SWO-OMs 
 'OM_41'
 #' @rdname SWO-OMs 
+'OM_37'
+#' @rdname SWO-OMs 
 'OM_42'
+#' @rdname SWO-OMs 
+'OM_38'
 #' @rdname SWO-OMs 
 'OM_43'
 #' @rdname SWO-OMs 
+'OM_39'
+#' @rdname SWO-OMs 
 'OM_44'
+#' @rdname SWO-OMs 
+'OM_40'
 #' @rdname SWO-OMs 
 'OM_45'
 #' @rdname SWO-OMs 
+'OM_41'
+#' @rdname SWO-OMs 
 'OM_46'
+#' @rdname SWO-OMs 
+'OM_42'
+#' @rdname SWO-OMs 
+'OM_47'
+#' @rdname SWO-OMs 
+'OM_43'
+#' @rdname SWO-OMs 
+'OM_48'
+#' @rdname SWO-OMs 
+'OM_44'
+#' @rdname SWO-OMs 
+'OM_49'
+#' @rdname SWO-OMs 
+'OM_45'
+#' @rdname SWO-OMs 
+'OM_50'
+#' @rdname SWO-OMs 
+'OM_46'
+#' @rdname SWO-OMs 
+'OM_51'
 #' @rdname SWO-OMs 
 'OM_47'
 #' @rdname SWO-OMs 

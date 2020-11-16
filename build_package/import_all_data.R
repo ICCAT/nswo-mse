@@ -88,6 +88,10 @@ for (i in seq_along(OMgrid.dirs)) {
   txt <- strsplit(SS.dir, '-M')[[1]][2]
   M <- strsplit(txt, '_')[[1]][1] %>% as.numeric()
 
+  # sigmaR
+  txt <- strsplit(SS.dir, '_sigmaR')[[1]][2]
+  sigmaR <- strsplit(txt, '_')[[1]][1] %>% as.numeric()
+
   # Steep
   txt <- strsplit(SS.dir, 'steepness')[[1]][2]
   h <- strsplit(txt, '_cpue')[[1]][1] %>% as.numeric()
@@ -114,12 +118,13 @@ for (i in seq_along(OMgrid.dirs)) {
   }
 
   OM@Name <- paste('M', M,
-                 'h', h,
-                 'CV', CV,
-                 'ESS', ESS,
-                 'Q', q,
-                 'ENV', env,
-                 sep='-')
+                   'sigmaR', sigmaR,
+                   'h', h,
+                   'CV', CV,
+                   'ESS', ESS,
+                   'Q', q,
+                   'ENV', env,
+                   sep='-')
 
   name <- paste0('OM_', i)
   assign(name, OM)
