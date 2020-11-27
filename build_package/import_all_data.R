@@ -627,6 +627,140 @@ CombinedIndex <- do.call('rbind', CombinedIndexList)
 usethis::use_data(CombinedIndex, overwrite = TRUE)
 
 
+extract <- function(OMlist, cpar) {
+  list <- lapply(lapply(OMlist, slot, name="cpars"), "[[", cpar)
+  if ("array" %in% class(list[[1]])) {
+    if (length(dim(list[[1]]))== 2) {
+      fun <- function(i, list) list[[i]][1,]
+      list <- lapply(1:length(list), fun, list=list)
+      if (cpar=="Perr_y") {
+        dim <- c(OMlist[[1]]@maxage+1 + OMlist[[1]]@nyears+OMlist[[1]]@proyears-1, length(OMlist))
+      } else {
+        dim <- c(OMlist[[1]]@nyears, length(OMlist))
+      }
+      arr <- array(as.numeric(unlist(list)), dim=dim)
+      arr <- aperm(arr, c(2,1))
+      return(arr)
+    } else {
+      fun <- function(i, list) list[[i]][1,,]
+      list <- lapply(1:length(list), fun, list=list)
+
+      if(cpar %in% c('SLarray', 'retL')) {
+        nbins <- length(OMlist[[1]]@cpars$CAL_binsmid)
+        arr <- array(as.numeric(unlist(list)),
+                   dim=c(nbins,
+                         OMlist[[1]]@nyears+OMlist[[1]]@proyears,
+                         length(OMlist)))
+      } else {
+        arr <- array(as.numeric(unlist(list)),
+                   dim=c(OMlist[[1]]@maxage+1,
+                         OMlist[[1]]@nyears+OMlist[[1]]@proyears,
+                         length(OMlist)))
+      }
+
+      arr <- aperm(arr, c(3,1,2))
+      return(arr)
+    }
+
+  }
+
+  if (class(list[[1]])=="numeric") {
+    if (cpar %in% c('CAL_bins', 'CAL_binsmid')) {
+      arr <- list[[1]]
+    } else{
+      arr <- lapply(list, '[[', 1) %>% unlist()
+    }
+
+    return(arr)
+  }
+
+}
+
+check <- function(array, OMlist, cpar) {
+  if (cpar =='Data') return(TRUE)
+  if (cpar =='CAL_binsmid') return(TRUE)
+  if (cpar =='CAL_bins') return(TRUE)
+  for (i in 1:length(OMlist)) {
+    if (class(array) == "array") {
+      p <- prod(OMlist[[i]]@cpars[[cpar]][1,,] == array[i,,])
+    }
+    if (class(array) == "numeric") {
+      p <- prod(OMlist[[i]]@cpars[[cpar]][1] == array[i])
+    }
+    if (class(array) == "matrix") {
+      p <- prod(OMlist[[i]]@cpars[[cpar]][1,] == array[i,])
+    }
+    if (p !=1) stop()
+  }
+}
+
+
+#' Join all SS OMs into a single OM
+#'
+fls <- list.files("data", pattern="OM_")
+
+nums <- strsplit(fls, split = "OM_") %>%
+  lapply(., "[", 2) %>% unlist() %>%
+  strsplit(., split = ".rda") %>% unlist() %>%
+  as.numeric()
+
+names <- strsplit(fls, split = ".rda") %>% unlist()
+names <- names[order(nums)]
+names <- names[!names =="OM_base_case"]
+names <- c("OM_base_case", names)
+
+OMlist <- list()
+for (i in 1:length(names)) {
+  OMlist[[i]] <- get(names[i])
+}
+
+baseOM <- OM_base_case
+SWOM <- baseOM
+
+SWOM@nsim <- length(fls)
+cnames <- names(baseOM@cpars)
+SWOM@cpars <- list()
+
+for (nm in cnames) {
+  temp <- extract(OMlist, nm)
+  check(temp, OMlist, nm)
+  SWOM@cpars[[nm]] <- temp
+}
+
+SWOM@cpars$M_ageArray <- array(NA, dim=c(SWOM@nsim, SWOM@maxage+1, SWOM@nyears+SWOM@proyears))
+SWOM@cpars$D <- SWOM@cpars$AC <-  rep(NA, SWOM@nsim)
+SWOM@cpars$R0 <- rep(0, SWOM@nsim)
+for (i in 1:length(OMlist)) {
+  SWOM@cpars$M_ageArray[i,,] <- matrix(OMlist[[i]]@M, nrow=SWOM@maxage+1, ncol=SWOM@nyears+SWOM@proyears)
+  SWOM@cpars$D[i] <- OMlist[[i]]@D[1]
+  SWOM@cpars$AC[i] <- OMlist[[i]]@AC[1]
+  SWOM@cpars$R0[i] <- OMlist[[i]]@R0[1]
+}
+
+SWOM@M <- SWOM@h <- SWOM@Perr <- SWOM@AC <- SWOM@D <-SWOM@R0 <- c(0,0)
+SWOM@Esd <- SWOM@qcv <- SWOM@L5 <- SWOM@LFS <- SWOM@Vmaxlen <- c(0,0)
+SWOM@EffLower <- c(0,0)
+SWOM@EffUpper <- c(0,0)
+
+SWOM <- MSEtool::Replace(SWOM, MSEtool::Perfect_Info)
+SWOM <- MSEtool::Replace(SWOM, MSEtool::Perfect_Imp)
+SWOM@Source <- names
+SWOM@Name <- "SWO All OMs"
+SWOM@interval <- 1
+usethis::use_data(SWOM, overwrite = TRUE)
+
+
+MPs <- c("AverageC", "Itarg1", "Itarg2",
+         "FMSYref") # the MPs that will be run
+SWOM@cpars$Data <- SWOData # for clarity, re-add SWOData to the OM
+
+Hist <- Simulate(SWOM, parallel = TRUE)
+SWO_MSE <- Project(Hist, MPs=MPs, parallel = FALSE)
+SWO_MSE@PPD <- list()
+SWO_MSE@Hist <- new("Hist")
+
+usethis::use_data(SWO_MSE, overwrite = TRUE)
+
 #
 #
 #

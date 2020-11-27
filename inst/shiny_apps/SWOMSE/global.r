@@ -2,9 +2,7 @@ library(SWOMSE)
 library(dplyr)
 
 
-
 # Generate Table of OM Assumptions
-SWOM@Source
 
 # Base Case
 # TODO: Check assumptions/parameters for base case
@@ -36,8 +34,7 @@ makeDF <- function(grid.dir) {
     is.neg <- stringr::str_extract(basename(ss.dir), 'env-')
     if (!is.na(is.neg)) tdf$env <- -tdf$env
 
-    OMNums <- stringr::str_extract_all(SWOM@Source, "\\(?[0-9,.]+\\)?") %>% unlist() %>%
-      as.numeric()
+    OMNums <- stringr::str_extract_all(SWOM@Source, "\\(?[0-9,.]+\\)?") %>% unlist() %>%  as.numeric()
 
     if (tdf$Num %in% OMNums) {
       tdf$Name <- paste0('OM_', tdf$Num)
@@ -53,8 +50,9 @@ makeDF <- function(grid.dir) {
   saveRDS(DF, "inst/shiny_apps/SWOMSE/data/OMTable.rds")
 }
 # Run function to save parameter assumption table
-# makeDF(grid.dir='C:/Users/Adrian/Dropbox/SWO_MSE/OMs/SS/2018_GRID/grid')
+ # makeDF(grid.dir='G:/My Drive/1_PROJECTS/North_Atlantic_Swordfish/OMs/Grid_2020/grid_2020')
 
+# OMAssumption <- readRDS('inst/shiny_apps/SWOMSE/data/OMTable.rds')
 OMAssumption <- readRDS('data/OMTable.rds')
 OMAssumption$env[OMAssumption$env<0] <- FALSE
 OMAssumption$env[OMAssumption$env>0] <- TRUE
