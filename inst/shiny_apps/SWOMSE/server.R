@@ -177,7 +177,7 @@ shinyServer(function(input, output, session) {
   # Trade-off plots
   makeTradeoffPlot <- function(names, PM1, PM2) {
     MSE <<- SubMSE(SWO_MSE, names)
-    TradePlot(MSE, Lims=0, PMlist=c(PM1, PM2))
+    TradePlot(MSE, Lims=0, PMlist=c(PM1, PM2), legend = FALSE)
   }
 
   output$tplot1 <- renderPlot(makeTradeoffPlot(getOM_1(), input$T_PMx, input$T_PMy))

@@ -50,14 +50,11 @@ avail <- function (classy, package=c("SWOMSE", 'all'))  {
                                                   getclass, logical(1), classy = classy)]
   temp <- c(temp, temp_globalenv)
 
-  # if (package=="all") {
-  #   temp <- c(temp, ls("package:MSEtool")[vapply(ls("package:MSEtool"),
-  #                                        getclass, logical(1), classy = classy)])
-  #     temp_DLMtool <- try(DLMtool::avail(classy), silent = TRUE)
-  #     if (!inherits(temp_DLMtool, "try-error"))
-  #       temp <- unique(c(temp, temp_DLMtool))
-  #
-  # }
+  if (package=="all") {
+    temp <- c(temp, ls("package:MSEtool")[vapply(ls("package:MSEtool"),
+                                         getclass, logical(1), classy = classy)])
+
+  }
 
   if (length(temp) < 1)
     stop("No objects of class '", classy, "' found",
