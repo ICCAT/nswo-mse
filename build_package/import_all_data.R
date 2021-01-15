@@ -36,7 +36,7 @@ cat("#' @name SWOData",
 
 
 # ---- Add SS OMs as Data ----
-nsim <- 20
+nsim <- 48
 
 OM.root <- 'G:/My Drive/1_Projects/North_Atlantic_Swordfish/OMs/Grid_2020'
 OMbase.dir <-  file.path(OM.root, "Michael_March2020/NSWO_MSE_SS3_Base_v2")
@@ -126,6 +126,41 @@ for (i in seq_along(OMgrid.dirs)) {
                    'ENV', env,
                    sep='-')
 
+
+  nyears <- OM@nyears
+  proyears <- OM@proyears
+  Len_age <- OM@cpars$Len_age
+  maxage <- OM@maxage
+
+  vB <- function(pars, ages) {
+    pars[1] * (1-exp(-pars[2]*(ages-pars[3])))
+  }
+  fitVB <- function(pars, LatAge, ages) {
+    pars[1] <- exp(pars[1])
+    pars[2] <- exp(pars[2])
+    sum((vB(pars, ages) - LatAge)^2)
+  }
+
+  OM@cpars$Linf <- rep(NA, nsim)
+  OM@cpars$K <- rep(NA, nsim)
+  OM@cpars$t0 <- rep(NA, nsim)
+  # Estimate vB parameters for each year and each sim if growth parameters are not in cpars
+  if (!all(c("Linf", "K", "t0") %in% names(SWOM@cpars))) {
+
+    # loop over simulations
+    cnt <- 0
+    for (ss in 1:nsim) {
+
+      starts  <- c(log(max(Len_age[ss,,nyears])), log(0.2), 0)
+      pars <- optim(starts, fitVB, LatAge=Len_age[ss,,nyears], ages=0:maxage)$par
+
+      # Add Linf, K, t0 to StockPars (current yr)
+      OM@cpars$Linf[ss] <- round(exp(pars[1]),3)
+      OM@cpars$K[ss] <- round(exp(pars[2]),3)
+      OM@cpars$t0[ss] <- mean(pars[3])
+
+    }
+  }
   name <- paste0('OM_', i)
   assign(name, OM)
 
@@ -698,7 +733,7 @@ check <- function(array, OMlist, cpar) {
 #' Join all SS OMs into a single OM
 #'
 fls <- list.files("data", pattern="OM_")
-
+options(warn=0)
 nums <- strsplit(fls, split = "OM_") %>%
   lapply(., "[", 2) %>% unlist() %>%
   strsplit(., split = ".rda") %>% unlist() %>%
@@ -741,6 +776,7 @@ SWOM@M <- SWOM@h <- SWOM@Perr <- SWOM@AC <- SWOM@D <-SWOM@R0 <- c(0,0)
 SWOM@Esd <- SWOM@qcv <- SWOM@L5 <- SWOM@LFS <- SWOM@Vmaxlen <- c(0,0)
 SWOM@EffLower <- c(0,0)
 SWOM@EffUpper <- c(0,0)
+
 
 SWOM <- MSEtool::Replace(SWOM, MSEtool::Perfect_Info)
 SWOM <- MSEtool::Replace(SWOM, MSEtool::Perfect_Imp)
