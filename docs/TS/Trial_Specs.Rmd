@@ -1,0 +1,61 @@
+---
+title: "Specificiations for MSE Trials for North Atlantic Swordfish"
+author: "Adrian Hordyk <adrian@bluematterscience.com>"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  rmdformats::robobook:
+    highlight: kate
+    toc_depth: 2
+    use_bookdown: yes
+  pdf_document:
+    toc: yes
+header-includes:
+- \usepackage{lineno}
+- \linenumbers
+---
+
+# Introduction
+
+The North Atlantic swordfish fishery, under the management of the [International Commission for the Conservation of Atlantic Tuna](https://www.iccat.int/en/index.asp) (ICCAT), is undergoing a management strategy evaluation (MSE) process. 
+
+ICCAT describes [MSE]((https://www.iccat.int/mse/en/index.asp)) as:
+ 
+>a collaborative process between Scientists and decision-makers that involves using computer simulation to compare the relative ability to achieve a set of management objectives using alternative Management Strategies, defined as different combinations of data collection schemes, methods of analysis, harvest control rules and subsequent processes leading to management actions.
+
+There are three main components in an MSE process:
+
+1. **Operating models (OMs)**: a collection of mathematical/statistical models that describe alternative hypotheses of the historical fishery dynamics and specifications for simulating the collection of data and implementation of management measures in the future;
+2. **Candidate management procedures (CMPs)**: a set of proposed algorithms that generate management recommendations from fishery data, and will be evaluated in the MSE;
+3. **Performance metrics (PMs)**: statistics use the quantitatively evaluate the CMPs against specified management objectives.
+
+The operating models, candidate management procedures, and performance metrics are developed as a collaborative effort between scientists, decision-makers, and other stakeholders in the fishery.
+
+## About this document
+This document describes the specifications for the OMs, CMPs, and PMs that have been proposed and developed for the North Atlantic swordfish (hereafter swordfish) fishery.
+
+
+
+# OM Uncertainty Grid
+
+OMs should span the plausible range of uncertainties in the fishery dynamics. OMs are sometimes grouped into categories such as 'Reference OMs' and 'Robustness OMs'.
+
+
+# Operating Model Conditioning
+
+
+# MSE Framework
+
+## Key Model Assumptions
+
+## Importing OMs into MSE Framework
+
+## Future Catches
+
+## Generation of Future Data
+
+# Candidate Management Procedures
+
+
+# Performance Metrics
+
+[Proposed Performance Metrics](https://docs.google.com/spreadsheets/d/1NytREnFCZ6OPrhXT5E5Wi8Y22w-ZmENY8kEZqDH_FQE/edit?usp=sharing)
