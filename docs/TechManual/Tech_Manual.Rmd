@@ -1,0 +1,24 @@
+---
+title: "Specificiations for MSE Trials for North Atlantic Swordfish"
+author: "Adrian Hordyk <adrian@bluematterscience.com>"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  rmdformats::robobook:
+    highlight: kate
+    toc_depth: 2
+    use_bookdown: yes
+  pdf_document:
+    toc: yes
+header-includes:
+- \usepackage{lineno}
+- \linenumbers
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Introduction
+
+
