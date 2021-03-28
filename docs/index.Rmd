@@ -36,7 +36,7 @@ knitr::opts_chunk$set(echo = FALSE)
 <div class="col2">
 [Package User Guide](userguide.html)
 
-[Trial Specifications Doc](https://docs.google.com/document/d/1L_1P5L3lcikzNhOSCOdUBSDfsa_NwN0tpIWvzxQ5xWw/edit?usp=sharing)
+[Trial Specifications Doc](TS/Trial_Specs.html)
 
 [CMP Development Guide (HTML)](CMP-Development-Guide.html)
 
