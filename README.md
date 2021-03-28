@@ -41,22 +41,12 @@ Note that the app is under development and all results are preliminary and for
 testing purposes only. 
 
 ## MSE Specifications
-The MSE Specifications document is available as a Google Doc  [here](https://docs.google.com/document/d/1L_1P5L3lcikzNhOSCOdUBSDfsa_NwN0tpIWvzxQ5xWw/edit?usp=sharing).
+NOTE: The previous Google Docs version of the MSE Specifications document was corrupted.
+
+The MSE Specifications document is available [here](https://iccat.github.io/nswo-mse/TS/TS_Specs.html).
 
 It is designed as a living document that will continue to be updated to reflect 
 the current assumptions and structure of the MSE process. 
-
-Please use the Comment feature for questions, comments, or feedback. These
-will be incorporated into the document as the model is updated.
-
-## Project Progress
-Progress on the 2019 project and 2020 proposed work is available in a Google Sheet  [here](https://docs.google.com/spreadsheets/d/1itPZ8xgDWNYepMJdZAh4ERSrdzmlSCLDBvV7QmXHyWw/edit?usp=sharing).
-
-A list of proposed management procedures and performance metrics will be developed
-in this Google Sheet as they are proposed by the SWO Group. 
-
-All users have Edit privileges. Details and/or proposed MPs/performance 
-metrics to be added as they are discussed/agreed upon.
 
 ## Bug Reports
 Please report bugs and other issues relating to the code using the 
