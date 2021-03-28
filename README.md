@@ -43,7 +43,7 @@ testing purposes only.
 ## MSE Specifications
 NOTE: The previous Google Docs version of the MSE Specifications document was corrupted.
 
-The MSE Specifications document is available [here](https://iccat.github.io/nswo-mse/TS/TS_Specs.html).
+The MSE Specifications document is available [here](https://iccat.github.io/nswo-mse/TS/Trial_Specs.html).
 
 It is designed as a living document that will continue to be updated to reflect 
 the current assumptions and structure of the MSE process. 
