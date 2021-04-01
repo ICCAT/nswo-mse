@@ -207,7 +207,7 @@ Note that as this repository is private, you will need to provide a personal acc
 ## MSEtool
 The `SWOMSE` package used for the swordfish MSE uses the `MSEtool` framework. The `MSEtool` package is automatically installed when `SWOMSE` is installed, and all `MSEtool` functions are available to the user when the `SWOMSE` package is loaded.
 
-`MSEtool` is an R package that has been developed for conducting fast, flexible, and transparent, MSE for a wide range of fisheries. `MSEtool` is part of the [`openMSE`](https://cran.r-project.org/package=openMSE) collection of packages. A non-technical description of `MSEtool` and its key features is available on the [`openMSE` website](https://cran.r-project.org/package=openMSE).
+`MSEtool` is an R package that has been developed for conducting fast, flexible, and transparent, MSE for a wide range of fisheries. `MSEtool` is part of the [`openMSE`](https://cran.r-project.org/package=openMSE) collection of packages. A non-technical description of `MSEtool` and its key features is available on the [`openMSE` website](https://openmse.com/).
 
 The operating model in `MSEtool`, including assumptions and equations, is described in detail in @carruthersDataLimitedMethodsToolkit2018a.
 
