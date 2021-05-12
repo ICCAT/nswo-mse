@@ -136,9 +136,10 @@ shinyServer(function(input, output, session) {
   # SubMSE
   SubMSE <- function(SWO_MSE, names) {
     sims <- which(SWOM@Source %in% names)
-    MSE <- DLMtool::Sub(SWO_MSE, sims=sims)
+
+    MSE <- MSEtool::Sub(SWO_MSE, sims=sims)
     if (MSE@nsim ==1) {
-      MSE@Misc$LatEffort <- array(MSE@Misc$LatEffort, dim=c(1, dim( MSE@Misc$LatEffort)))
+      # MSE@Misc$LatEffort <- array(MSE@Misc$LatEffort, dim=c(1, dim( MSE@Misc$LatEffort)))
       MSE <- joinMSE(list(MSE, MSE)) # temp fix for only 1 sim per OM
     }
     MSE
@@ -146,6 +147,7 @@ shinyServer(function(input, output, session) {
 
   # Performance table
   makeTable <- function(names) {
+
     MSE <- SubMSE(SWO_MSE, names)
     tt <- summary(MSE)
     tt
@@ -158,7 +160,7 @@ shinyServer(function(input, output, session) {
   # Wormplots
   makeZehPlot <- function(names) {
     MSE <- SubMSE(SWO_MSE, names)
-    DLMtool::DFO_bar(MSE)
+    MSEtool::DFO_bar(MSE)
   }
 
   output$zehplot1<-renderPlot(makeZehPlot(getOM_1()))
@@ -167,7 +169,7 @@ shinyServer(function(input, output, session) {
   # Wormplots
   makeWormPlot <- function(names) {
     MSE <- SubMSE(SWO_MSE, names)
-    DLMtool::wormplot(MSE)
+    MSEtool::wormplot(MSE)
   }
   output$wormplot1 <- renderPlot(makeWormPlot(getOM_1()))
   output$wormplot2 <- renderPlot(makeWormPlot(getOM_2()))
@@ -175,7 +177,7 @@ shinyServer(function(input, output, session) {
   # Trade-off plots
   makeTradeoffPlot <- function(names, PM1, PM2) {
     MSE <<- SubMSE(SWO_MSE, names)
-    TradePlot(MSE, Lims=0, PMlist=c(PM1, PM2))
+    TradePlot(MSE, Lims=0, PMlist=c(PM1, PM2), legend = FALSE)
   }
 
   output$tplot1 <- renderPlot(makeTradeoffPlot(getOM_1(), input$T_PMx, input$T_PMy))
