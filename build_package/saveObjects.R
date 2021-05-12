@@ -5,11 +5,23 @@ readSS <- function(SS.dir, i='base_case') {
   replist <- suppressWarnings(r4ss::SS_output(SS.dir, verbose = FALSE,
                                               hidewarn = TRUE,
                                               printstats=FALSE))
-  data <- r4ss::SS_readdat(file.path(SS.dir, 'data.ss_new'), version='3.24',
-                           verbose = FALSE)
+
+  if (i =='base_case') {
+    data <- r4ss::SS_readdat(file.path(SS.dir, 'data.ss_new'), version='3.24',
+                             verbose = FALSE)
+  } else {
+    data <- r4ss::SS_readdat(file.path(SS.dir, 'data.ss_new'), version='3.30',
+                             verbose = FALSE)
+  }
+
 
   # Natural mortality
-  tt <- replist$M_at_age %>% filter(Year <= replist$endyr)
+  if (i =='base_case') {
+    tt <- replist$M_at_age %>% filter(Year <= replist$endyr)
+  } else {
+    tt <- replist$M_at_age %>% filter(Yr <= replist$endyr)
+  }
+
   M <- unique(tt[,4])
   M <- M[!is.na(M)]
 
@@ -29,6 +41,10 @@ readSS <- function(SS.dir, i='base_case') {
     rng <- range(cpue_cv$se_log)
     cpue_cv <- cpue_cv %>% dplyr::filter(se_log %in% rng) %>% dplyr::distinct()
   }
+
+  # cpue lambda
+  txt <- strsplit(SS.dir, 'cpuelambda')[[1]][2]
+  lambda <- strsplit(txt, '_llq')[[1]][1] %>% as.numeric()
 
   # ess
   L_ESS <- data$lencomp$Nsamp %>% unique()
@@ -54,7 +70,7 @@ readSS <- function(SS.dir, i='base_case') {
 
   return(list(LH=list(replist$likelihoods_used %>% t() %>% data.frame(),
                       replist$likelihoods_by_fleet),
-              DF=data.frame(M=M, sigmaR=sigmaR, h=h, cpue_cv=cpue_cv,
+              DF=data.frame(M=M, sigmaR=sigmaR, h=h, cpue_cv=cpue_cv,lambda=lambda,
                             L_ESS=L_ESS, llq=llq, env=env, dir=basename(SS.dir),
                             n=i, conv=conv),
               replist=replist,
@@ -90,9 +106,10 @@ saveBaseCaseObjects <- function(OMbase.dir) {
 }
 
 
-OM.root <- 'G:/My Drive/1_Projects/North_Atlantic_Swordfish/OMs/Grid_2020'
-OMbase.dir <-  file.path(OM.root, "Michael_March2020/NSWO_MSE_SS3_Base_v2")
-OMgrid.dir <- file.path(OM.root, "grid_2020")
+
+
+OM.root <- 'G:/My Drive/1_Projects/North_Atlantic_Swordfish/OMs/grid_2021'
+OMgrid.dir <- file.path(OM.root, "grid_Apr2021")
 OMgrid.dirs <- list.dirs(OMgrid.dir, recursive = FALSE)
 
 ord <- lapply(strsplit(OMgrid.dirs, 'iter'), '[[', 2) %>% as.numeric() %>% order()
@@ -101,5 +118,7 @@ OMgrid.dirs <- OMgrid.dirs[ord]
 
 saveGridObjects(OMgrid.dirs)
 
+
+OMbase.dir <-  file.path(OM.root, "Michael_March2020/NSWO_MSE_SS3_Base_v2")
 saveBaseCaseObjects(OMbase.dir)
 
