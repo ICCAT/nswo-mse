@@ -34,13 +34,12 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## SWOMSE Documentation 
 <div class="col2">
-[Package User Guide](userguide.html)
 
 [Trial Specifications Doc](TS/Trial_Specs.html)
 
-[CMP Development Guide (HTML)](CMP-Development-Guide.html)
+[CMP Development Guide (HTML)](cMPdevelopment/CMP-Development-Guide.html)
 
-[CMP Development Guide (PDF)](CMP-Development-Guide.pdf)
+[CMP Development Guide (PDF)](cMPdevelopment/CMP-Development-Guide.pdf)
 
 
 </div>
@@ -49,35 +48,27 @@ knitr::opts_chunk$set(echo = FALSE)
 
 **Reports**
 <div class="col2">
-[OM Summary Report (HTML)](Reports/OM_Summary/OMs_Summary.html)
-
-[OM Summary Report (PDF)](Reports/OM_Summary/OMs_Summary.pdf)
-
+OM Summary Report to be added.
 </div>
 
-**Tables**
-<div class="col2">
-```{r, results='asis'}
-csv.fls <- list.files('Reports/OM_Summary', pattern="csv")
-for (fl in csv.fls) {
-  cat('[', fl, '](', paste0("Reports/OM_Summary/", fl), ')\n\n', sep="")
-}
-```
-</div>
+
+<!-- **Tables** -->
+<!-- <div class="col2"> -->
+<!-- ```{r, results='asis'} -->
+<!-- csv.fls <- list.files('Reports/OM_Summary', pattern="csv") -->
+<!-- for (fl in csv.fls) { -->
+<!--   cat('[', fl, '](', paste0("Reports/OM_Summary/", fl), ')\n\n', sep="") -->
+<!-- } -->
+<!-- ``` -->
+<!-- </div> -->
 
 ## Index Fit Report
 <div class="col2">
-[Index Fit Report (HTML)](Reports/Indices/Index_Report.html)
+Index Fit Report to be added. 
 
-[Index Fit Report (PDF)](Reports/Indices/Index_Report.pdf)
-</div>
+<!-- [Index Fit Report (HTML)](Reports/Indices/Index_Report.html) -->
 
-## Length Compositions
-
-<div class="col2">
-[Length Compositions Plots (HTML)](LengthComps.html)
-
-
+<!-- [Index Fit Report (PDF)](Reports/Indices/Index_Report.pdf) -->
 </div>
 
 
@@ -87,12 +78,11 @@ for (fl in csv.fls) {
 <div class="col4">
 
 ```{r, include=FALSE}
-fls <- list.files('Reports/Diagnostics', pattern='.html')
+fls <- list.files('Reports/OM_Diagnostics', pattern='.html')
 
 num <- NA
 for (x in seq_along(fls)) num[x] <- strsplit(fls[x], '-')[[1]][2]
-nums <- as.numeric(num[1:(length(num)-1)])
-nums <- c(nums+1, 1)
+nums <- as.numeric(num[1:(length(num))])
 df <- data.frame(fl=fls, num=nums, stringsAsFactors = FALSE)
 df <- df %>% dplyr::arrange(num)
 
@@ -102,7 +92,7 @@ df <- df %>% dplyr::arrange(num)
 ```{r, results='asis'}
 for (i in 1:nrow(df)) {
   nm <- strsplit(df[i,1], '.html')[[1]][1]
-  fl <- paste0('Reports/Diagnostics/', df[i,1])
+  fl <- paste0('Reports/OM_Diagnostics/', df[i,1])
   cat('\n[',nm,'](',fl,')\n', sep="")
 }
 ```
