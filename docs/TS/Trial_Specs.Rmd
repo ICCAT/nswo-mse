@@ -26,6 +26,7 @@ always_allow_html: true
 
 ```{r, include=FALSE}
 library(SWOMSE)
+library(dplyr)
 knitr::opts_chunk$set(echo=FALSE)
 ```
 
@@ -81,12 +82,13 @@ The catchability coefficient (*q*) for the CPUE indices for Canada, Japan, Portu
 The effective sample size (ESS) for the length composition data was established by adjusting ESS until unity was reached between modeled ESS and the Francis suggest sample size  [See @anon.Report2017ICCAT2017 for  details].
 
 ```{r fleet-info}
+OM.root <- 'G:/My Drive/1_PROJECTS/North_Atlantic_Swordfish/OMs/grid_2021'
+
 # Year_Info <- Data_DF %>% group_by(Name) %>% filter(is.na(CPUE_Obs)==FALSE) %>%
 #   summarize(min=min(year), max=max(year), .groups = 'keep')
 # 
 # Year_Info$Period <- paste0(Year_Info$min, '-', Year_Info$max)
-
-DF <- Fleet_DF
+DF <- Fleet_DF <- SWOMSE::Fleet_DF
 DF$Code <- gsub("_", '\\\\_', DF$Code)
 DF$index <- NULL
 DF$Description <- c(
@@ -123,9 +125,45 @@ DF %>% knitr::kable(escape = F,
 
 
 ```{r data-fig, fig.cap="The time periods for the data used in the model"}
-DataSummary <- Data_DF %>% dplyr::select(year, Code, Name, Catch, CPUE_Obs,
+Data <- readRDS(file.path(OM.root, 'OM_objects/DataList.rda'))[[1]]
+
+CatchDat <- Data$catch %>%  dplyr::filter(year>0)  %>% 
+  dplyr::rename(Code=fleet) %>%
+  dplyr::select(year, Code, catch)
+
+CatchDat$Code <- Fleet_DF$Code[match(CatchDat$Code, Fleet_DF$index)]
+CatchDat <- left_join(CatchDat, Fleet_DF, by="Code")
+
+WghtDat <- Data$meanbodywt %>% dplyr::filter(Year>0) %>%
+  dplyr::rename(year=Year, index=Fleet, Mean.Weight=Value, Weight.CV=Std_in) %>%
+  dplyr::select(year, index, Mean.Weight, Weight.CV)
+WghtDat <- left_join(WghtDat, Fleet_DF, by="index")
+
+LenDat <- Data$lencomp %>% dplyr::filter(Yr>0) %>%
+  dplyr::rename(year=Yr, index=FltSvy)
+cols <- names(LenDat)[7:length(names(LenDat))] # convert to long
+LenDat <- LenDat %>% tidyr::pivot_longer(all_of(cols), 'Length.Class', values_to="Length.Comp") %>%
+  dplyr::select(year, index, Length.Class, Length.Comp, Nsamp) %>%
+  dplyr::rename(Length.Nsamp=Nsamp)
+LenDat <- left_join(LenDat, Fleet_DF, by="index")
+
+CPUEDat <- Data$CPUE %>% dplyr::filter(year>0) %>%
+  dplyr::rename(CPUE_Obs=obs, CPUE_SE_log=se_log) %>%
+  dplyr::select(year, index, CPUE_Obs, CPUE_SE_log) %>%
+  dplyr::mutate(llq=1)
+CPUEDat <- dplyr::left_join(CPUEDat, Fleet_DF, by="index")
+
+AllDat <- dplyr::full_join(CatchDat, CPUEDat, by = c("year", "Code", "Name", "index"))
+AllDat <- dplyr::full_join(AllDat, LenDat, by = c("year", "Code", "Name", "index"))
+AllDat <- dplyr::full_join(AllDat, WghtDat, by =  c("year", "Code", "Name", "index"))
+AllDat <- dplyr::select(AllDat, year, index, Code, Name, catch, CPUE_Obs,
+                        CPUE_SE_log, Length.Class, Length.Comp, Length.Nsamp,
+                        Mean.Weight, Weight.CV)
+AllDat$year2 <- as.Date(paste(AllDat$year, 1, 1, sep = "-"))
+
+DataSummary <- AllDat %>% dplyr::select(year, Code, Name, catch, CPUE_Obs,
                                          Length.Comp, Mean.Weight, year2) %>%
-  tidyr::pivot_longer(cols=c('Catch', 'CPUE_Obs', 'Length.Comp', 'Mean.Weight'),
+  tidyr::pivot_longer(cols=c('catch', 'CPUE_Obs', 'Length.Comp', 'Mean.Weight'),
                       names_to = 'Data') %>%
   dplyr::mutate(is.data=ifelse(value>0, TRUE, NA)) %>%
   na.omit()
@@ -173,23 +211,26 @@ The operating models used in the MSE were developed from the base case assessmen
 3. The models used to generate the operating models had steepness as a fixed parameter rather than estimated internally. 
 
 ## OM Uncertainty Grid
-> The OMs are currently being conditioned and this section will be updated when the conditioning is complete.
-
-A OM uncertainty grid was developed from the modified SS3 model using a full factorial design with 7 axes of uncertainty:
+A OM uncertainty grid was developed from the modified SS3 model using a full factorial design with 6 axes of uncertainty:
 
 1. Natural mortality (*h*) - three levels: 0.1, 0.2, 0.3
 2. Recruitment variability (sigmaR) - two levels: 0.2, 0.6
 3. Steepness (*h*) - three levels: 0.6, 0.75, 0.90
+4. 
+5. Directional trend in catchability (q-inc) - two levels: TRUE, FALSE
+6. Environmental covariate (env) - two levels: TRUE, FALSE
+
 4. CV for the CPUE indices (CPUE CV) - two levels: 0.3, 0.6
 5. Length composition effective sample size (ESS) - two levels: 2, 20
-6. Directional trend in catchability (q-inc) - two levels: TRUE, FALSE
-7. Environmental covariate (env) - two levels: TRUE, FALSE
+
 
 The directional increase in catchability was modeled by assuming a 1% average annual increase in catchability throughout the history of the fishery, and adjusting the CPUE indices accordingly. 
 
 The environmental covariate was included by modeling catchability as a function of the AMO (see [Data](#data)).
 
 The factorial design of the 7 axes of uncertainty, each with 2 or 3 levels, resulted in an uncertainty grid of 288 OMs.
+
+// ADD REF TO SCRS DOC 
 
 # MSE Framework
 The `SWOMSE` R package has been developed to conduct the MSE for the Atlantic swordfish fishery. All code used for the MSE is open-source and reproducible. Group members can install the package and reproduce the analysis on their own machines.
@@ -204,12 +245,12 @@ devtools::install_github("ICCAT/nswo-mse", auth_token='your_personal_access_toke
 
 Note that as this repository is private, you will need to provide a personal access token to download and install from GitHub. See [here](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) for information on creating a personal access token.
 
-## MSEtool
-The `SWOMSE` package used for the swordfish MSE uses the `MSEtool` framework. The `MSEtool` package is automatically installed when `SWOMSE` is installed, and all `MSEtool` functions are available to the user when the `SWOMSE` package is loaded.
+## openMSE
+The `SWOMSE` package used for the swordfish MSE uses the `openMSE` framework. The `openMSE` package is automatically installed when `SWOMSE` is installed, and all `openMSE` functions are available to the user when the `SWOMSE` package is loaded.
 
-`MSEtool` is an R package that has been developed for conducting fast, flexible, and transparent, MSE for a wide range of fisheries. `MSEtool` is part of the [`openMSE`](https://cran.r-project.org/package=openMSE) collection of packages. A non-technical description of `MSEtool` and its key features is available on the [`openMSE` website](https://openmse.com/).
+`openMSE` is an R package that has been developed for conducting fast, flexible, and transparent, MSE for a wide range of fisheries. `openMSE` is an umbrella package that includes the `MSEtool`, `SAMtool` and `DLMtool` packages. A non-technical description of `openMSE` and its key features is available on the [`openMSE` website](https://openmse.com/).
 
-The operating model in `MSEtool`, including assumptions and equations, is described in detail in @carruthersDataLimitedMethodsToolkit2018a.
+The operating model in `openMSE`, including assumptions and equations, is described in detail in @carruthersDataLimitedMethodsToolkit2018a.
 
 ## Key Model Assumptions
 The MSE operating model differs in several ways from the SS3 model. 
@@ -235,8 +276,7 @@ As described [above](#single-stock), differences in the structure of the MSE ope
 The MSE framework generates a report comparing the populating dynamics predicted by SS3 and those generated when the SS3 model is imported into the MSE framework. See [here](../OM_Compare/OM_1.html) for an example report for one OM from the uncertainty grid.
 
 ```{r message=FALSE, warning=FALSE, cache=TRUE}
-OM.root <- 'G:/My Drive/1_Projects/North_Atlantic_Swordfish/OMs/Grid_2020'
-OMgrid.dir <- file.path(OM.root, "grid_2020")
+OMgrid.dir <- file.path(OM.root, "grid_Apr2021")
 OMgrid.dirs <- list.dirs(OMgrid.dir, recursive = FALSE)
 
 ord <- lapply(strsplit(OMgrid.dirs, 'iter'), '[[', 2) %>% as.numeric() %>% order()
