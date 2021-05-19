@@ -1,0 +1,63 @@
+---
+title: "Operating Models Summary Report"
+author: "Adrian Hordyk <adrian@bluematterscience.com>"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  pdf_document:
+    toc: yes
+  html_document:
+    toc: yes
+    toc_float: yes
+    number_sections: yes
+subtitle: 'North Atlantic Swordfish MSE '
+always_allow_html: true
+params:
+  OM.n: 1
+---
+
+```{css, echo=FALSE}
+body .main-container {
+  max-width: 1280px !important;
+  width: 1280px !important;
+  }
+body {
+  max-width: 1280px !important;
+}
+```
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(htmltools)
+library(ggplot2)
+knitr::opts_chunk$set(echo = FALSE)
+
+fig.num <- tab.num <- 0
+fig.cap <- function() {
+  fig.num <<- fig.num +1
+  paste0('Figure ',  fig.num, '.')
+
+} 
+tab.cap <- function() {
+  tab.num <<- tab.num +1
+  paste0('Table ',  tab.num, '.')
+}
+
+```
+
+# Introduction
+
+# Methods
+
+## Checks for Convergence
+
+## Checks for parameters near bounds
+
+## 
+
+# Results
+
+# Discussion
+
+# Acknowledgements
+
+# References
