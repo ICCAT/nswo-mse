@@ -316,7 +316,7 @@ plot_SS2OM(OM, OMgrid.dirs[1], open_file = FALSE, dir="../OM_Compare", filename=
 
 ## OM Summary Report
 
-A draft SCRS report summarizing the parameters, estimated reference points, and predicted stock dynamics for the 216 OMs in the uncertainty grid is available on the North Atlantic Swordfish MSE [homepage](https://iccat.github.io/nswo-mse/).
+A draft SCRS report summarizing the parameters, estimated reference points, and predicted stock dynamics for the 216 OMs in the uncertainty grid will be presented at the next intersessional meeting (May 31 - June 4) and will be added to the North Atlantic Swordfish MSE [homepage](https://iccat.github.io/nswo-mse/).
 
 ## OM Diagnostic Reports
 
