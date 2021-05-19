@@ -1,11 +1,9 @@
 Package: SWOMSE
 Type: Package
 Title: Management strategy evaluation for North Atlantic Swordfish
-Version: 0.3.0
-Authors@R: c(
-    person("Adrian", "Hordyk", email = "adrian@bluematterscience.com", role = c("aut", "cre")),
-    person("Tom", "Carruthers", email = "tom@bluematterscience.com", role = c("aut"))
-    )
+Version: 0.4.0
+Authors@R: 
+    person("Adrian", "Hordyk", email = "adrian@bluematterscience.com", role = c("aut", "cre"))
 Maintainer: A. Hordyk <adrian@bluematterscience.com>
 Description: This package contains code for running a MSE for Atlantic Swordfish.
 License: GPL-2 
