@@ -2079,7 +2079,8 @@ border: 0;
           <li><a href="#model-structure"><span class="toc-section-number">2.2</span> Model Structure</a></li>
           <li><a href="#fixed-biological-parameters"><span class="toc-section-number">2.3</span> Fixed Biological Parameters</a></li>
           <li><a href="#selectivity"><span class="toc-section-number">2.4</span> Selectivity</a></li>
-          <li><a href="#stock-recruitment"><span class="toc-section-number">2.5</span> Stock-Recruitment</a></li>
+          <li><a href="#retention-and-discard-mortality"><span class="toc-section-number">2.5</span> Retention and Discard Mortality</a></li>
+          <li><a href="#stock-recruitment"><span class="toc-section-number">2.6</span> Stock-Recruitment</a></li>
           </ul></li>
           <li><a href="#om-conditioning"><span class="toc-section-number">3</span> OM Conditioning</a>
           <ul>
@@ -2118,7 +2119,7 @@ border: 0;
         <ul class="authors">
           <li class="divider"></li>
                                 <li><span><i class="glyphicon glyphicon-user"></i> Adrian Hordyk <a href="mailto:adrian@bluematterscience.com" class="email">adrian@bluematterscience.com</a></span></li>
-                                         <li><span><i class="glyphicon glyphicon-calendar"></i> 17 May, 2021</span></li>
+                                         <li><span><i class="glyphicon glyphicon-calendar"></i> 19 May, 2021</span></li>
                   </ul>     
       </div>
       <div class="book-body fixed">
@@ -2396,8 +2397,12 @@ Figure 2.1: The time periods for the data used in the model
 <h2><span class="header-section-number">2.4</span> Selectivity</h2>
 <p>Selectivity was modeled as a function of length. Dome-shaped selectivity was allowed for five fleets: Spain, US, Japan, Portugal, and Morocco. Asymptotic selectivity was assumed for Canada, Chinese-Tapai and ‘Other.’ The age-specific survey CPUEs were modeled with a fixed age-based selectivity.</p>
 </div>
-<div id="stock-recruitment" class="section level2" number="2.5">
-<h2><span class="header-section-number">2.5</span> Stock-Recruitment</h2>
+<div id="retention-and-discard-mortality" class="section level2" number="2.5">
+<h2><span class="header-section-number">2.5</span> Retention and Discard Mortality</h2>
+<p>Retention curves were hard-coded into the model. A minimum size regulation was set to 125 cm for the Spain, Canada, Japan and Morocco fleets <span class="citation">(Schirripa &amp; Hordyk, 2020)</span>. The US and Chinese-Taipei fleets had the minimum size limit fixed at 119 cm <span class="citation">(Schirripa &amp; Hordyk, 2020)</span>. Insufficient data exists to estimate discard mortality in the model. The Group decided, based on <span class="citation">Coelho &amp; Muñoz-Lechuga (2019)</span>, to fix discard mortality at 88%.</p>
+</div>
+<div id="stock-recruitment" class="section level2" number="2.6">
+<h2><span class="header-section-number">2.6</span> Stock-Recruitment</h2>
 <p>Expected recruitment to age-0 was calculated from the total spawning stock biomass using the Beverton-Holt stock-recruit function. The standard error for the log-normally distributed recruitment deviations (sigmaR) was fixed to 0.2. Steepness (<em>h</em>) was an estimated parameter, with an informative prior with a Beta distribution, with mean 0.8 and standard deviation (SD) of 0.06. Steepness in the base case model was estaimed at 0.88 (SD = 0.03).</p>
 </div>
 </div>
@@ -2415,22 +2420,24 @@ Figure 2.1: The time periods for the data used in the model
 </div>
 <div id="om-uncertainty-grid" class="section level2" number="3.2">
 <h2><span class="header-section-number">3.2</span> OM Uncertainty Grid</h2>
-<blockquote>
-<p>The OMs are currently being conditioned and this section will be updated when the conditioning is complete.</p>
-</blockquote>
-<p>A OM uncertainty grid was developed from the modified SS3 model using a full factorial design with 7 axes of uncertainty:</p>
+<p>A OM uncertainty grid was developed from the modified SS3 model using a full factorial design with 6 axes of uncertainty:</p>
 <ol style="list-style-type: decimal">
-<li>Natural mortality (<em>h</em>) - three levels: 0.1, 0.2, 0.3</li>
-<li>Recruitment variability (sigmaR) - two levels: 0.2, 0.6</li>
-<li>Steepness (<em>h</em>) - three levels: 0.6, 0.75, 0.90</li>
-<li>CV for the CPUE indices (CPUE CV) - two levels: 0.3, 0.6</li>
-<li>Length composition effective sample size (ESS) - two levels: 2, 20</li>
-<li>Directional trend in catchability (q-inc) - two levels: TRUE, FALSE</li>
-<li>Environmental covariate (env) - two levels: TRUE, FALSE</li>
+<li><p>Natural mortality (<em>h</em>) - three levels: 0.1, 0.2, 0.3</p></li>
+<li><p>Recruitment variability (sigmaR) - two levels: 0.2, 0.6</p></li>
+<li><p>Steepness (<em>h</em>) - three levels: 0.6, 0.75, 0.90</p></li>
+<li><p>CPUE Lambda* - three levels: 0.05, 1, 20</p></li>
+<li><p>Directional trend in catchability (q-inc) - two levels: TRUE, FALSE</p></li>
+<li><p>Environmental covariate (env) - two levels: TRUE, FALSE</p></li>
 </ol>
+<p>* Note that the previous OM uncertainty grid included two axes:</p>
+<ol style="list-style-type: decimal">
+<li><p>CV for the CPUE indices (CPUE CV) - two levels: 0.3, 0.6</p></li>
+<li><p>Length composition effective sample size (ESS) - two levels: 2, 20</p></li>
+</ol>
+<p>These have now been replaced by one new factor - CPUE Lambda - with levels assigning different relative weights to the CPUE and length composition data.</p>
 <p>The directional increase in catchability was modeled by assuming a 1% average annual increase in catchability throughout the history of the fishery, and adjusting the CPUE indices accordingly.</p>
 <p>The environmental covariate was included by modeling catchability as a function of the AMO (see <a href="#data">Data</a>).</p>
-<p>The factorial design of the 7 axes of uncertainty, each with 2 or 3 levels, resulted in an uncertainty grid of 288 OMs.</p>
+<p>The factorial design of the 6 axes of uncertainty, each with 2 or 3 levels, resulted in an uncertainty grid of 216 OMs.</p>
 </div>
 </div>
 <div id="mse-framework" class="section level1" number="4">
@@ -2456,11 +2463,11 @@ Figure 2.1: The time periods for the data used in the model
 <h3><span class="header-section-number">4.3.1</span> Single Stock</h3>
 <p>The MSE OM assumes a single stock (i.e, female and male combined) rather than the female and male populations modeled in SS3. The MSE model was constructed so that the total numbers-at-age and the depletion in the terminal year match the SS3 model.</p>
 <p>The combined weight-at-age in the MSE OMs was calculated as a weighted average of the female and male weight-at-age in the SS3 model. As the weight-at-age is used to scale the numbers-at-age to biomass, this has the effect of slightly different absolute catch and biomass levels between the two modeling frameworks. However, the relative trend in both catch and biomass is closely matched between the MSE OM and the SS3 models. Provided that the candidate management procedures use information on the relative trends in fishery data (e.g., indices of abundance and historical landings) rather than the absolute level, the disparity in absolute magnitude between the two OM frameworks is unlikely to impact the relative performance of the CMPs.</p>
-<p>See <a href="#importing-oms-into-mse-framework">Importing OMs into MSE Framework</a> for more details on the comparision between the population dynamics predicted by the SS3 model and those generated in the MSE OMs.</p>
+<p>See <a href="#importing-oms-into-mse-framework">Importing OMs into MSE Framework</a> for more details on the comparison between the population dynamics predicted by the SS3 model and those generated in the MSE OMs.</p>
 </div>
 <div id="aggregated-fleet" class="section level3" number="4.3.2">
 <h3><span class="header-section-number">4.3.2</span> Aggregated Fleet</h3>
-<p>The MSE OM combines the exploitation pattern (selectivity and fishing mortality) of the 8 fishing fleets into 1 aggregated fleet. As management recommendations (i.e., annual TAC advice) are not fleet-specific, it is not necessary to explictily model the individual fleets in the MSE.</p>
+<p>The MSE OM combines the exploitation pattern (selectivity and fishing mortality) of the 8 fishing fleets into 1 aggregated fleet. As management recommendations (i.e., annual TAC advice) are not fleet-specific, it is not necessary to explicitly model the individual fleets in the MSE.</p>
 </div>
 <div id="spatial-structure" class="section level3" number="4.3.3">
 <h3><span class="header-section-number">4.3.3</span> Spatial Structure</h3>
@@ -2470,22 +2477,19 @@ Figure 2.1: The time periods for the data used in the model
 </div>
 <div id="importing-oms-into-mse-framework" class="section level1" number="5">
 <h1><span class="header-section-number">5</span> Importing OMs into MSE Framework</h1>
-<p>The 288 OMs in the uncertainty grid, developed using the SS3 software, (see <a href="#om-conditioning">OM Conditioning</a> were imported into MSE framework using the <code>SS2OM</code> function in <code>MSEtool</code> (see <a href="https://msetool.openmse.com/reference/SS2MOM.html">here</a> for details on the function).</p>
+<p>The 216 OMs in the uncertainty grid, developed using the SS3 software, (see <a href="#om-conditioning">OM Conditioning</a> were imported into MSE framework using the <code>SS2OM</code> function in <code>MSEtool</code> (see <a href="https://msetool.openmse.com/reference/SS2MOM.html">here</a> for details on the function).</p>
 <p>As described <a href="#single-stock">above</a>, differences in the structure of the MSE operating model and the SS3 assessment model resulted in differences in the predicted population dynamics in terms of absolute magnitude, but closely matched the dynamics in relative trends in catch and spawning biomass.</p>
 <p>The MSE framework generates a report comparing the populating dynamics predicted by SS3 and those generated when the SS3 model is imported into the MSE framework. See <a href="../OM_Compare/OM_1.html">here</a> for an example report for one OM from the uncertainty grid.</p>
 </div>
 <div id="om-validation" class="section level1" number="6">
 <h1><span class="header-section-number">6</span> OM Validation</h1>
-<blockquote>
-<p>The OMs are currently being (re-)conditioned and this section will be updated when the conditioning is complete.</p>
-</blockquote>
 <div id="om-summary-report" class="section level2" number="6.1">
 <h2><span class="header-section-number">6.1</span> OM Summary Report</h2>
-<p>A report summarizing the parameters, estimated reference points, and predicted stock dynamics for the 288 OMs in the uncertainty grid is available on the North Atlantic Swordfish MSE <a href="https://iccat.github.io/nswo-mse/">homepage</a>.</p>
+<p>A draft SCRS report summarizing the parameters, estimated reference points, and predicted stock dynamics for the 216 OMs in the uncertainty grid is available on the North Atlantic Swordfish MSE <a href="https://iccat.github.io/nswo-mse/">homepage</a>.</p>
 </div>
 <div id="om-diagnostic-reports" class="section level2" number="6.2">
 <h2><span class="header-section-number">6.2</span> OM Diagnostic Reports</h2>
-<p>Individual diagnostic reports with objective function values and plots of model fits and patterns in residuals are available for each of the 288 OMs on the North Atlantic Swordfish MSE <a href="https://iccat.github.io/nswo-mse/">homepage</a>.</p>
+<p>Individual diagnostic reports with objective function values and plots of model fits and patterns in residuals are available for each of the 216 OMs on the North Atlantic Swordfish MSE <a href="https://iccat.github.io/nswo-mse/">homepage</a>.</p>
 </div>
 <div id="index-fit-report" class="section level2" number="6.3">
 <h2><span class="header-section-number">6.3</span> Index Fit Report</h2>
