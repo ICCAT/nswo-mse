@@ -31,7 +31,7 @@ tab.cap <- function() {
 }
 
 
-OM.n <- as.numeric(OM.n)
+OM.n <- as.numeric(params$OM.n)
 OM_DF <- SWOMSE::OM_DF
 dfOM <- OM_DF %>% dplyr::select(i, M, sigmaR, h, lambda, llq, env)
 dfOM$env <- as.logical(dfOM$env)
