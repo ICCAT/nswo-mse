@@ -37,7 +37,7 @@ cat("#' @name SWOData",
 nsim <- 48 # number of simulations per OM
 
 OM.root <- 'G:/My Drive/1_Projects/North_Atlantic_Swordfish/OMs/grid_2021'
-OMgrid.dir <- file.path(OM.root, "grid_Apr2021")
+OMgrid.dir <- file.path(OM.root, "grid_May2021")
 OMgrid.dirs <- list.dirs(OMgrid.dir, recursive = FALSE)
 
 ord <- lapply(strsplit(OMgrid.dirs, 'iter'), '[[', 2) %>% as.numeric() %>% order()
@@ -183,6 +183,7 @@ writeOMDF <- function(i, OMgrid.dirs, RepList) {
 
   # converge
   log_det_hessian <- replist$log_det_hessian
+  if (is.null(log_det_hessian)) log_det_hessian <- NA
   data.frame(i=i, M=M, sigmaR=sigmaR, h=h, cpue_cv=cpue_cv,lambda=lambda,
              L_ESS=L_ESS, llq=llq, env=env, dir=basename(SS.dir),
              log_det_hessian=log_det_hessian)
@@ -241,3 +242,4 @@ cat("\n#' @name Fleet_DF",
     "\n\n\n",
     sep="", append=TRUE,
     file=file.path('R/', RoxygenFile))
+

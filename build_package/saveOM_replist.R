@@ -7,7 +7,7 @@
 library(r4ss); library(dplyr); library(tidyr); library(purrr)
 
 OM.root <- 'G:/My Drive/1_Projects/North_Atlantic_Swordfish/OMs/grid_2021'
-OMgrid.dir <- file.path(OM.root, "grid_Apr2021")
+OMgrid.dir <- file.path(OM.root, "grid_May2021")
 OMgrid.dirs <- list.dirs(OMgrid.dir, recursive = FALSE)
 
 ord <- lapply(strsplit(OMgrid.dirs, 'iter'), '[[', 2) %>% as.numeric() %>% order()
@@ -76,7 +76,7 @@ for (i in seq_along(RepList)) {
   TSbio_dat$Depletion <- TSbio_dat$SSB/TSbio_dat$SB0
   TSbio_dat$SS_Depletion <- RepList[[i]]$current_depletion
 
-  derived_quants <- RepList[[OM.n]]$derived_quants
+  derived_quants <- RepList[[i]]$derived_quants
   FMSY <- derived_quants$Value[derived_quants$Label=='annF_MSY']
   Kobe <- RepList[[i]]$Kobe %>% dplyr::rename(year=Yr)
   TSbio_dat <- dplyr::full_join(TSbio_dat, Kobe,by="year")
@@ -119,6 +119,33 @@ for (i in seq_along(RepList)) {
 }
 RefPoint_DF <- do.call('rbind', tempList)
 saveRDS(RefPoint_DF, paste0(OM.root, '/OM_objects/RefPoint_DF.rda'))
+
+# --- Fleet DF ----
+DataList <- readRDS(paste0(OM.root,'/OM_objects/DataList.rda'))
+data <- DataList[[1]] # same dat for all OMs
+fleet.names <- data$fleetnames
+fleet.index <- seq_along(fleet.names)
+Fleet_DF <- data.frame(Code=fleet.names,
+                       Name=c('Spain',
+                              'US',
+                              'Canada - Early',
+                              'Canada - Late',
+                              'Japan - Early',
+                              'Japan - Mid',
+                              'Japan - Late',
+                              'Portugal',
+                              'Chinese-Taipai',
+                              'Morocco',
+                              'Other',
+                              'Age-1 Survey',
+                              'Age-2 Survey',
+                              'Age-3 Survey',
+                              'Age-4 Survey',
+                              'Age-5+ Survey'),
+                       index=fleet.index)
+Fleet_DF$Code <- factor(Fleet_DF$Code, levels=Fleet_DF$Code, ordered = TRUE)
+Fleet_DF$Name <- factor(Fleet_DF$Name, levels=Fleet_DF$Name, ordered = TRUE)
+Fleet_DF <- Fleet_DF %>% dplyr::select(index, Name, Code)
 
 # ---- Selectivity and Retention ----
 # Selectivity data

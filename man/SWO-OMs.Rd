@@ -1088,7 +1088,7 @@ OM_216
 }
 \description{
 North Atlantic Swordfish Operating Models
-
+ 
 `SWOM` is a single OM combining all SS OMs including `OM_base_case` and
 all SS OMs there were imported into the package (`OM_1`, `OM_2`, ..., etc)
 }
