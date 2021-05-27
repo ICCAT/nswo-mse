@@ -37,7 +37,7 @@ cat("#' @name SWOData",
 nsim <- 48 # number of simulations per OM
 
 OM.root <- 'G:/My Drive/1_Projects/North_Atlantic_Swordfish/OMs/grid_2021'
-OMgrid.dir <- file.path(OM.root, "grid_May2021")
+OMgrid.dir <- file.path(OM.root, "grid_May2021_shifted")
 OMgrid.dirs <- list.dirs(OMgrid.dir, recursive = FALSE)
 
 ord <- lapply(strsplit(OMgrid.dirs, 'iter'), '[[', 2) %>% as.numeric() %>% order()
@@ -120,7 +120,21 @@ cat("#' @name SWO-OMs",
     sep="", append=TRUE,
     file=file.path('R/', RoxygenFile))
 
-purrr::map(seq_along(OMgrid.dirs), importOM, OMgrid.dirs, nsim)
+
+
+prob <- NULL
+for (i in 1:length(OMgrid.dirs)) {
+# for (i in 1:2) {
+  tt <- try(importOM(i, OMgrid.dirs, nsim))
+  if (class(try)=='try-error') {
+    prob <- c(prob, i)
+  }
+}
+
+prob
+
+
+# purrr::map(seq_along(OMgrid.dirs), importOM, OMgrid.dirs, nsim)
 
 # ---- Create OM Data-Frame ----
 
@@ -133,10 +147,9 @@ writeOMDF <- function(i, OMgrid.dirs, RepList) {
     data <- r4ss::SS_readdat(file.path(SS.dir, 'data.ss_new'), version='3.24',
                              verbose = FALSE)
   } else {
-    data <- r4ss::SS_readdat(file.path(SS.dir, 'data.ss_new'), version='3.30',
+    data <- r4ss::SS_readdat(file.path(SS.dir, 'SWO.dat'), version='3.30',
                              verbose = FALSE)
   }
-
 
   # M
   txt <- strsplit(SS.dir, '-M')[[1]][2]

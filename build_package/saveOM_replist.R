@@ -7,7 +7,7 @@
 library(r4ss); library(dplyr); library(tidyr); library(purrr)
 
 OM.root <- 'G:/My Drive/1_Projects/North_Atlantic_Swordfish/OMs/grid_2021'
-OMgrid.dir <- file.path(OM.root, "grid_May2021")
+OMgrid.dir <- file.path(OM.root, "grid_May2021_shifted")
 OMgrid.dirs <- list.dirs(OMgrid.dir, recursive = FALSE)
 
 ord <- lapply(strsplit(OMgrid.dirs, 'iter'), '[[', 2) %>% as.numeric() %>% order()
@@ -35,7 +35,7 @@ DataList <- list()
 for (i in seq_along(OMgrid.dirs)) {
   message(i)
   SS.dir <- OMgrid.dirs[i]
-  DataList[[i]] <- r4ss::SS_readdat(file.path(SS.dir, 'data.ss_new'),
+  DataList[[i]] <- r4ss::SS_readdat(file.path(SS.dir, 'SWO.dat'),
                                     version='3.30',
                                     verbose = FALSE)
 }
