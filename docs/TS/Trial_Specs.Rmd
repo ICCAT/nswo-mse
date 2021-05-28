@@ -85,6 +85,7 @@ The effective sample size (ESS) for the length composition data was established 
 ```{r fleet-info}
 OM.root <- 'G:/My Drive/1_PROJECTS/North_Atlantic_Swordfish/OMs/grid_2021'
 
+OM.dir <- "grid_May2021_shifted"
 # Year_Info <- Data_DF %>% group_by(Name) %>% filter(is.na(CPUE_Obs)==FALSE) %>%
 #   summarize(min=min(year), max=max(year), .groups = 'keep')
 # 
@@ -95,8 +96,8 @@ DF$index <- NULL
 DF$Description <- c(
   'Spain longline fleet',
   'US longline observer fleet',
-  'Canada longline fleet (early)',
   'Canada longline fleet (later)',
+  'Canada longline fleet (early)',
   'Japan fleet (early)',
   'Japan fleet (middle)',
   'Japan fleet (late)',
@@ -220,6 +221,8 @@ The operating models used in the MSE were developed from the base case assessmen
 
 3.  The models used to generate the operating models had steepness as a fixed parameter rather than estimated internally.
 
+4.  The length composition data for some fleets was adjusted (see [Appendix A in SCRS/2021/090](https://iccat.github.io/nswo-mse/Reports/OM_Summary/SCRS_2021_090_draft.pdf)).
+
 ## OM Uncertainty Grid {#om-uncertainty-grid}
 
 A OM uncertainty grid was developed from the modified SS3 model using a full factorial design with 6 axes of uncertainty:
@@ -236,13 +239,13 @@ A OM uncertainty grid was developed from the modified SS3 model using a full fac
 
 6.  Environmental covariate (env) - two levels: TRUE, FALSE
 
-\* Note that the previous OM uncertainty grid included two axes:
-
-1.  CV for the CPUE indices (CPUE CV) - two levels: 0.3, 0.6
-
-2.  Length composition effective sample size (ESS) - two levels: 2, 20
-
-These have now been replaced by one new factor - CPUE Lambda - with levels assigning different relative weights to the CPUE and length composition data.
+> Note that the previous OM uncertainty grid included two axes:
+>
+> 1.  CV for the CPUE indices (CPUE CV) - two levels: 0.3, 0.6
+>
+> 2.  Length composition effective sample size (ESS) - two levels: 2, 20
+>
+> These have now been replaced by one new factor - CPUE Lambda - with levels assigning different relative weights to the CPUE and length composition data.
 
 The directional increase in catchability was modeled by assuming a 1% average annual increase in catchability throughout the history of the fishery, and adjusting the CPUE indices accordingly.
 
@@ -281,7 +284,7 @@ The MSE operating model differs in several ways from the SS3 model.
 
 The MSE OM assumes a single stock (i.e, female and male combined) rather than the female and male populations modeled in SS3. The MSE model was constructed so that the total numbers-at-age and the depletion in the terminal year match the SS3 model.
 
-The combined weight-at-age in the MSE OMs was calculated as a weighted average of the female and male weight-at-age in the SS3 model. As the weight-at-age is used to scale the numbers-at-age to biomass, this has the effect of slightly different absolute catch and biomass levels between the two modeling frameworks. However, the relative trend in both catch and biomass is closely matched between the MSE OM and the SS3 models. Provided that the candidate management procedures use information on the relative trends in fishery data (e.g., indices of abundance and historical landings) rather than the absolute level, the disparity in absolute magnitude between the two OM frameworks is unlikely to impact the relative performance of the CMPs.
+The combined weight-at-age in the MSE OMs was calculated as a weighted average of the female and male weight-at-age in the SS3 model. As the weight-at-age is used to scale the numbers-at-age to biomass, this has the effect of slightly different absolute catch and biomass levels between the two modeling frameworks. However, the relative trend in both catch and biomass is closely matched between the MSE OM and the SS3 models.
 
 See [Importing OMs into MSE Framework](#importing-oms-into-mse-framework) for more details on the comparison between the population dynamics predicted by the SS3 model and those generated in the MSE OMs.
 
@@ -301,8 +304,9 @@ As described [above](#single-stock), differences in the structure of the MSE ope
 
 The MSE framework generates a report comparing the populating dynamics predicted by SS3 and those generated when the SS3 model is imported into the MSE framework. See [here](../OM_Compare/OM_1.html) for an example report for one OM from the uncertainty grid.
 
-```{r message=FALSE, warning=FALSE, cache=TRUE}
-OMgrid.dir <- file.path(OM.root, "grid_Apr2021")
+```{r message=FALSE, warning=FALSE}
+OMgrid.dir <- file.path(OM.root, OM.dir)
+
 OMgrid.dirs <- list.dirs(OMgrid.dir, recursive = FALSE)
 
 ord <- lapply(strsplit(OMgrid.dirs, 'iter'), '[[', 2) %>% as.numeric() %>% order()
@@ -316,16 +320,21 @@ plot_SS2OM(OM, OMgrid.dirs[1], open_file = FALSE, dir="../OM_Compare", filename=
 
 ## OM Summary Report
 
-A draft SCRS report summarizing the parameters, estimated reference points, and predicted stock dynamics for the 216 OMs in the uncertainty grid will be presented at the next intersessional meeting (May 31 - June 4) and will be added to the North Atlantic Swordfish MSE [homepage](https://iccat.github.io/nswo-mse/).
+A SCRS report summarizing the parameters, estimated reference points, and predicted stock dynamics for the 216 OMs in the uncertainty grid will be presented at the next intersessional meeting (May 31 - June 4). A draft of the report is available on the North Atlantic Swordfish MSE [homepage](https://iccat.github.io/nswo-mse/).
 
 ## OM Diagnostic Reports
 
 Individual diagnostic reports with objective function values and plots of model fits and patterns in residuals are available for each of the 216 OMs on the North Atlantic Swordfish MSE [homepage](https://iccat.github.io/nswo-mse/).
 
+```{=html}
+<!--
+
 ## Index Fit Report
 
 An Index Fit report, showing the fits and patterns in residuals for the fleet and survey indices is available on the North Atlantic Swordfish MSE [homepage](https://iccat.github.io/nswo-mse/).
 
+-->
+```
 # Simulation Specifications
 
 ```{r}
