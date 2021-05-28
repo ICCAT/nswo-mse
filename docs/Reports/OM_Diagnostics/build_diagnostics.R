@@ -10,7 +10,7 @@ OM_Diagnostic_Report <- function(i, openFile=TRUE, quiet=TRUE) {
   if (openFile) utils::browseURL(output_file)
 }
 
-for (i in 1:nrow(SWOMSE::OM_DF)) {
+for (i in 40:nrow(SWOMSE::OM_DF)) {
   message(i)
   OM_Diagnostic_Report(i, FALSE)
 }
