@@ -48,7 +48,8 @@ knitr::opts_chunk$set(echo = FALSE)
 
 **Reports**
 <div class="col2">
-OM Summary Report to be added.
+[SCRS/2021/090 (draft)](Reports/OM_Summary/SCRS_2021_090_draft.pdf)
+[SCRS/2021/090 Appendix B](Reports/OM_Summary/SCRS_2021_090_Appendix_B.html)
 </div>
 
 
