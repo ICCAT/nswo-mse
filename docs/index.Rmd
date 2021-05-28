@@ -44,12 +44,27 @@ knitr::opts_chunk$set(echo = FALSE)
 
 </div>
 
-## OM Summary Report
 
-**Reports**
+
+## Reports
+
+### OM Summary Report
+
 <div class="col2">
+
 [SCRS/2021/090 (draft)](Reports/OM_Summary/SCRS_2021_090_draft.pdf)
+
 [SCRS/2021/090 Appendix B](Reports/OM_Summary/SCRS_2021_090_Appendix_B.html)
+
+</div>
+
+### Index Fit Report
+<div class="col2">
+Index Fit Report to be added. 
+
+<!-- [Index Fit Report (HTML)](Reports/Indices/Index_Report.html) -->
+
+<!-- [Index Fit Report (PDF)](Reports/Indices/Index_Report.pdf) -->
 </div>
 
 
@@ -63,17 +78,9 @@ knitr::opts_chunk$set(echo = FALSE)
 <!-- ``` -->
 <!-- </div> -->
 
-## Index Fit Report
-<div class="col2">
-Index Fit Report to be added. 
-
-<!-- [Index Fit Report (HTML)](Reports/Indices/Index_Report.html) -->
-
-<!-- [Index Fit Report (PDF)](Reports/Indices/Index_Report.pdf) -->
-</div>
 
 
-## Individual OM Diagnostic Reports
+### Individual OM Diagnostic Reports
 <details>
 <summary>Click to expand</summary>
 <div class="col4">
