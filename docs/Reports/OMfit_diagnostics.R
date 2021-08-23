@@ -54,8 +54,9 @@ cpue.plot <- function(cpue) {
   cpue$color[cpue$res<0] <- -cpue$color[cpue$res<0]
   cpue$color <- cpue$color+7
 
-  for (i in seq_along(Fleets)) {
-    dt <- filter(cpue, Name==Fleets[i])
+  for (x in seq_along(Fleets)) {
+
+    dt <- cpue %>% dplyr::filter(Name==Fleets[x])
 
     # plot observed and fitted index
     ylim <- c(dt$Exp, dt$Obs) %>% range()
@@ -66,7 +67,7 @@ cpue.plot <- function(cpue) {
     # plot deviations
     ylim <- ceiling(max(abs(dt$res)*10))/10
     ylim <- c(-ylim, ylim)
-    textdf <- dt %>% distinct(Code, sd, ac, cor, rmse, mean.runs)
+    textdf <- dt %>% distinct(Name, sd, ac, cor, rmse, mean.runs)
     textdf$color <- 1
     textdf <- textdf %>% tidyr::gather("key", "value", 2:5)
     textdf$label <- paste(textdf$key, round(textdf$value,2), sep=" = ")
