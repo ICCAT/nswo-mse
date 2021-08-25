@@ -2,7 +2,7 @@
 
 library(SWOMSE)
 packageVersion('SWOMSE') # 0.5.0
-packageVersion('MSEtool') # 3.1.9999
+packageVersion('MSEtool') # 3.2.0
 
 # Fixed TAC MPs from reviewer
 # https://bitbucket.org/lfr_code/swo_codereview/src/master/stressTests/SWO_fixedCMPs.R
@@ -71,17 +71,11 @@ plot(apply(mpOut@TAC, 1, mean), apply(Catch_mean, 1, mean), xlab="Fixed TAC",
 abline(0, 1, lty=3)
 
 
-# ---- Compare Reference Points ----
-SSdir <- 'G:/My Drive/1_PROJECTS/North_Atlantic_Swordfish/OMs/grid_2021/grid_May2021_shifted/1-M0.1_sigmaR0.2_steepness0.6_cpuelambda0.05_llq1_env-4_iter1'
-replist <- r4ss::SS_output(SSdir)
+MSE@Catch[1,5,]
+MSE@Removals[1,5,]
+MSE@TAC[1,5,]
 
-replist$derived_quants %>% filter(Label=='annF_MSY')
 
-Hist <- Simulate(OM_1)
 
-Hist@Ref$ReferencePoints$FMSY
 
-Hist@Ref$ReferencePoints$SSBMSY
-Hist@Ref$ReferencePoints$MSY
-Hist@Ref$ReferencePoints$SSBMSY_SSB0
-Hist@SampPars$Stock$Depletion
+
