@@ -135,3 +135,6 @@ AverageC <- function(x, Data, reps=100) {
 class(AverageC) <- "MP"
 
 
+
+
+
