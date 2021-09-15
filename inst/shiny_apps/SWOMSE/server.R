@@ -169,7 +169,7 @@ shinyServer(function(input, output, session) {
   makeTable <- function(names) {
 
     MSE <- LoadMSE(names)
-    tt <- summary(MSE)
+    tt <- summary(MSE, PMnames)
     tt
   }
   output$PTable1 <- DT::renderDataTable(makeTable(getOM_1()),
@@ -198,11 +198,24 @@ shinyServer(function(input, output, session) {
 
   # Trade-off plots
   makeTradeoffPlot <- function(names, PM1, PM2) {
-    MSE <- LoadMSE(names)
-    TradePlot(MSE, Lims=0, PMlist=c(PM1, PM2), legend = FALSE)
+    MSElist <- list()
+
+    for (i in 1:length(names)) {
+      MSElist[[i]] <- LoadMSE(names[[i]])
+    }
+    # MSElist <<- MSElist
+    # PMlist <<- c(PM1, PM2)
+    # TradePlot_2(MSElist, Lims=0, PMlist=PMlist, legend = TRUE)
+
+    TradePlot_2(MSElist, Lims=0, PMlist=c(PM1, PM2), legend = TRUE,
+                point.size=3, label.size=6)
   }
 
-  output$tplot1 <- renderPlot(makeTradeoffPlot(getOM_1(), input$T_PMx, input$T_PMy))
-  output$tplot2 <- renderPlot(makeTradeoffPlot(getOM_2(), input$T_PMx, input$T_PMy))
+  output$tplot1 <- renderPlot(makeTradeoffPlot(list(getOM_1(), getOM_2()),
+                                               input$T_PMx, input$T_PMy))
+
+  output$tplot2 <- NULL
 
 })
+
+

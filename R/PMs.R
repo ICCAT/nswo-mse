@@ -110,6 +110,7 @@ Stability <- function (MSEobj = NULL, Ref = 1, Yrs =NULL)  {
     AAVY <- array(apply(((((MSEobj@Catch[, 1, y1] - MSEobj@Catch[,
                                                                  1, y2])/MSEobj@Catch[, 1, y2])^2)^0.5), 1, mean))
   }
+  AAVY[AAVY>1] <- 1
   PMobj@Stat <- AAVY
   PMobj@Ref <- Ref
   PMobj@Prob <- AAVY

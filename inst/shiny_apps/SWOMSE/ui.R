@@ -64,6 +64,22 @@ shinyUI(
                                        h5('OM Set 2'),
                                        DT::dataTableOutput('PTable2'))
                        ),
+                       tabPanel(h5("Trade-off plots",style = "color:black"),
+                                column(12,
+                                       column(3,
+                                              selectInput("T_PMx", "Performance Metric (x-axis)",
+                                                          choices=PMnames, selected="Status_M")
+                                       ),
+                                       column(3,
+                                              selectInput("T_PMy", "Performance Metric (y-axis)",
+                                                          choices=PMnames, selected="Yield_M")
+                                       )
+                                ),
+                                column(9,
+                                       plotOutput('tplot1', width='600px', height='550px')
+                                       )
+
+                       ),
                        tabPanel(h5("Zeh plots",style = "color:black"),
                                 column(6,
                                        h5('OM Set 1'),
@@ -79,25 +95,8 @@ shinyUI(
                                 column(6,
                                        h5('OM Set 2'),
                                        plotOutput('wormplot2'))
-                       ),
-                       tabPanel(h5("Trade-off plots",style = "color:black"),
-                                column(12,
-                                       column(3,
-                                              selectInput("T_PMx", "Performance Metric (x-axis)",
-                                                          choices=PMnames, selected="P50")
-                                              ),
-                                       column(3,
-                                              selectInput("T_PMy", "Performance Metric (y-axis)",
-                                                          choices=PMnames, selected="LTY")
-                                              )
-                                       ),
-                                column(6,
-                                       h5('OM Set 1'),
-                                       plotOutput('tplot1')),
-                                column(6,
-                                       h5('OM Set 2'),
-                                       plotOutput('tplot2'))
                        )
+
                    )
             ),
             column(2,
