@@ -238,7 +238,7 @@
         <ul class="authors">
           <li class="divider"></li>
                                 <li><span><i class="glyphicon glyphicon-user"></i> Adrian Hordyk <a href="mailto:adrian@bluematterscience.com" class="email">adrian@bluematterscience.com</a></span></li>
-                                         <li><span><i class="glyphicon glyphicon-calendar"></i> 25 August, 2021</span></li>
+                                         <li><span><i class="glyphicon glyphicon-calendar"></i> 16 September, 2021</span></li>
                   </ul>     
       </div>
       <div class="book-body fixed">
@@ -300,7 +300,7 @@
 <p>There were 6 indices of abundance derived from catch-per-unit-effort (CPUE) data from national fleets (Table <a href="#tab:fleet-info">2.1</a> and Figure <a href="#fig:data-fig">2.1</a>). Data from the Canada longline fleet was split into two stanzas: Early (1962 - 1970) and Late (1979 - 2016) due to changes in fishing practices that were believed to have changed catchability. Similarly, data from the Japan longline fleet was split into three phases: Early (1974 - 1998), Mid (2006 - 2010), and Late (2011 - 2015) due to changes in fishing practices in these periods. Five additional survey indices were developed from the age-specific (ages estimated from length data) CPUE from the Spain longline fleet (Table <a href="#tab:fleet-info">2.1</a> and Figure <a href="#fig:data-fig">2.1</a>).</p>
 <p>Length composition data from 7 national fleets (Spain, U.S., Canada (Late), Japan (Early, Mid, Late), Portugal, Chinese-Tapai, and Morocco) and mean weight data from two fleets (U.S. and Canada) was also used (Figure <a href="#fig:data-fig">2.1</a>).</p>
 <p>The catchability coefficient (<em>q</em>) for the CPUE indices for Canada, Japan, Portugal, Morocco, and the Spain age-specific survey indices, was made a function of the Atlantic Multidecadal Oscillation (AMO) <span class="citation">(See Anon., 2017 for details)</span>.</p>
-<p>The effective sample size (ESS) for the length composition data was established by adjusting ESS until unity was reached between modeled ESS and the Francis suggest sample size <span class="citation">(See Anon., 2017 for details)</span>.</p>
+<p>The effective sample size (ESS) for the length composition data was established by adjusting ESS until unity was reached between modeled ESS and the Francis suggested sample size <span class="citation">(See Anon., 2017 for details)</span>.</p>
 <table class="table table-striped" style="margin-left: auto; margin-right: auto;">
 <caption>
 <span id="tab:fleet-info">Table 2.1: </span>Summary table of the fishing fleets included the 2017 stock assessment of North Atlantic swordfish.
@@ -518,7 +518,7 @@ Figure 2.1: The time periods for the data used in the model
 </div>
 <div id="retention-and-discard-mortality" class="section level2" number="2.5">
 <h2><span class="header-section-number">2.5</span> Retention and Discard Mortality</h2>
-<p>Retention curves were hard-coded into the model. A minimum size regulation was set to 125 cm for the Spain, Canada, Japan and Morocco fleets <span class="citation">(Schirripa &amp; Hordyk, 2020)</span>. The US and Chinese-Taipei fleets had the minimum size limit fixed at 119 cm <span class="citation">(Schirripa &amp; Hordyk, 2020)</span>. Insufficient data exists to estimate discard mortality in the model. The Group decided, based on <span class="citation">Coelho &amp; Muñoz-Lechuga (2019)</span>, to fix discard mortality at 88%.</p>
+<p>The 2017 assessment did not explicitly model the retention curves and discard mortality.</p>
 </div>
 <div id="stock-recruitment" class="section level2" number="2.6">
 <h2><span class="header-section-number">2.6</span> Stock-Recruitment</h2>
@@ -545,7 +545,7 @@ Figure 2.1: The time periods for the data used in the model
 <li><p>Natural mortality (<em>h</em>) - three levels: 0.1, 0.2, 0.3</p></li>
 <li><p>Recruitment variability (sigmaR) - two levels: 0.2, 0.6</p></li>
 <li><p>Steepness (<em>h</em>) - three levels: 0.6, 0.75, 0.90</p></li>
-<li><p>CPUE Lambda* - three levels: 0.05, 1, 20</p></li>
+<li><p>CPUE Lambda - three levels: 0.05, 1, 20</p></li>
 <li><p>Directional trend in catchability (q-inc) - two levels: TRUE, FALSE</p></li>
 <li><p>Environmental covariate (env) - two levels: TRUE, FALSE</p></li>
 </ol>
@@ -599,7 +599,7 @@ Figure 2.1: The time periods for the data used in the model
 </div>
 <div id="importing-oms-into-mse-framework" class="section level1" number="5">
 <h1><span class="header-section-number">5</span> Importing OMs into MSE Framework</h1>
-<p>The 216 OMs in the uncertainty grid, developed using the SS3 software, (see <a href="#om-conditioning">OM Conditioning</a> were imported into MSE framework using the <code>SS2OM</code> function in <code>MSEtool</code> (see <a href="https://msetool.openmse.com/reference/SS2MOM.html">here</a> for details on the function).</p>
+<p>The 216 OMs in the uncertainty grid, conditioned using SS3, were imported into MSE framework using the <code>SS2OM</code> function in <code>MSEtool</code> (see <a href="https://msetool.openmse.com/reference/SS2MOM.html">here</a> for details on the function).</p>
 <p>As described <a href="#single-stock">above</a>, differences in the structure of the MSE operating model and the SS3 assessment model resulted in differences in the predicted population dynamics in terms of absolute magnitude, but closely matched the dynamics in relative trends in catch and spawning biomass.</p>
 <p>The MSE framework generates a report comparing the populating dynamics predicted by SS3 and those generated when the SS3 model is imported into the MSE framework. See <a href="../OM_Compare/OM_1.html">here</a> for an example report for one OM from the uncertainty grid.</p>
 </div>
@@ -607,7 +607,7 @@ Figure 2.1: The time periods for the data used in the model
 <h1><span class="header-section-number">6</span> OM Validation</h1>
 <div id="om-summary-report" class="section level2" number="6.1">
 <h2><span class="header-section-number">6.1</span> OM Summary Report</h2>
-<p>A SCRS report summarizing the parameters, estimated reference points, and predicted stock dynamics for the 216 OMs in the uncertainty grid will be presented at the next intersessional meeting (May 31 - June 4). A draft of the report is available on the North Atlantic Swordfish MSE <a href="https://iccat.github.io/nswo-mse/">homepage</a>.</p>
+<p>A SCRS report summarizing the parameters, estimated reference points, and predicted stock dynamics for the 216 OMs in the uncertainty grid was presented at the 2021 intersessional meeting (May 31 - June 4 2021). A copy of the report is available on the North Atlantic Swordfish MSE <a href="https://iccat.github.io/nswo-mse/">homepage</a>.</p>
 </div>
 <div id="om-diagnostic-reports" class="section level2" number="6.2">
 <h2><span class="header-section-number">6.2</span> OM Diagnostic Reports</h2>
@@ -624,21 +624,21 @@ An Index Fit report, showing the fits and patterns in residuals for the fleet an
 <div id="simulation-specifications" class="section level1" number="7">
 <h1><span class="header-section-number">7</span> Simulation Specifications</h1>
 <p>The current simulation specifications for the MSE are:</p>
-<blockquote>
-<p>Note: these are default settings and need to be confirmed by the Group</p>
-</blockquote>
 <ol style="list-style-type: decimal">
-<li>Management interval: 1 (i.e., TAC updated every year)</li>
-<li>Number of projection years: 50</li>
+<li>Management interval: 3 (i.e., TAC updated every 3rd year)</li>
+<li>Number of projection years: 30</li>
 <li>Number of simulations per OM: 48</li>
 </ol>
 </div>
 <div id="historical-spool-up-period" class="section level1" number="8">
 <h1><span class="header-section-number">8</span> Historical Spool-Up Period</h1>
 <p>The historical spool-up period was generated by importing the output from the SS3 assessment models and running the MSE simulation framework to recreate the historical fishery dynamics. No additional uncertainty was added to the historical simulations; that is, all 48 simulations were identical (e.g., same recruitment deviations) for the historical spool-up period.</p>
+<blockquote>
+<p>Note: The OMs were conditioned with data up to 2017, and therefore the projection period for the simulations currently starts from 2018. If catch data from 2018 to 2020 (or 2021) is available, the model can use the actual catches for the first few years of the projections, rather than assume that the cMPs are implemented in 2018.</p>
+</blockquote>
 <div id="historical-data" class="section level2" number="8.1">
 <h2><span class="header-section-number">8.1</span> Historical Data</h2>
-<p>Fishery data was generated by the MSE framework at the end of the spool-up period. There were three main sources of data available to the CMPs: 1) an index of abundance, 2) catch data, 3) length composition data.</p>
+<p>Fishery data was generated by the MSE framework at the end of the spool-up period (currently 2017, see note above). There were three main sources of data available to the CMPs: 1) an index of abundance, 2) catch data, 3) length composition data.</p>
 <div id="index-of-abundance" class="section level3" number="8.1.1">
 <h3><span class="header-section-number">8.1.1</span> Index of Abundance</h3>
 <p>At the 2020 Swordfish MSE technical meeting (4 – 5 June 2020), the Group discussed the use of the combined index <span class="citation">(Ortiz et al., 2017)</span> that was used in 2017 in the development of CMPs. Although the combined index was not used in the OM conditioning, it closely tracks the predicted abundance in the OMs and could be used as a single index for use in the CMPs.</p>
@@ -696,7 +696,10 @@ Figure 8.3: The length composition data used in the MSE for the North Atlantic s
 </div>
 <div id="selectivity-1" class="section level3" number="9.1.3">
 <h3><span class="header-section-number">9.1.3</span> Selectivity</h3>
-<p>Currently, the selectivity-at-length for the projection years is fixed to the estimated selectivity pattern from the last historical year for each OM. The Working Group will discuss this assumption in more detail and decide if it wishes to run scenarios with alternative assumptions for the selectivity pattern in the projection years.</p>
+<p>Currently, the selectivity-at-length for the projection years is fixed to the estimated selectivity pattern from the last historical year for each OM. The reviewer of the SWOMSE R code highlighted this as a possible uncertainty and recommended that the Group consider testing alternative assumptions for the selectivity pattern in the projection years <span class="citation">(Landmark Fisheries Research, 2021)</span>.</p>
+<blockquote>
+<p>The Working Group will discuss this assumption in more detail and decide if it wishes to run scenarios with alternative assumptions for the selectivity pattern in the projection years.</p>
+</blockquote>
 </div>
 <div id="catchability" class="section level3" number="9.1.4">
 <h3><span class="header-section-number">9.1.4</span> Catchability</h3>
@@ -706,6 +709,10 @@ Figure 8.3: The length composition data used in the MSE for the North Atlantic s
 <div id="future-catches" class="section level2" number="9.2">
 <h2><span class="header-section-number">9.2</span> Future Catches</h2>
 <p>The total allowable catch (TAC) recommended by the CMPs was assumed to be implemented without error. That is, annual catches were equal to the TAC recommendations (provided sufficient vulnerable biomass was available).</p>
+<p>Furthermore, the current assumption of the operating models is that the TACs do not include discards; that is, the actual removals will be higher than the TACs if there is discard mortality on the sub-legal fish.</p>
+<blockquote>
+<p>Note: the Group needs to discuss the appropriate (if any) degree of implementation error for the TAC recommendations provided by the CMPs.</p>
+</blockquote>
 </div>
 <div id="generation-of-future-data" class="section level2" number="9.3">
 <h2><span class="header-section-number">9.3</span> Generation of Future Data</h2>
@@ -719,13 +726,8 @@ Figure 8.3: The length composition data used in the MSE for the North Atlantic s
 <p>The observed catches in the projection years was generated by maintaining the catch observation error from the historical period.</p>
 <p>Note that as the SS3 model used to condition the operating models assumed no catch observation error and fitted the catches perfectly, the MSE assumes no catch observation error in the projection years.</p>
 </div>
-<div id="implementation-of-the-management-advice" class="section level3" number="9.3.3">
-<h3><span class="header-section-number">9.3.3</span> Implementation of the Management Advice</h3>
-<p>The operating models assume there is no implementation error in the implementation of the prescribed management advice (i.e., TACs).</p>
-<p>Furthermore, the current assumption of the operating models is that the TACs do not include discards; that is, the actual removals will be higher than the TACs if there is discard mortality on the sub-legal fish.</p>
-</div>
-<div id="length-composition" class="section level3" number="9.3.4">
-<h3><span class="header-section-number">9.3.4</span> Length Composition</h3>
+<div id="length-composition" class="section level3" number="9.3.3">
+<h3><span class="header-section-number">9.3.3</span> Length Composition</h3>
 <p>Length composition data for the projection years was generated using the aggregated selectivity pattern and assuming the effective sample size specified in the OM.</p>
 </div>
 </div>
@@ -738,9 +740,86 @@ Figure 8.3: The length composition data used in the MSE for the North Atlantic s
 </div>
 <div id="performance-metrics" class="section level1" number="11">
 <h1><span class="header-section-number">11</span> Performance Metrics</h1>
-<p>Performance metrics have not yet been finalized. A small group was established at the November 2020 MSE technical meeting with the task of finalizing the set of performance metrics that will be used to evaluate the MSE results.</p>
-<p>A Google sheet has been created for Members to add <a href="https://docs.google.com/spreadsheets/d/1NytREnFCZ6OPrhXT5E5Wi8Y22w-ZmENY8kEZqDH_FQE/edit?usp=sharing">Proposed Performance Metrics</a>.</p>
-<p>The proposed Performance Metrics will be added here as they are developed.</p>
+<p>Based on feedback from the Commission’s Panel 4, the following performance metrics have been proposed for swordfish:</p>
+<table>
+<colgroup>
+<col width="8%" />
+<col width="32%" />
+<col width="20%" />
+<col width="9%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+<th>Statistic</th>
+<th>Time Period (Years)</th>
+<th>Minimum Acceptable Probability</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Safety - Short</td>
+<td>Maintain low probability of stock declining to unacceptably low level</td>
+<td>Prob. SB &lt; SB<sub>lim</sub></td>
+<td>1 - 10</td>
+<td>5 - 10%</td>
+<td>SB<sub>lim</sub> defined as 0.4 SB<sub>MSY</sub></td>
+</tr>
+<tr class="even">
+<td>Safety - Medium</td>
+<td>As above</td>
+<td>As above</td>
+<td>11 - 30</td>
+<td>5 - 10%</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Status - Short</td>
+<td>Maintain stock in green quadrant of the Kobe matrix</td>
+<td>Prob SB &gt; SB<sub>MSY</sub> &amp; F &lt; F<sub>MSY</sub></td>
+<td>1 - 10</td>
+<td>50 - 60%</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Status - Medium</td>
+<td>As above</td>
+<td>As above</td>
+<td>11 - 30</td>
+<td>50 - 60%</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Stability</td>
+<td>Minimize large inter-annual changes in yield</td>
+<td>Average annual variability in yield (AAVY)</td>
+<td>1 - 30</td>
+<td>Maximum AAVY of 15 - 25%</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Short-term Yield</td>
+<td>Maximize yield while meeting other objectives</td>
+<td>Average catch</td>
+<td>1 - 10</td>
+<td>-</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Long-term Yield</td>
+<td>As above</td>
+<td>As above</td>
+<td>11 - 30</td>
+<td>-</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>A Google sheet has also been created for the Group to add comments or additional <a href="https://docs.google.com/spreadsheets/d/1NytREnFCZ6OPrhXT5E5Wi8Y22w-ZmENY8kEZqDH_FQE/edit?usp=sharing">Performance Metrics</a>.</p>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
@@ -753,6 +832,9 @@ Carruthers, T. R., &amp; Hordyk, A. R. (2018). The Data-Limited Methods Toolkit 
 </div>
 <div id="ref-coelhoHookingMortalitySwordfish2019" class="csl-entry">
 Coelho, R., &amp; Muñoz-Lechuga, R. (2019). Hooking mortality of swordfish in pelagic longlines: comments on the efficiency of minimum retention sizes. <em>Reviews in Fish Biology and Fisheries</em>, <em>29</em>(2), 453–463. <a href="https://doi.org/10.1007/s11160-018-9543-0">https://doi.org/10.1007/s11160-018-9543-0</a>
+</div>
+<div id="ref-landmarkfisheriesresearchPeerReviewNorth2021" class="csl-entry">
+Landmark Fisheries Research. (2021). Peer review of the North Atlantic Swordfish Management Strategy Evaluation (MSE) code and algorithms SCRS/2021/097. <em>Collect. Vol. Sci. Pap. ICCAT,</em> <em>78</em>.
 </div>
 <div id="ref-methotStockSynthesisBiological2013" class="csl-entry">
 Methot, R. D., &amp; Wetzel, C. R. (2013). Stock synthesis: A biological and statistical framework for fish stock assessment and fishery management. <em>Fisheries Research</em>, <em>142</em>, 86–99. <a href="https://doi.org/10.1016/j.fishres.2012.10.012">https://doi.org/10.1016/j.fishres.2012.10.012</a>
