@@ -173,9 +173,30 @@ shinyServer(function(input, output, session) {
     tt
   }
   output$PTable1 <- DT::renderDataTable(makeTable(getOM_1()),
-                                        options = list(dom = 't'))
+                                        extensions = c('Responsive', 'Buttons'),
+                                        selection='none',
+                                        options = list(
+                                          paging = TRUE,
+                                          searching = TRUE,
+                                          fixedColumns = TRUE,
+                                          autoWidth = TRUE,
+                                          ordering = TRUE,
+                                          dom = 'Brtip',
+                                          buttons = c('copy', 'csv', 'excel')
+                                        ))
+
   output$PTable2 <- DT::renderDataTable(makeTable(getOM_2()),
-                                        options = list(dom = 't'))
+                                        extensions = c('Responsive', 'Buttons'),
+                                        selection='none',
+                                        options = list(
+                                          paging = TRUE,
+                                          searching = TRUE,
+                                          fixedColumns = TRUE,
+                                          autoWidth = TRUE,
+                                          ordering = TRUE,
+                                          dom = 'Brtip',
+                                          buttons = c('copy', 'csv', 'excel')
+                                        ))
 
 
   # Zeh plots
