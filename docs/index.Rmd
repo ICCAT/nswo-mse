@@ -74,6 +74,15 @@ df <- df %>% dplyr::arrange(num)
 
 ```
 
+```{r, results='asis'}
+for (i in 1:nrow(df)) {
+  nm <- strsplit(df[i,1], '.html')[[1]][1]
+  fl <- paste0('Reports/OM_Diagnostics/', df[i,1])
+  cat('\n[',nm,'](',fl,')\n', sep="")
+}
+```
+
+:::
 
 ## Related SCRS Papers
 
@@ -180,15 +189,4 @@ for (i in 1:nrow(df)) {
 
 ```
 
-
-
-```{r, results='asis'}
-for (i in 1:nrow(df)) {
-  nm <- strsplit(df[i,1], '.html')[[1]][1]
-  fl <- paste0('Reports/OM_Diagnostics/', df[i,1])
-  cat('\n[',nm,'](',fl,')\n', sep="")
-}
-```
-
-:::
 </details>
