@@ -2,11 +2,13 @@
 title: "North Atlantic Swordfish MSE"
 author: "Adrian Hordyk <adrian@bluematterscience.com>"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: html_document
+output: 
+    html_document
 ---
 
 ![](img/220px-Xiphias_gladius2.jpg)
 
+```{=html}
 <style>
   .col2 {
     columns: 2 200px;         /* number of columns and width in pixels*/
@@ -24,66 +26,43 @@ output: html_document
     -moz-columns: 4 100px;
   }
 </style>
-
+```
 ```{r setup, include=FALSE}
 library(dplyr)
+library(pdftools)
 knitr::opts_chunk$set(echo = FALSE)
 
 
 ```
 
-## SWOMSE Documentation 
-<div class="col2">
+## Introduction
 
-[Trial Specifications Doc](TS/Trial_Specs.html)
+Welcome to the North Atlantic Swordfish MSE homepage.
 
-[CMP Development Guide (HTML)](cMPdevelopment/CMP-Development-Guide.html)
+This site contains links to documents, reports, and presentations related to the management strategy evaluation (MSE) process for the North Atlantic Swordfish.
 
-[CMP Development Guide (PDF)](cMPdevelopment/CMP-Development-Guide.pdf)
-
-
-</div>
+The MSE is being conducted with the open-source [openMSE](https://openmse.com/) framework. The code for the swordfish MSE is available in the `SWOMSE` R package available in the [ICCAT GitHub repository](https://github.com/ICCAT/nswo-mse).
 
 
+## MSE Process Documentation
 
-## Reports
+1. [Trial Specifications Doc](TS/Trial_Specs.html)
+
+2. [CMP Development Guide (HTML)](cMPdevelopment/CMP-Development-Guide.html)
+
+## Operating Model Reports
 
 ### OM Summary Report
 
-<div class="col2">
-
-[SCRS/2021/099](Reports/OM_Summary/Hordyk_et_al_SCRS_2021_099.pdf)
-
-[SCRS/2021/099 Appendix B](Reports/OM_Summary/SCRS_2021_090_Appendix_B.html)
-
-</div>
-
-### Index Fit Report
-<div class="col2">
-
-[Index Fit Report](Reports/Hordyk_SCRS_2021_100.pdf)
-
-</div>
-
-
-<!-- **Tables** -->
-<!-- <div class="col2"> -->
-<!-- ```{r, results='asis'} -->
-<!-- csv.fls <- list.files('Reports/OM_Summary', pattern="csv") -->
-<!-- for (fl in csv.fls) { -->
-<!--   cat('[', fl, '](', paste0("Reports/OM_Summary/", fl), ')\n\n', sep="") -->
-<!-- } -->
-<!-- ``` -->
-<!-- </div> -->
-
-
-
 ### Individual OM Diagnostic Reports
 Individual OM diagnostic reports for the 216 Operating Models in the updated OM Uncertainty Grid:
-<details>
-<summary>Click to expand</summary>
-<div class="col4">
 
+<details>
+
+<summary>Click to expand</summary>
+
+
+::: col4
 ```{r, include=FALSE}
 fls <- list.files('Reports/OM_Diagnostics', pattern='.html')
 
@@ -96,6 +75,113 @@ df <- df %>% dplyr::arrange(num)
 ```
 
 
+## Related SCRS Papers
+
+<details>
+
+<summary>Click to expand</summary>
+
+```{r, results='asis'}
+
+get_metadata_paper <- function(pdf) {
+  page1 <- pdf_data(pdf)[[1]]
+  
+  lst.head <- which(grepl('(1|2)\\d{3})', page1$text))
+  if (!length(lst.head)) {
+    lst.head <- 1
+  }
+  lst.head <-lst.head[1]
+  if (lst.head>20) lst.head <- 1
+  page1_nohead <- page1[(lst.head+1):nrow(page1),]
+  
+  ind <- which(grepl("^[[:upper:]]+$", page1_nohead$text))
+  ind <- which(diff(ind)==1)
+  ind <- c(ind, max(ind)+1)
+  title <- paste0(page1_nohead$text[ind], collapse = ' ')
+  
+  scrs <- page1$text[1]
+  year <- strsplit(scrs, '/')[[1]][2]
+  title <- paste0(title,' (', scrs, ')')
+  data.frame(title=title, year=year)
+  
+}
+
+
+list.papers <- list.files('./SCRS_Papers/')
+list.out <- list()
+for (i in seq_along(list.papers)) {
+  fl <- list.papers[i]
+  link <- file.path('./SCRS_Papers/',fl)
+  df <- get_metadata_paper(link)
+  df$link <- link
+  list.out[[i]] <- df
+}
+df <- do.call('rbind', list.out)
+
+df <- df %>% dplyr::arrange(desc(year))
+
+for (i in 1:nrow(df)) {
+  if (i==1) {
+    cat('#### ', df$year[i], '\n', sep="")
+  } else {
+    if (df$year[i]!=df$year[i-1])
+      cat('\n#### ', df$year[i], '\n', sep="")
+  }
+  cat('\n 1. [', df$title[i], '](', df$link[i], ')', '\n', sep="")
+  
+}
+
+
+```
+
+
+## Meeting Reports
+
+<details>
+
+<summary>Click to expand</summary>
+
+```{r, results='asis'}
+
+get_title_report <- function(pdf) {
+  page1 <- pdf_data(pdf)[[1]]
+  page1_title <- page1 %>% filter(height >10) 
+  begin_ab <- min(which(grepl('\\“', page1_title$text)))
+  title <- page1_title$text[1:(begin_ab-1)]
+  paste0(title, collapse = ' ')
+}
+
+
+list.reports <- list.files('./Meeting_Reports/')
+list.out <- list()
+for (i in seq_along(list.reports)) {
+  fl <- list.reports[i]
+  link <- file.path('./Meeting_Reports/',fl)
+  title <- get_title_report(link)
+  year <- strsplit(fl, "_")[[1]][1]
+  list.out[[i]] <- data.frame(year=year,
+                              title=title,
+                              link=link)
+}
+df <- do.call('rbind', list.out)
+
+df <- df %>% dplyr::arrange(desc(year))
+
+for (i in 1:nrow(df)) {
+  if (i==1) {
+    cat('### ', df$year[i], '\n', sep="")
+  } else {
+    if (df$year[i]!=df$year[i-1])
+      cat('\n### ', df$year[i], '\n', sep="")
+  }
+  cat('\n 1. [', df$title[i], '](', df$link[i], ')', '\n', sep="")
+  
+}
+
+```
+
+
+
 ```{r, results='asis'}
 for (i in 1:nrow(df)) {
   nm <- strsplit(df[i,1], '.html')[[1]][1]
@@ -103,5 +189,6 @@ for (i in 1:nrow(df)) {
   cat('\n[',nm,'](',fl,')\n', sep="")
 }
 ```
-</details> 
-</div>
+
+:::
+</details>
