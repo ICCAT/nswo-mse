@@ -104,7 +104,9 @@ get_metadata_paper <- function(pdf) {
   page1_nohead <- page1[(lst.head+1):nrow(page1),]
   
   ind <- which(grepl("^[[:upper:]]+$", page1_nohead$text))
-  ind <- which(diff(ind)==1)
+  
+  d <- diff(ind)
+  ind <- ind[1:(min(which(d>1))-1)]
   ind <- c(ind, max(ind)+1)
   title <- paste0(page1_nohead$text[ind], collapse = ' ')
   
