@@ -50,6 +50,9 @@ The MSE is being conducted with the open-source [openMSE](https://openmse.com/) 
 
 2. [CMP Development Guide (HTML)](cMPdevelopment/CMP-Development-Guide.html)
 
+3. [SWOMSE User Manual](UserManual/User_Manual.html)
+
+
 ## Operating Model Reports
 
 ### OM Summary Report
