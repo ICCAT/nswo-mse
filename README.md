@@ -3,6 +3,8 @@
 This repository contains the code and documentation for developing the management
 strategy evaluation (MSE) for the North Atlantic Swordfish fishery.
 
+More information on the North Atlantic Swordfish MSE is available on the project's [Homepage](https://iccat.github.io/nswo-mse/). 
+
 ## SWOMSE Package
 
 The `SWOMSE` R package has been developed to conduct a management strategy 
