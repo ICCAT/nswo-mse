@@ -5,7 +5,7 @@
 \alias{Fleet_DF}
 \title{Fleet Information}
 \format{
-An object of class \code{data.frame} with 16 rows and 3 columns.
+An object of class \code{data.frame} with 19 rows and 3 columns.
 }
 \usage{
 Fleet_DF
