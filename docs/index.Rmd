@@ -67,19 +67,19 @@ Individual OM diagnostic reports for the 216 Operating Models in the updated OM 
 
 ::: col4
 ```{r, include=FALSE}
-# fls <- list.files('Reports/OM_Diagnostics', pattern='.html')
-# num <- NA
-# for (x in seq_along(fls)) num[x] <- strsplit(fls[x], '-')[[1]][2]
-# nums <- as.numeric(num[1:(length(num))])
-# df <- data.frame(fl=fls, num=nums, stringsAsFactors = FALSE)
-# df <- df %>% dplyr::arrange(num)
-# ```
-# ```{r, results='asis'}
-# for (i in 1:nrow(df)) {
-#  nm <- strsplit(df[i,1], '.html')[[1]][1]
-#  fl <- paste0('Reports/OM_Diagnostics/', df[i,1])
-#  cat('\n[',nm,'](',fl,')\n', sep="")
-# }
+fls <- list.files('Reports/OM_Diagnostics', pattern='.html')
+num <- NA
+for (x in seq_along(fls)) num[x] <- strsplit(fls[x], '-')[[1]][2]
+nums <- as.numeric(num[1:(length(num))])
+df <- data.frame(fl=fls, num=nums, stringsAsFactors = FALSE)
+df <- df %>% dplyr::arrange(num)
+```
+```{r, results='asis'}
+for (i in 1:nrow(df)) {
+ nm <- strsplit(df[i,1], '.html')[[1]][1]
+ fl <- paste0('Reports/OM_Diagnostics/', df[i,1])
+ cat('\n[',nm,'](',fl,')\n', sep="")
+}
 ```
 
 :::
