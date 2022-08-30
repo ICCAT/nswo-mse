@@ -1,0 +1,7 @@
+
+1. Add any new functions to SWOMSE package
+
+2. Document
+
+3. Re-start R session, rebuild SWOMSE package
+
