@@ -3,1093 +3,1100 @@
 \docType{data}
 \name{SWO-OMs}
 \alias{SWO-OMs}
-\alias{OM_1}
-\alias{OM_2}
-\alias{OM_3}
-\alias{OM_4}
-\alias{OM_5}
-\alias{OM_6}
-\alias{OM_7}
-\alias{OM_8}
-\alias{OM_9}
-\alias{OM_10}
-\alias{OM_11}
-\alias{OM_12}
-\alias{OM_13}
-\alias{OM_14}
-\alias{OM_15}
-\alias{OM_16}
-\alias{OM_17}
-\alias{OM_18}
-\alias{OM_19}
-\alias{OM_20}
-\alias{OM_21}
-\alias{OM_22}
-\alias{OM_23}
-\alias{OM_24}
-\alias{OM_25}
-\alias{OM_26}
-\alias{OM_27}
-\alias{OM_28}
-\alias{OM_29}
-\alias{OM_30}
-\alias{OM_31}
-\alias{OM_32}
-\alias{OM_33}
-\alias{OM_34}
-\alias{OM_35}
-\alias{OM_36}
-\alias{OM_37}
-\alias{OM_38}
-\alias{OM_39}
-\alias{OM_40}
-\alias{OM_41}
-\alias{OM_42}
-\alias{OM_43}
-\alias{OM_44}
-\alias{OM_45}
-\alias{OM_46}
-\alias{OM_47}
-\alias{OM_48}
-\alias{OM_49}
-\alias{OM_50}
-\alias{OM_51}
-\alias{OM_52}
-\alias{OM_53}
-\alias{OM_54}
-\alias{OM_55}
-\alias{OM_56}
-\alias{OM_57}
-\alias{OM_58}
-\alias{OM_59}
-\alias{OM_60}
-\alias{OM_61}
-\alias{OM_62}
-\alias{OM_63}
-\alias{OM_64}
-\alias{OM_65}
-\alias{OM_66}
-\alias{OM_67}
-\alias{OM_68}
-\alias{OM_69}
-\alias{OM_70}
-\alias{OM_71}
-\alias{OM_72}
-\alias{OM_73}
-\alias{OM_74}
-\alias{OM_75}
-\alias{OM_76}
-\alias{OM_77}
-\alias{OM_78}
-\alias{OM_79}
-\alias{OM_80}
-\alias{OM_81}
-\alias{OM_82}
-\alias{OM_83}
-\alias{OM_84}
-\alias{OM_85}
-\alias{OM_86}
-\alias{OM_87}
-\alias{OM_88}
-\alias{OM_89}
-\alias{OM_90}
-\alias{OM_91}
-\alias{OM_92}
-\alias{OM_93}
-\alias{OM_94}
-\alias{OM_95}
-\alias{OM_96}
-\alias{OM_97}
-\alias{OM_98}
-\alias{OM_99}
-\alias{OM_100}
-\alias{OM_101}
-\alias{OM_102}
-\alias{OM_103}
-\alias{OM_104}
-\alias{OM_105}
-\alias{OM_106}
-\alias{OM_107}
-\alias{OM_108}
-\alias{OM_109}
-\alias{OM_110}
-\alias{OM_111}
-\alias{OM_112}
-\alias{OM_113}
-\alias{OM_114}
-\alias{OM_115}
-\alias{OM_116}
-\alias{OM_117}
-\alias{OM_118}
-\alias{OM_119}
-\alias{OM_120}
-\alias{OM_121}
-\alias{OM_122}
-\alias{OM_123}
-\alias{OM_124}
-\alias{OM_125}
-\alias{OM_126}
-\alias{OM_127}
-\alias{OM_128}
-\alias{OM_129}
-\alias{OM_130}
-\alias{OM_131}
-\alias{OM_132}
-\alias{OM_133}
-\alias{OM_134}
-\alias{OM_135}
-\alias{OM_136}
-\alias{OM_137}
-\alias{OM_138}
-\alias{OM_139}
-\alias{OM_140}
-\alias{OM_141}
-\alias{OM_142}
-\alias{OM_143}
-\alias{OM_144}
-\alias{OM_145}
-\alias{OM_146}
-\alias{OM_147}
-\alias{OM_148}
-\alias{OM_149}
-\alias{OM_150}
-\alias{OM_151}
-\alias{OM_152}
-\alias{OM_153}
-\alias{OM_154}
-\alias{OM_155}
-\alias{OM_156}
-\alias{OM_157}
-\alias{OM_158}
-\alias{OM_159}
-\alias{OM_160}
-\alias{OM_161}
-\alias{OM_162}
-\alias{OM_163}
-\alias{OM_164}
-\alias{OM_165}
-\alias{OM_166}
-\alias{OM_167}
-\alias{OM_168}
-\alias{OM_169}
-\alias{OM_170}
-\alias{OM_171}
-\alias{OM_172}
-\alias{OM_173}
-\alias{OM_174}
-\alias{OM_175}
-\alias{OM_176}
-\alias{OM_177}
-\alias{OM_178}
-\alias{OM_179}
-\alias{OM_180}
-\alias{OM_181}
-\alias{OM_182}
-\alias{OM_183}
-\alias{OM_184}
-\alias{OM_185}
-\alias{OM_186}
-\alias{OM_187}
-\alias{OM_188}
-\alias{OM_189}
-\alias{OM_190}
-\alias{OM_191}
-\alias{OM_192}
-\alias{OM_193}
-\alias{OM_194}
-\alias{OM_195}
-\alias{OM_196}
-\alias{OM_197}
-\alias{OM_198}
-\alias{OM_199}
-\alias{OM_200}
-\alias{OM_201}
-\alias{OM_202}
-\alias{OM_203}
-\alias{OM_204}
-\alias{OM_205}
-\alias{OM_206}
-\alias{OM_207}
-\alias{OM_208}
-\alias{OM_209}
-\alias{OM_210}
-\alias{OM_211}
-\alias{OM_212}
-\alias{OM_213}
-\alias{OM_214}
-\alias{OM_215}
-\alias{OM_216}
+\alias{MOM_0}
+\alias{MOM_1}
+\alias{MOM_2}
+\alias{MOM_3}
+\alias{MOM_4}
+\alias{MOM_5}
+\alias{MOM_6}
+\alias{MOM_7}
+\alias{MOM_8}
+\alias{MOM_9}
+\alias{MOM_10}
+\alias{MOM_11}
+\alias{MOM_12}
+\alias{MOM_13}
+\alias{MOM_14}
+\alias{MOM_15}
+\alias{MOM_16}
+\alias{MOM_17}
+\alias{MOM_18}
+\alias{MOM_19}
+\alias{MOM_20}
+\alias{MOM_21}
+\alias{MOM_22}
+\alias{MOM_23}
+\alias{MOM_24}
+\alias{MOM_25}
+\alias{MOM_26}
+\alias{MOM_27}
+\alias{MOM_28}
+\alias{MOM_29}
+\alias{MOM_30}
+\alias{MOM_31}
+\alias{MOM_32}
+\alias{MOM_33}
+\alias{MOM_34}
+\alias{MOM_35}
+\alias{MOM_36}
+\alias{MOM_37}
+\alias{MOM_38}
+\alias{MOM_39}
+\alias{MOM_40}
+\alias{MOM_41}
+\alias{MOM_42}
+\alias{MOM_43}
+\alias{MOM_44}
+\alias{MOM_45}
+\alias{MOM_46}
+\alias{MOM_47}
+\alias{MOM_48}
+\alias{MOM_49}
+\alias{MOM_50}
+\alias{MOM_51}
+\alias{MOM_52}
+\alias{MOM_53}
+\alias{MOM_54}
+\alias{MOM_55}
+\alias{MOM_56}
+\alias{MOM_57}
+\alias{MOM_58}
+\alias{MOM_59}
+\alias{MOM_60}
+\alias{MOM_61}
+\alias{MOM_62}
+\alias{MOM_63}
+\alias{MOM_64}
+\alias{MOM_65}
+\alias{MOM_66}
+\alias{MOM_67}
+\alias{MOM_68}
+\alias{MOM_69}
+\alias{MOM_70}
+\alias{MOM_71}
+\alias{MOM_72}
+\alias{MOM_73}
+\alias{MOM_74}
+\alias{MOM_75}
+\alias{MOM_76}
+\alias{MOM_77}
+\alias{MOM_78}
+\alias{MOM_79}
+\alias{MOM_80}
+\alias{MOM_81}
+\alias{MOM_82}
+\alias{MOM_83}
+\alias{MOM_84}
+\alias{MOM_85}
+\alias{MOM_86}
+\alias{MOM_87}
+\alias{MOM_88}
+\alias{MOM_89}
+\alias{MOM_90}
+\alias{MOM_91}
+\alias{MOM_92}
+\alias{MOM_93}
+\alias{MOM_94}
+\alias{MOM_95}
+\alias{MOM_96}
+\alias{MOM_97}
+\alias{MOM_98}
+\alias{MOM_99}
+\alias{MOM_100}
+\alias{MOM_101}
+\alias{MOM_102}
+\alias{MOM_103}
+\alias{MOM_104}
+\alias{MOM_105}
+\alias{MOM_106}
+\alias{MOM_107}
+\alias{MOM_108}
+\alias{MOM_109}
+\alias{MOM_110}
+\alias{MOM_111}
+\alias{MOM_112}
+\alias{MOM_113}
+\alias{MOM_114}
+\alias{MOM_115}
+\alias{MOM_116}
+\alias{MOM_117}
+\alias{MOM_118}
+\alias{MOM_119}
+\alias{MOM_120}
+\alias{MOM_121}
+\alias{MOM_122}
+\alias{MOM_123}
+\alias{MOM_124}
+\alias{MOM_125}
+\alias{MOM_126}
+\alias{MOM_127}
+\alias{MOM_128}
+\alias{MOM_129}
+\alias{MOM_130}
+\alias{MOM_131}
+\alias{MOM_132}
+\alias{MOM_133}
+\alias{MOM_134}
+\alias{MOM_135}
+\alias{MOM_136}
+\alias{MOM_137}
+\alias{MOM_138}
+\alias{MOM_139}
+\alias{MOM_140}
+\alias{MOM_141}
+\alias{MOM_142}
+\alias{MOM_143}
+\alias{MOM_144}
+\alias{MOM_145}
+\alias{MOM_146}
+\alias{MOM_147}
+\alias{MOM_148}
+\alias{MOM_149}
+\alias{MOM_150}
+\alias{MOM_151}
+\alias{MOM_152}
+\alias{MOM_153}
+\alias{MOM_154}
+\alias{MOM_155}
+\alias{MOM_156}
+\alias{MOM_157}
+\alias{MOM_158}
+\alias{MOM_159}
+\alias{MOM_160}
+\alias{MOM_161}
+\alias{MOM_162}
+\alias{MOM_163}
+\alias{MOM_164}
+\alias{MOM_165}
+\alias{MOM_166}
+\alias{MOM_167}
+\alias{MOM_168}
+\alias{MOM_169}
+\alias{MOM_170}
+\alias{MOM_171}
+\alias{MOM_172}
+\alias{MOM_173}
+\alias{MOM_174}
+\alias{MOM_175}
+\alias{MOM_176}
+\alias{MOM_177}
+\alias{MOM_178}
+\alias{MOM_179}
+\alias{MOM_180}
+\alias{MOM_181}
+\alias{MOM_182}
+\alias{MOM_183}
+\alias{MOM_184}
+\alias{MOM_185}
+\alias{MOM_186}
+\alias{MOM_187}
+\alias{MOM_188}
+\alias{MOM_189}
+\alias{MOM_190}
+\alias{MOM_191}
+\alias{MOM_192}
+\alias{MOM_193}
+\alias{MOM_194}
+\alias{MOM_195}
+\alias{MOM_196}
+\alias{MOM_197}
+\alias{MOM_198}
+\alias{MOM_199}
+\alias{MOM_200}
+\alias{MOM_201}
+\alias{MOM_202}
+\alias{MOM_203}
+\alias{MOM_204}
+\alias{MOM_205}
+\alias{MOM_206}
+\alias{MOM_207}
+\alias{MOM_208}
+\alias{MOM_209}
+\alias{MOM_210}
+\alias{MOM_211}
+\alias{MOM_212}
+\alias{MOM_213}
+\alias{MOM_214}
+\alias{MOM_215}
+\alias{MOM_216}
 \title{Operating models}
 \format{
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
 
-An object of class \code{OM} of length 1.
+An object of class \code{MOM} of length 1.
+
+An object of class \code{MOM} of length 1.
 }
 \usage{
-OM_1
+MOM_0
 
-OM_2
+MOM_1
 
-OM_3
+MOM_2
 
-OM_4
+MOM_3
 
-OM_5
+MOM_4
 
-OM_6
+MOM_5
 
-OM_7
+MOM_6
 
-OM_8
+MOM_7
 
-OM_9
+MOM_8
 
-OM_10
+MOM_9
 
-OM_11
+MOM_10
 
-OM_12
+MOM_11
 
-OM_13
+MOM_12
 
-OM_14
+MOM_13
 
-OM_15
+MOM_14
 
-OM_16
+MOM_15
 
-OM_17
+MOM_16
 
-OM_18
+MOM_17
 
-OM_19
+MOM_18
 
-OM_20
+MOM_19
 
-OM_21
+MOM_20
 
-OM_22
+MOM_21
 
-OM_23
+MOM_22
 
-OM_24
+MOM_23
 
-OM_25
+MOM_24
 
-OM_26
+MOM_25
 
-OM_27
+MOM_26
 
-OM_28
+MOM_27
 
-OM_29
+MOM_28
 
-OM_30
+MOM_29
 
-OM_31
+MOM_30
 
-OM_32
+MOM_31
 
-OM_33
+MOM_32
 
-OM_34
+MOM_33
 
-OM_35
+MOM_34
 
-OM_36
+MOM_35
 
-OM_37
+MOM_36
 
-OM_38
+MOM_37
 
-OM_39
+MOM_38
 
-OM_40
+MOM_39
 
-OM_41
+MOM_40
 
-OM_42
+MOM_41
 
-OM_43
+MOM_42
 
-OM_44
+MOM_43
 
-OM_45
+MOM_44
 
-OM_46
+MOM_45
 
-OM_47
+MOM_46
 
-OM_48
+MOM_47
 
-OM_49
+MOM_48
 
-OM_50
+MOM_49
 
-OM_51
+MOM_50
 
-OM_52
+MOM_51
 
-OM_53
+MOM_52
 
-OM_54
+MOM_53
 
-OM_55
+MOM_54
 
-OM_56
+MOM_55
 
-OM_57
+MOM_56
 
-OM_58
+MOM_57
 
-OM_59
+MOM_58
 
-OM_60
+MOM_59
 
-OM_61
+MOM_60
 
-OM_62
+MOM_61
 
-OM_63
+MOM_62
 
-OM_64
+MOM_63
 
-OM_65
+MOM_64
 
-OM_66
+MOM_65
 
-OM_67
+MOM_66
 
-OM_68
+MOM_67
 
-OM_69
+MOM_68
 
-OM_70
+MOM_69
 
-OM_71
+MOM_70
 
-OM_72
+MOM_71
 
-OM_73
+MOM_72
 
-OM_74
+MOM_73
 
-OM_75
+MOM_74
 
-OM_76
+MOM_75
 
-OM_77
+MOM_76
 
-OM_78
+MOM_77
 
-OM_79
+MOM_78
 
-OM_80
+MOM_79
 
-OM_81
+MOM_80
 
-OM_82
+MOM_81
 
-OM_83
+MOM_82
 
-OM_84
+MOM_83
 
-OM_85
+MOM_84
 
-OM_86
+MOM_85
 
-OM_87
+MOM_86
 
-OM_88
+MOM_87
 
-OM_89
+MOM_88
 
-OM_90
+MOM_89
 
-OM_91
+MOM_90
 
-OM_92
+MOM_91
 
-OM_93
+MOM_92
 
-OM_94
+MOM_93
 
-OM_95
+MOM_94
 
-OM_96
+MOM_95
 
-OM_97
+MOM_96
 
-OM_98
+MOM_97
 
-OM_99
+MOM_98
 
-OM_100
+MOM_99
 
-OM_101
+MOM_100
 
-OM_102
+MOM_101
 
-OM_103
+MOM_102
 
-OM_104
+MOM_103
 
-OM_105
+MOM_104
 
-OM_106
+MOM_105
 
-OM_107
+MOM_106
 
-OM_108
+MOM_107
 
-OM_109
+MOM_108
 
-OM_110
+MOM_109
 
-OM_111
+MOM_110
 
-OM_112
+MOM_111
 
-OM_113
+MOM_112
 
-OM_114
+MOM_113
 
-OM_115
+MOM_114
 
-OM_116
+MOM_115
 
-OM_117
+MOM_116
 
-OM_118
+MOM_117
 
-OM_119
+MOM_118
 
-OM_120
+MOM_119
 
-OM_121
+MOM_120
 
-OM_122
+MOM_121
 
-OM_123
+MOM_122
 
-OM_124
+MOM_123
 
-OM_125
+MOM_124
 
-OM_126
+MOM_125
 
-OM_127
+MOM_126
 
-OM_128
+MOM_127
 
-OM_129
+MOM_128
 
-OM_130
+MOM_129
 
-OM_131
+MOM_130
 
-OM_132
+MOM_131
 
-OM_133
+MOM_132
 
-OM_134
+MOM_133
 
-OM_135
+MOM_134
 
-OM_136
+MOM_135
 
-OM_137
+MOM_136
 
-OM_138
+MOM_137
 
-OM_139
+MOM_138
 
-OM_140
+MOM_139
 
-OM_141
+MOM_140
 
-OM_142
+MOM_141
 
-OM_143
+MOM_142
 
-OM_144
+MOM_143
 
-OM_145
+MOM_144
 
-OM_146
+MOM_145
 
-OM_147
+MOM_146
 
-OM_148
+MOM_147
 
-OM_149
+MOM_148
 
-OM_150
+MOM_149
 
-OM_151
+MOM_150
 
-OM_152
+MOM_151
 
-OM_153
+MOM_152
 
-OM_154
+MOM_153
 
-OM_155
+MOM_154
 
-OM_156
+MOM_155
 
-OM_157
+MOM_156
 
-OM_158
+MOM_157
 
-OM_159
+MOM_158
 
-OM_160
+MOM_159
 
-OM_161
+MOM_160
 
-OM_162
+MOM_161
 
-OM_163
+MOM_162
 
-OM_164
+MOM_163
 
-OM_165
+MOM_164
 
-OM_166
+MOM_165
 
-OM_167
+MOM_166
 
-OM_168
+MOM_167
 
-OM_169
+MOM_168
 
-OM_170
+MOM_169
 
-OM_171
+MOM_170
 
-OM_172
+MOM_171
 
-OM_173
+MOM_172
 
-OM_174
+MOM_173
 
-OM_175
+MOM_174
 
-OM_176
+MOM_175
 
-OM_177
+MOM_176
 
-OM_178
+MOM_177
 
-OM_179
+MOM_178
 
-OM_180
+MOM_179
 
-OM_181
+MOM_180
 
-OM_182
+MOM_181
 
-OM_183
+MOM_182
 
-OM_184
+MOM_183
 
-OM_185
+MOM_184
 
-OM_186
+MOM_185
 
-OM_187
+MOM_186
 
-OM_188
+MOM_187
 
-OM_189
+MOM_188
 
-OM_190
+MOM_189
 
-OM_191
+MOM_190
 
-OM_192
+MOM_191
 
-OM_193
+MOM_192
 
-OM_194
+MOM_193
 
-OM_195
+MOM_194
 
-OM_196
+MOM_195
 
-OM_197
+MOM_196
 
-OM_198
+MOM_197
 
-OM_199
+MOM_198
 
-OM_200
+MOM_199
 
-OM_201
+MOM_200
 
-OM_202
+MOM_201
 
-OM_203
+MOM_202
 
-OM_204
+MOM_203
 
-OM_205
+MOM_204
 
-OM_206
+MOM_205
 
-OM_207
+MOM_206
 
-OM_208
+MOM_207
 
-OM_209
+MOM_208
 
-OM_210
+MOM_209
 
-OM_211
+MOM_210
 
-OM_212
+MOM_211
 
-OM_213
+MOM_212
 
-OM_214
+MOM_213
 
-OM_215
+MOM_214
 
-OM_216
+MOM_215
+
+MOM_216
 }
 \description{
 North Atlantic Swordfish Operating Models
  
-`SWOM` is a single OM combining all SS OMs including `OM_base_case` and
-all SS OMs there were imported into the package (`OM_1`, `OM_2`, ..., etc)
+`MOM_1` is the base case assessment. The rest of the OMs are from the 
+OM uncertainty grid.
+
+All OMs are class `MOM` and contain 2 stocks (female and male) and 1 aggregated fleet
 }
 \keyword{datasets}
