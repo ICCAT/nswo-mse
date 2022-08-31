@@ -11,10 +11,7 @@ OM_Diagnostic_Report <- function(i, openFile=TRUE, quiet=TRUE) {
   if (openFile) utils::browseURL(file.path(diag.dir,output_file))
 }
 
-OMs <- OM_DF
-OMs <- OMs[!grepl('base_case', OMs$dir),] # don't build diagnostic report for base case
-
-for (om.num in OMs$OM.num) {
+for (om.num in OM_DF$OM.num) {
   message(om.num)
   OM_Diagnostic_Report(om.num, FALSE)
 }
