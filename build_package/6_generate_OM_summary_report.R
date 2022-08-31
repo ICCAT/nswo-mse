@@ -305,23 +305,45 @@ plot_relSB_TS <- function(DF, cols, factor, fact_label) {
 p1 <- plot_relSB_TS(TSBio_DF %>% filter(cpuelambda==1),
               cols[2], 'llq', fact_label[3])
 
-# Down-weight CAL
-p2 <- plot_relSB_TS(TSBio_DF %>% filter(cpuelambda%in% c(0.05,1)),
-              cols[1:2], 'llq', fact_label[3])
-
-# Down-weight Indices
-p3 <- plot_relSB_TS(TSBio_DF,
-              cols, 'llq', fact_label[3])
-
-
 ggsave(file.path(img_dir, '1_TS_SB_SBMSY_defaultweighting.png'),
        p1, width=9, height=6)
 
-ggsave(file.path(img_dir, '2_TS_SB_SBMSY_default_up.png'),
+# Down-weight CAL
+p2 <- plot_relSB_TS(TSBio_DF %>% filter(cpuelambda== 0.05),
+              cols[1], 'llq', fact_label[3])
+ggsave(file.path(img_dir, '2_TS_SB_SBMSY_up.png'),
        p2, width=9, height=6)
 
-ggsave(file.path(img_dir, '3_TS_SB_SBMSY_default_up_down.png'),
+# Default and Down-weight CAL
+p2a <- plot_relSB_TS(TSBio_DF %>% filter(cpuelambda!= 20),
+                    cols[1:2], 'llq', fact_label[3])
+ggsave(file.path(img_dir, '2_TS_SB_SBMSY_default_up.png'),
+       p2a, width=9, height=6)
+
+# Down-weight Indices
+p3 <- plot_relSB_TS(TSBio_DF %>% filter(cpuelambda== 20),
+              cols[3], 'llq', fact_label[3])
+ggsave(file.path(img_dir, '3_TS_SB_SBMSY_down.png'),
        p3, width=9, height=6)
+
+# All
+p4 <- plot_relSB_TS(TSBio_DF,
+                    cols, 'llq', fact_label[3])
+ggsave(file.path(img_dir, '4_TS_SB_SBMSY_all.png'),
+       p4, width=9, height=6)
+
+
+# Compile RMD ----
+
+input <- file.path(obj_dir, 'OM_Summary_Report.Rmd')
+output_file <- 'OM_Summary_Report.html'
+rmarkdown::render(input,
+                  output_format = 'html_document', output_file=output_file,
+                  output_dir=obj_dir, quiet=TRUE)
+utils::browseURL(file.path(obj_dir,output_file))
+
+
+
 
 
 
