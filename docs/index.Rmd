@@ -6,7 +6,7 @@ output:
     html_document
 ---
 
-![](img/220px-Xiphias_gladius2.jpg)
+![](../img/220px-Xiphias_gladius2.jpg)
 
 ```{=html}
 <style>
@@ -30,6 +30,8 @@ output:
 ```{r setup, include=FALSE}
 library(dplyr)
 library(pdftools)
+library(SWOMSE)
+library(DT)
 knitr::opts_chunk$set(echo = FALSE)
 
 
@@ -48,47 +50,84 @@ The MSE is being conducted with the open-source [openMSE](https://openmse.com/) 
 
 1. [Trial Specifications Doc](TS/Trial_Specs.html)
 
-2. [CMP Development Guide (HTML)](cMPdevelopment/CMP-Development-Guide.html)
+2. [CMP Development Guide](cMPdevelopment/CMP-Development-Guide.html)
 
 3. [SWOMSE User Manual](UserManual/User_Manual.html)
 
 
-## Operating Model Reports
+## Operating Models
+
+The 2022 stock assessment was used as a base case model for developing the OM grid for the MSE.
+
+An OM uncertainty grid was developed from the base case model using a full factorial design with 6 axes of uncertainty:
+
+1.  Natural mortality (*M*) - three levels: 0.1, 0.2, 0.3
+
+2.  Recruitment variability (sigmaR) - two levels: 0.2, 0.6
+
+3.  Steepness (*h*) - three levels: 0.6, 0.75, 0.90
+
+4.  Relative weight of the indices to the CAL data (cpuelambda) - three levels: 0.05, 1, 20
+
+5.  Directional trend in catchability (q-inc) - two levels: TRUE, FALSE
+
+6.  Environmental covariate (env) - two levels: TRUE, FALSE
 
 ### OM Summary Report
+A Summary Report for the 216 models in the uncertainty grid is available [here](/Reports/OM_Summary/2022/OM_Summary_Report.html).
 
 ### Individual OM Diagnostic Reports
-Individual OM diagnostic reports for the 216 Operating Models in the updated OM Uncertainty Grid:
 
-<details>
+The searchable table below displays the operating models in the `SWOMSE` package. The operating models can be accessed by the OM Object name, e.g., `SWOMSE::MOM_000` is the 2022 Base Case Stock Assessment.
 
-<summary>Click to expand</summary>
+Individual OM diagnostic reports can be accessed by clicking the links in the table below. 
 
+```{r}
+DF <- SWOMSE::OM_DF
+DF$OM.name <- paste0('MOM_',DF$OM.num)
+DF <- DF %>% select(OM.name, M, sigmaR, steepness, cpuelambda, llq, env)
 
-::: col4
-```{r, include=FALSE}
+DF$env <- as.logical(DF$env)
+DF$Comment <- ''
+DF$Comment[1] <- '2022 Assessment'
+DF <- DF %>% mutate(across(1:6, as.factor))
+
+# create links to OM diagnostic reports
 fls <- list.files('Reports/OM_Diagnostics', pattern='.html')
 num <- NA
 for (x in seq_along(fls)) num[x] <- strsplit(fls[x], '-')[[1]][2]
 nums <- as.numeric(num[1:(length(num))])
 df <- data.frame(fl=fls, num=nums, stringsAsFactors = FALSE)
 df <- df %>% dplyr::arrange(num)
-```
-```{r, results='asis'}
-for (i in 1:nrow(df)) {
- nm <- strsplit(df[i,1], '.html')[[1]][1]
- fl <- paste0('Reports/OM_Diagnostics/', df[i,1])
- cat('\n[',nm,'](',fl,')\n', sep="")
-}
+nums <- as.character(df$num)
+nums[nchar(nums)==1] <- paste0('00', nums[nchar(nums)==1])
+nums[nchar(nums)==2] <- paste0('0', nums[nchar(nums)==2])
+df$OM.num <- nums
+
+OM.name <- DF$OM.name %>% as.character()
+OM.link <- paste0('<a href=', file.path('Reports/OM_Diagnostics', fls), '> ', OM.name , ' </a>')
+DF$OM.name <- OM.link
+
+DT::datatable(DF, escape=1,
+              colnames=c('OM Object',
+                         'M',
+                         'sigmaR',
+                         'Steepness (h)',
+                         'Relative CPUE Weighting',
+                         'Assumed historical increase in catchability',
+                         'Include AMO Covariate',
+                         'Comment'),
+              filter = 'top',
+              options = list(
+                pageLength = 10, 
+                autoWidth = TRUE,
+                sDom  = '<"top">lrt<"bottom">ip'))
+
 ```
 
-:::
 
 ## Related SCRS Papers
 
-<details>
-
-<summary>Click to expand</summary>
 
 ```{r, results='asis'}
 
@@ -142,15 +181,11 @@ for (i in 1:nrow(df)) {
   
 }
 
-
 ```
 
 
 ## Meeting Reports
 
-<details>
-
-<summary>Click to expand</summary>
 
 ```{r, results='asis'}
 
@@ -191,4 +226,6 @@ for (i in 1:nrow(df)) {
 
 ```
 
-</details>
+
+<br>
+<br>
