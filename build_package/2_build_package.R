@@ -67,8 +67,12 @@ get_OM_details <- function(dir) {
 
   if (grepl('base_case', dir)) {
 
-    df <- data.frame(M=NA, sigmaR=NA, steepness=NA, cpuelambda=NA,
-                     llq=NA, env=NA)
+    df <- data.frame(M=0.2,
+                     sigmaR=0.2,
+                     steepness=0.88,
+                     cpuelambda=1,
+                     llq=1,
+                     env=7)
   } else {
     text <- text[-1]
     text[6] <- gsub('-5', 0, text[6])
@@ -86,6 +90,8 @@ get_OM_details <- function(dir) {
 }
 
 OM_DF <- lapply(OMgrid.dirs, get_OM_details) %>% do.call('rbind',.)
+OM_DF$env[OM_DF$env=='7'] <- '1'
+OM_DF <- OM_DF %>% mutate_at(1:6, as.numeric)
 
 usethis::use_data(OM_DF, overwrite = TRUE)
 
@@ -198,7 +204,11 @@ importOM <- function(i, OMgrid.dirs, nsim, OM_DF, SWOData) {
   # map real data across stocks - data is not sex-specific
   MOM@cpars[[1]][[1]]$Real.Data.Map <- matrix(1, nrow=n.fleet, ncol=n.stock)
 
-  name <- paste0('MOM_', i-1) # base case is 0
+  OM.num <- i-1  # base case is 0
+  OM.num <- as.character(OM.num)
+  if (nchar(OM.num)==1) OM.num <- paste0('00',OM.num)
+  if (nchar(OM.num)==2) OM.num <- paste0('0',OM.num)
+  name <- paste0('MOM_', OM.num)
   assign(name, MOM)
 
   do.call("use_data", list(as.name(name), overwrite = TRUE))
