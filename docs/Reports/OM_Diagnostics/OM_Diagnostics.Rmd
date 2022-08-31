@@ -69,42 +69,57 @@ grid_summary_DF <- as.data.frame(grid_factors_levels)
 grid_summary_DF[is.na(grid_summary_DF)] <- ''
 ```
 
-# Operating Model Scenario
-`r tab.cap()` The uncertainty grid is a full factorial design with the following `r n_factors` factors, resulting in `r nrow(OM_DF)-1` OMs. The parameters used to condition this OM are indicated with bold text in blue boxes.
+```{r, results='asis'}
 
-```{r, echo=FALSE, results="asis"}
+if (om.num != '000') {
+  cat('\n# Operating Model Scenario\n')
+  cap.num <- tab.cap()
+  cat('\n', cap.num, 'The uncertainty grid is a full factorial design with the following ', n_factors, ' factors, resulting in', nrow(OM_DF)-1, 'OMs. The parameters used to condition this OM are indicated with bold text in blue boxes.')
+  
+  om_df <- SWOMSE::OM_DF %>% dplyr::filter(OM.num==om.num)
+  om_df$env <- om_df$env %>% as.numeric() %>% as.logical()
+  
+  OM_name <- om_df$dir
+  om_df$dir <- NULL
+  om_df$OM.num <- NULL
+  
+  
+  back.col <- 'lightblue'
+  grid_summary_DF <- grid_summary_DF %>% dplyr::mutate(
+    M = kableExtra::cell_spec(M, 'html', bold=ifelse(grid_summary_DF$M==om_df$M, TRUE,   FALSE),
+                              background = ifelse(grid_summary_DF$M==om_df$M,   back.col, 'white')),
+    sigmaR = kableExtra::cell_spec(sigmaR, 'html',   bold=ifelse(grid_summary_DF$sigmaR==om_df$sigmaR, TRUE, FALSE),
+                                   background =   ifelse(grid_summary_DF$sigmaR==om_df$sigmaR, back.col, 'white')),
+    steepness = kableExtra::cell_spec(steepness, 'html',   bold=ifelse(grid_summary_DF$steepness==om_df$steepness, TRUE, FALSE),
+                              background =   ifelse(grid_summary_DF$steepness==om_df$steepness, back.col, 'white')),
+    cpuelambda = kableExtra::cell_spec(cpuelambda , 'html',   bold=ifelse(grid_summary_DF$cpuelambda ==om_df$cpuelambda , TRUE, FALSE),
+                                   background = ifelse(grid_summary_DF$cpuelambda   ==om_df$cpuelambda , back.col, 'white')),
+    llq = kableExtra::cell_spec(llq, 'html',   bold=ifelse(grid_summary_DF$llq==om_df$llq, TRUE, FALSE),
+                                background = ifelse(grid_summary_DF$llq==om_df$llq,   back.col, 'white')),
+    env = kableExtra::cell_spec(env, 'html',   bold=ifelse(grid_summary_DF$env==om_df$env, TRUE, FALSE),
+                                background = ifelse(grid_summary_DF$env==om_df$env,   back.col, 'white'))
+  )
+  rownames(grid_summary_DF) <- NULL
+  colnames(grid_summary_DF) <- c("M", 'sigmaR', 'h', 'CPUE CV lambda', 'Q increase',   'Env. Covariate')
+  
+  cat('\n\n**OM Name**:', OM_name, '\n\n')
+  
+  grid_summary_DF %>% knitr::kable(format='html', escape=FALSE) %>%
+    kableExtra::kable_styling() 
+} else {
+   cat('\n# Operating Model Scenario\n')
+   om_df <- SWOMSE::OM_DF %>% dplyr::filter(OM.num==om.num)
+   OM_name <- om_df$dir
+   cat('**\nOM Name**:', OM_name, '\n\n')
+   cat('\n 2022 Base Case Assessment. \n')
+   cat('\nThis model was used to condition all operating models in the uncertainty grid.')
+   
+  
+}
 
 
-om_df <- SWOMSE::OM_DF %>% dplyr::filter(OM.num==om.num)
-om_df$env <- om_df$env %>% as.numeric() %>% as.logical()
-
-OM_name <- om_df$dir
-om_df$dir <- NULL
-om_df$OM.num <- NULL
 
 
-back.col <- 'lightblue'
-grid_summary_DF <- grid_summary_DF %>% dplyr::mutate(
-  M = kableExtra::cell_spec(M, 'html', bold=ifelse(grid_summary_DF$M==om_df$M, TRUE, FALSE),
-                            background = ifelse(grid_summary_DF$M==om_df$M, back.col, 'white')),
-  sigmaR = kableExtra::cell_spec(sigmaR, 'html', bold=ifelse(grid_summary_DF$sigmaR==om_df$sigmaR, TRUE, FALSE),
-                                 background = ifelse(grid_summary_DF$sigmaR==om_df$sigmaR, back.col, 'white')),
-  steepness = kableExtra::cell_spec(steepness, 'html', bold=ifelse(grid_summary_DF$steepness==om_df$steepness, TRUE, FALSE),
-                            background = ifelse(grid_summary_DF$steepness==om_df$steepness, back.col, 'white')),
-  cpuelambda = kableExtra::cell_spec(cpuelambda , 'html', bold=ifelse(grid_summary_DF$cpuelambda ==om_df$cpuelambda , TRUE, FALSE),
-                                 background = ifelse(grid_summary_DF$cpuelambda ==om_df$cpuelambda , back.col, 'white')),
-  llq = kableExtra::cell_spec(llq, 'html', bold=ifelse(grid_summary_DF$llq==om_df$llq, TRUE, FALSE),
-                              background = ifelse(grid_summary_DF$llq==om_df$llq, back.col, 'white')),
-  env = kableExtra::cell_spec(env, 'html', bold=ifelse(grid_summary_DF$env==om_df$env, TRUE, FALSE),
-                              background = ifelse(grid_summary_DF$env==om_df$env, back.col, 'white'))
-)
-rownames(grid_summary_DF) <- NULL
-colnames(grid_summary_DF) <- c("M", 'sigmaR', 'h', 'CPUE CV lambda', 'Q increase', 'Env. Covariate')
-
-cat('**OM Name**:', OM_name, '\n\n')
-
-grid_summary_DF %>% knitr::kable(format='html', escape=FALSE) %>%
-  kableExtra::kable_styling() 
 
 ```
 
@@ -203,162 +218,6 @@ dt %>% DT::datatable(class = 'cell-border stripe', rownames = FALSE,
 
 ```
 
-# Time-Series Plots of Predicted Stock Dynamics
-
-## Spawning Biomass
-
-```{r, echo=FALSE, fig.width=8, fig.height=6}
-TSbio_dat <- readRDS(paste0(OM.root, '/OM_objects/TSBio_List.rda'))[[OM.n]]
-RefPoint_DF <- readRDS(paste0(OM.root, '/OM_objects/RefPoint_DF.rda'))
-ref_points <- RefPoint_DF %>% filter(i==OM.n) %>% select(-one_of('i'))
-TSbio_dat$SBMSY <- ref_points$SBMSY
-
-years <- min(TSbio_dat$year):TSbio_dat$year[which(TSbio_dat$Depletion == TSbio_dat$SS_Depletion)]
-SSB_DF <- TSbio_dat %>% filter(year %in% years)
-
-ggplot(SSB_DF, aes(x=year, y=SSB)) + geom_line(size=1.2) +
-  expand_limits(y=c(0, 0)) +
-  geom_line(aes(x=year, y=SB0), linetype=2) +
-  geom_line(aes(x=year, y=SBMSY), linetype=3) +
-  scale_y_continuous(sec.axis = sec_axis(~ . /SSB_DF$SB0[1], name="Depletion",
-                                                           breaks=seq(0, 1, by=0.2)),
-                              expand = expansion(mult=c(0, 0.05))) +
-  scale_x_continuous(breaks=seq(min(SSB_DF$year), max(SSB_DF$year), by=5)) +
-  theme_bw() +
-  labs(x="Year", y="Spawning Stock Biomass")
-```
-
-`r fig.cap()` Plot of the predicted historical spawning stock biomass for OM: `r om.num`. The dashed black line is the predicted average unfished spawning biomass ($SB_0$). The dotted black line is the equilibrium spawning biomass corresponding with fishing at $F_{MSY}$.
-
-## Recruitment 
-
-```{r, echo=FALSE, fig.width=8, fig.height=6}
-ggplot(SSB_DF, aes(x=year, y=Obs_Rec)) + geom_line(size=1.2) +
-  expand_limits(y=c(0, 0)) +
-  scale_y_continuous(expand = expansion(mult=c(0, 0.05)),
-                              sec.axis = sec_axis(~ . /SSB_DF$R0[1], name="Relative Recruitment",
-                                                           breaks=seq(0, 1, by=0.2))) +
-  geom_line(aes(x=year, y=R0), linetype=2) +
-  theme_bw() +
-  labs(y="Recruits", x="Year") +
-  scale_x_continuous(breaks=seq(min(SSB_DF$year), max(SSB_DF$year), by=5))
-```
-
-`r fig.cap()` Plot of the predicted historical recruitment for OM: `r om.num`. The dashed black line is the estimated average unfished recruitment ($R_0$).
-
-```{r, echo=FALSE, fig.width=8, fig.height=6}
-SSB <- seq(0, 1, length.out = 100)
-steep <- as.numeric(om_df$steepness)
-Rec <- (0.8  * steep * SSB)/(0.2 * (1 - steep) + (steep - 0.2) * SSB) # BH SRR
-srr <- data.frame(SSB=SSB*SSB_DF$SB0[1], Rec=Rec*SSB_DF$R0[1])
-
-ggplot(SSB_DF, aes(x=SSB)) + 
-  geom_point(size=2, aes(y=Obs_Rec)) +
-  expand_limits(y=c(0, 0), x=0) +
-  scale_y_continuous(expand = expansion(mult=c(0, 0.05))) +
-   scale_x_continuous(expand = expansion(mult=c(0, 0.05))) +
-  geom_line(data=srr, aes(x=SSB, y=Rec), color='blue', size=1.05) +
-  theme_bw() +
-  labs(y="Recruits", x="Spawning Biomass") +
-  geom_text(data=data.frame(x=0, y=Inf, text=paste0('h = ',  steep)),
-                     aes(x=x, y=y, label=text, hjust=-1, vjust=2))
-```
-
-`r fig.cap()` The expected Beverton-Holt stock-recruitment relationship (blue line) and predicted historical recruitment and spawning biomass (black dots). 
-
-```{r, echo=FALSE, fig.width=8, fig.height=6}
-recdevs.plot(SSB_DF)
-```
-`r fig.cap()` Recruitment deviations (log). Blue bars represent positive deviations where the estimated recruitment is higher than the mean value predicted from the stock-recruitment curve. Grey bars represent negative deviations. ‘ac’. and ‘sd’. refer to the lag-1 autocorrelation and standard deviation in the log recruitment deviations.
-
-# Reference Points
-`r tab.cap()` The biological reference points calculated for OM: `r om.num`.
-```{r, echo=FALSE}
-RefPoint_DF <- readRDS(paste0(OM.root, '/OM_objects/RefPoint_DF.rda'))
-ref_points <- RefPoint_DF %>% filter(i==OM.n) %>% select(-one_of('i'))
-ref_points <- round(ref_points,2)
-col.names <- c("MSY (dead)",
-               "MSY (retained)",
-               "SB~MSY~", 
-               'F~MSY~', 
-               'F/F~MSY~', 
-               'SB/SB~MSY~', 
-               'SB~MSY~/SB~0~', 
-               'SB/SB~0~')
-colnames(ref_points) <- col.names
-
-ref_points %>% 
-  knitr::kable(format = "html", 
-               col.names = col.names,
-               escape = F) %>%
-  kableExtra::kable_styling("striped", full_width = T)
-```
-
-
-# Kobe Plot 
-```{r, echo=FALSE, fig.width=8, fig.height=6}
-col1 <- 'yellow'
-col2 <- 'green'
-col3 <- 'red'
-maxX <- max(2,max(SSB_DF$B.Bmsy))
-maxY <- max(2,max(SSB_DF$F.Fmsy))
-
-fill.df <- data.frame(x=c(0,0,1,1,
-                          1,maxX, maxX, 1,
-                          0,0,1,1,
-                          1,maxX,maxX,1),
-                      y=c(0,1,1,0,
-                          0,0,1,1,
-                          1,maxY, maxY, 1,
-                          1,1, maxY, maxY),
-                      group=c(rep('BL', 4),
-                              rep('BR', 4),
-                              rep('TL', 4),
-                              rep('TR', 4)))
-
-ind <- seq(1, nrow(SSB_DF), by=5)
-labeldata <- SSB_DF[ind,]
-ggplot(SSB_DF) +
-  expand_limits(x=c(0,2), y=c(0,2)) +
-  geom_polygon(data=fill.df, aes(x=x, y=y, fill=group), alpha=0.5) +
-  geom_point(aes(x=B.Bmsy, y=F.Fmsy), size=2) +
-  geom_line(aes(x=B.Bmsy, y=F.Fmsy)) +
-  ggrepel::geom_text_repel(data=labeldata, 
-                           aes(x=B.Bmsy, y=F.Fmsy, label=year)) + 
-  scale_y_continuous(expand = expansion(mult=c(0.01, 0.01))) +
-   scale_x_continuous(expand = expansion(mult=c(0.01, 0.01))) +
-  theme_classic() +
-  scale_fill_manual(values=c(col1, col2, col3, col1)) +
-  labs(x="SB/SBMSY", y="F/FMSY") + 
-  guides(color='none', fill='none')
-
-```
-
-`r fig.cap()` Kobe plot for OM: `r om.num`.
-
-# Selectivity and Retention
-```{r, echo=FALSE, fig.width=8, fig.height=6}
-Select_List <- readRDS(paste0(OM.root, '/OM_objects/Select_List.rda'))
-SelectDat <- Select_List[[OM.n]]
-SelectDat$Name <- factor(SelectDat$Name, levels=unique(SelectDat$Name), order=TRUE)
-
-var_width = 25
-SelectDat <- mutate(SelectDat, Name = stringr::str_wrap(Name, width = var_width))
-SelectDat$Name <- factor(SelectDat$Name, levels=unique(SelectDat$Name), order=TRUE)
-
-ggplot(SelectDat, aes(x=Length.Class, y=Prob, color=Factor)) +
-  facet_wrap(~Name) +
-  geom_line(size=1) +
-  expand_limits(y=c(0, 0), x=0) +
-  scale_y_continuous(expand = expansion(mult=c(0, 0.05))) +
-   scale_x_continuous(expand = expansion(mult=c(0, 0.05))) +
-  theme_bw() +
-  scale_color_discrete() +
-  labs(x="Length Class (mm)", y="Probability", color="")
-
-```
-
-`r fig.cap()` The estimated selectivity- and retention-at-length for the 11 fleets.
 
 # Fits to Catch Data
 ```{r, echo=FALSE, fig.width=8, fig.height=6}
@@ -517,4 +376,162 @@ ggplot(Comps, aes(x=Bin)) +
 `r fig.cap()` Model predicted length composition (black line) and observed length composition (grey bars) aggregated over all years for each fleet.
 
 
+# Reference Points
+`r tab.cap()` The biological reference points calculated for OM: `r om.num`.
+```{r, echo=FALSE}
+RefPoint_DF <- readRDS(paste0(OM.root, '/OM_objects/RefPoint_DF.rda'))
+ref_points <- RefPoint_DF %>% filter(i==OM.n) %>% select(-one_of('i'))
+ref_points <- round(ref_points,2)
+col.names <- c("MSY (dead)",
+               "MSY (retained)",
+               "SB~MSY~", 
+               'F~MSY~', 
+               'F/F~MSY~', 
+               'SB/SB~MSY~', 
+               'SB~MSY~/SB~0~', 
+               'SB/SB~0~')
+colnames(ref_points) <- col.names
 
+ref_points %>% 
+  knitr::kable(format = "html", 
+               col.names = col.names,
+               escape = F) %>%
+  kableExtra::kable_styling("striped", full_width = T)
+```
+
+# Kobe Plot 
+```{r, echo=FALSE, fig.width=8, fig.height=6}
+TSbio_dat <- readRDS(paste0(OM.root, '/OM_objects/TSBio_List.rda'))[[OM.n]]
+RefPoint_DF <- readRDS(paste0(OM.root, '/OM_objects/RefPoint_DF.rda'))
+ref_points <- RefPoint_DF %>% filter(i==OM.n) %>% select(-one_of('i'))
+TSbio_dat$SBMSY <- ref_points$SBMSY
+
+years <- min(TSbio_dat$year):TSbio_dat$year[which(TSbio_dat$Depletion == TSbio_dat$SS_Depletion)]
+SSB_DF <- TSbio_dat %>% filter(year %in% years)
+
+
+col1 <- 'yellow'
+col2 <- 'green'
+col3 <- 'red'
+maxX <- max(2,max(SSB_DF$B.Bmsy))
+maxY <- max(2,max(SSB_DF$F.Fmsy))
+
+fill.df <- data.frame(x=c(0,0,1,1,
+                          1,maxX, maxX, 1,
+                          0,0,1,1,
+                          1,maxX,maxX,1),
+                      y=c(0,1,1,0,
+                          0,0,1,1,
+                          1,maxY, maxY, 1,
+                          1,1, maxY, maxY),
+                      group=c(rep('BL', 4),
+                              rep('BR', 4),
+                              rep('TL', 4),
+                              rep('TR', 4)))
+
+ind <- seq(1, nrow(SSB_DF), by=5)
+labeldata <- SSB_DF[ind,]
+ggplot(SSB_DF) +
+  expand_limits(x=c(0,2), y=c(0,2)) +
+  geom_polygon(data=fill.df, aes(x=x, y=y, fill=group), alpha=0.5) +
+  geom_point(aes(x=B.Bmsy, y=F.Fmsy), size=2) +
+  geom_line(aes(x=B.Bmsy, y=F.Fmsy)) +
+  ggrepel::geom_text_repel(data=labeldata, 
+                           aes(x=B.Bmsy, y=F.Fmsy, label=year)) + 
+  scale_y_continuous(expand = expansion(mult=c(0.01, 0.01))) +
+   scale_x_continuous(expand = expansion(mult=c(0.01, 0.01))) +
+  theme_classic() +
+  scale_fill_manual(values=c(col1, col2, col3, col1)) +
+  labs(x="SB/SBMSY", y="F/FMSY") + 
+  guides(color='none', fill='none')
+
+```
+
+`r fig.cap()` Kobe plot for OM: `r om.num`.
+
+# Time-Series Plots of Predicted Stock Dynamics
+
+## Spawning Biomass
+
+```{r, echo=FALSE, fig.width=8, fig.height=6}
+
+
+ggplot(SSB_DF, aes(x=year, y=SSB)) + geom_line(size=1.2) +
+  expand_limits(y=c(0, 0)) +
+  geom_line(aes(x=year, y=SB0), linetype=2) +
+  geom_line(aes(x=year, y=SBMSY), linetype=3) +
+  scale_y_continuous(sec.axis = sec_axis(~ . /SSB_DF$SB0[1], name="Depletion",
+                                                           breaks=seq(0, 1, by=0.2)),
+                              expand = expansion(mult=c(0, 0.05))) +
+  scale_x_continuous(breaks=seq(min(SSB_DF$year), max(SSB_DF$year), by=5)) +
+  theme_bw() +
+  labs(x="Year", y="Spawning Stock Biomass")
+```
+
+`r fig.cap()` Plot of the predicted historical spawning stock biomass for OM: `r om.num`. The dashed black line is the predicted average unfished spawning biomass ($SB_0$). The dotted black line is the equilibrium spawning biomass corresponding with fishing at $F_{MSY}$.
+
+## Recruitment 
+
+```{r, echo=FALSE, fig.width=8, fig.height=6}
+ggplot(SSB_DF, aes(x=year, y=Obs_Rec)) + geom_line(size=1.2) +
+  expand_limits(y=c(0, 0)) +
+  scale_y_continuous(expand = expansion(mult=c(0, 0.05)),
+                              sec.axis = sec_axis(~ . /SSB_DF$R0[1], name="Relative Recruitment",
+                                                           breaks=seq(0, 1, by=0.2))) +
+  geom_line(aes(x=year, y=R0), linetype=2) +
+  theme_bw() +
+  labs(y="Recruits", x="Year") +
+  scale_x_continuous(breaks=seq(min(SSB_DF$year), max(SSB_DF$year), by=5))
+```
+
+`r fig.cap()` Plot of the predicted historical recruitment for OM: `r om.num`. The dashed black line is the estimated average unfished recruitment ($R_0$).
+
+```{r, echo=FALSE, fig.width=8, fig.height=6}
+SSB <- seq(0, 1, length.out = 100)
+steep <- as.numeric(om_df$steepness)
+Rec <- (0.8  * steep * SSB)/(0.2 * (1 - steep) + (steep - 0.2) * SSB) # BH SRR
+srr <- data.frame(SSB=SSB*SSB_DF$SB0[1], Rec=Rec*SSB_DF$R0[1])
+
+ggplot(SSB_DF, aes(x=SSB)) + 
+  geom_point(size=2, aes(y=Obs_Rec)) +
+  expand_limits(y=c(0, 0), x=0) +
+  scale_y_continuous(expand = expansion(mult=c(0, 0.05))) +
+   scale_x_continuous(expand = expansion(mult=c(0, 0.05))) +
+  geom_line(data=srr, aes(x=SSB, y=Rec), color='blue', size=1.05) +
+  theme_bw() +
+  labs(y="Recruits", x="Spawning Biomass") +
+  geom_text(data=data.frame(x=0, y=Inf, text=paste0('h = ',  steep)),
+                     aes(x=x, y=y, label=text, hjust=-1, vjust=2))
+```
+
+`r fig.cap()` The expected Beverton-Holt stock-recruitment relationship (blue line) and predicted historical recruitment and spawning biomass (black dots). 
+
+```{r, echo=FALSE, fig.width=8, fig.height=6}
+recdevs.plot(SSB_DF)
+```
+
+`r fig.cap()` Recruitment deviations (log). Blue bars represent positive deviations where the estimated recruitment is higher than the mean value predicted from the stock-recruitment curve. Grey bars represent negative deviations. ‘ac’. and ‘sd’. refer to the lag-1 autocorrelation and standard deviation in the log recruitment deviations.
+
+# Estimated Selectivity and Retention Curves
+```{r, echo=FALSE, fig.width=8, fig.height=6}
+Select_List <- readRDS(paste0(OM.root, '/OM_objects/Select_List.rda'))
+SelectDat <- Select_List[[OM.n]]
+SelectDat$Name <- factor(SelectDat$Name, levels=unique(SelectDat$Name), order=TRUE)
+
+var_width = 25
+SelectDat <- mutate(SelectDat, Name = stringr::str_wrap(Name, width = var_width))
+SelectDat$Name <- factor(SelectDat$Name, levels=unique(SelectDat$Name), order=TRUE)
+
+ggplot(SelectDat, aes(x=Length.Class, y=Prob, color=Factor)) +
+  facet_wrap(~Name) +
+  geom_line(size=1) +
+  expand_limits(y=c(0, 0), x=0) +
+  scale_y_continuous(expand = expansion(mult=c(0, 0.05))) +
+   scale_x_continuous(expand = expansion(mult=c(0, 0.05))) +
+  theme_bw() +
+  scale_color_discrete() +
+  labs(x="Length Class (mm)", y="Probability", color="")
+
+```
+
+`r fig.cap()` The estimated selectivity- and retention-at-length for the 11 fleets in the terminal year of the assessment (2020).
