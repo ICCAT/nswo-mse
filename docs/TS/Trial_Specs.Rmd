@@ -1,5 +1,5 @@
 ---
-title: "Specificiations for MSE Trials for North Atlantic Swordfish"
+title: "Specifications for MSE Trials for North Atlantic Swordfish"
 author: "Adrian Hordyk <adrian@bluematterscience.com>"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
@@ -7,8 +7,6 @@ output:
     highlight: kate
     toc_depth: 2
     use_bookdown: yes
-  pdf_document:
-    toc: yes
 header-includes:
 - \usepackage{lineno}
 - \linenumbers
@@ -27,7 +25,10 @@ always_allow_html: true
 ```{r, include=FALSE}
 library(SWOMSE)
 library(dplyr)
+library(ggplot2)
 knitr::opts_chunk$set(echo=FALSE)
+
+MOM <- SWOMSE::MOM_001
 ```
 
 # Introduction
@@ -52,7 +53,7 @@ This document describes the specifications for the OMs, CMPs, and PMs that have 
 
 It is a living document and will be continued to be updated so that it reflects the current state of the swordfish MSE process.
 
-Members of the Swordfish Species Group (hereafter the Group) are encouraged to ask questions, provide feedback and comments, and make edits, to any part of this document.
+Members of the Swordfish Species Group (hereafter the Group) are encouraged to provide feedback, comments, or edits to any part of this document.
 
 The document is written using the [Markdown](https://www.markdownguide.org/) format and can edited in any text editor. The source document is available on the [ICCAT/nswo-mse](https://github.com/ICCAT/nswo-mse/blob/master/docs/TS/Trial_Specs.Rmd) GitHub repository.
 
@@ -62,61 +63,37 @@ Group members can make edits to the document either [directly in the online repo
 
 Group members can also use the [Discussions](https://github.com/ICCAT/nswo-mse/discussions) feature on the Github repository to post questions, comments, or points for discussion related to any aspect of this document or the MSE process in general.
 
-Compiled versions of this document in PDF and HTML format are available at the North Atlantic Swordfish MSE [homepage](https://iccat.github.io/nswo-mse/).
+A HTML version of this document is available at the North Atlantic Swordfish MSE [homepage](https://iccat.github.io/nswo-mse/).
 
 # Stock Assessment
 
-The swordfish operating models are based on the most recent stock assessment of the swordfish fishery [@anon.Report2017ICCAT2017] using Stock Synthesis 3 [SS3, @methotStockSynthesisBiological2013].
+Previously, the swordfish operating models were based on the 2017 stock assessment [@anon.Report2017ICCAT2017] using Stock Synthesis 3 [SS3, @methotStockSynthesisBiological2013].
 
-The data used in the 2017 assessment, and the structure and assumptions of the assessment model are summarized in the sub-sections below.
+A new stock assessment was conducted in 2022. The swordfish operating models have been updated based on this new assessment.
+
+The report for this assessment is currently in preparation (see SCRS/2022/124). The data used in the 2022 assessment, and the structure and assumptions of the assessment model are summarized in the sub-sections below.
 
 ## Data {#data}
 
 The assessment used landings data from 8 longline fleets (7 national fleets and 'Other' representing all catches not accounted for in the national fleets) (Table \@ref(tab:fleet-info) and Figure \@ref(fig:data-fig)).
 
-There were 6 indices of abundance derived from catch-per-unit-effort (CPUE) data from national fleets (Table \@ref(tab:fleet-info) and Figure \@ref(fig:data-fig)). Data from the Canada longline fleet was split into two stanzas: Early (1962 - 1970) and Late (1979 - 2016) due to changes in fishing practices that were believed to have changed catchability. Similarly, data from the Japan longline fleet was split into three phases: Early (1974 - 1998), Mid (2006 - 2010), and Late (2011 - 2015) due to changes in fishing practices in these periods. Five additional survey indices were developed from the age-specific (ages estimated from length data) CPUE from the Spain longline fleet (Table \@ref(tab:fleet-info) and Figure \@ref(fig:data-fig)).
+There were 6 indices of abundance derived from catch-per-unit-effort (CPUE) data from the national fleets (Table \@ref(tab:fleet-info) and Figure \@ref(fig:data-fig)). Data from the Japan longline fleet was split into two phases: Early (1950 - 1993), and Late (1994 - 2020) due to changes in fishing practices in these periods. Similarly, the Chinese-Taipei longline fleet was split into two phases: Early (1950 - 1989) and Late (1990 - 2020). Five additional survey indices were developed from the age-specific (ages estimated from length data) CPUE from the Spain longline fleet (Table \@ref(tab:fleet-info) and Figure \@ref(fig:data-fig)).
 
-Length composition data from 7 national fleets (Spain, U.S., Canada (Late), Japan (Early, Mid, Late), Portugal, Chinese-Tapai, and Morocco) and mean weight data from two fleets (U.S. and Canada) was also used (Figure \@ref(fig:data-fig)).
+Length composition data from 7 national fleets (Spain, U.S., Canada, Japan (Early, Late), Portugal, Chinese-Tapai, and Morocco) and mean weight data from two fleets (U.S. and Canada) was also used (Figure \@ref(fig:data-fig)).
 
 The catchability coefficient (*q*) for the CPUE indices for Canada, Japan, Portugal, Morocco, and the Spain age-specific survey indices, was made a function of the Atlantic Multidecadal Oscillation (AMO) [See @anon.Report2017ICCAT2017 for details].
 
 The effective sample size (ESS) for the length composition data was established by adjusting ESS until unity was reached between modeled ESS and the Francis suggested sample size [See @anon.Report2017ICCAT2017 for details].
 
 ```{r fleet-info}
-OM.root <- 'G:/My Drive/1_PROJECTS/North_Atlantic_Swordfish/OMs/grid_2021'
 
-OM.dir <- "grid_May2021_shifted"
-# Year_Info <- Data_DF %>% group_by(Name) %>% filter(is.na(CPUE_Obs)==FALSE) %>%
-#   summarize(min=min(year), max=max(year), .groups = 'keep')
-# 
-# Year_Info$Period <- paste0(Year_Info$min, '-', Year_Info$max)
 DF <- Fleet_DF <- SWOMSE::Fleet_DF
-DF$Code <- gsub("_", '\\\\_', DF$Code)
 DF$index <- NULL
-DF$Description <- c(
-  'Spain longline fleet',
-  'US longline observer fleet',
-  'Canada longline fleet (later)',
-  'Canada longline fleet (early)',
-  'Japan fleet (early)',
-  'Japan fleet (middle)',
-  'Japan fleet (late)',
-  'Portugal longline fleet',
-  'Chinese-Taipai longline fleet',
-  'Morocco longline fleet',
-  'All other swordfish fleets',
-  'Age-specific CPUE (Spain fleet)',
-  'Age-specific CPUE (Spain fleet)',
-  'Age-specific CPUE (Spain fleet)',
-  'Age-specific CPUE (Spain fleet)',
-  'Age-specific CPUE (Spain fleet)'
-)
-# 
-# DF <- left_join(DF, Year_Info %>% select(Name, Period), by="Name")
-# 
+DF <- DF[-19,]
+
 col.names <- colnames(DF)
 # col.names[4] <- 'CPUE Period'
-caption <- 'Summary table of the fishing fleets included the 2017 stock assessment of North Atlantic swordfish.'
+caption <- 'Summary table of the fishing fleets and indices of abundances included the 2022 stock assessment of North Atlantic swordfish.'
 DF %>% knitr::kable(escape = F,
                     caption=caption,
                     booktabs=TRUE,
@@ -125,67 +102,7 @@ DF %>% knitr::kable(escape = F,
 
 ```
 
-```{r data-fig, fig.cap="The time periods for the data used in the model"}
-Data <- readRDS(file.path(OM.root, 'OM_objects/DataList.rda'))[[1]]
-
-CatchDat <- Data$catch %>%  dplyr::filter(year>0)  %>% 
-  dplyr::rename(Code=fleet) %>%
-  dplyr::select(year, Code, catch)
-
-CatchDat$Code <- Fleet_DF$Code[match(CatchDat$Code, Fleet_DF$index)]
-CatchDat <- left_join(CatchDat, Fleet_DF, by="Code")
-
-WghtDat <- Data$meanbodywt %>% dplyr::filter(Year>0) %>%
-  dplyr::rename(year=Year, index=Fleet, Mean.Weight=Value, Weight.CV=Std_in) %>%
-  dplyr::select(year, index, Mean.Weight, Weight.CV)
-WghtDat <- left_join(WghtDat, Fleet_DF, by="index")
-
-LenDat <- Data$lencomp %>% dplyr::filter(Yr>0) %>%
-  dplyr::rename(year=Yr, index=FltSvy)
-cols <- names(LenDat)[7:length(names(LenDat))] # convert to long
-LenDat <- LenDat %>% tidyr::pivot_longer(all_of(cols), 'Length.Class', values_to="Length.Comp") %>%
-  dplyr::select(year, index, Length.Class, Length.Comp, Nsamp) %>%
-  dplyr::rename(Length.Nsamp=Nsamp)
-LenDat <- left_join(LenDat, Fleet_DF, by="index")
-
-CPUEDat <- Data$CPUE %>% dplyr::filter(year>0) %>%
-  dplyr::rename(CPUE_Obs=obs, CPUE_SE_log=se_log) %>%
-  dplyr::select(year, index, CPUE_Obs, CPUE_SE_log) %>%
-  dplyr::mutate(llq=1)
-CPUEDat <- dplyr::left_join(CPUEDat, Fleet_DF, by="index")
-
-AllDat <- dplyr::full_join(CatchDat, CPUEDat, by = c("year", "Code", "Name", "index"))
-AllDat <- dplyr::full_join(AllDat, LenDat, by = c("year", "Code", "Name", "index"))
-AllDat <- dplyr::full_join(AllDat, WghtDat, by =  c("year", "Code", "Name", "index"))
-AllDat <- dplyr::select(AllDat, year, index, Code, Name, catch, CPUE_Obs,
-                        CPUE_SE_log, Length.Class, Length.Comp, Length.Nsamp,
-                        Mean.Weight, Weight.CV)
-AllDat$year2 <- as.Date(paste(AllDat$year, 1, 1, sep = "-"))
-
-DataSummary <- AllDat %>% dplyr::select(year, Code, Name, catch, CPUE_Obs,
-                                         Length.Comp, Mean.Weight, year2) %>%
-  tidyr::pivot_longer(cols=c('catch', 'CPUE_Obs', 'Length.Comp', 'Mean.Weight'),
-                      names_to = 'Data') %>%
-  dplyr::mutate(is.data=ifelse(value>0, TRUE, NA)) %>%
-  na.omit()
-
-Data.Names <- c("Catch", 'CPUE', "Length Composition", "Mean Weight")
-DataSummary$Data <- factor(DataSummary$Data, labels=Data.Names)
-
-ggplot2::ggplot(DataSummary, ggplot2::aes(year2, Code, color=is.data)) +
-  ggplot2::facet_wrap(~Data, ncol=2) +
-  ggplot2::geom_line(size=2) +
-  ggplot2::labs(y="Fleet", x="Year", color='') +
-  ggplot2::scale_color_manual(values='#357DE9') +
-  ggplot2::theme_bw()+
-  ggplot2::guides(color="none") +
-  ggplot2::scale_x_date(breaks=seq.Date(min(DataSummary$year2), max(DataSummary$year2), "5 year"),
-               labels = scales::date_format("%Y")) +
-  ggplot2::theme(axis.text.x= ggplot2::element_text(angle=45, hjust=1),
-        strip.background = ggplot2::element_blank(),
-        strip.text = ggplot2::element_text(size=12))
- 
-```
+![(#fig:data-fig) Summary of the data used in the 2022 stock assessment.](../../img/Data_overview.png)
 
 ## Model Structure {#model-structure}
 
@@ -193,41 +110,29 @@ The SS3 model used one season, one area, and two sexes.
 
 ## Fixed Biological Parameters
 
-Natural mortality for both male and female was fixed at 0.2 for all age classes. Maturity-at-age was knife-edge, with 50% at age-5 and 100% thereafter. Fecundity was proportional to body weight. The growth parameters were fixed at values developed during the 2017 ICCAT Swordfish Data Preparatory Meeting [See @anon.Report2017ICCAT2017 for details].
+Natural mortality for both male and female was fixed at 0.2 for all age classes. Maturity-at-age was knife-edge, with 50% at age-5 and 100% thereafter. Fecundity was proportional to body weight. The growth parameters for the 2022 assessment were fixed at same used in the 2017 assessment, which were developed during the 2017 ICCAT Swordfish Data Preparatory Meeting [See @anon.Report2017ICCAT2017 for details].
 
 ## Selectivity
 
-Selectivity was modeled as a function of length. Dome-shaped selectivity was allowed for five fleets: Spain, US, Japan, Portugal, and Morocco. Asymptotic selectivity was assumed for Canada, Chinese-Tapai and 'Other'. The age-specific survey CPUEs were modeled with a fixed age-based selectivity.
+Selectivity was modeled as a function of length. Dome-shaped selectivity was allowed for five fleets: EU-Spain, USA, Japan, EU-Portugal, and Morocco. Asymptotic selectivity was assumed for Canada, Chinese-Taipei and Other. The age-specific survey CPUEs were modeled with a fixed age-based selectivity.
 
 ## Retention and Discard Mortality
 
-The 2017 assessment did not explicitly model the retention curves and discard mortality.
+The 2022 assessment assumed a minimum legal length of 119 cm lower jaw fork length (LFFL) for all fleets from 1993 - 2020, and estimated the selectivity and retention curves from the available data. Discard mortality was either estimated from the observer data (USA and Canada) or fixed at values taken from the literature (see SCRS/2022/124).
 
 ## Stock-Recruitment
 
-Expected recruitment to age-0 was calculated from the total spawning stock biomass using the Beverton-Holt stock-recruit function. The standard error for the log-normally distributed recruitment deviations (sigmaR) was fixed to 0.2. Steepness (*h*) was an estimated parameter, with an informative prior with a Beta distribution, with mean 0.8 and standard deviation (SD) of 0.06. Steepness in the base case model was estaimed at 0.88 (SD = 0.03).
+Expected recruitment to age-0 was calculated from the total spawning stock biomass using the Beverton-Holt stock-recruit function. The standard error for the log-normally distributed recruitment deviations (sigmaR) was fixed to 0.2. Steepness (*h*) was fixed at the value estimated in the 2017 assessment (0.88).
 
 # OM Conditioning {#om-conditioning}
 
-The operating models used in the MSE were developed from the base case assessment model [@anon.Report2017ICCAT2017] with several modifications.
+## OM Uncertainty Grid
 
-## Modifications to the Assessment Model
+The 2022 stock assessment was used as a base case model for developing the OM grid for the MSE.
 
-@schirripaMigratingNorthAtlantic2020 describe the modifications made to the assessment model used to generate the operating models for the MSE. To summarize, there were three main changes to the assessment model:
+An OM uncertainty grid was developed from the base case model using a full factorial design with 6 axes of uncertainty:
 
-1.  The model was updated to the latest version of the SS3 software (v3.30). The updated version gave essentially identical results to the previous version.
-
-2.  The model was modified to explicitly account for the minimum size limit regulation and the impacts of discard mortality. The minimum size regulation was set to 125 cm for the Spain, Canada, Japan and Morocco fleets [@schirripaMigratingNorthAtlantic2020]. The US and Chinese-Taipei fleets had the minimum size limit fixed at 119 cm [@schirripaMigratingNorthAtlantic2020]. Insufficient data exists to estimate discard mortality in the model. The Group decided, based on @coelhoHookingMortalitySwordfish2019, to fix discard mortality at 88%.
-
-3.  The models used to generate the operating models had steepness as a fixed parameter rather than estimated internally.
-
-4.  The length composition data for some fleets was adjusted (see [Appendix A in SCRS/2021/090](https://iccat.github.io/nswo-mse/Reports/OM_Summary/SCRS_2021_090_draft.pdf)).
-
-## OM Uncertainty Grid {#om-uncertainty-grid}
-
-A OM uncertainty grid was developed from the modified SS3 model using a full factorial design with 6 axes of uncertainty:
-
-1.  Natural mortality (*h*) - three levels: 0.1, 0.2, 0.3
+1.  Natural mortality (*M*) - three levels: 0.1, 0.2, 0.3
 
 2.  Recruitment variability (sigmaR) - two levels: 0.2, 0.6
 
@@ -235,23 +140,27 @@ A OM uncertainty grid was developed from the modified SS3 model using a full fac
 
 4.  CPUE Lambda - three levels: 0.05, 1, 20
 
-5.  Directional trend in catchability (q-inc) - two levels: TRUE, FALSE
+5.  Directional trend in catchability (llq) - two levels: TRUE, FALSE
 
 6.  Environmental covariate (env) - two levels: TRUE, FALSE
 
-> Note that the previous OM uncertainty grid included two axes:
->
-> 1.  CV for the CPUE indices (CPUE CV) - two levels: 0.3, 0.6
->
-> 2.  Length composition effective sample size (ESS) - two levels: 2, 20
->
-> These have now been replaced by one new factor - CPUE Lambda - with levels assigning different relative weights to the CPUE and length composition data.
-
 The directional increase in catchability was modeled by assuming a 1% average annual increase in catchability throughout the history of the fishery, and adjusting the CPUE indices accordingly.
 
-The environmental covariate was included by modeling catchability as a function of the AMO (see [Data](#data)).
+The environmental covariate was included by modeling catchability as a function of the AMO.
 
 The factorial design of the 6 axes of uncertainty, each with 2 or 3 levels, resulted in an uncertainty grid of 216 OMs.
+
+## OM Validation
+
+### OM Summary Report
+
+A [Summary Report](../Reports/OM_Summary/2022/OM_Summary_Report.html) summarizes the diagnostic checks, the calculated biological reference points, and the estimated stock status relative to those reference points, across the 216 operating models included in the OM Uncertainty Grid.
+
+A SCRS document is currently being prepared summarizing this information, and will be presented at the 2022 Species Group Meeting of the Swordfish Working Group. 
+
+### OM Diagnostic Reports
+
+Individual diagnostic reports with objective function values and plots of model fits and patterns in residuals are available for each of the 216 OMs (and the 2022 assessment) on the North Atlantic Swordfish MSE [homepage](https://iccat.github.io/nswo-mse/).
 
 # MSE Framework
 
@@ -276,145 +185,62 @@ The `SWOMSE` package used for the swordfish MSE uses the `openMSE` framework. Th
 
 The operating model in `openMSE`, including assumptions and equations, is described in detail in @carruthersDataLimitedMethodsToolkit2018.
 
-## Key Model Assumptions
+## Importing OMs into the MSE Framework {#importing-oms-into-mse-framework}
 
-The MSE operating model differs in several ways from the SS3 model.
+The 216 OMs in the uncertainty grid, conditioned using SS3, were imported into MSE framework using the `SS2MOM` function in `MSEtool` (see [here](https://msetool.openmse.com/reference/SS2MOM.html) for details on the function).
 
-### Single Stock {#single-stock}
+Previously, the 2-sex SS3 models were imported into a combined single-sex operating model in the MSE framework. The MSE framework was updated in 2022, and the imported operating models now maintain the separate sexes in the same manner as the SS3 assessment. Since the fishery is managed with a single overall total allowable catch (TAC), the individual fishing fleets were aggregated together in the operating models.
 
-The MSE OM assumes a single stock (i.e, female and male combined) rather than the female and male populations modeled in SS3. The MSE model was constructed so that the total numbers-at-age and the depletion in the terminal year match the SS3 model.
+The 2-sex operating model are available in the `SWOMSE` package as objects of class `MOM` (multi-stock operating model). For example, the 2022 stock assessment is available as the base case operating model named `MOM_1`:
 
-The combined weight-at-age in the MSE OMs was calculated as a weighted average of the female and male weight-at-age in the SS3 model. As the weight-at-age is used to scale the numbers-at-age to biomass, this has the effect of slightly different absolute catch and biomass levels between the two modeling frameworks. However, the relative trend in both catch and biomass is closely matched between the MSE OM and the SS3 models.
-
-See [Importing OMs into MSE Framework](#importing-oms-into-mse-framework) for more details on the comparison between the population dynamics predicted by the SS3 model and those generated in the MSE OMs.
-
-### Aggregated Fleet
-
-The MSE OM combines the exploitation pattern (selectivity and fishing mortality) of the 8 fishing fleets into 1 aggregated fleet. As management recommendations (i.e., annual TAC advice) are not fleet-specific, it is not necessary to explicitly model the individual fleets in the MSE.
-
-### Spatial Structure
-
-The MSE OM is a spatial model and can include any number of areas and age-based movement. However, following the [Assessment Model](#model-structure), the MSE OMs do not assume any spatial structure.
-
-# Importing OMs into MSE Framework {#importing-oms-into-mse-framework}
-
-The 216 OMs in the uncertainty grid, conditioned using SS3, were imported into MSE framework using the `SS2OM` function in `MSEtool` (see [here](https://msetool.openmse.com/reference/SS2MOM.html) for details on the function).
-
-As described [above](#single-stock), differences in the structure of the MSE operating model and the SS3 assessment model resulted in differences in the predicted population dynamics in terms of absolute magnitude, but closely matched the dynamics in relative trends in catch and spawning biomass.
-
-The MSE framework generates a report comparing the populating dynamics predicted by SS3 and those generated when the SS3 model is imported into the MSE framework. See [here](../OM_Compare/OM_1.html) for an example report for one OM from the uncertainty grid.
-
-```{r message=FALSE, warning=FALSE}
-OMgrid.dir <- file.path(OM.root, OM.dir)
-
-OMgrid.dirs <- list.dirs(OMgrid.dir, recursive = FALSE)
-
-ord <- lapply(strsplit(OMgrid.dirs, 'iter'), '[[', 2) %>% as.numeric() %>% order()
-OMgrid.dirs <- OMgrid.dirs[ord]
-OM <- SS2OM(OMgrid.dirs[1], nsim=3)
-
-plot_SS2OM(OM, OMgrid.dirs[1], open_file = FALSE, dir="../OM_Compare", filename='OM_1')
+```{r, echo=TRUE}
+library(SWOMSE)
+MOM_001@Name
 ```
 
-# OM Validation
 
-## OM Summary Report
+# Historical Spool-Up Period
 
-A SCRS report summarizing the parameters, estimated reference points, and predicted stock dynamics for the 216 OMs in the uncertainty grid was presented at the 2021 intersessional meeting (May 31 - June 4 2021). A copy of the report is available on the North Atlantic Swordfish MSE [homepage](https://iccat.github.io/nswo-mse/).
+The historical spool-up period was generated by importing the output from the SS3 assessment models and running the MSE simulation framework to recreate the historical fishery dynamics. No additional uncertainty was added to the historical simulations; that is, all `r MOM@nsim` simulations were identical (e.g., same recruitment deviations) for the historical spool-up period.
 
-## OM Diagnostic Reports
+The operating models have been conditioned on data up to and including 2020 (see the [Data section](#data)), and therefore the projection period for the MSE framework starts in the following year, i.e., 2021. Currently, model uses assumed catches for the first two years (2021 and 2022) and then implements the management procedures in the following year (i.e., 2023). See the [Future Catches](#future-catches) section for more information.  
 
-Individual diagnostic reports with objective function values and plots of model fits and patterns in residuals are available for each of the 216 OMs on the North Atlantic Swordfish MSE [homepage](https://iccat.github.io/nswo-mse/).
+## Historical Data
+The observed fishery data was imported into the MSE framework and made available to the CMPs. Three sources of data available to the CMPs: 1) catch data, 2) a primary index of abundance, and 3) additional individual indices.
 
-```{=html}
-<!--
+### Catch Data
 
-## Index Fit Report
+The catch data used in the OM conditioning are made available in the simulated data that is provided to the CMPs (Figure \@ref(fig:catch-plot)).
 
-An Index Fit report, showing the fits and patterns in residuals for the fleet and survey indices is available on the North Atlantic Swordfish MSE [homepage](https://iccat.github.io/nswo-mse/).
+![(#fig:catch-plot) The historical total catch and total allowable catch (TAC) for the North Atlantic swordfish.](../../img/Catch_TAC.png)
 
--->
-```
-# Simulation Specifications
+### Indices of Abundance
 
-```{r}
-OM <- SWOMSE::OM_1
-```
+#### Primary Index
+
+At the [2020 Swordfish MSE technical meeting (4 -- 5 June 2020)](./Meeting_Reports/2020_SWO_MSE_1_ENG.pdf), the Group chose to use the Combined Index [@ortizUpdatedCombinedBiomass2017] as the primary index for the development of CMPs. This index was updated for the 2022 assessment. The Combined Index was imported into the `SWOMSE` framework and made available to the CMPs (Figure \@ref(fig:index-plot)).
+
+
+![(#fig:index-plot) The Combined Index for the North Atlantic swordfish fishery.](../../img/Combined_Index.png)
+
+#### Other Indices
+The additional individual fishery-dependent and survey indices are also imported into the MSE framework and made available to the CMPs (Figure \@ref(fig:addindex-plot)). 
+
+![(#fig:addindex-plot) The additional individual fishery-dependent and survey indices for the North Atlantic swordfish fishery.](../../img/Individual_Indices.png)
+
+
+
+# Closed-Loop Simulation Testing
+
+## Simulation Specifications
+
 
 The current simulation specifications for the MSE are:
 
 1.  Management interval: 3 (i.e., TAC updated every 3rd year)
 2.  Number of projection years: 30
-3.  Number of simulations per OM: `r OM@nsim`
+3.  Number of simulations per OM: `r MOM@nsim`
 
-# Historical Spool-Up Period
-
-The historical spool-up period was generated by importing the output from the SS3 assessment models and running the MSE simulation framework to recreate the historical fishery dynamics. No additional uncertainty was added to the historical simulations; that is, all `r OM@nsim` simulations were identical (e.g., same recruitment deviations) for the historical spool-up period.
-
-> Note: The OMs were conditioned with data up to 2017, and therefore the projection period for the simulations currently starts from 2018. If catch data from 2018 to 2020 (or 2021) is available, the model can use the actual catches for the first few years of the projections, rather than assume that the cMPs are implemented in 2018.
-
-## Historical Data
-
-Fishery data was generated by the MSE framework at the end of the spool-up period (currently 2017, see note above). There were three main sources of data available to the CMPs: 1) an index of abundance, 2) catch data, 3) length composition data.
-
-### Index of Abundance
-
-At the 2020 Swordfish MSE technical meeting (4 -- 5 June 2020), the Group discussed the use of the combined index [@ortizUpdatedCombinedBiomass2017] that was used in 2017 in the development of CMPs. Although the combined index was not used in the OM conditioning, it closely tracks the predicted abundance in the OMs and could be used as a single index for use in the CMPs.
-
-The MSE framework can include any number of indices of abundance. Currently, one index of abundance is included in the MSE framework and made available to the CMPs.
-
-The Group decided to use the combined index in the initial development and testing of CMPs, and to conduct further investigations in the future on the effect of conditioning the OMs using the combined index.
-
-The combined index was imported into the `SWOMSE` framework and made available to the CMPs (Figure \@ref(fig:index-plot)).
-
-```{r index-plot, fig.cap='The combined index for the North Atlantic swordfish fishery. See text for details.'}
-Index <- OM@cpars$Data@Ind[1,]
-Index <- Index/mean(Index, na.rm=TRUE)
-
-plot(OM@cpars$Data@Year, Index, type="l", lwd=2, xlab="Year", ylab="Scaled CPUE",
-     ylim=c(0, max(Index, na.rm=TRUE)))
-
-```
-
-### Catch Data
-
-The catch data used in the OM conditioning were made available in the simulated data that was provided to the CMPs (Figure \@ref(fig:catch-plot)).
-
-```{r catch-plot, fig.cap='The historical total catch data used in the MSE for the North Atlantic swordfish.'}
-Catch <- OM@cpars$Data@Cat[1,]
-
-plot(OM@cpars$Data@Year, Catch, type="l", lwd=2, xlab="Year", ylab="Catch", ylim=c(0, max(Catch)))
-
-```
-
-### Length Composition Data
-
-The length composition data used in the OM conditioning were made available in the simulated data that was provided to the CMPs (Figure \@ref(fig:length-plot)).
-
-```{r length-plot, fig.cap='The length composition data used in the MSE for the North Atlantic swordfish.', cache=TRUE}
-Data <- OM@cpars$Data
-CALmids <- Data@CAL_mids
-CAL <- Data@CAL[1,,]
-
-DF <- data.frame(Year=Data@Year, Bin=rep(CALmids, each=length(Data@Year)),
-                 Length=as.vector(CAL)
-) 
-DF <- DF %>% filter(is.na(Length)==FALSE)
-
-library(ggplot2)
-ggplot(DF, aes(x=Bin, y=Length)) +
-  facet_wrap(~Year) +
-  geom_bar(stat='identity') +
-  theme_classic() +
-  labs(x="Length Class (cm)", y="Count")
-
-```
-
-### Life-History Parameters
-
-At this point, no CMPs requiring estimates of life-history values have been proposed to be included in the analysis.
-
-# Projection Period
 
 ## Assumptions
 
@@ -426,7 +252,7 @@ Recruitment deviations for the projection period were generated assuming a log-n
 
 $$\mu_R = -0.5\sigma_R^2\left(1-\frac{\text{AC}}{\sqrt{(1-\text{AC}^2)}}\right)$$
 
-where AC is the lag-1 autocorrelation factor calculated from the historical recruitment deviations and $\sigma_R^2$ is the variance of the recruitment deviations specified in the OM (i.e., sigmaR\^2 defined [above](#om-uncertainty-grid)).
+where AC is the lag-1 autocorrelation factor calculated from the historical recruitment deviations and $\sigma_R^2$ is the variance of the recruitment deviations specified in the OM (i.e., sigmaR\^2 defined [above](#om-conditioning)).
 
 The recruitment deviations for the projection period were generated independently for each simulation.
 
@@ -436,39 +262,55 @@ Biological parameters such as mean weight-at-age and maturity-at-age were consta
 
 ### Selectivity
 
-Currently, the selectivity-at-length for the projection years is fixed to the estimated selectivity pattern from the last historical year for each OM. The reviewer of the SWOMSE R code highlighted this as a possible uncertainty and recommended that the Group consider testing alternative assumptions for the selectivity pattern in the projection years [@landmarkfisheriesresearchPeerReviewNorth2021].
+Currently, the selectivity-at-length for the projection years is fixed to the estimated selectivity pattern from the last historical year for each OM. The reviewer of the `SWOMSE` R code highlighted this as a possible uncertainty and recommended that the Group consider testing alternative assumptions for the selectivity pattern in the projection years [@anon.PeerReviewNorth2021].
 
 > The Working Group will discuss this assumption in more detail and decide if it wishes to run scenarios with alternative assumptions for the selectivity pattern in the projection years.
 
 ### Catchability
 
-No time-varying catchability was assumed for the projection years.
+No time-varying catchability is assumed for the projection years.
 
-## Future Catches
+### Future Catches
 
-The total allowable catch (TAC) recommended by the CMPs was assumed to be implemented without error. That is, annual catches were equal to the TAC recommendations (provided sufficient vulnerable biomass was available).
+The total allowable catch (TAC) recommended by the CMPs is assumed to be implemented without error. That is, annual catches are equal to the TAC recommendations (provided sufficient vulnerable biomass was available). The Group determined that this assumption was appropriate based on the fact that historically the total landed catch has been below the total allowable catch (TAC) (see Figure \@ref(fig:catch-plot)). 
 
-Furthermore, the current assumption of the operating models is that the TACs do not include discards; that is, the actual removals will be higher than the TACs if there is discard mortality on the sub-legal fish.
+The operating models also assume that the TACs recommended by the CMPs apply to the landed catch and do not include discards; that is, the actual removals will be higher than the TACs if there is discard mortality on the sub-legal fish.
 
-> Note: the Group needs to discuss the appropriate (if any) degree of implementation error for the TAC recommendations provided by the CMPs.
+Since the MSE projection period begins in 2021 (the year after the conditioning), and the landed catches are typically below the TAC (Figure \@ref(fig:catch-plot)), the MSE framework assumes that the catch in the first two projection years (2021 and 2022) is equal to observed landed catch in 2020. 
+
+The CMPs are then first implemented in 2023, and every 3rd year after that, with the TAC held constant in the interim years.
+
 
 ## Generation of Future Data
 
 ### Indices
 
-The index of abundance in the projection years was generated by adding observation error to the projected total biomass, and standardizing to be on the same scale as the historical index.
+The primary index of abundance (Combined Index) was generated in the projection years by adding observation error to the projected stock biomass, and standardizing to be on the same scale as the historical observed Combined Index.
 
-The observation error was generated by calculating the statistical properties of the residuals from the fit of the combined index to the simulated total abundance during the historical period. The procedure for calculating the residuals for the projection years is described in detail in the [openMSE documentation](https://openmse.com/features-conditioning-oms/indices/).
+The additional individual indices were generated in the projection years in the same manner, using the simulated stock biomass (or abundance in some cases).
+
+The observation error was generated by calculating the statistical properties of the residuals from the fit of each respective index to the simulated stock (biomass or abundance) during the historical period. The procedure for calculating the residuals for the projection years is described in detail in the [openMSE documentation](https://openmse.com/features-conditioning-oms/indices/).
+
+Following the assumptions of the stock assessment, it is assumed that all indices are proportional to the respective stock biomass or abundance (i.e., it is assumed that the indices are not hyper-stable or hyper-deplete). 
 
 ### Catches
 
-The observed catches in the projection years was generated by maintaining the catch observation error from the historical period.
+Following the assumption of the stock assessment, the observed catches in the projection years were generated with no observation error. That is, the observed catches in the MSE framework are equal to the actual simulated landed catches (provided there is sufficient biomass in the simulated population to support the prescribed TAC). The model does not include a bio-economic component and inter-annual change in fishing effort is unconstrained. 
 
-Note that as the SS3 model used to condition the operating models assumed no catch observation error and fitted the catches perfectly, the MSE assumes no catch observation error in the projection years.
+### Data Lags
+Data lags of 2 or more years are typical for this fishery. For example, the 2022 assessment used data up to and including 2020.
 
-### Length Composition
+In the MSE framework, the CMPs are always provided with the simulated fishery data up to the previous year. That is, if a CMP is implemented in year $t$, the catch and indices of abundance data provided to the CMP are up to and including year $t-1$. 
 
-Length composition data for the projection years was generated using the aggregated selectivity pattern and assuming the effective sample size specified in the OM.
+Data lags are then handled in the CMP code, where the default assumption is that the catch and index data are lagged by 2 years. See the CMP (see the [CMP Development Guide](../cMPdevelopment/CMP-Development-Guide.html) for more details).
+
+## Management Interval
+
+At the 2021 [Intersessional meeting](/Meeting_Reports/2021_SWO_ENG.pdf), the Group proposed a 3-year MP advice interval (see Table 5 in the report).
+
+The operating models have been conditioned on data up to 2020. As described [above](#future-catches), the model assumes the 2020 catch is taken in 2021 and 2022, and then begins applying the CMPs in 2023.  
+
+The 3-yr management interval is applied within the CMP code (see the [CMP Development Guide](../cMPdevelopment/CMP-Development-Guide.html) for more details).
 
 # Candidate Management Procedures
 
@@ -476,29 +318,21 @@ At this point, the candidate management procedures have not yet been developed.
 
 The Group decided that CMP development work should involve the national scientists. A small group was formed at the November 2020 MSE technical meeting, lead by Dr K. Gillespie, with the aim of continuing the CMP development work in 2021.
 
-A [CMP Development Guide](https://iccat.github.io/nswo-mse/CMP-Development-Guide.html) is available on the swordfish [MSE homepage](https://iccat.github.io/).
+A [CMP Development Guide](../cMPdevelopment/CMP-Development-Guide.html) is available on the swordfish [MSE homepage](https://iccat.github.io/).
 
 # Performance Metrics
 
-Based on feedback from the Commission's Panel 4, the following performance metrics have been proposed for swordfish:
+Based on feedback from the Commission's Panel 4, the following preliminary performance metrics have been proposed for swordfish:
 
-+------------------+-----------------------------------------------------------------------+--------------------------------------------+---------------------+--------------------------------+--------------------------------+
 | Name             | Description                                                           | Statistic                                  | Time Period (Years) | Minimum Acceptable Probability | Notes                          |
-+==================+=======================================================================+============================================+=====================+================================+================================+
+|------------|----------------|------------|------------|------------|------------|
 | Safety - Short   | Maintain low probability of stock declining to unacceptably low level | Prob. SB \< SB~lim~                        | 1 - 10              | 5 - 10%                        | SB~lim~ defined as 0.4 SB~MSY~ |
-+------------------+-----------------------------------------------------------------------+--------------------------------------------+---------------------+--------------------------------+--------------------------------+
 | Safety - Medium  | As above                                                              | As above                                   | 11 - 30             | 5 - 10%                        |                                |
-+------------------+-----------------------------------------------------------------------+--------------------------------------------+---------------------+--------------------------------+--------------------------------+
 | Status - Short   | Maintain stock in green quadrant of the Kobe matrix                   | Prob SB \> SB~MSY~ & F \< F~MSY~           | 1 - 10              | 50 - 60%                       |                                |
-+------------------+-----------------------------------------------------------------------+--------------------------------------------+---------------------+--------------------------------+--------------------------------+
 | Status - Medium  | As above                                                              | As above                                   | 11 - 30             | 50 - 60%                       |                                |
-+------------------+-----------------------------------------------------------------------+--------------------------------------------+---------------------+--------------------------------+--------------------------------+
 | Stability        | Minimize large inter-annual changes in yield                          | Average annual variability in yield (AAVY) | 1 - 30              | Maximum AAVY of 15 - 25%       |                                |
-+------------------+-----------------------------------------------------------------------+--------------------------------------------+---------------------+--------------------------------+--------------------------------+
 | Short-term Yield | Maximize yield while meeting other objectives                         | Average catch                              | 1 - 10              | \-                             |                                |
-+------------------+-----------------------------------------------------------------------+--------------------------------------------+---------------------+--------------------------------+--------------------------------+
 | Long-term Yield  | As above                                                              | As above                                   | 11 - 30             | \-                             |                                |
-+------------------+-----------------------------------------------------------------------+--------------------------------------------+---------------------+--------------------------------+--------------------------------+
 
 A Google sheet has also been created for the Group to add comments or additional [Performance Metrics](https://docs.google.com/spreadsheets/d/1NytREnFCZ6OPrhXT5E5Wi8Y22w-ZmENY8kEZqDH_FQE/edit?usp=sharing).
 
