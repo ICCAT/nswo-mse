@@ -34,7 +34,7 @@ tab.cap <- function() {
 
 # Introduction
 
-TODO 
+This report summarizes the diagnostic checks, the calculated biological reference points, and the estimated stock status relative to those reference points, across the 216 operating models included in the OM Uncertainty Grid.  
 
 ## Operating Models 
 

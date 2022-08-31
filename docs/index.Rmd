@@ -73,12 +73,15 @@ An OM uncertainty grid was developed from the base case model using a full facto
 
 6.  Environmental covariate (env) - two levels: TRUE, FALSE
 
+This resulted in an OM Uncertainty Grid with 216 operating models. The 2022 Base Case assessment is also included in the `SWOMSE` package.
+
 ### OM Summary Report
-A Summary Report for the 216 models in the uncertainty grid is available [here](/Reports/OM_Summary/2022/OM_Summary_Report.html).
+
+The [Summary Report](Reports/OM_Summary/2022/OM_Summary_Report.html) summarizes the diagnostic checks, the calculated biological reference points, and the estimated stock status relative to those reference points, across the 216 operating models included in the OM Uncertainty Grid.  
 
 ### Individual OM Diagnostic Reports
 
-The searchable table below displays the operating models in the `SWOMSE` package. The operating models can be accessed by the OM Object name, e.g., `SWOMSE::MOM_000` is the 2022 Base Case Stock Assessment.
+The searchable table below displays the operating models in the `SWOMSE` package. The operating models can be accessed in the R package by the OM Object name, e.g., `SWOMSE::MOM_000` is the 2022 Base Case Stock Assessment.
 
 Individual OM diagnostic reports can be accessed by clicking the links in the table below. 
 
