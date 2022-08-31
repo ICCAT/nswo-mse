@@ -191,7 +191,7 @@ The 216 OMs in the uncertainty grid, conditioned using SS3, were imported into M
 
 Previously, the 2-sex SS3 models were imported into a combined single-sex operating model in the MSE framework. The MSE framework was updated in 2022, and the imported operating models now maintain the separate sexes in the same manner as the SS3 assessment. Since the fishery is managed with a single overall total allowable catch (TAC), the individual fishing fleets were aggregated together in the operating models.
 
-The 2-sex operating model are available in the `SWOMSE` package as objects of class `MOM` (multi-stock operating model). For example, the 2022 stock assessment is available as the base case operating model named `MOM_1`:
+The 2-sex operating model are available in the `SWOMSE` package as objects of class `MOM` (multi-stock operating model). For example, the 2022 stock assessment is available as the base case operating model named `MOM_001`:
 
 ```{r, echo=TRUE}
 library(SWOMSE)
