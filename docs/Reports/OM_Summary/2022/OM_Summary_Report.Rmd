@@ -74,7 +74,7 @@ DT::datatable(DF,
 Check_Bounds_DF <- readRDS('Check_Bounds_DF.rda')
 
 Check_Bounds_DF <- Check_Bounds_DF %>% mutate(across(c(1:7, 12), as.factor))
-Check_Bounds_DF <- Check_Bounds_DF %>% select(OM.num, Min, Max, SD, Parameter) %>%
+Check_Bounds_DF <- Check_Bounds_DF %>% select(OM.num, Min, Max, Value, Parameter) %>%
   relocate(OM.num, Parameter)
 
 DT::datatable(Check_Bounds_DF,
