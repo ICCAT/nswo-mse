@@ -82,6 +82,10 @@ create_grid_folders <- function(i, grid, OM.grid.dir, base.dir) {
   vals[vals>0] <- grid$env[i]
   ctl$Q_parms_tv[, 'PHASE'] <- vals
 
+  # adjust bounds on R0
+  ctl$SR_parms[1,'LO'] <- 5
+  ctl$SR_parms[1,'HI'] <- 9
+
   # create directory
   i_char <- as.character(i)
   if (nchar(i_char)==1) i_char <- paste0('00', i_char)
@@ -111,6 +115,7 @@ create_grid_folders <- function(i, grid, OM.grid.dir, base.dir) {
   file.copy(file.path(base.dir, "ss3.exe"),
             file.path(OM.grid.dir, dir, "ss3.exe"))
 
+  invisible(file.path(OM.grid.dir, dir))
 }
 
 sapply(1:nrow(grid), create_grid_folders,
