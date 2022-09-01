@@ -38,6 +38,7 @@ tab.cap <- function() {
   paste0('Table ',  tab.num, '.')
 }
 
+om.num <- params$om.num
 OM.n <- as.numeric(om.num)+1 # base case is element 1 in all lists
 
 OM_DF <- SWOMSE::OM_DF
