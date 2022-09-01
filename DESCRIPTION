@@ -13,7 +13,8 @@ RoxygenNote: 7.2.0
 Depends: 
     R (>= 3.5.0),
     dplyr,
-    openMSE
+    openMSE,
+    MSEtool (>= 3.5.1)
 Imports:
     devtools,
     methods,
