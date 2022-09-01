@@ -246,9 +246,9 @@ purrr::map(seq_along(OMgrid.dirs), importOM, OMgrid.dirs, nsim, OM_DF, SWOData)
 
 
 # ---- Update SWO_Data with AddInd -----
-load('data/MOM_0.rda')
+load('data/MOM_000.rda')
 
-SWOData <- MOM_0@cpars[[1]][[1]]$Data
+SWOData <- MOM_000@cpars[[1]][[1]]$Data
 
 usethis::use_data(SWOData, overwrite = TRUE)
 
