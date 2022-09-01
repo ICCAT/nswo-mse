@@ -65,6 +65,8 @@ saveRDS(Check_Bounds_DF, file.path(obj_dir, 'Check_Bounds_DF.rda'))
 
 
 Parameters <- Check_Bounds_DF$Parameter %>% unique()
+Parameters
+
 
 Bound_Table <- Check_Bounds_DF %>% group_by(Parameter) %>%
   summarize(nOM=length(unique(OM.num))) %>%
@@ -78,11 +80,12 @@ Check_Bounds_DF %>% dplyr::filter(Parameter ==Parameters[6])
 Check_Convergence <- function(i, RepList) {
   replist <- RepList[[i]]
   log_det_hessian <- replist$log_det_hessian
+  high_grad <- 0.0001
   max_final_gradient <- replist$maximum_gradient_component
   df <- data.frame(log_det_hessian=log_det_hessian,
              invertible=is.finite(log_det_hessian),
              max_final_gradient=max_final_gradient,
-             high_grad=max_final_gradient>0.0001)
+             high_grad=max_final_gradient>high_grad)
 
   df2 <- replist$parameters_with_highest_gradients
   df2$Parameter <-rownames(df2)
