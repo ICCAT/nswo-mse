@@ -14,7 +14,7 @@ Depends:
     R (>= 3.5.0),
     dplyr,
     openMSE,
-    MSEtool (>= 3.5.1)
+    MSEtool (>= 3.6.0)
 Imports:
     devtools,
     methods,
