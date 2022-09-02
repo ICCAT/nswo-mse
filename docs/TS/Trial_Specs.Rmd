@@ -306,7 +306,7 @@ Data lags are then handled in the CMP code, where the default assumption is that
 
 ## Management Interval
 
-At the 2021 [Intersessional meeting](/Meeting_Reports/2021_SWO_ENG.pdf), the Group proposed a 3-year MP advice interval (see Table 5 in the report).
+At the 2021 [Intersessional meeting](/Meeting_Reports/2021_SWO_ENG.pdf), the Group proposed a 3-year MP advice interval (see Table 5 in the [Report of the 2021 ICCAT Intersessional Meeting of the Swordfish Species Group](../Meeting_Reports//2021_SWO_ENG.pdf)).
 
 The operating models have been conditioned on data up to 2020. As described [above](#future-catches), the model assumes the 2020 catch is taken in 2021 and 2022, and then begins applying the CMPs in 2023.  
 
