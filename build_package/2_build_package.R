@@ -123,7 +123,7 @@ importOM <- function(i, OMgrid.dirs, nsim, proyears, OM_DF, SWOData) {
   SS.dir <- OMgrid.dirs[i]
 
   # import MOM
-  MOM <- SS2MOM(SS.dir, nsim=nsim)
+  MOM <- SS2MOM(SS.dir, nsim=nsim, proyears = proyears, interval = 1)
 
   # get fleet-specific indices
   nyears <- MOM@Fleets[[1]][[1]]@nyears
