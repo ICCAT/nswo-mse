@@ -2,6 +2,7 @@
 
 
 nsim <- 48 # number of simulations per OM
+proyears <- 30 # number of projection years
 
 OM.root <- 'G:/My Drive/1_Projects/North_Atlantic_Swordfish/OMs'
 OMgrid.dir <- file.path(OM.root,'grid_2022')
@@ -117,7 +118,7 @@ docOM <- function(OMname) {
 }
 
 
-importOM <- function(i, OMgrid.dirs, nsim, OM_DF, SWOData) {
+importOM <- function(i, OMgrid.dirs, nsim, proyears, OM_DF, SWOData) {
   message(i)
   SS.dir <- OMgrid.dirs[i]
 
@@ -175,6 +176,7 @@ importOM <- function(i, OMgrid.dirs, nsim, OM_DF, SWOData) {
   # aggregate all fleets into one
   MOM <- MOM %>% MSEtool::MOM_agg_fleets(.)
 
+  MOM@proyears <- proyears
   # add data to female and male stocks
   for (p in 1:n.stock) {
     MOM@cpars[[p]][[1]]$Data <- Data
@@ -232,7 +234,8 @@ cat("#' @name SWO-OMs",
     file=file.path('R/', RoxygenFile))
 
 
-purrr::map(seq_along(OMgrid.dirs), importOM, OMgrid.dirs, nsim, OM_DF, SWOData)
+purrr::map(seq_along(OMgrid.dirs), importOM, OMgrid.dirs, nsim, proyears,
+           OM_DF, SWOData)
 
 # prob <- NULL
 # for (i in 1:length(OMgrid.dirs)) {
