@@ -6,7 +6,7 @@ OM.grid.dir <- 'G:/My Drive/1_PROJECTS/North_Atlantic_Swordfish/OMs/grid_2022'
 
 # ---- Base Case - 2022 Assessment ----
 # 2022 NSWO Assessment Base Case Model:
-source.dir <- 'G:/.shortcut-targets-by-id/1it8Et005kzWPhMAlR6qlsc0GpqCWkIIn/SWO_Assess_2022/Base_v5'
+source.dir <- 'G:/My Drive/1_PROJECTS/North_Atlantic_Swordfish/OMs/Base_v5'
 
 base.dir <- file.path(OM.grid.dir, '000_base_case')
 files <- c('ss.par', 'forecast.ss', 'starter.ss', 'control.ss_new', 'SWOv5.dat', 'ss3.exe')
@@ -20,10 +20,6 @@ file.copy(file.path(source.dir, files), file.path(base.dir, files), overwrite = 
 forecast <- r4ss::SS_readforecast(file.path(base.dir, 'forecast.ss'))
 forecast$MSY <- 2
 r4ss::SS_writeforecast(forecast, base.dir, overwrite = TRUE)
-
-# Run the base case model:
-# setwd(file.path(OM.grid.dir, '000_base_case'))
-# system2('ss3.exe', stdout = FALSE, stderr = FALSE)
 
 
 # ---- Condition OM Grid ----
@@ -134,8 +130,6 @@ run_ss_grid <- function(dir) {
 }
 
 OM.dirs <- list.dirs(OM.grid.dir, recursive = FALSE)
-OM.dirs <- OM.dirs[-1] # don't run base case again (if run above)
-
 
 # Split into groups (system seems to start to lag if I run the entire set in one go)
 
