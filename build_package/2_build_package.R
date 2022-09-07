@@ -93,6 +93,8 @@ get_OM_details <- function(dir) {
 OM_DF <- lapply(OMgrid.dirs, get_OM_details) %>% do.call('rbind',.)
 OM_DF$env[OM_DF$env=='7'] <- '1'
 OM_DF <- OM_DF %>% mutate_at(1:6, as.numeric)
+OM_DF$dir <- NULL
+OM_DF$OM.object <- paste0('MOM_', OM_DF$OM.num)
 
 usethis::use_data(OM_DF, overwrite = TRUE)
 
@@ -185,11 +187,10 @@ importOM <- function(i, OMgrid.dirs, nsim, proyears, OM_DF, SWOData) {
     MOM@cpars[[p]][[1]]$Cobs_y <- matrix(1, nrow=nsim, ncol=nyears+MOM@proyears)
   }
 
-  i_num <- as.character(i)
-  if (nchar(i_num)==1) i_num <- paste0('00', i_num)
-  if (nchar(i_num)==2) i_num <- paste0('0', i_num)
-
-
+  i_num <- i-1  # base case is 0
+  i_num <- as.character(i_num)
+  if (nchar(i_num)==1) i_num <- paste0('00',i_num)
+  if (nchar(i_num)==2) i_num <- paste0('0',i_num)
 
   if (grepl('base_case', SS.dir)) {
     name <- 'SWO 2022 Base Case'
@@ -197,7 +198,6 @@ importOM <- function(i, OMgrid.dirs, nsim, proyears, OM_DF, SWOData) {
     vals <- OM_DF %>% dplyr::filter(OM.num==i_num)
     vals$OM.num <- vals$dir <- NULL
     name <- paste(names(vals), vals, collapse = ' ', sep=':')
-
   }
 
   MOM@Name <- name
@@ -206,16 +206,11 @@ importOM <- function(i, OMgrid.dirs, nsim, proyears, OM_DF, SWOData) {
   # map real data across stocks - data is not sex-specific
   MOM@cpars[[1]][[1]]$Real.Data.Map <- matrix(1, nrow=n.fleet, ncol=n.stock)
 
-  OM.num <- i-1  # base case is 0
-  OM.num <- as.character(OM.num)
-  if (nchar(OM.num)==1) OM.num <- paste0('00',OM.num)
-  if (nchar(OM.num)==2) OM.num <- paste0('0',OM.num)
-  name <- paste0('MOM_', OM.num)
+  name <- paste0('MOM_', i_num)
   assign(name, MOM)
 
   do.call("use_data", list(as.name(name), overwrite = TRUE))
   docOM(name)
-
 }
 
 
