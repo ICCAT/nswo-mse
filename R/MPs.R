@@ -1,138 +1,270 @@
-#' A simple index targeting MP
+
+# Model-free CMPs ----
+
+
+#' Targeting Model-Free Example MP
+#'
+#' A example index-targeting MP that iteratively adjusts the TAC
+#' based on the ratio of recent to overall index.
 #'
 #' @param x A position in the data object
 #' @param Data An object of class `Data`
-#' @param reps The number of replicates to include
+#' @param Data_Lag The number of years to lag the data
+#' @param Interval The TAC update interval
 #' @param yrsmth The number of recent years to average index over
 #' @param mc The maximum fractional change in the TAC among years
+#' @param multi Multiplier for the index target from the average index
+#' @param ... Additional arguments (unused)
 #'
-#' @return An object of class `Rec` with management recommendations
+#' @return An object of class `Rec`
 #' @export
-#'
-#' @examples
-#'  Itarg1(1, SWOData)
-Itarg1 <- function(x, Data, reps = 100, yrsmth = 5, mc = 0.05) {
+ITarget_1 <- function(x, Data,
+                      Data_Lag=2, Interval=3,
+                      yrsmth = 5, mc = 0.2, multi=1,
+                      ...) {
+  # 1. Create a `Rec` (recommendation) object
+  Rec <- new('Rec')
 
-  ind <- max(1, (length(Data@Year) - yrsmth + 1)):length(Data@Year)
-
-  deltaI <- mean(Data@Ind[x, ind], na.rm=TRUE)/Data@Iref[x]
-
-  if (deltaI < (1 - mc)) deltaI <- 1 - mc
-  if (deltaI > (1 + mc)) deltaI <- 1 + mc
-  Ind_CV <- mean(Data@CV_Ind[x,ind], na.rm=TRUE)
-  if (is.na(Ind_CV)) Ind_CV <-  mean(Data@CV_Ind[x,], na.rm=TRUE)
-
-  TAC <- Data@MPrec[x] * deltaI * trlnorm(reps, 1, Ind_CV)
-
-  Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
-  Rec
-}
-class(Itarg1) <- 'MP'
-
-#' A second simple index targeting MP
-#'
-#' A management procedure that incrementally adjusts the TAC (starting from
-#' reference level that is a fraction of mean recent catches)
-#' to reach a target CPUE / relative abundance index.
-#'
-#' Based on the index target MP developed by Geromont and Butterworth (2014)
-#' and evaluated in Carruthers et al. (2015).
-#'
-#' @param x A position in the data object
-#' @param Data An object of class `Data`
-#' @param reps The number of replicates to include
-#' @param Imulti Parameter controlling how much larger target CPUE / index is compared with recent levels
-#'
-#' @return An object of class `Rec` with management recommendations
-#' @export
-#'
-#' @examples
-#' Itarg2(1, SWOData)
-#'
-#' @references Carruthers et al. 2015. Performance evaluation of simple
-#' management procedures. ICES J. Mar Sci. 73, 464-482.
-#'
-#' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
-#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci. 72, 251-261.
-#' doi:10.1093/icesjms/fst232
-#' @importFrom MSEtool TACfilter trlnorm
-Itarg2 <- function(x, Data, reps = 100, Imulti = 1.5) {
-  ind <- (length(Data@Year) - 4):length(Data@Year)  # recent 5 years
-  ylast <- match(Data@LHYear[1], Data@Year)  #last historical year
-  ind2 <- (ylast - 4):ylast  # historical 5 pre-projection years
-  ind3 <- (ylast - 9):ylast  # historical 10 pre-projection years
-  C_dat <- Data@Cat[x, ind2] # catch data from last 5 years
-  C_bar <- mean(C_dat, na.rm = TRUE) # mean catch from last 5 years - ignoring CV
-
-  Irecent <- mean(Data@Ind[x, ind], na.rm=TRUE) # mean index in last 5 years
-  Iave <- mean(Data@Ind[x, ind3], na.rm=TRUE) # mean index in last 10 years
-
-  Itarget <- Iave * Imulti
-  I0 <- 0.8 * Iave
-  if (Irecent > I0) {
-    TAC <- 0.5 * C_bar * (1 + ((Irecent - I0)/(Itarget - I0)))
-  } else {
-    TAC <- 0.5 * C_bar * (Irecent/I0)^2
+  # 2. TAC Imputation for initial projection years
+  # Year when the MSE analysis is being conducted (2022)
+  Current_Yr <- as.numeric(format(Sys.Date(), "%Y"))
+  if (max(Data@Year) <Current_Yr) {
+    # set the TAC to last recorded catch for years up to
+    # and including Current_Yr (2022)
+    Rec@TAC <- Data@MPrec[x]
+    return(Rec)
   }
 
-  Rec <- new("Rec")
-  Rec@TAC <-  TACfilter(TAC)
+  # 3. MP Management Interval
+  Imp_Years <- seq(Current_Yr+1, by=Interval, length.out=30)
+  # Not an MP update year
+  if (!(max(Data@Year)+1) %in% Imp_Years) {
+    Rec@TAC <- Data@MPrec[x]
+    return(Rec)
+  }
+
+  # 4. Lag the simulated data by `Data_Lag` years
+  Data <- Lag_Data(Data, Data_Lag, x==1)
+
+  # 5. Start of MP-specific Code
+  # number of years of index data
+  n_years <- length(Data@Ind[x,])
+
+  # year index for `yrsmth` most recent years
+  yr_ind <- max(1, n_years-yrsmth+1):n_years
+
+  # index target - mean index x `multi`
+  Ind_Target <- mean(Data@Ind[x, ], na.rm=TRUE) * multi
+
+  # ratio of mean recent index to Ind_Target
+  deltaI <- mean(Data@Ind[x, yr_ind], na.rm=TRUE)/Ind_Target
+
+  # max/min change in TAC
+  if (deltaI < (1 - mc)) deltaI <- 1 - mc
+  if (deltaI > (1 + mc)) deltaI <- 1 + mc
+
+  Rec@TAC <- Data@MPrec[x] * deltaI
+  # 6. Return the `Rec` object
   Rec
 }
-class(Itarg2) <- 'MP'
+# 7. Assign function to class `MP`
+class(ITarget_1) <- 'MP'
 
-
-
-#' A simple constant catch MP
+#' Incremental Index Target MP
 #'
-#' Future TACs are set to the most recent TAC
+#' A management procedure that incrementally adjusts the TAC
+#' (starting from reference level that is a fraction of mean recent catches)
+#' to reach a target CPUE / relative abundance index
+#' See `?Itarget1` for more information.
 #'
 #' @param x A position in the data object
 #' @param Data An object of class `Data`
-#' @param reps The number of replicates to include
+#' @param Data_Lag The number of years to lag the data
+#' @param Interval The TAC update interval
+#' @param yrsmth The number of recent years to average index over
+#' @param xx Parameter controlling the fraction of mean catch to start using in first year
+#' @param Imulti Parameter controlling how much larger target CPUE / index is compared with recent levels
+#' @param ... Additional arguments (unused)
 #'
-#' @return An object of class `Rec` with management recommendations
+#' @return An object of class `Rec`
 #' @export
-#'
-#' @examples
-#' ConstC(1, SWOData)
-ConstC <- function(x, Data, reps=100) {
-  LastTAC <- Data@MPrec[x] # last TAC
-  TAC <- rep(LastTAC, reps)
-  TAC <- TACfilter(TAC)
-  Rec <- new("Rec")
-  Rec@TAC <- TAC
+ITarget_2 <- function(x, Data,
+                      Data_Lag=2, Interval=3,
+                      yrsmth = 5, xx = 0, Imulti=1.5,
+                      ...) {
+  Rec <- new('Rec')
+
+  Current_Yr <- as.numeric(format(Sys.Date(), "%Y"))
+  if (max(Data@Year) <Current_Yr) {
+    Rec@TAC <- Data@MPrec[x]
+    return(Rec)
+  }
+
+  Imp_Years <- seq(Current_Yr+1, by=Interval, length.out=30)
+  if (!(max(Data@Year)+1) %in% Imp_Years) {
+    Rec@TAC <- Data@MPrec[x]
+    return(Rec)
+  }
+
+  Data <- Lag_Data(Data, Data_Lag, x==1)
+  # modify Year slot so Itarget1 works
+  Data@Year <- Data@Year[1:length(Data@Cat[1,])]
+  Rec <- DLMtool::Itarget1(x, Data, yrsmth = yrsmth, xx=xx, Imulti=Imulti, ...)
   Rec
-
 }
-class(ConstC) <- 'MP'
+# 7. Assign function to class `MP`
+class(ITarget_2) <- 'MP'
 
-#' A simple constant catch MP using average historical catch
+
+# Assessment-based CMPs ----
+
+#' ASPIC-like Surplus Production Assessment Model with TAC = MSY
 #'
-#' Future TACs are set to the most average historical catch
+#' An example model-based CMP that uses the `SAMtool::SP` function, which is similar
+#' to ASPIC. It sets the TAC to the estimated MSY.
 #'
 #' @param x A position in the data object
 #' @param Data An object of class `Data`
-#' @param reps The number of replicates to include
+#' @param Data_Lag The number of years to lag the data
+#' @param Interval The TAC update interval
+#' @param ... Additional arguments (unused)
 #'
-#' @return An object of class `Rec` with management recommendations
+#' @return An object of class `Rec`
 #' @export
-#'
-#' @examples
-#' AverageC(1, SWOData)
-AverageC <- function(x, Data, reps=100) {
+SP_1 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
+  Rec <- new('Rec')
 
-  ind <- which(Data@Year == Data@LHYear)
-  histCatch <- Data@Cat[x, 1:ind]
-  meanC <- mean(histCatch, na.rm=TRUE)
-  TAC <- rlnorm(reps, log(meanC), 0.2)
+  Current_Yr <- as.numeric(format(Sys.Date(), "%Y"))
+  if (max(Data@Year) <Current_Yr) {
+    Rec@TAC <- Data@MPrec[x]
+    return(Rec)
+  }
 
-  Rec <- new("Rec")
-  Rec@TAC <- TAC
+  Imp_Years <- seq(Current_Yr+1, by=Interval, length.out=30)
+  if (!(max(Data@Year)+1) %in% Imp_Years) {
+    Rec@TAC <- Data@MPrec[x]
+    return(Rec)
+  }
+
+  Data <- Lag_Data(Data, Data_Lag, x==1)
+
+  # apply assessment model
+  Mod <- SAMtool::SP(x, Data, fix_dep=TRUE, start=list(dep=0.85))
+
+  # harvest control rule - TAC = MSY
+  Rec@TAC <- Mod@MSY
   Rec
 }
-class(AverageC) <- "MP"
+class(SP_1) <- 'MP'
+
+#' ASPIC-like Surplus Production Assessment Fox Model with TAC = MSY
+#'
+#' An example model-based CMP that uses the `SAMtool::SP_Fox` function, which fixes BMSY/K = 0.37, and is similar
+#' to ASPIC. It sets the TAC to the estimated MSY.
+#'
+#' @param x A position in the data object
+#' @param Data An object of class `Data`
+#' @param Data_Lag The number of years to lag the data
+#' @param Interval The TAC update interval
+#' @param ... Additional arguments (unused)
+#'
+#' @return An object of class `Rec`
+#' @export
+#'
+SP_Fox_1 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
+  Rec <- new('Rec')
+
+  Current_Yr <- as.numeric(format(Sys.Date(), "%Y"))
+  if (max(Data@Year) <Current_Yr) {
+    Rec@TAC <- Data@MPrec[x]
+    return(Rec)
+  }
+
+  Imp_Years <- seq(Current_Yr+1, by=Interval, length.out=30)
+  if (!(max(Data@Year)+1) %in% Imp_Years) {
+    Rec@TAC <- Data@MPrec[x]
+    return(Rec)
+  }
+
+  Data <- Lag_Data(Data, Data_Lag, x==1)
+
+  # apply assessment model
+  Mod <- SAMtool::SP_Fox(x, Data, fix_dep=TRUE, start=list(dep=0.85))
+
+  # harvest control rule - TAC = MSY
+  Rec@TAC <- Mod@MSY
+  Rec
+}
+class(SP_Fox_1) <- 'MP'
+
+
+#' JABBA Assessmetn Model with TAC = MSY
+#'
+#' An example model-based CMP that uses the `JABBA` package to assess the stock.
+#' It sets the TAC = estimated MSY.
+#'
+#' @param x A position in the data object
+#' @param Data An object of class `Data`
+#' @param Data_Lag The number of years to lag the data
+#' @param Interval The TAC update interval
+#' @param ... Additional arguments (unused)
+#'
+#' @return An object of class `Rec`
+#' @export
+#'
+JABBA_1 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
+
+  # check for dependencies
+  chk <- require(JABBA, quietly=TRUE)
+  if (!chk) stop('package `JABBA` must be installed')
+
+  chk <- require(rjags, quietly=TRUE)
+  if (!chk) stop('package `rjags` must be installed')
+
+  Rec <- new('Rec')
+
+  Current_Yr <- as.numeric(format(Sys.Date(), "%Y"))
+  if (max(Data@Year) <Current_Yr) {
+    Rec@TAC <- Data@MPrec[x]
+    return(Rec)
+  }
+
+  Imp_Years <- seq(Current_Yr+1, by=Interval, length.out=30)
+  if (!(max(Data@Year)+1) %in% Imp_Years) {
+    Rec@TAC <- Data@MPrec[x]
+    return(Rec)
+  }
+
+  Data <- Lag_Data(Data, Data_Lag, x==1)
+
+  # structure data to suit JABBA
+  catch <- data.frame(Data@Year[1:length(Data@Cat[x,])], Data@Cat[x,])
+  index <- data.frame(Data@Year[1:length(Data@Cat[x,])],Data@Ind[x,])
+  index_se <- data.frame(Data@Year[1:length(Data@Cat[x,])], Data@CV_Ind[x,])
+  index_se[,2] <- 0.23
+
+  input <- JABBA::build_jabba(catch=catch,
+                              cpue=index,
+                              se=index_se,
+                              catch.cv=0.01,
+                              assessment="SWO",
+                              scenario = "1",
+                              model.type = "Schaefer",
+                              sigma.est = FALSE,
+                              fixed.obsE = 0.01,
+                              r.prior = c(0.42, 0.4),
+                              psi.dist='beta',
+                              psi.prior=c(0.95, 0.05),
+                              verbose=FALSE)
+
+  # apply assessment model
+  Mod <- JABBA::fit_jabba(input,quickmcmc=TRUE, verbose=FALSE)
+
+  # harvest control rule - TAC = MSY
+  Rec@TAC <- Mod$estimates[8,1]
+  Rec
+}
+class(JABBA_1) <- 'MP'
 
 
 
