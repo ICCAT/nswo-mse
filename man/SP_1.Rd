@@ -2,9 +2,33 @@
 % Please edit documentation in R/MPs.R
 \name{SP_1}
 \alias{SP_1}
-\title{ASPIC-like Surplus Production Assessment Model with TAC = MSY}
+\alias{SP_2}
+\alias{SP_3}
+\alias{SP_Fox_1}
+\alias{SP_Fox_2}
+\alias{SP_Fox_3}
+\alias{SP_SS_1}
+\alias{SP_SS_2}
+\alias{SP_SS_3}
+\title{ASPIC-like Surplus Production Assessment Model}
 \usage{
 SP_1(x, Data, Data_Lag = 2, Interval = 3, ...)
+
+SP_2(x, Data, Data_Lag = 2, Interval = 3, ...)
+
+SP_3(x, Data, Data_Lag = 2, Interval = 3, ...)
+
+SP_Fox_1(x, Data, Data_Lag = 2, Interval = 3, ...)
+
+SP_Fox_2(x, Data, Data_Lag = 2, Interval = 3, ...)
+
+SP_Fox_3(x, Data, Data_Lag = 2, Interval = 3, ...)
+
+SP_SS_1(x, Data, Data_Lag = 2, Interval = 3, ...)
+
+SP_SS_2(x, Data, Data_Lag = 2, Interval = 3, ...)
+
+SP_SS_3(x, Data, Data_Lag = 2, Interval = 3, ...)
 }
 \arguments{
 \item{x}{A position in the data object}
@@ -24,3 +48,24 @@ An object of class `Rec`
 An example model-based CMP that uses the `SAMtool::SP` function, which is similar
 to ASPIC. It sets the TAC to the estimated MSY.
 }
+\section{Functions}{
+\itemize{
+\item \code{SP_1}: TAC set to estimated MSY
+
+\item \code{SP_2}: Same as `SP_1` but calculates TAC by applying estimated F_MSY to estimated biomass
+
+\item \code{SP_3}: Same as `SP_1` but calculates TAC based on the harvest control rule proposed for North Atlantic Albacore
+
+\item \code{SP_Fox_1}: Same as `SP_1` but uses the Fox assumptions of the Fox model
+
+\item \code{SP_Fox_2}: Same as `SP_Fox_1` but calculates TAC by applying estimated F_MSY to estimated biomass
+
+\item \code{SP_Fox_3}: Same as `SP_Fox_1` but calculates TAC based on the harvest control rule proposed for North Atlantic Albacore
+
+\item \code{SP_SS_1}: State-space version of `SP_1` but calculates TAC by applying estimated F_MSY to estimated biomass
+
+\item \code{SP_SS_2}: Same as `SP_SS_1` but
+
+\item \code{SP_SS_3}: Same as `SP_SS_1` but calculates TAC based on the harvest control rule proposed for North Atlantic Albacore
+}}
+

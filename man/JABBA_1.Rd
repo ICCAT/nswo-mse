@@ -2,7 +2,7 @@
 % Please edit documentation in R/MPs.R
 \name{JABBA_1}
 \alias{JABBA_1}
-\title{JABBA Assessmetn Model with TAC = MSY}
+\title{JABBA Assessment Model with TAC = MSY}
 \usage{
 JABBA_1(x, Data, Data_Lag = 2, Interval = 3, ...)
 }
@@ -23,4 +23,12 @@ An object of class `Rec`
 \description{
 An example model-based CMP that uses the `JABBA` package to assess the stock.
 It sets the TAC = estimated MSY.
+}
+\details{
+Note 1: this MP requires the `JABBA` and `rjags` packages to be installed, and
+the JAGS software installed on your machine.
+
+Note 2: the JABBA model takes a long time to run in closed-loop, and sometimes
+crashes. Recommend testing with a small number of simulations (`MOM@nsim <=5`)
+first!
 }
