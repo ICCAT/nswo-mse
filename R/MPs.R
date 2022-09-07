@@ -1,3 +1,26 @@
+# Misc. Functions ----
+
+#' Should the TAC remain unchanged?
+#'
+#' @param Initial_MP_Yr The calendar year when the MP will first be implemented
+#' @param Interval The management interval where the TAC is updated
+#' @param Data An object of class `Data`
+#'
+#' @return TRUE if the TAC should remain unchanged and FALSE otherwise
+#' @export
+#'
+SameTAC <- function(Initial_MP_Yr, Interval, Data) {
+  # Are CMP implemented yet?
+  if (max(Data@Year) <(Initial_MP_Yr-1)) return(TRUE)
+
+  # Is it an TAC update year?
+  Imp_Years <- seq(Initial_MP_Yr, by=Interval, length.out=30)
+  if (!(max(Data@Year)+1) %in% Imp_Years) return(TRUE)
+
+  FALSE
+}
+
+
 
 # Model-free CMPs ----
 
@@ -25,28 +48,18 @@ ITarget_1 <- function(x, Data,
   # 1. Create a `Rec` (recommendation) object
   Rec <- new('Rec')
 
-  # 2. TAC Imputation for initial projection years
-  # Year when the MSE analysis is being conducted (2022)
-  Current_Yr <- as.numeric(format(Sys.Date(), "%Y"))
-  if (max(Data@Year) <Current_Yr) {
-    # set the TAC to last recorded catch for years up to
-    # and including Current_Yr (2022)
+  # 2. Check if TAC needs to be updated
+  Initial_MP_Yr <- 2024
+  if (SameTAC(Initial_MP_Yr, Interval, Data)) {
+    # Keep TAC unchanged from previous
     Rec@TAC <- Data@MPrec[x]
     return(Rec)
   }
 
-  # 3. MP Management Interval
-  Imp_Years <- seq(Current_Yr+1, by=Interval, length.out=30)
-  # Not an MP update year
-  if (!(max(Data@Year)+1) %in% Imp_Years) {
-    Rec@TAC <- Data@MPrec[x]
-    return(Rec)
-  }
+  # 3. Lag the simulated data by `Data_Lag` years
+  Data <- Lag_Data(Data, Data_Lag)
 
-  # 4. Lag the simulated data by `Data_Lag` years
-  Data <- Lag_Data(Data, Data_Lag, x==1)
-
-  # 5. Start of MP-specific Code
+  # 4. Start of MP-specific Code
   # number of years of index data
   n_years <- length(Data@Ind[x,])
 
@@ -64,11 +77,12 @@ ITarget_1 <- function(x, Data,
   if (deltaI > (1 + mc)) deltaI <- 1 + mc
 
   Rec@TAC <- Data@MPrec[x] * deltaI
-  # 6. Return the `Rec` object
+  # 5. Return the `Rec` object
   Rec
 }
-# 7. Assign function to class `MP`
+# 6. Assign function to class `MP`
 class(ITarget_1) <- 'MP'
+
 
 #' Incremental Index Target MP
 #'
@@ -94,19 +108,13 @@ ITarget_2 <- function(x, Data,
                       ...) {
   Rec <- new('Rec')
 
-  Current_Yr <- as.numeric(format(Sys.Date(), "%Y"))
-  if (max(Data@Year) <Current_Yr) {
+  Initial_MP_Yr <- 2024
+  if (SameTAC(Initial_MP_Yr, Interval, Data)) {
     Rec@TAC <- Data@MPrec[x]
     return(Rec)
   }
 
-  Imp_Years <- seq(Current_Yr+1, by=Interval, length.out=30)
-  if (!(max(Data@Year)+1) %in% Imp_Years) {
-    Rec@TAC <- Data@MPrec[x]
-    return(Rec)
-  }
-
-  Data <- Lag_Data(Data, Data_Lag, x==1)
+  Data <- Lag_Data(Data, Data_Lag)
   # modify Year slot so Itarget1 works
   Data@Year <- Data@Year[1:length(Data@Cat[1,])]
   Rec <- DLMtool::Itarget1(x, Data, yrsmth = yrsmth, xx=xx, Imulti=Imulti, ...)
@@ -116,9 +124,11 @@ ITarget_2 <- function(x, Data,
 class(ITarget_2) <- 'MP'
 
 
-# Assessment-based CMPs ----
+# openMSE Assessment-based CMPs ----
 
-#' ASPIC-like Surplus Production Assessment Model with TAC = MSY
+## Surplus production models ----
+
+#' ASPIC-like Surplus Production Assessment Model
 #'
 #' An example model-based CMP that uses the `SAMtool::SP` function, which is similar
 #' to ASPIC. It sets the TAC to the estimated MSY.
@@ -130,23 +140,18 @@ class(ITarget_2) <- 'MP'
 #' @param ... Additional arguments (unused)
 #'
 #' @return An object of class `Rec`
+#' @describeIn SP_1 TAC set to estimated MSY
 #' @export
 SP_1 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
   Rec <- new('Rec')
 
-  Current_Yr <- as.numeric(format(Sys.Date(), "%Y"))
-  if (max(Data@Year) <Current_Yr) {
+  Initial_MP_Yr <- 2024
+  if (SameTAC(Initial_MP_Yr, Interval, Data)) {
     Rec@TAC <- Data@MPrec[x]
     return(Rec)
   }
 
-  Imp_Years <- seq(Current_Yr+1, by=Interval, length.out=30)
-  if (!(max(Data@Year)+1) %in% Imp_Years) {
-    Rec@TAC <- Data@MPrec[x]
-    return(Rec)
-  }
-
-  Data <- Lag_Data(Data, Data_Lag, x==1)
+  Data <- Lag_Data(Data, Data_Lag)
 
   # apply assessment model
   Mod <- SAMtool::SP(x, Data, fix_dep=TRUE, start=list(dep=0.85))
@@ -157,36 +162,87 @@ SP_1 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
 }
 class(SP_1) <- 'MP'
 
-#' ASPIC-like Surplus Production Assessment Fox Model with TAC = MSY
-#'
-#' An example model-based CMP that uses the `SAMtool::SP_Fox` function, which fixes BMSY/K = 0.37, and is similar
-#' to ASPIC. It sets the TAC to the estimated MSY.
-#'
-#' @param x A position in the data object
-#' @param Data An object of class `Data`
-#' @param Data_Lag The number of years to lag the data
-#' @param Interval The TAC update interval
-#' @param ... Additional arguments (unused)
-#'
-#' @return An object of class `Rec`
+
+#' @describeIn SP_1 Same as `SP_1` but calculates TAC by applying estimated F_MSY to estimated biomass
 #' @export
-#'
+SP_2 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
+  Rec <- new('Rec')
+
+  Initial_MP_Yr <- 2024
+  if (SameTAC(Initial_MP_Yr, Interval, Data)) {
+    Rec@TAC <- Data@MPrec[x]
+    return(Rec)
+  }
+
+  Data <- Lag_Data(Data, Data_Lag)
+
+  # apply assessment model
+  Mod <- SAMtool::SP(x, Data, fix_dep=TRUE, start=list(dep=0.85))
+
+  # harvest control rule - apply estimated F_MSY to estimate biomass
+  M <- 0.2 # assumed natural mortality
+  Fmort <- Mod@FMSY
+  Z <- M+Fmort
+  VB <- as.numeric(Mod@VB[length(Mod@VB)])
+
+  Rec@TAC <-  Fmort/Z*(1-exp(-Z))*VB
+  Rec
+}
+class(SP_2) <- 'MP'
+
+#' @describeIn SP_1 Same as `SP_1` but calculates TAC based on the harvest control rule proposed for North Atlantic Albacore
+#' @export
+SP_3 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
+  Rec <- new('Rec')
+
+  Initial_MP_Yr <- 2024
+  if (SameTAC(Initial_MP_Yr, Interval, Data)) {
+    Rec@TAC <- Data@MPrec[x]
+    return(Rec)
+  }
+
+  Data <- Lag_Data(Data, Data_Lag)
+
+  # apply assessment model
+  Mod <- SAMtool::SP(x, Data, fix_dep=TRUE, start=list(dep=0.85))
+
+  # harvest control rule
+  # based on: https://www.iccat.int/Documents/Recs/compendiopdf-e/2017-04-e.pdf
+  Bthresh <- Mod@BMSY
+  Blim <- 0.4 * Bthresh
+  Ftar <- 0.8 * Mod@FMSY
+  Fmin <- 0.1 * Mod@FMSY
+  Bcurr <- Mod@B[length(Mod@B)]
+
+  if (Bcurr>=Bthresh) {
+    Fmort <- Ftar
+  } else if (Bcurr>Blim) {
+    Fmort <- Mod@FMSY * (-0.367 + 1.167*  Bcurr/Bthresh)
+  } else {
+    Fmort <- Fmin
+  }
+
+  M <- 0.2 # assumed natural mortality
+  Z <- M+Fmort
+  Rec@TAC <-  Fmort/Z*(1-exp(-Z))*Bcurr
+  Rec
+}
+class(SP_3) <- 'MP'
+
+
+## Surplus production Fox model ----
+#' @describeIn SP_1 Same as `SP_1` but uses the Fox assumptions of the Fox model
+#' @export
 SP_Fox_1 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
   Rec <- new('Rec')
 
-  Current_Yr <- as.numeric(format(Sys.Date(), "%Y"))
-  if (max(Data@Year) <Current_Yr) {
+  Initial_MP_Yr <- 2024
+  if (SameTAC(Initial_MP_Yr, Interval, Data)) {
     Rec@TAC <- Data@MPrec[x]
     return(Rec)
   }
 
-  Imp_Years <- seq(Current_Yr+1, by=Interval, length.out=30)
-  if (!(max(Data@Year)+1) %in% Imp_Years) {
-    Rec@TAC <- Data@MPrec[x]
-    return(Rec)
-  }
-
-  Data <- Lag_Data(Data, Data_Lag, x==1)
+  Data <- Lag_Data(Data, Data_Lag)
 
   # apply assessment model
   Mod <- SAMtool::SP_Fox(x, Data, fix_dep=TRUE, start=list(dep=0.85))
@@ -198,10 +254,208 @@ SP_Fox_1 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
 class(SP_Fox_1) <- 'MP'
 
 
-#' JABBA Assessmetn Model with TAC = MSY
+#' @describeIn SP_1 Same as `SP_Fox_1` but calculates TAC by applying estimated F_MSY to estimated biomass
+#' @export
+SP_Fox_2 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
+  Rec <- new('Rec')
+
+  Initial_MP_Yr <- 2024
+  if (SameTAC(Initial_MP_Yr, Interval, Data)) {
+    Rec@TAC <- Data@MPrec[x]
+    return(Rec)
+  }
+
+  Data <- Lag_Data(Data, Data_Lag)
+
+  # apply assessment model
+  Mod <- SAMtool::SP_Fox(x, Data, fix_dep=TRUE, start=list(dep=0.85))
+
+  # harvest control rule - apply estimated F_MSY to estimate biomass
+  M <- 0.2 # assumed natural mortality
+  Fmort <- Mod@FMSY
+  Z <- M+Fmort
+  VB <- as.numeric(Mod@VB[length(Mod@VB)])
+
+  Rec@TAC <-  Fmort/Z*(1-exp(-Z))*VB
+
+  Rec
+}
+class(SP_Fox_2) <- 'MP'
+
+#' @describeIn SP_1 Same as `SP_Fox_1` but calculates TAC based on the harvest control rule proposed for North Atlantic Albacore
+#' @export
+SP_Fox_3 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
+  Rec <- new('Rec')
+
+  Initial_MP_Yr <- 2024
+  if (SameTAC(Initial_MP_Yr, Interval, Data)) {
+    Rec@TAC <- Data@MPrec[x]
+    return(Rec)
+  }
+
+  Data <- Lag_Data(Data, Data_Lag)
+
+  # apply assessment model
+  Mod <- SAMtool::SP_Fox(x, Data, fix_dep=TRUE, start=list(dep=0.85))
+
+  # harvest control rule
+  # based on: https://www.iccat.int/Documents/Recs/compendiopdf-e/2017-04-e.pdf
+  Bthresh <- Mod@BMSY
+  Blim <- 0.4 * Bthresh
+  Ftar <- 0.8 * Mod@FMSY
+  Fmin <- 0.1 * Mod@FMSY
+  Bcurr <- Mod@B[length(Mod@B)]
+
+  if (Bcurr>=Bthresh) {
+    Fmort <- Ftar
+  } else if (Bcurr>Blim) {
+    Fmort <- Mod@FMSY * (-0.367 + 1.167*  Bcurr/Bthresh)
+  } else {
+    Fmort <- Fmin
+  }
+
+  M <- 0.2 # assumed natural mortality
+  Z <- M+Fmort
+  Rec@TAC <-  Fmort/Z*(1-exp(-Z))*Bcurr
+
+  Rec
+}
+class(SP_Fox_3) <- 'MP'
+
+
+
+
+## State-Space Surplus production ----
+
+#' @describeIn SP_1 State-space version of `SP_1` but calculates TAC by applying estimated F_MSY to estimated biomass
+#' @export
+SP_SS_1 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
+  Rec <- new('Rec')
+
+  Initial_MP_Yr <- 2024
+  if (SameTAC(Initial_MP_Yr, Interval, Data)) {
+    Rec@TAC <- Data@MPrec[x]
+    return(Rec)
+  }
+
+  Data <- Lag_Data(Data, Data_Lag)
+
+  # apply assessment model
+  Mod <- SAMtool::SP_SS(x, Data, fix_dep=TRUE, start=list(dep=0.85, sigma=0.2))
+
+  # harvest control rule - TAC = MSY
+  Rec@TAC <- Mod@MSY
+  Rec
+}
+class(SP_SS_1) <- 'MP'
+
+#' @describeIn SP_1 Same as `SP_SS_1` but
+#' @export
+SP_SS_2 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
+  Rec <- new('Rec')
+
+  Initial_MP_Yr <- 2024
+  if (SameTAC(Initial_MP_Yr, Interval, Data)) {
+    Rec@TAC <- Data@MPrec[x]
+    return(Rec)
+  }
+
+  Data <- Lag_Data(Data, Data_Lag)
+
+  # apply assessment model
+  Mod <- SAMtool::SP_SS(x, Data, fix_dep=TRUE, start=list(dep=0.85, sigma=0.2))
+
+  # harvest control rule - apply estimated F_MSY to estimate biomass
+  M <- 0.2 # assumed natural mortality
+  Fmort <- Mod@FMSY
+  Z <- M+Fmort
+  VB <- as.numeric(Mod@VB[length(Mod@VB)])
+
+  Rec@TAC <-  Fmort/Z*(1-exp(-Z))*VB
+  Rec
+}
+class(SP_SS_2) <- 'MP'
+
+#' @describeIn SP_1 Same as `SP_SS_1` but calculates TAC based on the harvest control rule proposed for North Atlantic Albacore
+#' @export
+SP_SS_3 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
+  Rec <- new('Rec')
+
+  Initial_MP_Yr <- 2024
+  if (SameTAC(Initial_MP_Yr, Interval, Data)) {
+    Rec@TAC <- Data@MPrec[x]
+    return(Rec)
+  }
+
+  Data <- Lag_Data(Data, Data_Lag)
+
+  # apply assessment model
+  Mod <- SAMtool::SP_Fox(x, Data, fix_dep=TRUE, start=list(dep=0.85))
+
+  # harvest control rule
+  # based on: https://www.iccat.int/Documents/Recs/compendiopdf-e/2017-04-e.pdf
+  Bthresh <- Mod@BMSY
+  Blim <- 0.4 * Bthresh
+  Ftar <- 0.8 * Mod@FMSY
+  Fmin <- 0.1 * Mod@FMSY
+  Bcurr <- Mod@B[length(Mod@B)]
+
+  if (Bcurr>=Bthresh) {
+    Fmort <- Ftar
+  } else if (Bcurr>Blim) {
+    Fmort <- Mod@FMSY * (-0.367 + 1.167*  Bcurr/Bthresh)
+  } else {
+    Fmort <- Fmin
+  }
+
+  M <- 0.2 # assumed natural mortality
+  Z <- M+Fmort
+  Rec@TAC <-  Fmort/Z*(1-exp(-Z))*Bcurr
+  Rec
+}
+class(SP_SS_3) <- 'MP'
+
+
+# Assessments from other packages ----
+
+
+#' spict Assessment Model with TAC = MSY
+#'
+#' An example model-based CMP that uses the `spict` package to assess the stock.
+#' It sets the TAC = estimated MSY.
+#'
+#' Note: this MP requires the `MSEextra` package to be installed. Run `MSEextra()` and
+#' then `library(MSEextra)`
+#'
+#' @param x A position in the data object
+#' @param Data An object of class `Data`
+#' @param Data_Lag The number of years to lag the data
+#' @param Interval The TAC update interval
+#' @param ... Additional arguments (unused)
+#'
+#' @return An object of class `Rec`
+#' @export
+#'
+SPICT_1 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
+
+
+}
+
+
+
+
+
+#' JABBA Assessment Model with TAC = MSY
 #'
 #' An example model-based CMP that uses the `JABBA` package to assess the stock.
 #' It sets the TAC = estimated MSY.
+#'
+#' Note 1: this MP requires the `JABBA` and `rjags` packages to be installed, and
+#' the JAGS software installed on your machine.
+#'
+#' Note 2: the JABBA model takes a long time to run in closed-loop, and sometimes
+#' crashes. Recommend testing with a small number of simulations (`MOM@nsim <=5`)
+#' first!
 #'
 #' @param x A position in the data object
 #' @param Data An object of class `Data`
@@ -223,19 +477,13 @@ JABBA_1 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
 
   Rec <- new('Rec')
 
-  Current_Yr <- as.numeric(format(Sys.Date(), "%Y"))
-  if (max(Data@Year) <Current_Yr) {
+  Initial_MP_Yr <- 2024
+  if (SameTAC(Initial_MP_Yr, Interval, Data)) {
     Rec@TAC <- Data@MPrec[x]
     return(Rec)
   }
 
-  Imp_Years <- seq(Current_Yr+1, by=Interval, length.out=30)
-  if (!(max(Data@Year)+1) %in% Imp_Years) {
-    Rec@TAC <- Data@MPrec[x]
-    return(Rec)
-  }
-
-  Data <- Lag_Data(Data, Data_Lag, x==1)
+  Data <- Lag_Data(Data, Data_Lag)
 
   # structure data to suit JABBA
   catch <- data.frame(Data@Year[1:length(Data@Cat[x,])], Data@Cat[x,])
