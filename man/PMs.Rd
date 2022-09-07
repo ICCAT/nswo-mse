@@ -11,22 +11,22 @@
 \alias{Yield_M}
 \title{Swordfish Performance Metrics functions}
 \usage{
-Safety_S(MSEobj = NULL, Ref = 0.4, Yrs = 10)
+Safety_S(MMSEobj = NULL, Ref = 0.4, Yrs = 10)
 
-Safety_M(MSEobj = NULL, Ref = 0.4, Yrs = c(11, 30))
+Safety_M(MMSEobj = NULL, Ref = 0.4, Yrs = c(11, 30))
 
-Status_S(MSEobj = NULL, Ref = 1, Yrs = 10)
+Status_S(MMSEobj = NULL, Ref = 1, Yrs = 10)
 
-Status_M(MSEobj = NULL, Ref = 1, Yrs = c(11, 30))
+Status_M(MMSEobj = NULL, Ref = 1, Yrs = c(11, 30))
 
-Stability(MSEobj = NULL, Ref = 1, Yrs = NULL)
+Stability(MMSEobj = NULL, Ref = 1, Yrs = NULL)
 
-Yield_S(MSEobj = NULL, Ref = 1, Yrs = 10)
+Yield_S(MMSEobj = NULL, Ref = 1, Yrs = 10)
 
 Yield_M(MSEobj = NULL, Ref = 1, Yrs = c(11, 30))
 }
 \arguments{
-\item{MSEobj}{An object of class `MSE`}
+\item{MMSEobj}{An object of class `MMSE`}
 
 \item{Ref}{Reference point used in the performance metrics (e.g., 0.5BMSY)}
 
@@ -40,9 +40,9 @@ Swordfish Performance Metrics functions
 }
 \section{Functions}{
 \itemize{
-\item \code{Safety_S}: Probability Spawning Biomass is > 0.4SBMSY over first 10 years
+\item \code{Safety_S}: Probability Female Spawning Biomass is > 0.4SBMSY over first 10 years
 
-\item \code{Safety_M}: Probability Spawning Biomass is > 0.4SBMSY over last 20 years
+\item \code{Safety_M}: Probability Female Spawning Biomass is > 0.4SBMSY over last 20 years
 
 \item \code{Status_S}: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) over first  10 years
 
