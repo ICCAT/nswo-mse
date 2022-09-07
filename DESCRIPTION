@@ -17,6 +17,8 @@ Depends:
     MSEtool (>= 3.6.0)
 Imports:
     devtools,
+    dplyr,
+    ggplot2,
     methods,
     mvtnorm,
     r4ss,
