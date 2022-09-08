@@ -23,7 +23,7 @@ Stability(MMSEobj = NULL, Ref = 1, Yrs = NULL)
 
 Yield_S(MMSEobj = NULL, Ref = 1, Yrs = 10)
 
-Yield_M(MSEobj = NULL, Ref = 1, Yrs = c(11, 30))
+Yield_M(MMSEobj = NULL, Ref = 1, Yrs = c(11, 30))
 }
 \arguments{
 \item{MMSEobj}{An object of class `MMSE`}
