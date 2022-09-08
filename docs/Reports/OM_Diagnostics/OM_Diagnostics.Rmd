@@ -44,12 +44,8 @@ OM.n <- as.numeric(om.num)+1 # base case is element 1 in all lists
 OM_DF <- SWOMSE::OM_DF
 
 OM_grid_DF <- SWOMSE::OM_DF %>% 
-  dplyr::filter(dir!='000_base_case') %>%
-  dplyr::select(-OM.num, -dir)
-
-OM_grid_DF <- SWOMSE::OM_DF %>%
-  dplyr::filter(dir!='000_base_case') %>%
-  dplyr::select(-OM.num, -dir)
+  dplyr::filter(OM.num =='000') %>%
+  dplyr::select(-OM.num)
 
 grid_factors_levels <- apply(OM_grid_DF, 2, unique)
 grid_factors_levels <- lapply(grid_factors_levels, as.numeric)
@@ -80,8 +76,7 @@ if (om.num != '000') {
   om_df <- SWOMSE::OM_DF %>% dplyr::filter(OM.num==om.num)
   om_df$env <- om_df$env %>% as.numeric() %>% as.logical()
   
-  OM_name <- om_df$dir
-  om_df$dir <- NULL
+  OM_name <- om_df$OM.object
   om_df$OM.num <- NULL
   
   
@@ -110,7 +105,7 @@ if (om.num != '000') {
 } else {
    cat('\n# Operating Model Scenario\n')
    om_df <- SWOMSE::OM_DF %>% dplyr::filter(OM.num==om.num)
-   OM_name <- om_df$dir
+   OM_name <- om_df$OM.object
    cat('**\nOM Name**:', OM_name, '\n\n')
    cat('\n 2022 Base Case Assessment. \n')
    cat('\nThis model was used to condition all operating models in the uncertainty grid.')
@@ -470,6 +465,20 @@ ggplot(SSB_DF, aes(x=year, y=SSB)) + geom_line(size=1.2) +
 ```
 
 `r fig.cap()` Plot of the predicted historical spawning stock biomass for OM: `r om.num`. The dashed black line is the predicted average unfished spawning biomass ($SB_0$). The dotted black line is the equilibrium spawning biomass corresponding with fishing at $F_{MSY}$.
+
+```{r, echo=FALSE, fig.width=8, fig.height=6}
+
+
+ggplot(SSB_DF, aes(x=year, y=B.Bmsy)) + geom_line(size=1.2) +
+  expand_limits(y=c(0, 0)) +
+  geom_hline(yintercept = 1, linetype=2) +
+  geom_hline(yintercept = 0.5, linetype=3) +
+  scale_x_continuous(breaks=seq(min(SSB_DF$year), max(SSB_DF$year), by=5)) +
+  theme_bw() +
+  labs(x="Year", y="SB/SB_MSY")
+```
+
+`r fig.cap()` Plot of the predicted historical spawning stock biomass relative to the estimated $SB_\text{MSY}$ for OM: `r om.num`. 
 
 ## Recruitment 
 
