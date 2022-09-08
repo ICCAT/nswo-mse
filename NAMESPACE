@@ -3,6 +3,7 @@
 export(ITarget_1)
 export(ITarget_2)
 export(JABBA_1)
+export(Proj_plot)
 export(SPICT_1)
 export(SP_1)
 export(SP_2)
