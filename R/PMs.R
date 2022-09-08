@@ -151,7 +151,7 @@ class(Yield_S) <- 'PM'
 
 #' @describeIn PMs Average Yield in last 20 years
 #' @export
-Yield_M <- function(MSEobj=NULL, Ref=1, Yrs=c(11,30)) {
+Yield_M <- function(MMSEobj=NULL, Ref=1, Yrs=c(11,30)) {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
