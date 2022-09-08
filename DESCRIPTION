@@ -13,12 +13,11 @@ RoxygenNote: 7.2.0
 Depends: 
     R (>= 3.5.0),
     dplyr,
-    openMSE,
-    MSEtool (>= 3.6.0)
+    ggplot2,
+    MSEtool (>= 3.6.0),
+    openMSE
 Imports:
     devtools,
-    dplyr,
-    ggplot2,
     methods,
     mvtnorm,
     r4ss,
