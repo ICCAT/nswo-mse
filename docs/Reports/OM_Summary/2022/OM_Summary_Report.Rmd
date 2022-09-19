@@ -75,11 +75,13 @@ DT::datatable(DF,
 ```{r}
 Check_Bounds_DF <- readRDS('Check_Bounds_DF.rda')
 
-Check_Bounds_DF <- Check_Bounds_DF %>% mutate(across(c(1:7, 12), as.factor))
-Check_Bounds_DF <- Check_Bounds_DF %>% select(OM.num, Min, Max, Value, Parameter) %>%
-  relocate(OM.num, Parameter)
+Check_Bounds_DF <- Check_Bounds_DF %>% mutate(across(1:2, as.factor))
+Check_Bounds_DF <- Check_Bounds_DF %>% select(OM.num, Class, Min, Max, Value, Parameter) %>%
+  relocate(OM.num, Class, Parameter)
 
 Check_Bounds_DF$Parameter <- factor(Check_Bounds_DF$Parameter)
+Check_Bounds_DF$Class <- factor(Check_Bounds_DF$Class, levels=unique(Check_Bounds_DF$Class),
+                                     ordered = TRUE)
 DT::datatable(Check_Bounds_DF,
               rownames= FALSE,
               filter = 'top',
@@ -100,11 +102,13 @@ DT::datatable(Check_Bounds_DF,
 ```{r}
 Check_Convergence_DF <- readRDS('Check_Convergence_DF.rda')
 
-Check_Convergence_DF <- Check_Convergence_DF %>% select(OM.num,  log_det_hessian, invertible,
+Check_Convergence_DF <- Check_Convergence_DF %>% select(OM.num, Class,  log_det_hessian, invertible,
                                               max_final_gradient, 
                                               Gradient, Parameter) %>%
-  relocate(OM.num, Parameter)
+  relocate(OM.num, Class, Parameter)
 
+Check_Convergence_DF$Class <- factor(Check_Convergence_DF$Class, levels=unique(Check_Convergence_DF$Class),
+                                     ordered = TRUE)
 DT::datatable(Check_Convergence_DF,
               rownames= FALSE,
               filter = 'top',
@@ -126,7 +130,12 @@ DT::datatable(Check_Convergence_DF,
 ```{r}
 Check_Correlation_DF <- readRDS('Check_Correlation_DF.rda')
 
-DT::datatable(Check_Correlation_DF,
+DF <- Check_Convergence_DF
+DF$OM.num <- factor(DF$OM.num, levels=unique(DF$OM.num),
+                                     ordered = TRUE)
+DF$Class <- factor(DF$Class, levels=unique(DF$Class),
+                                     ordered = TRUE)
+DT::datatable(Check_Convergence_DF,
               rownames= FALSE,
               filter = 'top',
               extensions = 'Buttons',
@@ -150,7 +159,7 @@ DT::datatable(Check_Correlation_DF,
 ```{r}
 ReferencePoint_DF <- readRDS('ReferencePoint_DF.rda')
 
-RefPointDF <- ReferencePoint_DF %>% select(OM.num, SB0, SBMSY, FMSY, MSY_d, MSY_r, SB_SB0, SB_SBMSY, F_FMSY)
+RefPointDF <- ReferencePoint_DF %>% select(OM.num, Class, SB0, SBMSY, FMSY, MSY_d, MSY_r, SB_SB0, SB_SBMSY, F_FMSY)
 RefPointDF$OM.num <- factor(RefPointDF$OM.num)
 
 RefPointDF <- RefPointDF %>% mutate(across(where(is.numeric), round, digits=2))

@@ -39,14 +39,14 @@ Check_Bounds <- function(i) {
   near_bounds$Parameter <- names
   rownames(near_bounds) <- NULL
   if (nrow(near_bounds)>0) {
-    return(cbind(OM_DF[i,], near_bounds))
+    df <- OM_DF[i,]
+    return(cbind(df %>% select(OM.num, Class),near_bounds))
   }
 }
 
 Check_Bounds_List <- lapply(1:nrow(OM_DF), Check_Bounds)
 Check_Bounds_DF <- do.call('rbind', Check_Bounds_List)
 Check_Bounds_DF$dir <- NULL
-Check_Bounds_DF <- Check_Bounds_DF %>% relocate(., OM.num)
 
 saveRDS(Check_Bounds_DF, file.path(obj_dir, 'Check_Bounds_DF.rda'))
 
@@ -134,7 +134,10 @@ Check_Correlations <- function(i) {
 
 Check_Correlation_List <- lapply(1:nrow(OM_DF), Check_Correlations)
 Check_Correlation_DF <- do.call('rbind', Check_Correlation_List)
+Check_Correlation_DF <- left_join(OM_DF %>% select(OM.num, Class),
+                                  Check_Correlation_DF)
 rownames(Check_Correlation_DF) <- NULL
+Check_Correlation_DF <- Check_Correlation_DF %>% filter(is.na(Check_Correlation_DF$`Parameter i`)==FALSE)
 saveRDS(Check_Correlation_DF, file.path(obj_dir, 'Check_Correlation_DF.rda'))
 
 
@@ -201,11 +204,16 @@ Classes <-  TSBio$Class %>% unique()
 Classes <- Classes[!Classes=='Base Case']
 
 
-
 # loop over classes and time-series info
 for (i in seq_along(Classes)) {
   class <- Classes[i]
   df_TS <- getTS_OM_DF(class, TSBio)
+
+  if (class !='Reference') {
+    ref_TS <- getTS_OM_DF('Reference', TSBio)
+    df_TS <- bind_rows(df_TS, ref_TS)
+    df_TS$Class <- factor(df_TS$Class, levels=c(class, 'Reference'), ordered = TRUE)
+  }
 
   Vars <- c('B.Bmsy', 'F.Fmsy', 'F', 'SSB', 'Depletion')
   BC_Vars <- paste0('BC_', Vars)
@@ -215,14 +223,27 @@ for (i in seq_along(Classes)) {
                 'SSB',
                 expression(SB/SB[0]))
   for (j in seq_along(Vars)) {
-    p <- ggplot(df_TS, aes_string(x='year', y=Vars[j], color='steepness'))+
-      facet_wrap(~M) +
-      geom_line() +
-      expand_limits(y=c(0)) +
-      geom_line() +
-      geom_line(aes_string(y=BC_Vars[j]), linetype=2, color='black') +
-      theme_bw() +
-      labs(x="Year", y=Ylabs[[j]])
+    if (class=='Reference') {
+      p <- ggplot(df_TS, aes_string(x='year', y=Vars[j], color='steepness'))+
+        facet_wrap(~M) +
+        geom_line() +
+        expand_limits(y=c(0)) +
+        geom_line() +
+        geom_line(aes_string(y=BC_Vars[j]), linetype=2, color='black') +
+        theme_bw() +
+        labs(x="Year", y=Ylabs[[j]])
+    } else {
+      p <- ggplot(df_TS, aes_string(x='year', y=Vars[j],
+                                    color='steepness',
+                                    linetype='Class'))+
+        facet_grid(~M) +
+        geom_line() +
+        expand_limits(y=c(0)) +
+        geom_line() +
+        geom_line(aes_string(y=BC_Vars[j]), linetype=2, color='black') +
+        theme_bw() +
+        labs(x="Year", y=Ylabs[[j]])
+    }
 
     if (Vars[j] %in% c('B.Bmsy')){
       p <- p +
