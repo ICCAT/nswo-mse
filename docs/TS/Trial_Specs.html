@@ -1747,7 +1747,10 @@ border: 0;
           <li><a href="#om-conditioning" id="toc-om-conditioning"><span class="toc-section-number">3</span> OM Conditioning</a>
           <ul>
           <li><a href="#om-uncertainty-grid" id="toc-om-uncertainty-grid"><span class="toc-section-number">3.1</span> OM Uncertainty Grid</a></li>
-          <li><a href="#om-validation" id="toc-om-validation"><span class="toc-section-number">3.2</span> OM Validation</a></li>
+          <li><a href="#evaluation-and-revision-of-om-grid" id="toc-evaluation-and-revision-of-om-grid"><span class="toc-section-number">3.2</span> Evaluation and Revision of OM Grid</a></li>
+          <li><a href="#reference-operating-models" id="toc-reference-operating-models"><span class="toc-section-number">3.3</span> Reference Operating Models</a></li>
+          <li><a href="#robustness-operating-models" id="toc-robustness-operating-models"><span class="toc-section-number">3.4</span> Robustness Operating Models</a></li>
+          <li><a href="#om-validation" id="toc-om-validation"><span class="toc-section-number">3.5</span> OM Validation</a></li>
           </ul></li>
           <li><a href="#mse-framework" id="toc-mse-framework"><span class="toc-section-number">4</span> MSE Framework</a>
           <ul>
@@ -1774,7 +1777,7 @@ border: 0;
         <ul class="authors">
           <li class="divider"></li>
                                 <li><span><i class="glyphicon glyphicon-user"></i> Adrian Hordyk <a href="mailto:adrian@bluematterscience.com" class="email">adrian@bluematterscience.com</a></span></li>
-                                         <li><span><i class="glyphicon glyphicon-calendar"></i> 02 September, 2022</span></li>
+                                         <li><span><i class="glyphicon glyphicon-calendar"></i> 19 September, 2022</span></li>
                   </ul>     
       </div>
       <div class="book-body fixed">
@@ -2027,10 +2030,10 @@ Age-5+
 </div>
 <div id="om-conditioning" class="section level1" number="3">
 <h1><span class="header-section-number">3</span> OM Conditioning</h1>
+<p>The 2022 stock assessment was used as a base case model for developing the operating models evaluated in the MSE.</p>
 <div id="om-uncertainty-grid" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> OM Uncertainty Grid</h2>
-<p>The 2022 stock assessment was used as a base case model for developing the OM grid for the MSE.</p>
-<p>An OM uncertainty grid was developed from the base case model using a full factorial design with 6 axes of uncertainty:</p>
+<p>In 2019, the Swordfish Species Group developed an OM uncertainty grid using a full factorial design with 6 axes of uncertainty:</p>
 <ol style="list-style-type: decimal">
 <li><p>Natural mortality (<em>M</em>) - three levels: 0.1, 0.2, 0.3</p></li>
 <li><p>Recruitment variability (sigmaR) - two levels: 0.2, 0.6</p></li>
@@ -2040,18 +2043,49 @@ Age-5+
 <li><p>Environmental covariate (env) - two levels: TRUE, FALSE</p></li>
 </ol>
 <p>The directional increase in catchability was modeled by assuming a 1% average annual increase in catchability throughout the history of the fishery, and adjusting the CPUE indices accordingly.</p>
-<p>The environmental covariate was included by modeling catchability as a function of the AMO.</p>
-<p>The factorial design of the 6 axes of uncertainty, each with 2 or 3 levels, resulted in an uncertainty grid of 216 OMs.</p>
+<p>The environmental covariate was included by modeling catchability as a function of the AMO, as was done in the 2017 and 2022 stock assessments.</p>
+<p>This factorial design of the 6 axes of uncertainty, each with 2 or 3 levels, resulted in an uncertainty grid of 216 OMs.</p>
 </div>
-<div id="om-validation" class="section level2" number="3.2">
-<h2><span class="header-section-number">3.2</span> OM Validation</h2>
-<div id="om-summary-report" class="section level3" number="3.2.1">
-<h3><span class="header-section-number">3.2.1</span> OM Summary Report</h3>
+<div id="evaluation-and-revision-of-om-grid" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Evaluation and Revision of OM Grid</h2>
+<p>Previous analyses of the OM uncertainty grid based on the 2017 assessment revealed that the three levels of natural mortality and steepness had the largest impact on the predicted stock dynamics <a href="https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_et_al_SCRS_2021_099.pdf">Hordyk et al., 2019</a> and are therefore the most important axes of uncertainty in the OM grid.</p>
+<p>The second level of recruitment variability (<span class="math inline">\(\sigma_R = 0.6\)</span>) had a minor impact on the predicted stock dynamics <a href="https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_et_al_SCRS_2021_099.pdf">Hordyk et al., 2019</a>, but did influence the relative performance of candidate management procedures (Hordyk, 2021)[<a href="https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_SCRS_2021_161.pdf" class="uri">https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_SCRS_2021_161.pdf</a>].</p>
+<p>The fourth axes of uncertainty was intended to evaluate the effect of alternative relative weightings of the length composition data and the indices of abundance. The three levels reflect a complete down-weighting of the indices of abundance (0.05; effectively only fitting the model to the length composition data), leaving the relative weighting of the two data sources unchanged from that used in the assessment (1), and up-weighting the indices of abundance so the model ignores the length composition data (20). This was done because of apparent conflicting signals between the length composition data and some of the indices of abundance. Recent analysis involved performing the recommended iterative re-weighting procedure <span class="citation">(Francis, 2011)</span></p>
+<div id="francis-r" class="section level3" number="3.2.1">
+<h3><span class="header-section-number">3.2.1</span> Francis R</h3>
+<p>This same pattern in results was found when the analyses were conducted with the new OM grid based on the 2022 assessment. Therefore, based on these results, the OM uncertainty grid was modified and the OMs placed into categories reflecting their relative importantce</p>
+</div>
+</div>
+<div id="reference-operating-models" class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> Reference Operating Models</h2>
+</div>
+<div id="robustness-operating-models" class="section level2" number="3.4">
+<h2><span class="header-section-number">3.4</span> Robustness Operating Models</h2>
+<div id="higher-recruitment-variability" class="section level3" number="3.4.1">
+<h3><span class="header-section-number">3.4.1</span> Higher Recruitment Variability</h3>
+</div>
+<div id="removing-length-data" class="section level3" number="3.4.2">
+<h3><span class="header-section-number">3.4.2</span> Removing Length Data</h3>
+</div>
+<div id="assumed-increase-in-catchability" class="section level3" number="3.4.3">
+<h3><span class="header-section-number">3.4.3</span> Assumed Increase in Catchability</h3>
+</div>
+<div id="other-robustness-tests" class="section level3" number="3.4.4">
+<h3><span class="header-section-number">3.4.4</span> Other Robustness Tests</h3>
+<div id="changing-environmental-conditions-and-climate-change" class="section level4" number="3.4.4.1">
+<h4><span class="header-section-number">3.4.4.1</span> Changing Environmental Conditions and Climate Change</h4>
+</div>
+</div>
+</div>
+<div id="om-validation" class="section level2" number="3.5">
+<h2><span class="header-section-number">3.5</span> OM Validation</h2>
+<div id="om-summary-report" class="section level3" number="3.5.1">
+<h3><span class="header-section-number">3.5.1</span> OM Summary Report</h3>
 <p>A <a href="../Reports/OM_Summary/2022/OM_Summary_Report.html">Summary Report</a> summarizes the diagnostic checks, the calculated biological reference points, and the estimated stock status relative to those reference points, across the 216 operating models included in the OM Uncertainty Grid.</p>
 <p>A SCRS document is currently being prepared summarizing this information, and will be presented at the 2022 Species Group Meeting of the Swordfish Working Group.</p>
 </div>
-<div id="om-diagnostic-reports" class="section level3" number="3.2.2">
-<h3><span class="header-section-number">3.2.2</span> OM Diagnostic Reports</h3>
+<div id="om-diagnostic-reports" class="section level3" number="3.5.2">
+<h3><span class="header-section-number">3.5.2</span> OM Diagnostic Reports</h3>
 <p>Individual diagnostic reports with objective function values and plots of model fits and patterns in residuals are available for each of the 216 OMs (and the 2022 assessment) on the North Atlantic Swordfish MSE <a href="https://iccat.github.io/nswo-mse/">homepage</a>.</p>
 </div>
 </div>
@@ -2079,7 +2113,7 @@ Age-5+
 <p>The 2-sex operating model are available in the <code>SWOMSE</code> package as objects of class <code>MOM</code> (multi-stock operating model). For example, the 2022 stock assessment is available as the base case operating model named <code>MOM_001</code>:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SWOMSE)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>MOM_001<span class="sc">@</span>Name</span></code></pre></div>
-<pre><code>## [1] &quot;M:0.2 sigmaR:0.2 steepness:0.6 cpuelambda:0.05 llq:1 env:0&quot;</code></pre>
+<pre><code>## [1] &quot;M:0.1 sigmaR:0.2 steepness:0.6 cpuelambda:0.05 llq:1 env:0&quot;</code></pre>
 </div>
 </div>
 <div id="historical-spool-up-period" class="section level1" number="5">
@@ -2158,7 +2192,7 @@ Age-5+
 <h3><span class="header-section-number">6.2.5</span> Future Catches</h3>
 <p>The total allowable catch (TAC) recommended by the CMPs is assumed to be implemented without error. That is, annual catches are equal to the TAC recommendations (provided sufficient vulnerable biomass was available). The Group determined that this assumption was appropriate based on the fact that historically the total landed catch has been below the total allowable catch (TAC) (see Figure <a href="#fig:catch-plot">5.1</a>).</p>
 <p>The operating models also assume that the TACs recommended by the CMPs apply to the landed catch and do not include discards; that is, the actual removals will be higher than the TACs if there is discard mortality on the sub-legal fish.</p>
-<p>Since the MSE projection period begins in 2021 (the year after the conditioning), and the landed catches are typically below the TAC (Figure <a href="#fig:catch-plot">5.1</a>), the MSE framework assumes that the catch in the first two projection years (2021 and 2022) is equal to observed landed catch in 2020.</p>
+<p>Since the MSE projection period begins in 2021 (the year after the conditioning), and the landed catches are typically below the TAC (Figure <a href="#fig:catch-plot">5.1</a>), the MSE framework assumes that the catch in the first two projection years (2021 and 2022) is equal to specified TAC for those years (13,200 ton).</p>
 <p>The CMPs are then first implemented in 2023, and every 3rd year after that, with the TAC held constant in the interim years.</p>
 </div>
 </div>
@@ -2177,15 +2211,15 @@ Age-5+
 </div>
 <div id="data-lags" class="section level3" number="6.3.3">
 <h3><span class="header-section-number">6.3.3</span> Data Lags</h3>
-<p>Data lags of 2 or more years are typical for this fishery. For example, the 2022 assessment used data up to and including 2020.</p>
+<p>Data lags of several years are common for many fisheries. For example, the 2022 assessment used data up to and including 2020. Assuming a CMP will be used to generate a TAC recommendation for 2023 based on this data, this is a data lag of 3 years.</p>
 <p>In the MSE framework, the CMPs are always provided with the simulated fishery data up to the previous year. That is, if a CMP is implemented in year <span class="math inline">\(t\)</span>, the catch and indices of abundance data provided to the CMP are up to and including year <span class="math inline">\(t-1\)</span>.</p>
-<p>Data lags are then handled in the CMP code, where the default assumption is that the catch and index data are lagged by 2 years. See the CMP (see the <a href="../cMPdevelopment/CMP-Development-Guide.html">CMP Development Guide</a> for more details).</p>
+<p>Data lags are then handled in the CMP code, where the default assumption is that the catch and index data are lagged by 3 years. See the CMP (see the <a href="../cMPdevelopment/CMP-Development-Guide.html">CMP Development Guide</a> for more details).</p>
 </div>
 </div>
 <div id="management-interval" class="section level2" number="6.4">
 <h2><span class="header-section-number">6.4</span> Management Interval</h2>
 <p>At the 2021 <a href="/Meeting_Reports/2021_SWO_ENG.pdf">Intersessional meeting</a>, the Group proposed a 3-year MP advice interval (see Table 5 in the <a href="../Meeting_Reports//2021_SWO_ENG.pdf">Report of the 2021 ICCAT Intersessional Meeting of the Swordfish Species Group</a>).</p>
-<p>The operating models have been conditioned on data up to 2020. As described <a href="#future-catches">above</a>, the model assumes the 2020 catch is taken in 2021 and 2022, and then begins applying the CMPs in 2023.</p>
+<p>The operating models have been conditioned on data up to 2020. As described <a href="#future-catches">above</a>, the model assumes that the catch is 2021 and 2022 is equal to the current TAC (13,200 ton), and then begins applying the CMPs in 2023.</p>
 <p>The 3-yr management interval is applied within the CMP code (see the <a href="../cMPdevelopment/CMP-Development-Guide.html">CMP Development Guide</a> for more details).</p>
 </div>
 </div>
@@ -2277,6 +2311,8 @@ Age-5+
 </tbody>
 </table>
 <p>A Google sheet has also been created for the Group to add comments or additional <a href="https://docs.google.com/spreadsheets/d/1NytREnFCZ6OPrhXT5E5Wi8Y22w-ZmENY8kEZqDH_FQE/edit?usp=sharing">Performance Metrics</a>.</p>
+<p>#TODO
+biomass performance metrics and Kobe space calculated for females</p>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
@@ -2289,6 +2325,9 @@ Anon. (2021). Peer review of the North Atlantic Swordfish Management Strategy Ev
 </div>
 <div id="ref-carruthersDataLimitedMethodsToolkit2018" class="csl-entry">
 Carruthers, T., &amp; Hordyk, A. R. (2018). The Data-Limited Methods Toolkit (DLMtool): An R package for informing management of data-limited populations. <em>Methods in Ecology and Evolution</em>, <em>9</em>(12), 2388–2395. <a href="https://doi.org/10.1111/2041-210X.13081">https://doi.org/10.1111/2041-210X.13081</a>
+</div>
+<div id="ref-francisDataWeightingStatistical2011" class="csl-entry">
+Francis, R. I. C. C. (2011). Data weighting in statistical fisheries stock assessment models. <em>Canadian Journal of Fisheries and Aquatic Sciences</em>, <em>68</em>(6), 1124–1138. <a href="https://doi.org/10.1139/f2011-025">https://doi.org/10.1139/f2011-025</a>
 </div>
 <div id="ref-methotStockSynthesisBiological2013" class="csl-entry">
 Methot, R. D., &amp; Wetzel, C. R. (2013). Stock synthesis: A biological and statistical framework for fish stock assessment and fishery management. <em>Fisheries Research</em>, <em>142</em>, 86–99. <a href="https://doi.org/10.1016/j.fishres.2012.10.012">https://doi.org/10.1016/j.fishres.2012.10.012</a>

@@ -8,7 +8,7 @@ DataList <- readRDS(paste0(OM.root, '/OM_objects/DataList.rda'))
 Fleet_DF <- readRDS(paste0(OM.root, '/OM_objects/Fleet_DF.rda'))
 
 # --- Make Data Figures ----
-Data <- DataList[[1]]
+Data <- DataList
 
 CatchDat <- Data$catch %>%  dplyr::filter(year>0)  %>%
   dplyr::rename(Code=fleet) %>%
@@ -85,10 +85,10 @@ ggsave('img/Combined_Index.png', p, width=6, height=4)
 
 
 # ---- Plot Additional Indices -----
-AddInd <- SWOMSE::MOM_1@cpars[[1]][[1]]$Data@AddInd
+AddInd <- SWOMSE::MOM_000@cpars[[1]][[1]]$Data@AddInd
 
 
-length(SWOMSE::MOM_1@cpars[[1]][[1]]$Data@AddIunits)
+length(SWOMSE::MOM_000@cpars[[1]][[1]]$Data@AddIunits)
 
 ni <- dim(AddInd)[2]
 yrs <- dimnames(AddInd)[[3]]

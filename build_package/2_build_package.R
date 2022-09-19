@@ -6,7 +6,7 @@ proyears <- 30 # number of projection years
 
 OM.root <- 'G:/My Drive/1_Projects/North_Atlantic_Swordfish/OMs'
 OMgrid.dir <- file.path(OM.root,'grid_2022')
-OMgrid.dirs <- list.dirs(OMgrid.dir, recursive = FALSE)
+OMgrid.dirs <- list.dirs(OMgrid.dir, recursive = TRUE)
 
 # ---- Install latest version of r4ss ----
 # devtools::install_github("r4ss/r4ss", build_vignettes = TRUE, force=TRUE)
@@ -57,47 +57,66 @@ cat("#' @name SWOData",
     sep="", append=TRUE,
     file=file.path('R/', RoxygenFile))
 
-
-
 # ---- Create OM Data Frame -----
 get_OM_details <- function(dir) {
 
-  text <- dir %>% basename() %>% strsplit(.,'_')
-  text <- text[[1]]
-  OM.num <- text[1]
+  if (!any(grepl('Report.sso',list.files(dir)))) {
 
-  if (grepl('base_case', dir)) {
-
-    df <- data.frame(M=0.2,
-                     sigmaR=0.2,
-                     steepness=0.88,
-                     cpuelambda=1,
-                     llq=1,
-                     env=7)
   } else {
-    text <- text[-1]
-    text[6] <- gsub('-5', 0, text[6])
-    text[6] <- gsub('5', 1, text[6])
 
-    df <- data.frame(text) %>% tidyr::separate(text, into = c("Parameter", "Value"),
-                                               sep = "(?<=[A-Za-z])(?=[0-9])")
-    df <- df %>% tidyr::pivot_wider(., names_from = Parameter, values_from = Value)
+    text <- dir %>% basename() %>% strsplit(.,'_')
+    text <- text[[1]]
+    OM.num <- text[1]
+
+    if (grepl('base_case', dir)) {
+
+      df <- data.frame(M=0.2,
+                       sigmaR=0.2,
+                       steepness=0.88,
+                       cpuelambda=TRUE,
+                       llq=1,
+                       env=7,
+                       Class='Base Case'
+                       )
+    } else {
+      text <- text[-1]
+      text[6] <- gsub('-5', 0, text[6])
+      text[6] <- gsub('5', 1, text[6])
+
+      df <- data.frame(text) %>% tidyr::separate(text, into = c("Parameter", "Value"),
+                                                 sep = "(?<=[A-Za-z])(?=[0-9])")
+      df <- df %>% tidyr::pivot_wider(., names_from = Parameter, values_from = Value)
+    }
+
+    if (grepl('Reference', dir)) {
+      df$Class <- 'Reference'
+    }
+    if (grepl('Robustness', dir)) {
+      dir2 <- strsplit(dir, 'Robustness/')[[1]][2]
+      name <- strsplit(dir2, '/')[[1]][1]
+      df$Class <- paste0('R_', name)
+    }
+
+    df$OM.num <- OM.num
+    df$env[df$env=='7'] <- '1'
+    df$cpuelambda[df$cpuelambda==1] <- TRUE
+    df$cpuelambda[df$cpuelambda==20] <- FALSE
+    df$OM.object <- paste0('MOM_', df$OM.num)
+    df$dir <- strsplit(dir, OMgrid.dir)[[1]][2]
+
+    return(df)
   }
-
-  df$OM.num <- OM.num
-  df$dir <- dir %>% basename()
-
-  df
 }
 
-OM_DF <- lapply(OMgrid.dirs, get_OM_details) %>% do.call('rbind',.)
-OM_DF$env[OM_DF$env=='7'] <- '1'
-OM_DF <- OM_DF %>% mutate_at(1:6, as.numeric)
-OM_DF$dir <- NULL
-OM_DF$OM.object <- paste0('MOM_', OM_DF$OM.num)
+OM_list <- lapply(OMgrid.dirs, get_OM_details)
+OM_list[sapply(OM_list, is.null)] <- NULL
+OM_DF <- do.call('rbind',OM_list)
+
+OM_DF <- OM_DF %>% mutate(across(c(1:3, 5:6), as.numeric))
+OM_DF <- OM_DF %>% rename('Include CAL'=cpuelambda)
+OM_DF$`Include CAL` <- as.logical(OM_DF$`Include CAL`)
 
 usethis::use_data(OM_DF, overwrite = TRUE)
-
 
 cat("\n#' @name OM_DF",
     "\n#' @docType data",
@@ -111,7 +130,6 @@ cat("\n#' @name OM_DF",
 
 # ---- Import OMs ----
 
-
 docOM <- function(OMname) {
   cat("#' @rdname SWO-OMs \n", "'", OMname, "'\n",
       sep="", append=TRUE,
@@ -120,9 +138,9 @@ docOM <- function(OMname) {
 }
 
 
-importOM <- function(i, OMgrid.dirs, nsim, proyears, OM_DF, SWOData) {
+importOM <- function(i, nsim, proyears, OM_DF, SWOData) {
   message(i)
-  SS.dir <- OMgrid.dirs[i]
+  SS.dir <- file.path(OMgrid.dir, OM_DF$dir[i])
 
   # import MOM
   MOM <- SS2MOM(SS.dir, nsim=nsim, proyears = proyears, interval = 1)
@@ -187,18 +205,11 @@ importOM <- function(i, OMgrid.dirs, nsim, proyears, OM_DF, SWOData) {
     MOM@cpars[[p]][[1]]$Cobs_y <- matrix(1, nrow=nsim, ncol=nyears+MOM@proyears)
   }
 
-  i_num <- i-1  # base case is 0
-  i_num <- as.character(i_num)
-  if (nchar(i_num)==1) i_num <- paste0('00',i_num)
-  if (nchar(i_num)==2) i_num <- paste0('0',i_num)
 
-  if (grepl('base_case', SS.dir)) {
-    name <- 'SWO 2022 Base Case'
-  } else {
-    vals <- OM_DF %>% dplyr::filter(OM.num==i_num)
-    vals$OM.num <- vals$dir <- NULL
-    name <- paste(names(vals), vals, collapse = ' ', sep=':')
-  }
+  # assign name
+  vals <- OM_DF[i,]
+  vals$OM.num <- vals$dir <- vals$OM.object <- NULL
+  name <- paste(names(vals), vals, collapse = ' ', sep=':')
 
   MOM@Name <- name
   n.fleet <- length(MOM@cpars[[1]])
@@ -206,7 +217,7 @@ importOM <- function(i, OMgrid.dirs, nsim, proyears, OM_DF, SWOData) {
   # map real data across stocks - data is not sex-specific
   MOM@cpars[[1]][[1]]$Real.Data.Map <- matrix(1, nrow=n.fleet, ncol=n.stock)
 
-  name <- paste0('MOM_', i_num)
+  name <- OM_DF$OM.object[i]
   assign(name, MOM)
 
   do.call("use_data", list(as.name(name), overwrite = TRUE))
@@ -229,18 +240,8 @@ cat("#' @name SWO-OMs",
     file=file.path('R/', RoxygenFile))
 
 
-purrr::map(seq_along(OMgrid.dirs), importOM, OMgrid.dirs, nsim, proyears,
+purrr::map(1:nrow(OM_DF), importOM, nsim, proyears,
            OM_DF, SWOData)
-
-# prob <- NULL
-# for (i in 1:length(OMgrid.dirs)) {
-#   tt <- try(importOM(i, OMgrid.dirs, nsim))
-#   if (class(try)=='try-error') {
-#     prob <- c(prob, i)
-#   }
-# }
-#
-# prob
 
 
 # ---- Update SWO_Data with AddInd -----

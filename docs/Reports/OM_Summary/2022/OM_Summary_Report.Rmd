@@ -34,7 +34,7 @@ tab.cap <- function() {
 
 # Introduction
 
-This report summarizes the diagnostic checks, the calculated biological reference points, and the estimated stock status relative to those reference points, across the 216 operating models included in the OM Uncertainty Grid.  
+This report summarizes the diagnostic checks, the calculated biological reference points, and the estimated stock status relative to those reference points, for all operating models included in the OM Uncertainty Grid.  
 
 ## Operating Models 
 
@@ -42,19 +42,18 @@ This report summarizes the diagnostic checks, the calculated biological referenc
 
 ```{r}
 DF <- OM_DF
-DF <- DF %>% select(OM.num, M, sigmaR, steepness, cpuelambda, llq, env)
-DF <- DF %>% filter(OM.num!='000')
-DF$env <- as.logical(DF$env)
-DF <- DF %>% mutate(across(1:7, as.factor))
+DF <- DF %>% select(OM.num, M, sigmaR, steepness, `Include CAL`, llq, Class)
+DF <- DF %>% mutate(across(1:6, as.factor))
+DF$Class <- factor(DF$Class, levels=unique(DF$Class), ordered=TRUE)
 
 DT::datatable(DF, 
               colnames=c('OM Number',
                          'M',
                          'sigmaR',
                          'Steepness (h)',
-                         'Relative CPUE Weighting',
+                         'Include CAL',
                          'Assumed historical increase in catchability',
-                         'Include AMO Covariate'),
+                         'Class'),
               rownames= FALSE,
               filter = 'top',
               extensions = 'Buttons',
@@ -80,6 +79,7 @@ Check_Bounds_DF <- Check_Bounds_DF %>% mutate(across(c(1:7, 12), as.factor))
 Check_Bounds_DF <- Check_Bounds_DF %>% select(OM.num, Min, Max, Value, Parameter) %>%
   relocate(OM.num, Parameter)
 
+Check_Bounds_DF$Parameter <- factor(Check_Bounds_DF$Parameter)
 DT::datatable(Check_Bounds_DF,
               rownames= FALSE,
               filter = 'top',
@@ -101,7 +101,7 @@ DT::datatable(Check_Bounds_DF,
 Check_Convergence_DF <- readRDS('Check_Convergence_DF.rda')
 
 Check_Convergence_DF <- Check_Convergence_DF %>% select(OM.num,  log_det_hessian, invertible,
-                                              max_final_gradient, high_grad, 
+                                              max_final_gradient, 
                                               Gradient, Parameter) %>%
   relocate(OM.num, Parameter)
 
@@ -141,17 +141,19 @@ DT::datatable(Check_Correlation_DF,
 ```
 
 
-# Biological Reference Points
+# Summary Tables
 
-## Summary Table
+## Biological Reference Points
 
-`r tab.cap()` Summary table of the calculated biological reference points for the OMs in the uncertainty grid. 
+`r tab.cap()` Summary table of the calculated biological reference points and estimated stock status for the OMs in the uncertainty grid. 
 
 ```{r}
 ReferencePoint_DF <- readRDS('ReferencePoint_DF.rda')
 
-RefPointDF <- ReferencePoint_DF %>% select(OM.num, SB0, SBMSY, FMSY, MSY_d, MSY_r)
+RefPointDF <- ReferencePoint_DF %>% select(OM.num, SB0, SBMSY, FMSY, MSY_d, MSY_r, SB_SB0, SB_SBMSY, F_FMSY)
 RefPointDF$OM.num <- factor(RefPointDF$OM.num)
+
+RefPointDF <- RefPointDF %>% mutate(across(where(is.numeric), round, digits=2))
 
 DT::datatable(RefPointDF,
               rownames= FALSE,
@@ -166,166 +168,83 @@ DT::datatable(RefPointDF,
 ```
 
 
-## Boxplots by Axes 
+# Time-Series Plots  
 
-The following plots show boxplots of the biological reference points. The plots are faceted by natural mortality (M; columns) and steepness (h; rows), the two axes that had the largest impact on the reference points, and color-coded by the levels of the remaining axes.
 
 ```{r}
-ReferencePoint_DF <- ReferencePoint_DF %>% mutate(across(1:6, as.factor))
+imgs <- list.files(file.path('../../../../img/OM_Summary_Report/'))
+Classes <- OM_DF %>% filter(Class!='Base Case') %>% select(Class)
+Classes <- unique(Classes$Class)
 
-fig_name_list <- readRDS('ref_plot_list.rda')
-ref_points <- c('SB0', 'SBMSY', 'FMSY', 'MSY_r')
-ref_labels <- c('SB~0~', 'SB~MSY~', 'F~MSY~', 'MSY (retained)')
-factors <- colnames(ReferencePoint_DF)[c(2,4:6)]
-
-heading_list <- plot_list <- fig_cap_list <- height_list <- width_list <- list()
-
-for (i in seq_along(ref_points)) {
-  ref <- ref_points[i] %>% as.character()
-  heading_list[[i]] <- paste0('\n### ', ref_labels[i], '\n') 
-  plot_list[[i]] <- list()
-  fig_cap_list[[i]] <- list()
-  height_list[[i]] <- list()
-  width_list[[i]] <- list()
-  
-  for (j in seq_along(factors)) {
-    var <- factors[j]  %>% as.character()
-    n_levels <- ReferencePoint_DF[[var]] %>% levels() %>% length()
-    this.fig.num <- fig.cap()
-    caption<- paste('\n\n', this.fig.num, 'Boxplots of estimated', ref, 
-                     'faceted by natural mortality (M; columns) and steepness (h; rows), and color coded by',
-                     n_levels, 'levels of', var, '.\n\n\n')
-  
-    fig_cap_list[[i]][[j]] <- caption
-  }
-}
-
+plots <- c('SSB', 'F', 'Depletion', 'B.Bmsy', 'F.Fmsy')
+headings <- c('SSB', 'Fishing mortality (F)', 'SB/SB~0~', 'SB/SB~MSY~', 'F/F~MSY~')
+text <- c('spawning stock biomass (SSB)',
+          'fishing mortality (F)',
+          'relative spawning biomass (SB/SB0)',
+          'relative spawning biomass (SB/SB_MSY)',
+          'relative fishing mortality (F/F_MSY)')
 
 ```
+
+## Reference
+
+Time-series plots of the 9 Reference Operating Models.
 
 ```{r, results='asis', width=6, height=6}
-for (i in seq_along(ref_points)) {
-  cat(heading_list[[i]])
-  for (j in seq_along(factors)) {
-    cat('\n![](', file.path('../../../../img/OM_Summary_Report/', fig_name_list[[i]][[j]]), ')')
-    cat(fig_cap_list[[i]][[j]])
-  }
+Class <- 'Reference'
+figs <- imgs[grepl(Class, imgs)]
+
+for (i in seq_along(plots)) {
+ this.fig <- figs[grepl(plots[i], figs)]
+ cat('\n###', headings[i], '\n')
+ cat('\n![](', file.path('../../../../img/OM_Summary_Report/', this.fig), ')')
+ this.fig.num <- fig.cap()
+ caption<- paste('\n\n', this.fig.num, 'Time-series of estimated', text[i], 
+                     'with three levels natural mortality (M; columns) and with three levels steepness (h; colors). The black dashed line represents the predictions from the 2022 Base Case stock assessment.\n\n\n')
+                     
+ cat(caption)
 }
-
-
-
 ```
 
 
-# Estimated Stock Status
+## R1. Higher Recruitment Variability
 
-## Summary Table
-
-`r tab.cap()` Summary table of the estimated stock dynamics relative to the biological reference points for the OMs in the uncertainty grid. 
-
-```{r}
-RefPointDF <- ReferencePoint_DF %>% select(OM.num, SB_SB0, SB_SBMSY, F_FMSY)
-RefPointDF$OM.num <- factor(RefPointDF$OM.num)
-RefPointDF[,2:4] <- round(RefPointDF[,2:4], 2)
-DT::datatable(RefPointDF,
-              filter = 'top',
-              rownames= FALSE,
-              extensions = 'Buttons',
-              options = list(
-                pageLength = 10, 
-                autoWidth = TRUE,
-                sDom  = '<"top">Bflrt<"bottom">ip',
-                buttons='csv')
-)
-```
-
-
-## Boxplots by Axes
-
-The following plots show boxplots of the estimated stock status relative to the biological reference points. The plots are faceted by natural mortality (M; columns) and steepness (h; rows), the two axes that had the largest impact on the reference points, and color-coded by the levels of the remaining axes.
-
-```{r}
-ReferencePoint_DF <- ReferencePoint_DF %>% mutate(across(1:6, as.factor))
-
-fig_name_list <- readRDS('status_ref_plot_list.rda')
-ref_points <- c('SB_SB0', 'SB_SBMSY', 'F_FMSY')
-ref_labels <- c('SB/SB~0~', 'SB/SB~MSY~', 'F/F~MSY~')
-factors <- colnames(ReferencePoint_DF)[c(2,4:6)]
-
-heading_list <- plot_list <- fig_cap_list <- height_list <- width_list <- list()
-
-for (i in seq_along(ref_points)) {
-  ref <- ref_points[i] %>% as.character()
-  heading_list[[i]] <- paste0('\n### ', ref_labels[i], '\n') 
-  plot_list[[i]] <- list()
-  fig_cap_list[[i]] <- list()
-  height_list[[i]] <- list()
-  width_list[[i]] <- list()
-  
-  for (j in seq_along(factors)) {
-    var <- factors[j]  %>% as.character()
-    n_levels <- ReferencePoint_DF[[var]] %>% levels() %>% length()
-    this.fig.num <- fig.cap()
-    caption<- paste('\n\n', this.fig.num, 'Boxplots of estimated', ref, 
-                     'faceted by natural mortality (M; columns) and steepness (h; rows), and color coded by',
-                     n_levels, 'levels of', var, '.\n\n\n')
-  
-    fig_cap_list[[i]][[j]] <- caption
-  }
-}
-
-
-```
+Time-series plots of the 9 OMs where the recruitment variability was assumed to be higher than the Base Case.
 
 ```{r, results='asis', width=6, height=6}
-for (i in seq_along(ref_points)) {
-  cat(heading_list[[i]])
-  for (j in seq_along(factors)) {
-    cat('\n![](', file.path('../../../../img/OM_Summary_Report/', fig_name_list[[i]][[j]]), ')')
-    cat(fig_cap_list[[i]][[j]])
-  }
+Class <- 'R_higher_sigmaR'
+figs <- imgs[grepl(Class, imgs)]
+
+for (i in seq_along(plots)) {
+ this.fig <- figs[grepl(plots[i], figs)]
+ cat('\n###', headings[i], '\n')
+ cat('\n![](', file.path('../../../../img/OM_Summary_Report/', this.fig), ')')
+ this.fig.num <- fig.cap()
+ caption<- paste('\n\n', this.fig.num, 'Time-series of estimated', text[i], 
+                     'with three levels natural mortality (M; columns) and with three levels steepness (h; colors). The black dashed line represents the predictions from the 2022 Base Case stock assessment. The predictions for the Reference Operating Models are shown in colored dashed lines. \n\n\n')
+                     
+ cat(caption)
 }
-
-
 ```
 
-## SB/SB~MSY~ Time-Series Plots 
+## R2. Remove Catch-at-Length
 
-Almost all variation in the predicted stock dynamics can be explained by four factors: 
+Time-series plots of the 9 OMs where the catch-at-length data was not included in the operating model conditioning.
 
-1. Natural mortality (*M*)
-2. Steepness (*h*)
-3. Relative weighting of the CPUE to CAL data (cpuelambda)
-4. The assumed 1% increase in catchability in historical CPUEs
+```{r, results='asis', width=6, height=6}
+Class <- 'R_remove_CAL'
+figs <- imgs[grepl(Class, imgs)]
 
-The following plots show the estimated $SB/SB_{MSY}$ across these four axes.  
-
-### Default Weighting of CPUE Indices
-
-![](../../../../img/OM_Summary_Report/1_TS_SB_SBMSY_defaultweighting.png)
-
-
-`r fig.cap()` The estimated SB/SB~MSY~ faceted by *M* (columns) and steepness (*h*; rows), with line type indicating the levels for the assumed increase in catchability, and color showing the weighting of the CPUE data relative to the CAL data.
-
-### Down weighting of CAL Data
-
-![](../../../../img/OM_Summary_Report/2_TS_SB_SBMSY_up.png)
-
-`r fig.cap()` The estimated SB/SB~MSY~ faceted by *M* (columns) and steepness (*h*; rows), with line type indicating the levels for the assumed increase in catchability, and color showing the weighting of the CPUE data relative to the CAL data.
-
-
-### Down weighting of CPUE Indices
-
-![](../../../../img/OM_Summary_Report/3_TS_SB_SBMSY_down.png)
-
-`r fig.cap()` The estimated SB/SB~MSY~ faceted by *M* (columns) and steepness (*h*; rows), with line type indicating the levels for the assumed increase in catchability, and color showing the weighting of the CPUE data relative to the CAL data.
-
-
-
-### All
-
-![](../../../../img/OM_Summary_Report/4_TS_SB_SBMSY_all.png)
-
-`r fig.cap()` The estimated SB/SB~MSY~ faceted by *M* (columns) and steepness (*h*; rows), with line type indicating the levels for the assumed increase in catchability, and color showing the weighting of the CPUE data relative to the CAL data.
+for (i in seq_along(plots)) {
+ this.fig <- figs[grepl(plots[i], figs)]
+ cat('\n###', headings[i], '\n')
+ cat('\n![](', file.path('../../../../img/OM_Summary_Report/', this.fig), ')')
+ this.fig.num <- fig.cap()
+ caption<- paste('\n\n', this.fig.num, 'Time-series of estimated', text[i], 
+                     'with three levels natural mortality (M; columns) and with three levels steepness (h; colors). The black dashed line represents the predictions from the 2022 Base Case stock assessment. The predictions for the Reference Operating Models are shown in colored dashed lines. \n\n\n')
+                     
+ cat(caption)
+}
+```
 
 

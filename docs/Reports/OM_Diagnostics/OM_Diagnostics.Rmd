@@ -39,17 +39,18 @@ tab.cap <- function() {
 }
 
 om.num <- params$om.num
-OM.n <- as.numeric(om.num)+1 # base case is element 1 in all lists
+
 
 OM_DF <- SWOMSE::OM_DF
 
-OM_grid_DF <- SWOMSE::OM_DF %>% 
-  dplyr::filter(OM.num =='000') %>%
-  dplyr::select(-OM.num)
+OM_grid_DF <- OM_DF %>% 
+  dplyr::filter(OM.num !='000') %>%
+  dplyr::select(-OM.num, -Class, -OM.object, -dir)
 
 grid_factors_levels <- apply(OM_grid_DF, 2, unique)
 grid_factors_levels <- lapply(grid_factors_levels, as.numeric)
 grid_factors_levels$env <- as.logical(grid_factors_levels$env)
+grid_factors_levels$`Include CAL` <- as.logical(grid_factors_levels$`Include CAL`)
 
 n_factors <- length(grid_factors_levels)
 max_n_levels <- lapply(grid_factors_levels, length) %>% unlist() %>% max()
@@ -71,14 +72,14 @@ grid_summary_DF[is.na(grid_summary_DF)] <- ''
 if (om.num != '000') {
   cat('\n# Operating Model Scenario\n')
   cap.num <- tab.cap()
-  cat('\n', cap.num, 'The uncertainty grid is a full factorial design with the following ', n_factors, ' factors, resulting in', nrow(OM_DF)-1, 'OMs. The parameters used to condition this OM are indicated with bold text in blue boxes.')
+  cat('\n', cap.num, 'The properties of this operating model.')
   
-  om_df <- SWOMSE::OM_DF %>% dplyr::filter(OM.num==om.num)
+  om_df <- OM_DF %>% dplyr::filter(OM.num==om.num)
   om_df$env <- om_df$env %>% as.numeric() %>% as.logical()
+  om_df$`Include CAL` <- om_df$`Include CAL` %>% as.numeric() %>% as.logical()
   
   OM_name <- om_df$OM.object
   om_df$OM.num <- NULL
-  
   
   back.col <- 'lightblue'
   grid_summary_DF <- grid_summary_DF %>% dplyr::mutate(
@@ -88,19 +89,21 @@ if (om.num != '000') {
                                    background =   ifelse(grid_summary_DF$sigmaR==om_df$sigmaR, back.col, 'white')),
     steepness = kableExtra::cell_spec(steepness, 'html',   bold=ifelse(grid_summary_DF$steepness==om_df$steepness, TRUE, FALSE),
                               background =   ifelse(grid_summary_DF$steepness==om_df$steepness, back.col, 'white')),
-    cpuelambda = kableExtra::cell_spec(cpuelambda , 'html',   bold=ifelse(grid_summary_DF$cpuelambda ==om_df$cpuelambda , TRUE, FALSE),
-                                   background = ifelse(grid_summary_DF$cpuelambda   ==om_df$cpuelambda , back.col, 'white')),
+    `Include.CAL` = kableExtra::cell_spec(`Include.CAL` , 'html',   bold=ifelse(grid_summary_DF$`Include.CAL` ==om_df$`Include CAL` , TRUE, FALSE),
+                                   background = ifelse(grid_summary_DF$`Include.CAL`   ==om_df$`Include CAL` , back.col, 'white')),
     llq = kableExtra::cell_spec(llq, 'html',   bold=ifelse(grid_summary_DF$llq==om_df$llq, TRUE, FALSE),
                                 background = ifelse(grid_summary_DF$llq==om_df$llq,   back.col, 'white')),
     env = kableExtra::cell_spec(env, 'html',   bold=ifelse(grid_summary_DF$env==om_df$env, TRUE, FALSE),
                                 background = ifelse(grid_summary_DF$env==om_df$env,   back.col, 'white'))
   )
   rownames(grid_summary_DF) <- NULL
-  colnames(grid_summary_DF) <- c("M", 'sigmaR', 'h', 'CPUE CV lambda', 'Q increase',   'Env. Covariate')
+  colnames(grid_summary_DF) <- c("M", 'sigmaR', 'h', 'Include CAL', 'Q increase',   'Env. Covariate')
   
   cat('\n\n**OM Name**:', OM_name, '\n\n')
+  cat('\n\n**Class**:', om_df$Class, '\n\n')
   
-  grid_summary_DF %>% knitr::kable(format='html', escape=FALSE) %>%
+  grid_summary_DF %>% select(-`Env. Covariate`) %>%
+    knitr::kable(format='html', escape=FALSE) %>%
     kableExtra::kable_styling() 
 } else {
    cat('\n# Operating Model Scenario\n')
@@ -109,13 +112,8 @@ if (om.num != '000') {
    cat('**\nOM Name**:', OM_name, '\n\n')
    cat('\n 2022 Base Case Assessment. \n')
    cat('\nThis model was used to condition all operating models in the uncertainty grid.')
-   
   
 }
-
-
-
-
 
 ```
 
@@ -146,8 +144,9 @@ DF %>% knitr::kable(escape = F,
 `r tab.cap()` The total and component overall likelihood values.
 
 ```{r, echo=FALSE, results="asis"}
-LHlist <- readRDS(file.path(OM.root, 'OM_objects/LHlist.rda'))
-likelihood <- LHlist[[OM.n]]
+
+
+likelihood <- readRDS(file.path(OM.root, 'OM_objects/Likelihoods', basename(om_df$dir), 'likelihoods.rda'))
 dt <- likelihood[[1]][1,]
 rownames(dt) <- NULL
 
@@ -180,14 +179,15 @@ dt %>% t() %>% knitr::kable(format = "html", escape = F,
 ```{r}
 
 # CPUE fitting info
-CPUE_List <- readRDS(paste0(OM.root, '/OM_objects/CPUE_List.rda'))[[OM.n]]
-cpue <- left_join(CPUE_List, Fleet_DF, by='index')
+cpue <- readRDS(file.path(OM.root, 'OM_objects/CPUEs', basename(om_df$dir), 'cpues.rda'))
+cpue <- left_join(cpue, Fleet_DF, by='index')
 cpue <- cpue %>% filter(Name !='Spain')
 cpue <- cpue %>% dplyr::group_by(Code) %>% dplyr::group_modify(~fit.diagnostics(.x))
 
 # drop Spain and Combined Index
 cpue <- cpue %>% dplyr::filter(!Code%in%Fleet_DF$Code[c(1,19)])
 ```
+
 ```{r, echo=FALSE, fig.width=8, fig.height=18,}
 cpue.plot(cpue)
 ```
@@ -217,7 +217,7 @@ dt %>% DT::datatable(class = 'cell-border stripe', rownames = FALSE,
 
 # Fits to Catch Data
 ```{r, echo=FALSE, fig.width=8, fig.height=6}
-CatchDat <- readRDS(paste0(OM.root, '/OM_objects/Catch_List.rda'))[[OM.n]]
+CatchDat <- readRDS(file.path(OM.root, 'OM_objects/Catch', basename(om_df$dir), 'catch.rda'))
 
 var_width = 30
 CatchDat <- mutate(CatchDat, Name = stringr::str_wrap(Name, width = var_width))
@@ -257,8 +257,8 @@ ggplot(CatchDat, aes(x=year)) +
 # Fits to Length Composition
 
 ```{r, echo=FALSE}
-LenDat_List <- readRDS(paste0(OM.root, '/OM_objects/LenDat_List.rda'))
-predLen <- LenDat_List[[OM.n]]
+predLen <- readRDS(file.path(OM.root, 'OM_objects/CAL', basename(om_df$dir), 'cal.rda'))
+
 ```
 
 ## Observed and Predicted by Fleet and Year
@@ -354,7 +354,7 @@ ggplot(dat, aes(x=Year, y=Bin)) +
 
 ## Fits to Aggregated Length Composition
 ```{r, echo=FALSE, fig.width=8, fig.height=8}
-Comps <-  LenDat_List[[OM.n]] %>% group_by(Name, Bin) %>% summarize(Obs=sum(Obs), Exp=sum(Exp),
+Comps <- predLen %>% group_by(Name, Bin) %>% summarize(Obs=sum(Obs), Exp=sum(Exp),
                                                                     .groups = 'keep')
 var_width = 30
 Comps <- mutate(Comps, Name = stringr::str_wrap(Name, width = var_width))
@@ -375,8 +375,10 @@ ggplot(Comps, aes(x=Bin)) +
 # Reference Points
 `r tab.cap()` The biological reference points calculated for OM: `r om.num`.
 ```{r, echo=FALSE}
-RefPoint_DF <- readRDS(paste0(OM.root, '/OM_objects/RefPoint_DF.rda'))
-ref_points <- RefPoint_DF %>% filter(i==OM.n) %>% select(-one_of('i'))
+
+ref_points <- readRDS(file.path(OM.root, 'OM_objects/Ref_Points', basename(om_df$dir), 'ref_points.rda'))
+ref_points_2 <- ref_points
+
 ref_points <- round(ref_points,2)
 col.names <- c("MSY (dead)",
                "MSY (retained)",
@@ -397,10 +399,9 @@ ref_points %>%
 
 # Kobe Plot 
 ```{r, echo=FALSE, fig.width=8, fig.height=6}
-TSbio_dat <- readRDS(paste0(OM.root, '/OM_objects/TSBio_List.rda'))[[OM.n]]
-RefPoint_DF <- readRDS(paste0(OM.root, '/OM_objects/RefPoint_DF.rda'))
-ref_points <- RefPoint_DF %>% filter(i==OM.n) %>% select(-one_of('i'))
-TSbio_dat$SBMSY <- ref_points$SBMSY
+
+TSbio_dat <- readRDS(file.path(OM.root, 'OM_objects/Timeseries', basename(om_df$dir), 'timeseries.rda'))
+TSbio_dat$SBMSY <- ref_points_2$SBMSY
 
 years <- min(TSbio_dat$year):TSbio_dat$year[which(TSbio_dat$Depletion == TSbio_dat$SS_Depletion)]
 SSB_DF <- TSbio_dat %>% filter(year %in% years)
@@ -451,12 +452,11 @@ ggplot(SSB_DF) +
 
 ```{r, echo=FALSE, fig.width=8, fig.height=6}
 
-
 ggplot(SSB_DF, aes(x=year, y=SSB)) + geom_line(size=1.2) +
   expand_limits(y=c(0, 0)) +
   geom_line(aes(x=year, y=SB0), linetype=2) +
   geom_line(aes(x=year, y=SBMSY), linetype=3) +
-  scale_y_continuous(sec.axis = sec_axis(~ . /SSB_DF$SB0[1], name="Depletion",
+  scale_y_continuous(sec.axis = sec_axis(~ . /SSB_DF$SB0[1], name=expression(SB/SB[0]),
                                                            breaks=seq(0, 1, by=0.2)),
                               expand = expansion(mult=c(0, 0.05))) +
   scale_x_continuous(breaks=seq(min(SSB_DF$year), max(SSB_DF$year), by=5)) +
@@ -475,7 +475,7 @@ ggplot(SSB_DF, aes(x=year, y=B.Bmsy)) + geom_line(size=1.2) +
   geom_hline(yintercept = 0.5, linetype=3) +
   scale_x_continuous(breaks=seq(min(SSB_DF$year), max(SSB_DF$year), by=5)) +
   theme_bw() +
-  labs(x="Year", y="SB/SB_MSY")
+  labs(x="Year", y=expression(SB/SB[MSY]))
 ```
 
 `r fig.cap()` Plot of the predicted historical spawning stock biomass relative to the estimated $SB_\text{MSY}$ for OM: `r om.num`. 
@@ -523,17 +523,19 @@ recdevs.plot(SSB_DF)
 `r fig.cap()` Recruitment deviations (log). Blue bars represent positive deviations where the estimated recruitment is higher than the mean value predicted from the stock-recruitment curve. Grey bars represent negative deviations. ‘ac’. and ‘sd’. refer to the lag-1 autocorrelation and standard deviation in the log recruitment deviations.
 
 # Estimated Selectivity and Retention Curves
-```{r, echo=FALSE, fig.width=8, fig.height=6}
-Select_List <- readRDS(paste0(OM.root, '/OM_objects/Select_List.rda'))
-SelectDat <- Select_List[[OM.n]]
+
+```{r, echo=FALSE, fig.width=12, fig.height=6}
+
+SelectDat <- readRDS(file.path(OM.root, 'OM_objects/Select_Retain', basename(om_df$dir), 'select.rda'))
+
 SelectDat$Name <- factor(SelectDat$Name, levels=unique(SelectDat$Name), order=TRUE)
 
-var_width = 25
+var_width = 15
 SelectDat <- mutate(SelectDat, Name = stringr::str_wrap(Name, width = var_width))
 SelectDat$Name <- factor(SelectDat$Name, levels=unique(SelectDat$Name), order=TRUE)
 
 ggplot(SelectDat, aes(x=Length.Class, y=Prob, color=Factor)) +
-  facet_wrap(~Name) +
+  facet_grid(year~Name) +
   geom_line(size=1) +
   expand_limits(y=c(0, 0), x=0) +
   scale_y_continuous(expand = expansion(mult=c(0, 0.05))) +
@@ -544,4 +546,4 @@ ggplot(SelectDat, aes(x=Length.Class, y=Prob, color=Factor)) +
 
 ```
 
-`r fig.cap()` The estimated selectivity- and retention-at-length for the 11 fleets in the terminal year of the assessment (2020).
+`r fig.cap()` The estimated selectivity- and retention-at-length for the 11 fleets in the first and terminal year of the assessment (1950 & 2020).
