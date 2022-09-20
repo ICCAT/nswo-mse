@@ -182,8 +182,6 @@ DT::datatable(RefPointDF,
 
 ```{r}
 imgs <- list.files(file.path('../../../../img/OM_Summary_Report/'))
-Classes <- OM_DF %>% filter(Class!='Base Case') %>% select(Class)
-Classes <- unique(Classes$Class)
 
 plots <- c('SSB', 'F', 'Depletion', 'B.Bmsy', 'F.Fmsy')
 headings <- c('SSB', 'Fishing mortality (F)', 'SB/SB~0~', 'SB/SB~MSY~', 'F/F~MSY~')
@@ -195,65 +193,16 @@ text <- c('spawning stock biomass (SSB)',
 
 ```
 
-## Reference
-
-Time-series plots of the 9 Reference Operating Models.
-
 ```{r, results='asis', width=6, height=6}
-Class <- 'Reference'
-figs <- imgs[grepl(Class, imgs)]
 
 for (i in seq_along(plots)) {
- this.fig <- figs[grepl(plots[i], figs)]
- cat('\n###', headings[i], '\n')
+ this.fig <- imgs[grepl(plots[i], imgs)]
+ cat('\n##', headings[i], '\n')
  cat('\n![](', file.path('../../../../img/OM_Summary_Report/', this.fig), ')')
  this.fig.num <- fig.cap()
  caption<- paste('\n\n', this.fig.num, 'Time-series of estimated', text[i], 
-                     'with three levels natural mortality (M; columns) and with three levels steepness (h; colors). The black dashed line represents the predictions from the 2022 Base Case stock assessment.\n\n\n')
+                     'with three levels natural mortality (M; columns) and three levels steepness (h; rows), and the Reference OMs and two sets of Robustness OMs (colors). The black dashed line represents the predictions from the 2022 Base Case stock assessment.\n\n\n')
                      
  cat(caption)
 }
 ```
-
-
-## R1. Higher Recruitment Variability
-
-Time-series plots of the 9 OMs where the recruitment variability was assumed to be higher than the Base Case.
-
-```{r, results='asis', width=6, height=6}
-Class <- 'R_higher_sigmaR'
-figs <- imgs[grepl(Class, imgs)]
-
-for (i in seq_along(plots)) {
- this.fig <- figs[grepl(plots[i], figs)]
- cat('\n###', headings[i], '\n')
- cat('\n![](', file.path('../../../../img/OM_Summary_Report/', this.fig), ')')
- this.fig.num <- fig.cap()
- caption<- paste('\n\n', this.fig.num, 'Time-series of estimated', text[i], 
-                     'with three levels natural mortality (M; columns) and with three levels steepness (h; colors). The black dashed line represents the predictions from the 2022 Base Case stock assessment. The predictions for the Reference Operating Models are shown in colored dashed lines. \n\n\n')
-                     
- cat(caption)
-}
-```
-
-## R2. Remove Catch-at-Length
-
-Time-series plots of the 9 OMs where the catch-at-length data was not included in the operating model conditioning.
-
-```{r, results='asis', width=6, height=6}
-Class <- 'R_remove_CAL'
-figs <- imgs[grepl(Class, imgs)]
-
-for (i in seq_along(plots)) {
- this.fig <- figs[grepl(plots[i], figs)]
- cat('\n###', headings[i], '\n')
- cat('\n![](', file.path('../../../../img/OM_Summary_Report/', this.fig), ')')
- this.fig.num <- fig.cap()
- caption<- paste('\n\n', this.fig.num, 'Time-series of estimated', text[i], 
-                     'with three levels natural mortality (M; columns) and with three levels steepness (h; colors). The black dashed line represents the predictions from the 2022 Base Case stock assessment. The predictions for the Reference Operating Models are shown in colored dashed lines. \n\n\n')
-                     
- cat(caption)
-}
-```
-
-

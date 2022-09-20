@@ -189,19 +189,58 @@ TSBio <- TSBio %>% mutate(across(1:6, as.factor))
 
 TSBio$Class %>% unique()
 
-getTS_OM_DF <- function(class, TSBio) {
-  BC_TS <- TSBio %>% filter(Class=='Base Case')
-  cols <- c('B.Bmsy', 'F.Fmsy', 'F', 'SSB', 'Depletion')
-  cols2 <- paste0('BC_', cols)
-  bc <- BC_TS  %>% select(cols)
-  names(bc) <- cols2
 
-  DF_TS <- TSBio %>% filter(Class==class)
-  cbind(DF_TS, bc)
+BC_TS <- TSBio %>% filter(Class=='Base Case')
+cols <- c('B.Bmsy', 'F.Fmsy', 'F', 'SSB', 'Depletion')
+cols2 <- paste0('BC_', cols)
+bc <- BC_TS  %>% select(cols)
+names(bc) <- cols2
+
+DF_TS <- TSBio %>% filter(Class!='Base Case')
+DF_TS <- cbind(DF_TS, bc)
+DF_TS$Class <- factor(DF_TS$Class, levels=unique(DF_TS$Class),
+                      ordered = TRUE)
+Ylabs <- list(expression(SB/SB[MSY]),
+              expression(F/F[MSY]),
+              'Fishing mortality (F)',
+              'SSB',
+              expression(SB/SB[0]))
+Vars <- c('B.Bmsy', 'F.Fmsy', 'F', 'SSB', 'Depletion')
+BC_Vars <- paste0('BC_', Vars)
+
+for (i in seq_along(Vars)) {
+  p <- ggplot(DF_TS, aes_string(x='year', y=Vars[i],
+                                color='Class'))+
+    facet_grid(steepness~M) +
+    geom_line() +
+    expand_limits(y=c(0)) +
+    geom_line() +
+    geom_line(aes_string(y=BC_Vars[i]), linetype=2, color='darkgray') +
+    theme_bw() +
+    labs(x="Year", y=Ylabs[[i]], color='OM Group')
+
+  if (Vars[i] %in% c('B.Bmsy')){
+    p <- p +
+      geom_hline(yintercept = 1, linetype=2) +
+      geom_hline(yintercept = 0.5, linetype=3)
+  }
+
+  if (Vars[i] %in% c('F.Fmsy')){
+    p <- p +
+      geom_hline(yintercept = 1, linetype=2)
+
+  }
+  if (Vars[i] %in% c('Depletion')){
+    p <- p +
+      expand_limits(y=c(0,1))
+
+  }
+  name <- paste0(paste(Vars[i], sep='_'), '.png')
+  ggsave(file.path(img_dir, name), width=8, height=6)
 }
 
-Classes <-  TSBio$Class %>% unique()
-Classes <- Classes[!Classes=='Base Case']
+
+
 
 
 # loop over classes and time-series info
