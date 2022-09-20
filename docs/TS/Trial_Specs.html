@@ -1747,7 +1747,7 @@ border: 0;
           <li><a href="#om-conditioning" id="toc-om-conditioning"><span class="toc-section-number">3</span> OM Conditioning</a>
           <ul>
           <li><a href="#om-uncertainty-grid" id="toc-om-uncertainty-grid"><span class="toc-section-number">3.1</span> OM Uncertainty Grid</a></li>
-          <li><a href="#evaluation-and-revision-of-om-grid" id="toc-evaluation-and-revision-of-om-grid"><span class="toc-section-number">3.2</span> Evaluation and Revision of OM Grid</a></li>
+          <li><a href="#evaluation-of-the-om-grid" id="toc-evaluation-of-the-om-grid"><span class="toc-section-number">3.2</span> Evaluation of the OM Grid</a></li>
           <li><a href="#reference-operating-models" id="toc-reference-operating-models"><span class="toc-section-number">3.3</span> Reference Operating Models</a></li>
           <li><a href="#robustness-operating-models" id="toc-robustness-operating-models"><span class="toc-section-number">3.4</span> Robustness Operating Models</a></li>
           <li><a href="#om-validation" id="toc-om-validation"><span class="toc-section-number">3.5</span> OM Validation</a></li>
@@ -1777,7 +1777,7 @@ border: 0;
         <ul class="authors">
           <li class="divider"></li>
                                 <li><span><i class="glyphicon glyphicon-user"></i> Adrian Hordyk <a href="mailto:adrian@bluematterscience.com" class="email">adrian@bluematterscience.com</a></span></li>
-                                         <li><span><i class="glyphicon glyphicon-calendar"></i> 19 September, 2022</span></li>
+                                         <li><span><i class="glyphicon glyphicon-calendar"></i> 20 September, 2022</span></li>
                   </ul>     
       </div>
       <div class="book-body fixed">
@@ -2036,7 +2036,7 @@ Age-5+
 <p>In 2019, the Swordfish Species Group developed an OM uncertainty grid using a full factorial design with 6 axes of uncertainty:</p>
 <ol style="list-style-type: decimal">
 <li><p>Natural mortality (<em>M</em>) - three levels: 0.1, 0.2, 0.3</p></li>
-<li><p>Recruitment variability (sigmaR) - two levels: 0.2, 0.6</p></li>
+<li><p>Recruitment variability (sigmaR; <span class="math inline">\(\sigma_R\)</span>) - two levels: 0.2, 0.6</p></li>
 <li><p>Steepness (<em>h</em>) - three levels: 0.6, 0.75, 0.90</p></li>
 <li><p>CPUE Lambda - three levels: 0.05, 1, 20</p></li>
 <li><p>Directional trend in catchability (llq) - two levels: TRUE, FALSE</p></li>
@@ -2046,35 +2046,43 @@ Age-5+
 <p>The environmental covariate was included by modeling catchability as a function of the AMO, as was done in the 2017 and 2022 stock assessments.</p>
 <p>This factorial design of the 6 axes of uncertainty, each with 2 or 3 levels, resulted in an uncertainty grid of 216 OMs.</p>
 </div>
-<div id="evaluation-and-revision-of-om-grid" class="section level2" number="3.2">
-<h2><span class="header-section-number">3.2</span> Evaluation and Revision of OM Grid</h2>
+<div id="evaluation-of-the-om-grid" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Evaluation of the OM Grid</h2>
 <p>Previous analyses of the OM uncertainty grid based on the 2017 assessment revealed that the three levels of natural mortality and steepness had the largest impact on the predicted stock dynamics <a href="https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_et_al_SCRS_2021_099.pdf">Hordyk et al., 2019</a> and are therefore the most important axes of uncertainty in the OM grid.</p>
-<p>The second level of recruitment variability (<span class="math inline">\(\sigma_R = 0.6\)</span>) had a minor impact on the predicted stock dynamics <a href="https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_et_al_SCRS_2021_099.pdf">Hordyk et al., 2019</a>, but did influence the relative performance of candidate management procedures (Hordyk, 2021)[<a href="https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_SCRS_2021_161.pdf" class="uri">https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_SCRS_2021_161.pdf</a>].</p>
-<p>The fourth axes of uncertainty was intended to evaluate the effect of alternative relative weightings of the length composition data and the indices of abundance. The three levels reflect a complete down-weighting of the indices of abundance (0.05; effectively only fitting the model to the length composition data), leaving the relative weighting of the two data sources unchanged from that used in the assessment (1), and up-weighting the indices of abundance so the model ignores the length composition data (20). This was done because of apparent conflicting signals between the length composition data and some of the indices of abundance. Recent analysis involved performing the recommended iterative re-weighting procedure <span class="citation">(Francis, 2011)</span></p>
-<div id="francis-r" class="section level3" number="3.2.1">
-<h3><span class="header-section-number">3.2.1</span> Francis R</h3>
-<p>This same pattern in results was found when the analyses were conducted with the new OM grid based on the 2022 assessment. Therefore, based on these results, the OM uncertainty grid was modified and the OMs placed into categories reflecting their relative importantce</p>
-</div>
+<p>The second level of recruitment variability (<span class="math inline">\(\sigma_R = 0.6\)</span>) had a minor impact on the predicted stock dynamics <a href="https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_et_al_SCRS_2021_099.pdf">Hordyk et al., 2019</a>, but did influence the relative performance of candidate management procedures <a href="https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_SCRS_2021_161.pdf">Hordyk, 2021</a>. This second level is now treated as a robustness test (see below for more details).</p>
+<p>The fourth axis of uncertainty was intended to evaluate the effect of alternative relative weightings of the length composition data and the indices of abundance. The three levels reflect a complete down-weighting of the indices of abundance (0.05; effectively only fitting the model to the length composition data), leaving the relative weighting of the two data sources unchanged from that used in the assessment (1), and up-weighting the indices of abundance so the model ignores the length composition data (20). This was done because of apparent conflicting signals between the length composition data and some of the indices of abundance, and the high computation demand of conducting the recommended iterative re-weighting procedure across all OMs in the grid <span class="citation">(Francis, 2011)</span>. However, this iterative re-weighting procedure has now been conducted for the new operating models based on the 2022 assessment, and therefore this axis of uncertainty has been modified to two levels: 1) fit the assessment to both length and CPUE data and conduct the iterative re-weighting procedure, and 2) only fit the model to the CPUE data. This second level is now treated as a robustness test (see below for more details).</p>
+<p>The fifth axis of uncertainty with the assumed 1% increase in catchability for the indices of abundance had a relatively minor influence on both the predicted stock dynamics <a href="https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_et_al_SCRS_2021_099.pdf">Hordyk et al., 2019</a> and the performance of candidate management procedures <a href="https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_SCRS_2021_161.pdf">Hordyk, 2021</a>. The second level of this axis is now treated as a robustness test (see below for more details).</p>
+<p>In both the 2017 and 2022 stock assessments, the catchability coefficient (<em>q</em>) for the CPUE indices for Canada, Japan, Portugal, Morocco, and the Spain age-specific survey indices, was made a function of the Atlantic Multidecadal Oscillation (AMO). Including this environmental covariate resulted in a better statistical fit to the data for these indices. The sixth axis of uncertainty examined the impact of not including this environmental covariate in the stock assessment. The analyses revealed that removing the environmental covariate from the assessment model had no detectable influence on either the predicted stock dynamics <a href="https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_et_al_SCRS_2021_099.pdf">Hordyk et al., 2019</a> or the performance of candidate management procedures <a href="https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_SCRS_2021_161.pdf">Hordyk, 2021</a>. Therefore, the environmental covariate was included in all models in the OM grid. Further examination of the impact of changing environmental conditions on the performance of the candidate management procudures may be examined in additional robustness tests (see below for more details).</p>
+<p>This same pattern in results was found when the analyses were re-conducted with the new OM grid based on the 2022 assessment.</p>
 </div>
 <div id="reference-operating-models" class="section level2" number="3.3">
 <h2><span class="header-section-number">3.3</span> Reference Operating Models</h2>
+<p>Based on these analysis, a set of 9 operating models were identified as the main reference set. These operating models spanned the three levels of <em>M</em> and <em>h</em> and had the following assumptions:</p>
+<ol style="list-style-type: decimal">
+<li>Following the assessment, <span class="math inline">\(\sigma_R = 0.2\)</span></li>
+<li>The Francis iterative re-weighting procedure was conducted on each operating model to find the appropriate weighting between the length compostion data and the indices of abundance</li>
+<li>The standardized indices of abundance were used (i.e., no assumed 1% increase in catchability)</li>
+</ol>
+<p>These 9 OMs are referred to as the Reference OMs.</p>
 </div>
 <div id="robustness-operating-models" class="section level2" number="3.4">
 <h2><span class="header-section-number">3.4</span> Robustness Operating Models</h2>
+<p>The remaining operating models were considered as Robustness Test OMs.</p>
 <div id="higher-recruitment-variability" class="section level3" number="3.4.1">
 <h3><span class="header-section-number">3.4.1</span> Higher Recruitment Variability</h3>
+<p>This set of 9 operating models had the same structure and assumptions as the Reference Set, with the exception that the recruitment variability was assumed to higher <span class="math inline">\((\sigma_R = 0.6)\)</span></p>
 </div>
 <div id="removing-length-data" class="section level3" number="3.4.2">
 <h3><span class="header-section-number">3.4.2</span> Removing Length Data</h3>
+<p>This set of 9 operating models had the same structure and assumptions as the Reference Set, with the exception that the model was only fit to the indices of abundance (i.e., fits to the length composition data were not included in the total likelihood).</p>
 </div>
 <div id="assumed-increase-in-catchability" class="section level3" number="3.4.3">
 <h3><span class="header-section-number">3.4.3</span> Assumed Increase in Catchability</h3>
+<p>This set of 9 operating models had the same structure and assumptions as the Reference Set, with the exception that the indices of abundance were modified to assume an average 1% increase in catchability over the historical period. The Francis iterative re-weighting procedure has not yet been conducted for this operating models, and therefore these OMs have not yet been included in the MSE framework.</p>
 </div>
 <div id="other-robustness-tests" class="section level3" number="3.4.4">
 <h3><span class="header-section-number">3.4.4</span> Other Robustness Tests</h3>
-<div id="changing-environmental-conditions-and-climate-change" class="section level4" number="3.4.4.1">
-<h4><span class="header-section-number">3.4.4.1</span> Changing Environmental Conditions and Climate Change</h4>
-</div>
+<p>Other robustness test, for example examining the impact of changing environmental conditions in the future projection period may be developed by the Group and will be described here.</p>
 </div>
 </div>
 <div id="om-validation" class="section level2" number="3.5">
@@ -2110,10 +2118,10 @@ Age-5+
 <h2><span class="header-section-number">4.3</span> Importing OMs into the MSE Framework</h2>
 <p>The 216 OMs in the uncertainty grid, conditioned using SS3, were imported into MSE framework using the <code>SS2MOM</code> function in <code>MSEtool</code> (see <a href="https://msetool.openmse.com/reference/SS2MOM.html">here</a> for details on the function).</p>
 <p>Previously, the 2-sex SS3 models were imported into a combined single-sex operating model in the MSE framework. The MSE framework was updated in 2022, and the imported operating models now maintain the separate sexes in the same manner as the SS3 assessment. Since the fishery is managed with a single overall total allowable catch (TAC), the individual fishing fleets were aggregated together in the operating models.</p>
-<p>The 2-sex operating model are available in the <code>SWOMSE</code> package as objects of class <code>MOM</code> (multi-stock operating model). For example, the 2022 stock assessment is available as the base case operating model named <code>MOM_001</code>:</p>
+<p>The 2-sex operating model are available in the <code>SWOMSE</code> package as objects of class <code>MOM</code> (multi-stock operating model). For example, the 2022 stock assessment is available as the base case operating model named <code>MOM_000</code>:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SWOMSE)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>MOM_001<span class="sc">@</span>Name</span></code></pre></div>
-<pre><code>## [1] &quot;M:0.1 sigmaR:0.2 steepness:0.6 cpuelambda:0.05 llq:1 env:0&quot;</code></pre>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>MOM_000<span class="sc">@</span>Name</span></code></pre></div>
+<pre><code>## [1] &quot;M:0.2 sigmaR:0.2 steepness:0.88 cpuelambda:1 llq:1 env:1 Class:Base Case&quot;</code></pre>
 </div>
 </div>
 <div id="historical-spool-up-period" class="section level1" number="5">
