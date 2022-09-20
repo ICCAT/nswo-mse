@@ -153,14 +153,12 @@ DT::datatable(DF,
 
 # Summary Tables
 
-## Biological Reference Points
-
-`r tab.cap()` Summary table of the calculated biological reference points and estimated stock status for the OMs in the uncertainty grid. 
+`r tab.cap()` Summary table of the calculated biological reference points and estimated stock status in the terminal year for the OMs in the uncertainty grid. 
 
 ```{r}
 ReferencePoint_DF <- readRDS('ReferencePoint_DF.rda')
 
-RefPointDF <- ReferencePoint_DF %>% select(OM.num, Class, SB0, SBMSY, FMSY, MSY_d, MSY_r, SB_SB0, SB_SBMSY, F_FMSY)
+RefPointDF <- ReferencePoint_DF %>% select(OM.num, Class, SB0, SBMSY, FMSY, MSY_d, MSY_r, SB, SB_SB0, SB_SBMSY, F_FMSY)
 RefPointDF$OM.num <- factor(RefPointDF$OM.num)
 
 RefPointDF <- RefPointDF %>% mutate(across(where(is.numeric), round, digits=2))
