@@ -159,8 +159,12 @@ DT::datatable(DF,
 ReferencePoint_DF <- readRDS('ReferencePoint_DF.rda')
 
 RefPointDF <- ReferencePoint_DF %>% select(OM.num, Class, SB0, SBMSY, FMSY, MSY_d, MSY_r, SB, SB_SB0, SB_SBMSY, F_FMSY)
+
+RefPointDF <- left_join(OM_DF %>% select(OM.num, M, steepness),RefPointDF, by='OM.num')
 RefPointDF$OM.num <- factor(RefPointDF$OM.num)
 RefPointDF$Class <- factor(RefPointDF$Class, levels=unique(RefPointDF$Class),ordered=TRUE)
+RefPointDF$M <- factor(RefPointDF$M)
+RefPointDF$steepness <- factor(RefPointDF$steepness)
 
 RefPointDF <- RefPointDF %>% mutate(across(where(is.numeric), round, digits=2))
 
