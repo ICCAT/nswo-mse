@@ -128,14 +128,15 @@ DT::datatable(Check_Convergence_DF,
 `r tab.cap()` Table of operating model parameters that have correlation factor > 0.95.
 
 ```{r}
+
 Check_Correlation_DF <- readRDS('Check_Correlation_DF.rda')
 
-DF <- Check_Convergence_DF
+DF <- Check_Correlation_DF
 DF$OM.num <- factor(DF$OM.num, levels=unique(DF$OM.num),
                                      ordered = TRUE)
 DF$Class <- factor(DF$Class, levels=unique(DF$Class),
                                      ordered = TRUE)
-DT::datatable(Check_Convergence_DF,
+DT::datatable(DF,
               rownames= FALSE,
               filter = 'top',
               extensions = 'Buttons',
