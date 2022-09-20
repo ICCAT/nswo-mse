@@ -138,6 +138,8 @@ Check_Correlation_DF <- left_join(OM_DF %>% select(OM.num, Class),
                                   Check_Correlation_DF)
 rownames(Check_Correlation_DF) <- NULL
 Check_Correlation_DF <- Check_Correlation_DF %>% filter(is.na(Check_Correlation_DF$`Parameter i`)==FALSE)
+
+
 saveRDS(Check_Correlation_DF, file.path(obj_dir, 'Check_Correlation_DF.rda'))
 
 
@@ -164,6 +166,7 @@ RefPointDF <- do.call('rbind',RefPointDF_List)
 
 RefPointDF$SB0 <- RefPointDF$SBMSY / RefPointDF$SBMSY_SB0
 RefPointDF$SB_SB0 <- RefPointDF$Depletion
+RefPointDF$SB <- RefPointDF$SB_SB0 * RefPointDF$SB0
 ReferencePoint_DF <- RefPointDF
 saveRDS(ReferencePoint_DF, file.path(obj_dir, 'ReferencePoint_DF.rda'))
 
