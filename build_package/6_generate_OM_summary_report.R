@@ -190,6 +190,9 @@ TSBio <- do.call('rbind', TSBio_List)
 
 TSBio <- TSBio %>% mutate(across(1:6, as.factor))
 
+TSBio$Class <- recode(TSBio$Class,
+                      'R_higher_sigmaR'='R1. Higher sigmaR',
+                      'R_remove_CAL'='R2. Remove CAL')
 TSBio$Class %>% unique()
 
 
