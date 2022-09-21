@@ -190,9 +190,6 @@ TSBio <- do.call('rbind', TSBio_List)
 
 TSBio <- TSBio %>% mutate(across(1:6, as.factor))
 
-TSBio$Class <- recode(TSBio$Class,
-                      'R_higher_sigmaR'='R1. Higher sigmaR',
-                      'R_remove_CAL'='R2. Remove CAL')
 TSBio$Class %>% unique()
 
 
@@ -223,7 +220,9 @@ for (i in seq_along(Vars)) {
     geom_line() +
     geom_line(aes_string(y=BC_Vars[i]), linetype=2, color='darkgray') +
     theme_bw() +
-    labs(x="Year", y=Ylabs[[i]], color='OM Group')
+    labs(x="Year", y=Ylabs[[i]], color='OM Group') +
+    scale_color_brewer(type='div', palette = 'PRGn')
+
 
   if (Vars[i] %in% c('B.Bmsy')){
     p <- p +
