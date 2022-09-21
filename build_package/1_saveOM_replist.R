@@ -14,9 +14,6 @@ OMgrid.dirs <- list.dirs(OMgrid.dir, recursive = TRUE)
 
 # ---- Save OM replist ----
 
-which(grepl('132', OMgrid.dirs))
-i <- 17
-
 for (i in seq_along(OMgrid.dirs)) {
   dir <- OMgrid.dirs[i]
   if (!any(grepl('Report.sso',list.files(dir)))) {
