@@ -178,15 +178,15 @@ These 9 OMs are referred to as the Reference OMs.
 
 The remaining operating models were considered as Robustness Test OMs. 
 
-### Higher Recruitment Variability
+### R1. Higher sigmaR
 
 This set of 9 operating models had the same structure and assumptions as the Reference Set, with the exception that the recruitment variability was assumed to higher $(\sigma_R = 0.6)$
 
-### Removing Length Data 
+### R2. Remove CAL 
 
 This set of 9 operating models had the same structure and assumptions as the Reference Set, with the exception that the model was only fit to the indices of abundance (i.e., fits to the length composition data were not included in the total likelihood).
 
-### Assumed Increase in Catchability
+### R3. Increase q
 
 This set of 9 operating models had the same structure and assumptions as the Reference Set, with the exception that the indices of abundance were modified to assume an average 1% increase in catchability over the historical period. The Francis iterative re-weighting procedure has not yet been conducted for this operating models, and therefore these OMs have not yet been included in the MSE framework. 
 
