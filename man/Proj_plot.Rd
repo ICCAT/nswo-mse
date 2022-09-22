@@ -4,7 +4,13 @@
 \alias{Proj_plot}
 \title{Projection plots}
 \usage{
-Proj_plot(MMSE, sl = "SB_SBMSY", quants = c(0.05, 0.95))
+Proj_plot(
+  MMSE,
+  sl = "SB_SBMSY",
+  quants = c(0.05, 0.95),
+  MPs = NULL,
+  ncol = NULL
+)
 }
 \arguments{
 \item{MMSE}{An object of class `MMSE`}
