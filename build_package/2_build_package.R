@@ -1,7 +1,7 @@
 # Import OMs and Data and add to SWOMSE package
 
 
-nsim <- 48 # number of simulations per OM
+nsim <- 200 # number of simulations per OM
 proyears <- 30 # number of projection years
 
 OM.root <- 'G:/My Drive/1_Projects/North_Atlantic_Swordfish/OMs'
@@ -63,7 +63,6 @@ get_OM_details <- function(dir,  OMgrid.dir) {
   if (!any(grepl('Report.sso',list.files(dir)))) {
 
   } else {
-
     text <- dir %>% basename() %>% strsplit(.,'_')
     text <- text[[1]]
     OM.num <- text[1]
@@ -94,7 +93,9 @@ get_OM_details <- function(dir,  OMgrid.dir) {
     if (grepl('Robustness', dir)) {
       dir2 <- strsplit(dir, 'Robustness/')[[1]][2]
       name <- strsplit(dir2, '/')[[1]][1]
-      df$Class <- paste0('R_', name)
+      name <- sub("_", '. ', name)
+      name <- sub("_", ' ', name)
+      df$Class <- name
     }
 
     df$OM.num <- OM.num
@@ -114,6 +115,11 @@ OM_DF <- do.call('rbind',OM_list)
 
 OM_DF <- OM_DF %>% mutate(across(c(1:3, 5:6), as.numeric))
 OM_DF <- OM_DF %>% rename('Include CAL'=cpuelambda)
+
+OM_DF$Class <- factor(OM_DF$Class,
+                      levels=unique(OM_DF$Class),
+                      ordered = TRUE)
+
 OM_DF$`Include CAL` <- as.logical(OM_DF$`Include CAL`)
 
 usethis::use_data(OM_DF, overwrite = TRUE)
@@ -230,7 +236,7 @@ cat("#' @name SWO-OMs",
     "\n#' @title Operating models",
     "\n#' @description North Atlantic Swordfish Operating Models",
     "\n#'  ",
-    "\n#' `MOM_1` is the base case assessment. The rest of the OMs are from the ",
+    "\n#' `MOM_000` is the base case assessment. The rest of the OMs are from the ",
     "\n#' OM uncertainty grid.",
     "\n#' ",
     "\n#' All OMs are class `MOM` and contain 2 stocks (female and male) and 1 aggregated fleet",

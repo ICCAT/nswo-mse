@@ -419,9 +419,10 @@ class(SP_SS_3) <- 'MP'
 # Assessments from other packages ----
 
 
-#' spict Assessment Model with TAC = MSY
+#' SPiCT Assessment Model with TAC = MSY
 #'
-#' An example model-based CMP that uses the `spict` package to assess the stock.
+#' An example model-based CMP that uses the `MSEextra::spict` function as a wrapper
+#' to the `spict` package to assess the stock.
 #' It sets the TAC = estimated MSY.
 #'
 #' Note: this MP requires the `MSEextra` package to be installed. Run `MSEextra()` and
@@ -438,11 +439,29 @@ class(SP_SS_3) <- 'MP'
 #'
 SPICT_1 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
 
+  chk <- require(MSEextra, quietly=TRUE)
+  if (!chk) stop('package `MSEextra` must be installed. Use `MSEextra()`')
+
+  Rec <- new('Rec')
+
+  Initial_MP_Yr <- 2024
+  if (SameTAC(Initial_MP_Yr, Interval, Data)) {
+    Rec@TAC <- Data@MPrec[x]
+    return(Rec)
+  }
+
+  Data <- Lag_Data(Data, Data_Lag)
+
+  # apply assessment model
+  Mod <- MSEextra::spict(x, Data, fix_dep=TRUE, start=list(dep=0.85))
+
+  # harvest control rule - TAC = MSY
+  Rec@TAC <- Mod@MSY
+  Rec
+
 
 }
-
-
-
+class(SPICT_1) <- 'MP'
 
 
 #' JABBA Assessment Model with TAC = MSY

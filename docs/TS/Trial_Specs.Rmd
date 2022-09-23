@@ -28,7 +28,7 @@ library(dplyr)
 library(ggplot2)
 knitr::opts_chunk$set(echo=FALSE)
 
-MOM <- SWOMSE::MOM_001
+MOM <- SWOMSE::MOM_000
 ```
 
 # Introduction
@@ -152,15 +152,15 @@ This factorial design of the 6 axes of uncertainty, each with 2 or 3 levels, res
 
 ## Evaluation of the OM Grid
 
-Previous analyses of the OM uncertainty grid based on the 2017 assessment revealed that the three levels of natural mortality and steepness had the largest impact on the predicted stock dynamics [Hordyk et al., 2019](https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_et_al_SCRS_2021_099.pdf) and are therefore the most important axes of uncertainty in the OM grid. 
+Previous analyses of the OM uncertainty grid based on the 2017 assessment revealed that the three levels of natural mortality and steepness had the largest impact on the predicted stock dynamics [Hordyk et al., 2021](https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_et_al_SCRS_2021_099.pdf) and are therefore the most important axes of uncertainty in the OM grid. 
 
-The second level of recruitment variability ($\sigma_R = 0.6$) had a minor impact on the predicted stock dynamics [Hordyk et al., 2019](https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_et_al_SCRS_2021_099.pdf), but did influence the relative performance of candidate management procedures [Hordyk, 2021](https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_SCRS_2021_161.pdf). This second level is now treated as a robustness test (see below for more details).
+The second level of recruitment variability ($\sigma_R = 0.6$) had a minor impact on the predicted stock dynamics [Hordyk et al., 2021](https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_et_al_SCRS_2021_099.pdf), but did influence the relative performance of candidate management procedures [Hordyk, 2021](https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_SCRS_2021_161.pdf). This second level is now treated as a robustness test (see below for more details).
 
 The fourth axis of uncertainty was intended to evaluate the effect of alternative relative weightings of the length composition data and the indices of abundance. The three levels reflect a complete down-weighting of the indices of abundance (0.05; effectively only fitting the model to the length composition data), leaving the relative weighting of the two data sources unchanged from that used in the assessment (1), and up-weighting the indices of abundance so the model ignores the length composition data (20). This was done because of apparent conflicting signals between the length composition data and some of the indices of abundance, and the high computation demand of conducting the recommended iterative re-weighting procedure across all OMs in the grid [@francisDataWeightingStatistical2011]. However, this iterative re-weighting procedure has now been conducted for the new operating models based on the 2022 assessment, and therefore this axis of uncertainty has been modified to two levels: 1) fit the assessment to both length and CPUE data and conduct the iterative re-weighting procedure, and 2) only fit the model to the CPUE data. This second level is now treated as a robustness test (see below for more details).
 
-The fifth axis of uncertainty with the assumed 1% increase in catchability for the indices of abundance had a relatively minor influence on both the predicted stock dynamics [Hordyk et al., 2019](https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_et_al_SCRS_2021_099.pdf) and the performance of candidate management procedures [Hordyk, 2021](https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_SCRS_2021_161.pdf). The second level of this axis is now treated as a robustness test (see below for more details).
+The fifth axis of uncertainty with the assumed 1% increase in catchability for the indices of abundance had a relatively minor influence on both the predicted stock dynamics [Hordyk et al., 2021](https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_et_al_SCRS_2021_099.pdf) and the performance of candidate management procedures [Hordyk, 2021](https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_SCRS_2021_161.pdf). The second level of this axis is now treated as a robustness test (see below for more details).
 
-In both the 2017 and 2022 stock assessments, the catchability coefficient (*q*) for the CPUE indices for Canada, Japan, Portugal, Morocco, and the Spain age-specific survey indices, was made a function of the Atlantic Multidecadal Oscillation (AMO). Including this environmental covariate resulted in a better statistical fit to the data for these indices. The sixth axis of uncertainty examined the impact of not including this environmental covariate in the stock assessment. The analyses revealed that removing the environmental covariate from the assessment model had no detectable influence on either the predicted stock dynamics [Hordyk et al., 2019](https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_et_al_SCRS_2021_099.pdf) or the performance of candidate management procedures [Hordyk, 2021](https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_SCRS_2021_161.pdf). Therefore, the environmental covariate was included in all models in the OM grid. Further examination of the impact of changing environmental conditions on the performance of the candidate management procudures may be examined in additional robustness tests (see below for more details).
+In both the 2017 and 2022 stock assessments, the catchability coefficient (*q*) for the CPUE indices for Canada, Japan, Portugal, Morocco, and the Spain age-specific survey indices, was made a function of the Atlantic Multidecadal Oscillation (AMO). Including this environmental covariate resulted in a better statistical fit to the data for these indices. The sixth axis of uncertainty examined the impact of not including this environmental covariate in the stock assessment. The analyses revealed that removing the environmental covariate from the assessment model had no detectable influence on either the predicted stock dynamics [Hordyk et al., 2021](https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_et_al_SCRS_2021_099.pdf) or the performance of candidate management procedures [Hordyk, 2021](https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_SCRS_2021_161.pdf). Therefore, the environmental covariate was included in all models in the OM grid. Further examination of the impact of changing environmental conditions on the performance of the candidate management procedures may be examined in additional robustness tests (see below for more details).
 
 This same pattern in results was found when the analyses were re-conducted with the new OM grid based on the 2022 assessment. 
 
@@ -178,15 +178,15 @@ These 9 OMs are referred to as the Reference OMs.
 
 The remaining operating models were considered as Robustness Test OMs. 
 
-### Higher Recruitment Variability
+### R1. Higher sigmaR
 
 This set of 9 operating models had the same structure and assumptions as the Reference Set, with the exception that the recruitment variability was assumed to higher $(\sigma_R = 0.6)$
 
-### Removing Length Data 
+### R2. Remove CAL 
 
 This set of 9 operating models had the same structure and assumptions as the Reference Set, with the exception that the model was only fit to the indices of abundance (i.e., fits to the length composition data were not included in the total likelihood).
 
-### Assumed Increase in Catchability
+### R3. Increase q
 
 This set of 9 operating models had the same structure and assumptions as the Reference Set, with the exception that the indices of abundance were modified to assume an average 1% increase in catchability over the historical period. The Francis iterative re-weighting procedure has not yet been conducted for this operating models, and therefore these OMs have not yet been included in the MSE framework. 
 
@@ -235,11 +235,11 @@ The 216 OMs in the uncertainty grid, conditioned using SS3, were imported into M
 
 Previously, the 2-sex SS3 models were imported into a combined single-sex operating model in the MSE framework. The MSE framework was updated in 2022, and the imported operating models now maintain the separate sexes in the same manner as the SS3 assessment. Since the fishery is managed with a single overall total allowable catch (TAC), the individual fishing fleets were aggregated together in the operating models.
 
-The 2-sex operating model are available in the `SWOMSE` package as objects of class `MOM` (multi-stock operating model). For example, the 2022 stock assessment is available as the base case operating model named `MOM_001`:
+The 2-sex operating model are available in the `SWOMSE` package as objects of class `MOM` (multi-stock operating model). For example, the 2022 stock assessment is available as the base case operating model named `MOM_000`:
 
 ```{r, echo=TRUE}
 library(SWOMSE)
-MOM_001@Name
+MOM_000@Name
 ```
 
 
@@ -247,7 +247,7 @@ MOM_001@Name
 
 The historical spool-up period was generated by importing the output from the SS3 assessment models and running the MSE simulation framework to recreate the historical fishery dynamics. No additional uncertainty was added to the historical simulations; that is, all `r MOM@nsim` simulations were identical (e.g., same recruitment deviations) for the historical spool-up period.
 
-The operating models have been conditioned on data up to and including 2020 (see the [Data section](#data)), and therefore the projection period for the MSE framework starts in the following year, i.e., 2021. Currently, model uses assumed catches for the first two years (2021 and 2022) and then implements the management procedures in the following year (i.e., 2023). See the [Future Catches](#future-catches) section for more information.  
+The operating models have been conditioned on data up to and including 2020 (see the [Data section](#data)), and therefore the projection period for the MSE framework starts in the following year, i.e., 2021. Currently, model uses assumed catches for the first three years (2021 - 2023) and then implements the management procedures in the following year (i.e., 2024). See the [Future Catches](#future-catches) section for more information.  
 
 ## Historical Data
 The observed fishery data was imported into the MSE framework and made available to the CMPs. Three sources of data available to the CMPs: 1) catch data, 2) a primary index of abundance, and 3) additional individual indices.
@@ -320,9 +320,9 @@ The total allowable catch (TAC) recommended by the CMPs is assumed to be impleme
 
 The operating models also assume that the TACs recommended by the CMPs apply to the landed catch and do not include discards; that is, the actual removals will be higher than the TACs if there is discard mortality on the sub-legal fish.
 
-Since the MSE projection period begins in 2021 (the year after the conditioning), and the landed catches are typically below the TAC (Figure \@ref(fig:catch-plot)), the MSE framework assumes that the catch in the first two projection years (2021 and 2022) is equal to specified TAC for those years (13,200 ton). 
+Since the MSE projection period begins in 2021 (the year after the conditioning), and the landed catches are typically below the TAC (Figure \@ref(fig:catch-plot)), the MSE framework assumes that the catch in the first three projection years (2021 - 2023) is equal to specified TAC for those years (13,200 ton). 
 
-The CMPs are then first implemented in 2023, and every 3rd year after that, with the TAC held constant in the interim years.
+The CMPs are then first implemented in 2024, and every 3rd year after that, with the TAC held constant in the interim years.
 
 
 ## Generation of Future Data

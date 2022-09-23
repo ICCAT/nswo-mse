@@ -2,6 +2,13 @@
 library(dplyr)
 library(r4ss)
 
+# don't re-run as the models have no been re-conditioned using
+# the Francis iterative re-weighting procedure
+#
+# This script does not do that and will overwrite those results!!
+
+stop()
+
 OM.grid.dir <- 'G:/My Drive/1_PROJECTS/North_Atlantic_Swordfish/OMs/grid_2022'
 
 # ---- Base Case - 2022 Assessment ----

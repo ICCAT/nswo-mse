@@ -138,6 +138,8 @@ Check_Correlation_DF <- left_join(OM_DF %>% select(OM.num, Class),
                                   Check_Correlation_DF)
 rownames(Check_Correlation_DF) <- NULL
 Check_Correlation_DF <- Check_Correlation_DF %>% filter(is.na(Check_Correlation_DF$`Parameter i`)==FALSE)
+
+
 saveRDS(Check_Correlation_DF, file.path(obj_dir, 'Check_Correlation_DF.rda'))
 
 
@@ -164,6 +166,7 @@ RefPointDF <- do.call('rbind',RefPointDF_List)
 
 RefPointDF$SB0 <- RefPointDF$SBMSY / RefPointDF$SBMSY_SB0
 RefPointDF$SB_SB0 <- RefPointDF$Depletion
+RefPointDF$SB <- RefPointDF$SB_SB0 * RefPointDF$SB0
 ReferencePoint_DF <- RefPointDF
 saveRDS(ReferencePoint_DF, file.path(obj_dir, 'ReferencePoint_DF.rda'))
 
@@ -217,7 +220,9 @@ for (i in seq_along(Vars)) {
     geom_line() +
     geom_line(aes_string(y=BC_Vars[i]), linetype=2, color='darkgray') +
     theme_bw() +
-    labs(x="Year", y=Ylabs[[i]], color='OM Group')
+    labs(x="Year", y=Ylabs[[i]], color='OM Group') +
+    scale_color_brewer(type='div', palette = 'PRGn')
+
 
   if (Vars[i] %in% c('B.Bmsy')){
     p <- p +
@@ -238,74 +243,6 @@ for (i in seq_along(Vars)) {
   name <- paste0(paste(Vars[i], sep='_'), '.png')
   ggsave(file.path(img_dir, name), width=8, height=6)
 }
-
-
-
-
-
-# loop over classes and time-series info
-for (i in seq_along(Classes)) {
-  class <- Classes[i]
-  df_TS <- getTS_OM_DF(class, TSBio)
-
-  if (class !='Reference') {
-    ref_TS <- getTS_OM_DF('Reference', TSBio)
-    df_TS <- bind_rows(df_TS, ref_TS)
-    df_TS$Class <- factor(df_TS$Class, levels=c(class, 'Reference'), ordered = TRUE)
-  }
-
-  Vars <- c('B.Bmsy', 'F.Fmsy', 'F', 'SSB', 'Depletion')
-  BC_Vars <- paste0('BC_', Vars)
-  Ylabs <- list(expression(SB/SB[MSY]),
-                expression(F/F[MSY]),
-                'Fishing mortality (F)',
-                'SSB',
-                expression(SB/SB[0]))
-  for (j in seq_along(Vars)) {
-    if (class=='Reference') {
-      p <- ggplot(df_TS, aes_string(x='year', y=Vars[j], color='steepness'))+
-        facet_wrap(~M) +
-        geom_line() +
-        expand_limits(y=c(0)) +
-        geom_line() +
-        geom_line(aes_string(y=BC_Vars[j]), linetype=2, color='black') +
-        theme_bw() +
-        labs(x="Year", y=Ylabs[[j]])
-    } else {
-      p <- ggplot(df_TS, aes_string(x='year', y=Vars[j],
-                                    color='steepness',
-                                    linetype='Class'))+
-        facet_grid(~M) +
-        geom_line() +
-        expand_limits(y=c(0)) +
-        geom_line() +
-        geom_line(aes_string(y=BC_Vars[j]), linetype=2, color='black') +
-        theme_bw() +
-        labs(x="Year", y=Ylabs[[j]])
-    }
-
-    if (Vars[j] %in% c('B.Bmsy')){
-      p <- p +
-        geom_hline(yintercept = 1, linetype=2) +
-        geom_hline(yintercept = 0.5, linetype=3)
-    }
-
-    if (Vars[j] %in% c('F.Fmsy')){
-      p <- p +
-        geom_hline(yintercept = 1, linetype=2)
-
-    }
-    if (Vars[j] %in% c('Depletion')){
-      p <- p +
-        expand_limits(y=c(0,1))
-
-    }
-    name <- paste0(paste(class, Vars[j], sep='_'), '.png')
-    ggsave(file.path(img_dir, name), width=8, height=3)
-
-  }
-}
-
 
 
 # Compile RMD ----

@@ -94,26 +94,28 @@ Individual OM diagnostic reports can be accessed by clicking the links in the ta
 ```{r}
 DF <- SWOMSE::OM_DF
 DF$OM.name <- paste0('MOM_',DF$OM.num)
-DF <- DF %>% select(OM.name, M, sigmaR, steepness, `Include CAL`, llq, Class)
+DF <- DF %>% select(OM.name, OM.num, M, sigmaR, steepness, `Include CAL`, llq, Class)
 
-DF <- DF %>% mutate(across(2:4, as.factor))
+DF <- DF %>% mutate(across(3:8, as.factor))
+
 # create links to OM diagnostic reports
 fls <- list.files('Reports/OM_Diagnostics', pattern='.html')
 num <- NA
 for (x in seq_along(fls)) num[x] <- strsplit(fls[x], '-')[[1]][2]
 nums <- as.numeric(num[1:(length(num))])
 df <- data.frame(fl=fls, num=nums, stringsAsFactors = FALSE)
-df <- df %>% dplyr::arrange(num)
 nums <- as.character(df$num)
 nums[nchar(nums)==1] <- paste0('00', nums[nchar(nums)==1])
 nums[nchar(nums)==2] <- paste0('0', nums[nchar(nums)==2])
 df$OM.num <- nums
 
-OM.name <- DF$OM.name %>% as.character()
-OM.link <- paste0('<a href=', file.path('Reports/OM_Diagnostics', fls), '> ', OM.name , ' </a>')
+DF <-right_join(DF, df, by='OM.num')
+
+OM.link <- paste0('<a href=', file.path('Reports/OM_Diagnostics', DF$fl), '> ', DF$OM.name , ' </a>')
 DF$OM.name <- OM.link
 DF$Class <- factor(DF$Class, levels=unique(DF$Class), ordered = TRUE)
-
+rownames(DF) <- NULL
+DF <- DF %>% select(OM.name, M, sigmaR, steepness, `Include CAL`, llq, Class)
 DT::datatable(DF, escape=1,
               colnames=c('OM Object',
                          'M',

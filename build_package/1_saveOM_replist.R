@@ -28,6 +28,7 @@ for (i in seq_along(OMgrid.dirs)) {
     replist <- suppressWarnings(r4ss::SS_output(dir, verbose = FALSE,
                                                 hidewarn = TRUE,
                                                 printstats=FALSE))
+
     saveRDS(replist, file.path(out.dir, 'replist.rda'))
   }
 }

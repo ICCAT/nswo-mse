@@ -2,7 +2,7 @@
 % Please edit documentation in R/MPs.R
 \name{SPICT_1}
 \alias{SPICT_1}
-\title{spict Assessment Model with TAC = MSY}
+\title{SPiCT Assessment Model with TAC = MSY}
 \usage{
 SPICT_1(x, Data, Data_Lag = 2, Interval = 3, ...)
 }
@@ -21,7 +21,8 @@ SPICT_1(x, Data, Data_Lag = 2, Interval = 3, ...)
 An object of class `Rec`
 }
 \description{
-An example model-based CMP that uses the `spict` package to assess the stock.
+An example model-based CMP that uses the `MSEextra::spict` function as a wrapper
+to the `spict` package to assess the stock.
 It sets the TAC = estimated MSY.
 }
 \details{

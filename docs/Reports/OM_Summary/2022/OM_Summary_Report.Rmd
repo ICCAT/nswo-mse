@@ -128,14 +128,15 @@ DT::datatable(Check_Convergence_DF,
 `r tab.cap()` Table of operating model parameters that have correlation factor > 0.95.
 
 ```{r}
+
 Check_Correlation_DF <- readRDS('Check_Correlation_DF.rda')
 
-DF <- Check_Convergence_DF
+DF <- Check_Correlation_DF
 DF$OM.num <- factor(DF$OM.num, levels=unique(DF$OM.num),
                                      ordered = TRUE)
 DF$Class <- factor(DF$Class, levels=unique(DF$Class),
                                      ordered = TRUE)
-DT::datatable(Check_Convergence_DF,
+DT::datatable(DF,
               rownames= FALSE,
               filter = 'top',
               extensions = 'Buttons',
@@ -152,15 +153,18 @@ DT::datatable(Check_Convergence_DF,
 
 # Summary Tables
 
-## Biological Reference Points
-
-`r tab.cap()` Summary table of the calculated biological reference points and estimated stock status for the OMs in the uncertainty grid. 
+`r tab.cap()` Summary table of the calculated biological reference points and estimated stock status in the terminal year for the OMs in the uncertainty grid. 
 
 ```{r}
 ReferencePoint_DF <- readRDS('ReferencePoint_DF.rda')
 
-RefPointDF <- ReferencePoint_DF %>% select(OM.num, Class, SB0, SBMSY, FMSY, MSY_d, MSY_r, SB_SB0, SB_SBMSY, F_FMSY)
+RefPointDF <- ReferencePoint_DF %>% select(OM.num, Class, SB0, SBMSY, FMSY, MSY_d, MSY_r, SB, SB_SB0, SB_SBMSY, F_FMSY)
+
+RefPointDF <- left_join(OM_DF %>% select(OM.num, M, steepness),RefPointDF, by='OM.num')
 RefPointDF$OM.num <- factor(RefPointDF$OM.num)
+RefPointDF$Class <- factor(RefPointDF$Class, levels=unique(RefPointDF$Class),ordered=TRUE)
+RefPointDF$M <- factor(RefPointDF$M)
+RefPointDF$steepness <- factor(RefPointDF$steepness)
 
 RefPointDF <- RefPointDF %>% mutate(across(where(is.numeric), round, digits=2))
 
@@ -191,6 +195,7 @@ text <- c('spawning stock biomass (SSB)',
           'relative spawning biomass (SB/SB_MSY)',
           'relative fishing mortality (F/F_MSY)')
 
+nrobust <- OM_DF %>% filter(Class!='Base Case', Class!='Reference') %>% distinct(Class) %>% nrow()
 ```
 
 ```{r, results='asis', width=6, height=6}
@@ -201,7 +206,7 @@ for (i in seq_along(plots)) {
  cat('\n![](', file.path('../../../../img/OM_Summary_Report/', this.fig), ')')
  this.fig.num <- fig.cap()
  caption<- paste('\n\n', this.fig.num, 'Time-series of estimated', text[i], 
-                     'with three levels natural mortality (M; columns) and three levels steepness (h; rows), and the Reference OMs and two sets of Robustness OMs (colors). The black dashed line represents the predictions from the 2022 Base Case stock assessment.\n\n\n')
+                     'with three levels natural mortality (M; columns) and three levels steepness (h; rows), and the Reference OMs and', nrobust, 'sets of Robustness OMs (colors). The black dashed line represents the predictions from the 2022 Base Case stock assessment.\n\n\n')
                      
  cat(caption)
 }
