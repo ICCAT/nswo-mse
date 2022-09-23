@@ -58,7 +58,7 @@ cat("#' @name SWOData",
     file=file.path('R/', RoxygenFile))
 
 # ---- Create OM Data Frame -----
-get_OM_details <- function(dir) {
+get_OM_details <- function(dir,  OMgrid.dir) {
 
   if (!any(grepl('Report.sso',list.files(dir)))) {
 
@@ -108,7 +108,7 @@ get_OM_details <- function(dir) {
   }
 }
 
-OM_list <- lapply(OMgrid.dirs, get_OM_details)
+OM_list <- lapply(OMgrid.dirs, get_OM_details,  OMgrid.dir= OMgrid.dir)
 OM_list[sapply(OM_list, is.null)] <- NULL
 OM_DF <- do.call('rbind',OM_list)
 
