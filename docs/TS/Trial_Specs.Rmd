@@ -352,7 +352,7 @@ Data lags are then handled in the CMP code, where the default assumption is that
 
 At the 2021 [Intersessional meeting](/Meeting_Reports/2021_SWO_ENG.pdf), the Group proposed a 3-year MP advice interval (see Table 5 in the [Report of the 2021 ICCAT Intersessional Meeting of the Swordfish Species Group](../Meeting_Reports//2021_SWO_ENG.pdf)).
 
-The operating models have been conditioned on data up to 2020. As described [above](#future-catches), the model assumes that the catch is 2021 and 2022 is equal to the current TAC (13,200 ton), and then begins applying the CMPs in 2023.  
+The operating models have been conditioned on data up to 2020. As described [above](#future-catches), the model assumes that the catch in 2021 -- 2023 is equal to the current TAC (13,200 ton), and then begins applying the CMPs in 2024.  
 
 The 3-yr management interval is applied within the CMP code (see the [CMP Development Guide](../cMPdevelopment/CMP-Development-Guide.html) for more details).
 
