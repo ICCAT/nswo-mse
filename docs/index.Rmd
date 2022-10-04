@@ -196,12 +196,14 @@ for (i in 1:nrow(df)) {
 ## Meeting Reports
 
 
-```{r, results='asis'}
+```{r message=FALSE, warning=FALSE, results='asis'}
 
 get_title_report <- function(pdf) {
   page1 <- pdf_data(pdf)[[1]]
   page1_title <- page1 %>% filter(height >10) 
   begin_ab <- min(which(grepl('\\“', page1_title$text)))
+  if (!is.finite(begin_ab))
+    begin_ab <- nrow(page1_title)+1
   title <- page1_title$text[1:(begin_ab-1)]
   paste0(title, collapse = ' ')
 }
