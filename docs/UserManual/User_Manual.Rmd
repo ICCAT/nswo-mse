@@ -56,7 +56,6 @@ install.packages('remotes')
 Then the `SWOMSE` package can be installed with:
 
 ```{r, eval=FALSE}
-options(timeout=900)
 remotes::install_github("ICCAT/nswo-mse")
 ```
 
