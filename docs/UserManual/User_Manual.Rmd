@@ -47,18 +47,17 @@ We also recommend the latest version of [RStudio](https://rstudio.com/products/r
 ## SWOMSE R Package
 The MSE code is packaged into an R package called `SWOMSE`, stored in the [ICCAT/nswo-mse GitHub Repository](https://github.com/ICCAT/nswo-mse). 
 
-Note that as this repository is private, you will need to provide a personal access token to download and install from GitHub. See [here](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) for information on creating a personal access token. Please contact [Adrian Hordyk](mailto:adrian@bluematterscience.com) or [Ai Kimoto](mailto:ai.kimoto@iccat.int) if you do not have access. 
-
-The `devtools` package is required to install the `SWOMSE` package. Install the `devtools` package with:
+The `remotes` package is required to install the `SWOMSE` package from GitHub. Install the `remotes` package with:
 
 ```{r, eval=FALSE}
-install.packages('devtools')
+install.packages('remotes')
 ```
 
 Then the `SWOMSE` package can be installed with:
 
 ```{r, eval=FALSE}
-devtools::install_github("ICCAT/nswo-mse", auth_token='your_personal_access_token')
+options(timeout=900)
+remotes::install_github("ICCAT/nswo-mse")
 ```
 
 This will install the `SWOMSE` package and all the dependency packages on your machine.

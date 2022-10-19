@@ -4,3 +4,5 @@
 ^Meta$
 ^build_package$
 ^docs$
+.gitignore
+.git
