@@ -1,8 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^doc$
-^Meta$
-^build_package$
 ^docs$
+^build_package$
+^\.git$
 .gitignore
-.git
+
