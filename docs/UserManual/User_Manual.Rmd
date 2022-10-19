@@ -56,7 +56,7 @@ install.packages('remotes')
 Then the `SWOMSE` package can be installed with:
 
 ```{r, eval=FALSE}
-remotes::install_github("ICCAT/nswo-mse")
+remotes::install_github("ICCAT/nswo-mse", 'SWOMSE')
 ```
 
 This will install the `SWOMSE` package and all the dependency packages on your machine.
