@@ -1,7 +1,17 @@
+.gitignore
+^Analyses$
+^archive$
+^build_package$
+^dev$
+^docs$
+^img$
+^results$
+^Slick_objects$
+^\.git$
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^docs$
-^build_package$
-^\.git$
-.gitignore
+
+
+
+
 
