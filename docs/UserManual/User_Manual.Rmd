@@ -47,28 +47,6 @@ We also recommend the latest version of [RStudio](https://rstudio.com/products/r
 ## SWOMSE R Package
 The MSE code is packaged into an R package called `SWOMSE`, stored in the [ICCAT/nswo-mse GitHub Repository](https://github.com/ICCAT/nswo-mse). 
 
-The `remotes` package is required to install the `SWOMSE` package from GitHub. Install the `remotes` package with:
-
-```{r, eval=FALSE}
-install.packages('remotes')
-```
-
-Then the `SWOMSE` package can be installed with:
-
-```{r, eval=FALSE}
-remotes::install_github("ICCAT/nswo-mse")
-```
-
-This will install the `SWOMSE` package and all the dependency packages on your machine.
-
-Alternatively, you can clone the repository on your machine and build and install the package locally with RStudio.
-
-Once installed, the package can be loaded into the current R session:
-
-```{r}
-library(SWOMSE)
-```
-
 ### About the `openMSE` R Package
 The `SWOMSE` package uses the `openMSE` package as a key dependency. `openMSE` will be automatically installed when the `SWOMSE` package is installed.
 
@@ -81,6 +59,49 @@ The `SWOMSE` package uses the `openMSE` package as a key dependency. `openMSE` w
 All functions related to importing operating models, simulating the historical fishery dynamics, and projecting the fishery forward in time with different modes of management are located in the `MSEtool` package, and are available to the user when the `SWOMSE` package is loaded. 
 
 A non-technical description of `openMSE` and its key features is available on the [`openMSE` website](https://openmse.com/). The operating model in `MSEtool`, including assumptions and equations, is described in detail in @carruthersDataLimitedMethodsToolkit2018.
+
+### Installing `SWOMSE`
+The `SWOMSE` package requires the latest version of the `openMSE` packages. These can be installed directly from CRAN. 
+
+It's usually best to remove existing packages before installing new versions (don't worry about the error message if these packages aren't already installed on your machine):
+
+```{r, eval=FALSE, echo=TRUE}
+remove.packages('openMSE')
+remove.packages('DLMtool')
+remove.packages('MSEtool')
+remove.packages('SAMtool')
+```
+
+Then install the latest version of `openMSE` (this will also install the latest version of the other packages):
+
+```{r, eval=FALSE, echo=TRUE}
+install.packages('openMSE')
+```
+
+The `SWOMSE` package can be installed directly from the [GitHub repository](https://github.com/ICCAT/nswo-mse) using the `remotes` package:
+
+```{r, eval=FALSE, echo=TRUE}
+# install.packages("remotes")
+options(timeout = 400)
+remotes::install_github("ICCAT/nswo-mse")
+```
+The `remotes` package is required to install the `SWOMSE` package from GitHub. Install the `remotes` package with:
+
+```{r, eval=FALSE}
+install.packages('remotes')
+```
+
+This will install the `SWOMSE` package and all the dependency packages on your machine.
+
+Alternatively, you can clone the repository on your machine and build and install the package locally with RStudio.
+
+Once installed, the package can be loaded into the current R session:
+
+```{r}
+library(SWOMSE)
+```
+
+
 
 
 # Operating Models
@@ -98,19 +119,16 @@ Currently, the `r length(MOMs)-1` MOMs from the uncertainty grid are available i
 
 The 2022 base case stock assessment is also available in the package (`MOM_000`). 
 
-Each OM has `r MOM_001@nsim` individual simulations (used to generate stochastic recruitment deviations and observation parameters for the projection period), specified in the `nsim` slot:
+Each OM has `r MOM_000@nsim` individual simulations (used to generate stochastic recruitment deviations and observation parameters for the projection period), specified in the `nsim` slot:
 
 ```{r, echo=TRUE}
-MOM_001@nsim
+MOM_000@nsim
 ```
 
 The `Name` slot in the `MOM` object provides a summary of the individual levels of the axes of uncertainty for a particular OM, e.g.,:
 
 ```{r, echo=TRUE}
 MOM_000@Name
-MOM_001@Name
-MOM_002@Name
-MOM_003@Name
 ```
 
 
@@ -178,11 +196,11 @@ dimnames(SWOData@AddInd)[[2]][2]
 In this example, we will run a closed-loop simulation for a single operating model from the OM uncertainty grid. 
 
 ## Selecting the OM
-First, we select an operating model. Here we will use `MOM_001`:
+First, we select an operating model. Here we will use `MOM_000`:
 
 ```{r}
-OM_DF %>% dplyr::filter(OM.num=='001')
-OM <- MOM_001
+OM_DF %>% dplyr::filter(OM.num=='000')
+OM <- MOM_000
 ```
 
 You can see the details for all the OMs by examining the `OM_DF` object.
@@ -214,7 +232,7 @@ That way, if you revise your MPs or develop more, you can just re-do the project
 Hist <- SimulateMOM(OM, silent=TRUE, parallel=FALSE)
 
 # optional: save historical simulation object to disk
-saveRDS(Hist, 'MOM_001.hist')
+saveRDS(Hist, 'MOM_000.hist')
 ```
 
 ### Forward Projections
@@ -225,7 +243,7 @@ Now we can run the forward projections:
 MMSE <- ProjectMOM(Hist, MPs=ourMPs, silent=TRUE)
 
 # optional: save projection object to disk
-saveRDS(MMSE, 'MOM_001.mmse')
+saveRDS(MMSE, 'MOM_000.mmse')
 ```
 
 

@@ -212,15 +212,6 @@ The `SWOMSE` R package has been developed to conduct the MSE for the Atlantic sw
 
 ## Installing the package
 
-The `SWOMSE` package can be installed directly from the [GitHub repository](https://github.com/ICCAT/nswo-mse) using the `devtool` package:
-
-```{r, eval=FALSE, echo=TRUE}
-# install.packages("devtools")
-devtools::install_github("ICCAT/nswo-mse", auth_token='your_personal_access_token')
-```
-
-Note that as this repository is private, you will need to provide a personal access token to download and install from GitHub. See [here](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) for information on creating a personal access token.
-
 ## openMSE
 
 The `SWOMSE` package used for the swordfish MSE uses the `openMSE` framework. The `openMSE` package is automatically installed when `SWOMSE` is installed, and all `openMSE` functions are available to the user when the `SWOMSE` package is loaded.
@@ -228,6 +219,32 @@ The `SWOMSE` package used for the swordfish MSE uses the `openMSE` framework. Th
 `openMSE` is an R package that has been developed for conducting fast, flexible, and transparent, MSE for a wide range of fisheries. `openMSE` is an umbrella package that includes the `MSEtool`, `SAMtool` and `DLMtool` packages. A non-technical description of `openMSE` and its key features is available on the [`openMSE` website](https://openmse.com/).
 
 The operating model in `openMSE`, including assumptions and equations, is described in detail in @carruthersDataLimitedMethodsToolkit2018.
+
+## Installing `SWOMSE`
+The `SWOMSE` package requires the latest version of the `openMSE` packages. These can be installed directly from CRAN. 
+
+It's usually best to remove existing packages before installing new versions (don't worry about the error message if these packages aren't already installed on your machine):
+
+```{r, eval=FALSE, echo=TRUE}
+remove.packages('openMSE')
+remove.packages('DLMtool')
+remove.packages('MSEtool')
+remove.packages('SAMtool')
+```
+
+Then install the latest version of `openMSE` (this will also install the latest version of the other packages):
+
+```{r, eval=FALSE, echo=TRUE}
+install.packages('openMSE')
+```
+
+The `SWOMSE` package can be installed directly from the [GitHub repository](https://github.com/ICCAT/nswo-mse) using the `remotes` package:
+
+```{r, eval=FALSE, echo=TRUE}
+# install.packages("remotes")
+options(timeout = 400)
+remotes::install_github("ICCAT/nswo-mse")
+```
 
 ## Importing OMs into the MSE Framework {#importing-oms-into-mse-framework}
 
