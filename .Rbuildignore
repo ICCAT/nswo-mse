@@ -7,7 +7,6 @@
 ^img$
 ^results$
 ^Slick_objects$
-^\.git$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 
