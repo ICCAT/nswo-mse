@@ -78,17 +78,16 @@ Then install the latest version of `openMSE` (this will also install the latest 
 install.packages('openMSE')
 ```
 
-The `SWOMSE` package can be installed directly from the [GitHub repository](https://github.com/ICCAT/nswo-mse) using the `remotes` package:
-
-```{r, eval=FALSE, echo=TRUE}
-# install.packages("remotes")
-options(timeout = 400)
-remotes::install_github("ICCAT/nswo-mse")
-```
 The `remotes` package is required to install the `SWOMSE` package from GitHub. Install the `remotes` package with:
 
 ```{r, eval=FALSE}
 install.packages('remotes')
+```
+
+Then the `SWOMSE` package can be installed directly from the [GitHub repository](https://github.com/ICCAT/nswo-mse) using the `remotes` package:
+
+```{r, eval=FALSE, echo=TRUE}
+remotes::install_github("ICCAT/nswo-mse")
 ```
 
 This will install the `SWOMSE` package and all the dependency packages on your machine.
@@ -100,8 +99,6 @@ Once installed, the package can be loaded into the current R session:
 ```{r}
 library(SWOMSE)
 ```
-
-
 
 
 # Operating Models
