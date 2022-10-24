@@ -1533,7 +1533,7 @@ src: url(data:application/font-sfnt;base64,AAEAAAARAQAABAAQR0RFRgs+Cz8AAjwQAAAAQ
         <ul class="authors">
           <li class="divider"></li>
                                 <li><span><i class="glyphicon glyphicon-user"></i> Adrian Hordyk <a href="mailto:adrian@bluematterscience.com" class="email">adrian@bluematterscience.com</a></span></li>
-                                         <li><span><i class="glyphicon glyphicon-calendar"></i> 19 October, 2022</span></li>
+                                         <li><span><i class="glyphicon glyphicon-calendar"></i> 24 October, 2022</span></li>
                   </ul>     
       </div>
       <div class="book-body fixed">
@@ -1598,12 +1598,10 @@ src: url(data:application/font-sfnt;base64,AAEAAAARAQAABAAQR0RFRgs+Cz8AAjwQAAAAQ
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">remove.packages</span>(<span class="st">&#39;SAMtool&#39;</span>)</span></code></pre></div>
 <p>Then install the latest version of <code>openMSE</code> (this will also install the latest version of the other packages):</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&#39;openMSE&#39;</span>)</span></code></pre></div>
-<p>The <code>SWOMSE</code> package can be installed directly from the <a href="https://github.com/ICCAT/nswo-mse">GitHub repository</a> using the <code>remotes</code> package:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(&quot;remotes&quot;)</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">timeout =</span> <span class="dv">400</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;ICCAT/nswo-mse&quot;</span>)</span></code></pre></div>
 <p>The <code>remotes</code> package is required to install the <code>SWOMSE</code> package from GitHub. Install the <code>remotes</code> package with:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&#39;remotes&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&#39;remotes&#39;</span>)</span></code></pre></div>
+<p>Then the <code>SWOMSE</code> package can be installed directly from the <a href="https://github.com/ICCAT/nswo-mse">GitHub repository</a> using the <code>remotes</code> package:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;ICCAT/nswo-mse&quot;</span>)</span></code></pre></div>
 <p>This will install the <code>SWOMSE</code> package and all the dependency packages on your machine.</p>
 <p>Alternatively, you can clone the repository on your machine and build and install the package locally with RStudio.</p>
 <p>Once installed, the package can be loaded into the current R session:</p>
