@@ -50,22 +50,22 @@ to ASPIC. It sets the TAC to the estimated MSY.
 }
 \section{Functions}{
 \itemize{
-\item \code{SP_1}: TAC set to estimated MSY
+\item \code{SP_1()}: TAC set to estimated MSY
 
-\item \code{SP_2}: Same as `SP_1` but calculates TAC by applying estimated F_MSY to estimated biomass
+\item \code{SP_2()}: Same as `SP_1` but calculates TAC by applying estimated F_MSY to estimated biomass
 
-\item \code{SP_3}: Same as `SP_1` but calculates TAC based on the harvest control rule proposed for North Atlantic Albacore
+\item \code{SP_3()}: Same as `SP_1` but calculates TAC based on the harvest control rule proposed for North Atlantic Albacore
 
-\item \code{SP_Fox_1}: Same as `SP_1` but uses the Fox assumptions of the Fox model
+\item \code{SP_Fox_1()}: Same as `SP_1` but uses the Fox assumptions of the Fox model
 
-\item \code{SP_Fox_2}: Same as `SP_Fox_1` but calculates TAC by applying estimated F_MSY to estimated biomass
+\item \code{SP_Fox_2()}: Same as `SP_Fox_1` but calculates TAC by applying estimated F_MSY to estimated biomass
 
-\item \code{SP_Fox_3}: Same as `SP_Fox_1` but calculates TAC based on the harvest control rule proposed for North Atlantic Albacore
+\item \code{SP_Fox_3()}: Same as `SP_Fox_1` but calculates TAC based on the harvest control rule proposed for North Atlantic Albacore
 
-\item \code{SP_SS_1}: State-space version of `SP_1` but calculates TAC by applying estimated F_MSY to estimated biomass
+\item \code{SP_SS_1()}: State-space version of `SP_1` but calculates TAC by applying estimated F_MSY to estimated biomass
 
-\item \code{SP_SS_2}: Same as `SP_SS_1` but
+\item \code{SP_SS_2()}: Same as `SP_SS_1` but
 
-\item \code{SP_SS_3}: Same as `SP_SS_1` but calculates TAC based on the harvest control rule proposed for North Atlantic Albacore
+\item \code{SP_SS_3()}: Same as `SP_SS_1` but calculates TAC based on the harvest control rule proposed for North Atlantic Albacore
+
 }}
-
