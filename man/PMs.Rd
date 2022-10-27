@@ -19,7 +19,7 @@ Status_S(MMSEobj = NULL, Ref = 1, Yrs = 10)
 
 Status_M(MMSEobj = NULL, Ref = 1, Yrs = c(11, 30))
 
-Stability(MMSEobj = NULL, Ref = 1, Yrs = NULL)
+Stability(MMSEobj = NULL, Ref = 0.25, Yrs = NULL)
 
 Yield_S(MMSEobj = NULL, Ref = 1, Yrs = 10)
 
@@ -40,18 +40,18 @@ Swordfish Performance Metrics functions
 }
 \section{Functions}{
 \itemize{
-\item \code{Safety_S}: Probability Female Spawning Biomass is > 0.4SBMSY over first 10 years
+\item \code{Safety_S()}: Probability Female Spawning Biomass is > 0.4SBMSY over first 10 years
 
-\item \code{Safety_M}: Probability Female Spawning Biomass is > 0.4SBMSY over last 20 years
+\item \code{Safety_M()}: Probability Female Spawning Biomass is > 0.4SBMSY over last 20 years
 
-\item \code{Status_S}: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) over first  10 years
+\item \code{Status_S()}: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) over first  10 years
 
-\item \code{Status_M}: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) over last  20 years
+\item \code{Status_M()}: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) over last  20 years
 
-\item \code{Stability}: Average Annual Variability in Yield
+\item \code{Stability()}: Probability Annual Variability in Yield < 25%
 
-\item \code{Yield_S}: Average Yield in first 10 years
+\item \code{Yield_S()}: Average Yield in first 10 years
 
-\item \code{Yield_M}: Average Yield in last 20 years
+\item \code{Yield_M()}: Average Yield in last 20 years
+
 }}
-
