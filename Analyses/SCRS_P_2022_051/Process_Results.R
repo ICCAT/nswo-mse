@@ -2,7 +2,7 @@ library(SWOMSE)
 
 # Reference OMs ----
 
-MMSE.dir <- 'results/Reference'
+MMSE.dir <- 'G:/My Drive/1_PROJECTS/North_Atlantic_Swordfish/Results/Reference'
 fls <- list.files(MMSE.dir, pattern='.mmse')
 img.dir <- 'img/MP_Performance/SCRS_P_2022_051'
 
@@ -46,8 +46,18 @@ Status_S(MMSE)
 Status_M(MMSE)
 
 
+apply(tt@Prob, 2, median)
+apply(tt@Prob, 2, mean)
+
+apply(MMSE@SB_SBMSY[,1,,1:10], 2, median)
+
 Yield_S(MMSE)
 Yield_M(MMSE)
+
+apply(obj$Perf$Det$Values[1:9,,3], 2, median)
+tt <- Status_S(MMSElist[[1]])
+
+apply(tt@Prob, 2, mean)
 
 ## Stability ----
 Stability(MMSE)
