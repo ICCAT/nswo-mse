@@ -391,3 +391,5 @@ It's clear which of these MPs is likely to provide the highest TAC in 2024. But 
 
 To determine this, we need to evaluate them in using closed-loop simulation testing. A description of how to conduct the closed-loop simulation testing in available in `SWOMSE` package [User Manual](https://iccat.github.io/nswo-mse/UserManual/User_Manual.html).
 
+# Tuning Candidate Management Procedures
+
