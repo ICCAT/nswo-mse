@@ -99,16 +99,16 @@ Status_M <- function (MMSEobj = NULL, Ref = 1, Yrs =c(11, 30))  {
 }
 class(Status_M) <- 'PM'
 
-#' @describeIn PMs Average Annual Variability in Yield
+#' @describeIn PMs Probability Annual Variability in Yield < 25%
 #' @export
-Stability <- function (MMSEobj = NULL, Ref = 1, Yrs =NULL)  {
+Stability <- function (MMSEobj = NULL, Ref = .25, Yrs =NULL)  {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
   PMobj <- new("PMobj")
-  PMobj@Name <- paste0("Average Annual Variability in Yield (Years ",
+  PMobj@Name <- paste0("Prob. Average Annual Variability in Yield < 25% (Years ",
                        Yrs[1], "-", Yrs[2], ")")
-  PMobj@Caption <- paste0("Average Annual Variability in Yield (Years ",
+  PMobj@Caption <- paste0("Average Annual Variability in Yield < 25% (Years ",
                           Yrs[1], "-", Yrs[2], ")")
   y1 <- Yrs[1]:(Yrs[2] - 1)
   y2 <- (Yrs[1] + 1):Yrs[2]
@@ -119,9 +119,9 @@ Stability <- function (MMSEobj = NULL, Ref = 1, Yrs =NULL)  {
     AAVY <- array(apply(((((Total_Catch[, 1, y1] - Total_Catch[, 1, y2])/Total_Catch[, 1, y2])^2)^0.5), 1, mean))
   }
   AAVY[AAVY>1] <- 1
-  PMobj@Stat <- AAVY
+  PMobj@Stat <- AAVY < Ref
   PMobj@Ref <- Ref
-  PMobj@Prob <- AAVY
+  PMobj@Prob <- calcProb(PMobj@Stat, MMSEobj)
   PMobj@Mean <- calcMean(PMobj@Prob)
   PMobj@MPs <- MMSEobj@MPs[[1]]
   PMobj
