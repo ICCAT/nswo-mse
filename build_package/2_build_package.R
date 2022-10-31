@@ -1,7 +1,7 @@
 # Import OMs and Data and add to SWOMSE package
 
 
-nsim <- 200 # number of simulations per OM
+nsim <- 48 # number of simulations per OM
 proyears <- 30 # number of projection years
 
 OM.root <- 'G:/My Drive/1_Projects/North_Atlantic_Swordfish/OMs'
