@@ -121,6 +121,8 @@ OM_DF$Class <- factor(OM_DF$Class,
                       ordered = TRUE)
 
 OM_DF$`Include CAL` <- as.logical(OM_DF$`Include CAL`)
+OM_DF$dir <- NULL
+OM_DF <- OM_DF %>% relocate(OM.object)
 
 usethis::use_data(OM_DF, overwrite = TRUE)
 
