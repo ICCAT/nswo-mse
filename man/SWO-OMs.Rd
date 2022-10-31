@@ -193,8 +193,8 @@ MOM_195
 }
 \description{
 North Atlantic Swordfish Operating Models
-
-`MOM_000` is the base case assessment. The rest of the OMs are from the
+ 
+`MOM_000` is the base case assessment. The rest of the OMs are from the 
 OM uncertainty grid.
 
 All OMs are class `MOM` and contain 2 stocks (female and male) and 1 aggregated fleet
