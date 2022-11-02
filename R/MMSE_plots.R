@@ -9,6 +9,31 @@ get_OM_details <- function(MMSE) {
   OM_DF[ind,]
 }
 
+#' Combine multiple MMSE objects together
+#'
+#' @param MMSElist A list of objects of class `MMSE`
+#' @param name The name for the `MMSE` object that is returned
+#'
+#' @return An object of class `MMSE`
+#' @export
+#'
+combine_MMSE <- function(MMSElist, name) {
+  classess <- lapply(MMSElist, class) %>% unlist()
+  if (!all(classess %in% 'MMSE'))
+    stop('MMSElist must be a list of `MMSE` objects')
+
+  MMSE_out <- MMSElist[[1]]
+  MMSE_out@nsim <- lapply(MMSElist, slot, 'nsim') %>% unlist() %>% sum()
+
+  slots <- c('SB_SBMSY', 'F_FMSY', 'N', 'B', 'SSB', 'VB', 'Catch', 'Removals')
+  for (sl in slots) {
+    vals <- lapply(MMSElist, slot, sl)
+    slot(MMSE_out, sl) <- do.call(abind:::abind, c(vals, along = 1))
+  }
+  MMSE_out@Name <- name
+  MMSE_out
+}
+
 
 get_TS_results <- function(MMSE, sl) {
 
