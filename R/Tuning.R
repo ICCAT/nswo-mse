@@ -62,6 +62,7 @@ TuneMP_1_Par <- function(multiHist=NULL,
 
   i <- 0
   dif <- 1E10
+  dfList <- list()
   while(i<=maxit & dif>tol){
     i <- i+1
     MSEtool:::message('Iteration', i, 'of', maxit)
@@ -73,13 +74,25 @@ TuneMP_1_Par <- function(multiHist=NULL,
     if (n.OM==1) {
       MMSE <- ProjectMOM(multiHist, MPs=c("MP1","MP2","MP3"),silent=silent,
                          parallel = FALSE)
+      df <- data.frame(i=i,
+                       OM=1,
+                       TunePar=vals_array[i,],
+                       TuneVal=tunefunc(MMSE[[om]])
+      )
     } else {
       MMSEList <- list()
+      dflist <- list()
       for (om in 1:n.OM) {
         MSEtool:::message('Projecting OM', om, 'of', n.OM)
         MMSEList[[om]] <- ProjectMOM(multiHist[[om]], MPs=c("MP1","MP2","MP3"),
                                      silent=silent,parallel = FALSE)
+        dflist[[om]] <- data.frame(i=i,
+                                   OM=om,
+                                   TunePar=vals_array[i,],
+                                   TuneVal=tunefunc(MMSEList[[om]])
+        )
       }
+      df <- do.call('rbind', dflist)
       MMSE <- combine_MMSE(MMSEList, 'name')
     }
 
@@ -107,6 +120,15 @@ TuneMP_1_Par <- function(multiHist=NULL,
     MSEtool:::message_info('Difference from Previous', round(dif,rnd), paste0('(tolerance: ', tol, ')') )
     MSEtool:::message_info(paste0('New Tuning Parameters: ', paste(round(vals_array[i+1,],rnd), collapse=" ")))
 
+    dfList[[i]] <- df
+
   }
-  i_vals
+  df <- do.call('rbind', dfList)
+
+  out <- list()
+  tune_val <- i_vals[!is.na(i_vals)]
+  out$tune_val <- tune_val[length(tune_val)]
+  out$i_vals <- i_vals
+  out$df <- df
+  out
 }
