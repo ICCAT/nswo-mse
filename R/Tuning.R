@@ -22,7 +22,7 @@ TuneMP_1_Par <- function(multiHist=NULL,
                          silent=TRUE){
 
   # ---- Checks ----
-  if (inherits(multiHist, 'list'))
+  if (inherits(multiHist, 'list') & !inherits(multiHist, 'multiHist'))
     if (!all(unlist(lapply(multiHist, inherits, 'multiHist'))))
       stop('`multiHist` must be a list of objects of class `multiHist')
 
@@ -38,7 +38,7 @@ TuneMP_1_Par <- function(multiHist=NULL,
   if (!inherits(tunefunc, 'function'))
     stop('`tunefunc` must be a function that takes an object of class `MMSE`')
 
-  if (inherits(multiHist, 'list')) {
+  if  (inherits(multiHist, 'list') & !inherits(multiHist, 'multiHist')) {
     n.OM <- length(multiHist)
   } else {
     if (!inherits(multiHist, 'multiHist'))
@@ -64,7 +64,7 @@ TuneMP_1_Par <- function(multiHist=NULL,
   dif <- 1E10
   while(i<=maxit & dif>tol){
     i <- i+1
-    MSEtool:::message(i, 'of', maxit)
+    MSEtool:::message('Iteration', i, 'of', maxit)
     assign("par1", vals_array[i,1], envir=globalenv())
     assign("par2", vals_array[i,2], envir=globalenv())
     assign("par3", vals_array[i,3], envir=globalenv())
@@ -101,8 +101,6 @@ TuneMP_1_Par <- function(multiHist=NULL,
     abline(v=trial,col='blue',lty=2)
     legend('topleft',legend=paste0('Diff = ', round(dif,5)),text.col='red',bty='n')
 
-
-    MSEtool:::message_info('i =', i)
     MSEtool:::message_info(paste0('Tuning Parameters: ', paste(round(vals_array[i,],rnd), collapse=" ")))
     MSEtool:::message_info(paste0('Tuning Target: ', paste(round(tune_vals,rnd), collapse=" ")))
     MSEtool:::message_info('Proposed Tuning Parameter:',round(i_vals[i+1],rnd))
