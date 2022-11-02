@@ -124,11 +124,15 @@ TuneMP_1_Par <- function(multiHist=NULL,
 
   }
   df <- do.call('rbind', dfList)
+  df <- df %>% round(3)
 
   out <- list()
   tune_val <- i_vals[!is.na(i_vals)]
-  out$tune_val <- tune_val[length(tune_val)]
+  out$tune_val <- round(tune_val[length(tune_val)], rnd)
   out$i_vals <- i_vals
   out$df <- df
+  out$tunetarg <- tunetarg
+  out$tunefunc <- tunefunc
+  out$MP <- MP
   out
 }
