@@ -50,10 +50,14 @@ TuneMP_1_Par <- function(multiHist=NULL,
   MSEtool:::message_info('Tuning over', n.OM, 'OM(s)')
 
   # ---- Tuning MPs ----
-  MP1<-function(x,Data,tunepar,...) MP(x,Data,tunepar=par1, ...)
-  MP2<-function(x,Data,tunepar,...) MP(x,Data,tunepar=par2, ...)
-  MP3<-function(x,Data,tunepar,...) MP(x,Data,tunepar=par3, ...)
+  MP1 <- function(x,Data,tunepar,...) MP(x,Data,tunepar=par1, ...)
+  MP2 <- function(x,Data,tunepar,...) MP(x,Data,tunepar=par2, ...)
+  MP3 <- function(x,Data,tunepar,...) MP(x,Data,tunepar=par3, ...)
   class(MP1) <- class(MP2) <- class(MP3) <- "MP"
+
+  assign("MP1", MP1, envir=globalenv())
+  assign("MP2", MP2, envir=globalenv())
+  assign("MP3", MP3, envir=globalenv())
 
   # ---- Tuning Values ----
   vals_array <- array(NA, c(maxit,3))
@@ -74,7 +78,7 @@ TuneMP_1_Par <- function(multiHist=NULL,
     # Projections
     if (n.OM==1) {
       MMSE <- ProjectMOM(multiHist, MPs=c("MP1","MP2","MP3"),silent=silent,
-                         parallel = FALSE)
+                         parallel = FALSE, checkMPs=FALSE)
       df <- data.frame(i=i,
                        OM=1,
                        TunePar=vals_array[i,],
@@ -86,7 +90,7 @@ TuneMP_1_Par <- function(multiHist=NULL,
       for (om in 1:n.OM) {
         MSEtool:::message('Projecting OM', om, 'of', n.OM)
         MMSEList[[om]] <- ProjectMOM(multiHist[[om]], MPs=c("MP1","MP2","MP3"),
-                                     silent=silent,parallel = FALSE)
+                                     silent=silent,parallel = FALSE, checkMPs=FALSE)
         dflist[[om]] <- data.frame(i=i,
                                    OM=om,
                                    TunePar=vals_array[i,],
