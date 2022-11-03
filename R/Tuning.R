@@ -10,6 +10,7 @@
 #' @param tol Stopping tolerance
 #' @param rnd Numeric value for rounding displayed numbers
 #' @param silent Logical. Hide the output while running closed-loop simulations?
+#' @export
 TuneMP_1_Par <- function(multiHist=NULL,
                          init_vals=NULL,
                          MP=NULL,
