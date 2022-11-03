@@ -82,7 +82,7 @@ TuneMP_1_Par <- function(multiHist=NULL,
       df <- data.frame(i=i,
                        OM=1,
                        TunePar=vals_array[i,],
-                       TuneVal=tunefunc(MMSE[[om]])
+                       TuneVal=tunefunc(MMSE)
       )
     } else {
       MMSEList <- list()
