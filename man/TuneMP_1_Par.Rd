@@ -12,7 +12,7 @@ TuneMP_1_Par(
   tunetarg = 1,
   step = 0.8,
   maxit = 10,
-  tol = 0.01,
+  tol = 0.001,
   rnd = 3,
   silent = TRUE
 )
