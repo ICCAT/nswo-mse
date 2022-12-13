@@ -92,7 +92,7 @@ obj$StateVar$TimeNow <- 2020
 
 # -- Title --
 obj$Text$Title <- "North Atlantic Swordfish Demonstration MSE Results"
-obj$Text$Sub_title <- "Surplus Production Candidate MPs for Reference and R3. OMs"
+obj$Text$Sub_title <- "Surplus Production Candidate MPs for Reference and Robustness Set 3. OMs"
 
 # - Metadata -
 obj$Misc$Author<-"Adrian Hordyk"
@@ -102,9 +102,9 @@ obj$Misc$Institution <- "Blue Matter Science"
 obj$Misc$Fishery <- 'North Atlantic Swordfish'
 
 # - Intro Text -
-obj$Text$Introduction[[1]]<-"These results show the performance of a set of management procedures that use surplus production assessment models and several different harvest control rules to generate TAC advice. This analysis was conducted as a preliminary investigation of the performance of surplus production assessment models. These results were presented to the Swordfish Species Working Group in SCRS/P/2022/051."
+obj$Text$Introduction[[1]]<-"These results show the performance of a set of management procedures that use surplus production assessment models and several different harvest control rules to generate TAC advice. This analysis was conducted as a preliminary investigation of the performance of surplus production assessment models. These results were presented to the ICCAT Swordfish Species Working Group in SCRS/P/2022/051."
 
-obj$Text$Introduction[[2]]<-"<strong>Note:</strong>These results were posted with permission from the International Commission for the Conservation of Atlantic Tunas for the purpose of demonstrating the features of Slick. The North Atlantic Swordfish MSE process in still ongoing. The operating models, candidate management procedures, and performance metrics shown here as for demonstration purposes only and are subject to change as the MSE process contiunes. The results presented here do not
+obj$Text$Introduction[[2]]<-"<strong>Note:</strong>These results were posted with permission from the International Commission for the Conservation of Atlantic Tunas (ICCAT) for the purpose of demonstrating the features of Slick. The North Atlantic Swordfish MSE process in still ongoing. The operating models, candidate management procedures, and performance metrics shown here are for demonstration purposes only and are subject to change as the MSE process contiunes. The results presented here do not
 necessarily reflect the point of view of ICCAT or other funders and in no ways anticipate ICCAT future policy in this area."
 
 
