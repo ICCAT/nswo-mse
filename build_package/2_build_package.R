@@ -8,6 +8,8 @@ OM.root <- 'G:/My Drive/1_Projects/North_Atlantic_Swordfish/OMs'
 OMgrid.dir <- file.path(OM.root,'grid_2022')
 OMgrid.dirs <- list.dirs(OMgrid.dir, recursive = TRUE)
 
+SSData <- r4ss::SS_readdat(file.path(OMgrid.dir, '000_base_case/SWOv5.dat'))
+
 # ---- Install latest version of r4ss ----
 # devtools::install_github("r4ss/r4ss", build_vignettes = TRUE, force=TRUE)
 
@@ -121,7 +123,7 @@ OM_DF$Class <- factor(OM_DF$Class,
                       ordered = TRUE)
 
 OM_DF$`Include CAL` <- as.logical(OM_DF$`Include CAL`)
-OM_DF$dir <- NULL
+
 OM_DF <- OM_DF %>% relocate(OM.object)
 
 usethis::use_data(OM_DF, overwrite = TRUE)
@@ -162,7 +164,9 @@ importOM <- function(i, nsim, proyears, OM_DF, SWOData) {
 
   Data@AddInd <- array(NA, dim=c(1, n.fleet+n.survey.fleet, nyears))
   Data@CV_AddInd <- Data@AddInd
-  Data@AddIunits <- rep(1,n.fleet+n.survey.fleet)
+  n_age <- MOM@Stocks[[1]]@maxage+1
+  Data@AddIndV <-   array(NA, dim=c(1, n.fleet+n.survey.fleet, n_age))
+  Data@AddIunits <- rep(1,n.fleet+n.survey.fleet) # to be updated
 
   fleet.ind.units <- c(1,0,0,0,0,1,0,0,1,0,0) # from SWOv5.dat
   # add fleet indices
@@ -171,19 +175,22 @@ importOM <- function(i, nsim, proyears, OM_DF, SWOData) {
       ind <- MOM@cpars[[1]][[fl]]$Data@VInd[1,]
       cv_ind <- MOM@cpars[[1]][[fl]]$Data@CV_VInd[1,]
       units <- fleet.ind.units[fl]
+      vul <- MOM@cpars[[1]][[fl]]$V[1,,nyears]
     } else {
       fl2 <- fl-n.fleet
       ind <- MOM@cpars[[1]][[1]]$Data@AddInd[1,fl2,]
       cv_ind <- MOM@cpars[[1]][[1]]$Data@CV_AddInd[1,fl2,]
       units <- MOM@cpars[[1]][[1]]$Data@AddIunits[fl2]
+      vul <- MOM@cpars[[1]][[1]]$Data@AddIndV[1,fl2,]
     }
     if (length(cv_ind)<nyears)
       cv_ind <- rep(cv_ind[1], nyears)
     Data@AddInd[1,fl, ] <- ind
     Data@CV_AddInd[1,fl,] <- cv_ind
     Data@AddIunits[fl] <- units
-
+    Data@AddIndV[1,fl,] <- vul
   }
+
   # name the dimensions
   dimnames(Data@AddInd)[[1]] <- 1
   dimnames(Data@AddInd)[[2]] <- Fleet_DF$Code
@@ -193,6 +200,7 @@ importOM <- function(i, nsim, proyears, OM_DF, SWOData) {
   Data@AddInd <- Data@AddInd[,-19,, drop=FALSE]
   Data@CV_AddInd <- Data@CV_AddInd[,-19,, drop=FALSE]
   Data@AddIunits <- Data@AddIunits[-19]
+  Data@AddIndV <- Data@AddIndV[,-19,, drop=FALSE]
 
   # drop empty indices
   max.vals <- suppressWarnings(apply(Data@AddInd[1,,], 1, max, na.rm=TRUE))
@@ -200,6 +208,48 @@ importOM <- function(i, nsim, proyears, OM_DF, SWOData) {
   Data@AddInd <- Data@AddInd[,-ind,, drop=FALSE]
   Data@CV_AddInd <- Data@CV_AddInd[,-ind,, drop=FALSE]
   Data@AddIunits <- Data@AddIunits[-ind]
+  Data@AddIndV <- Data@AddIndV[,-ind,, drop=FALSE]
+
+  # Add catch-at-length data
+  CAL_fleets <- 3 # use CAN LL CAL data - longest with logistic selectivity
+  nsamp <- 200 # assumed annual sample size
+
+  len_dat <- SSData$lencomp %>% filter(FltSvy==CAL_fleets)
+  len_dat <- len_dat[,c(1, 3, 7:ncol(len_dat))]
+  len_dat <- len_dat %>% tidyr::pivot_longer(., cols=3:ncol(len_dat))
+  len_dat$Length <- readr::parse_number(len_dat$name)
+
+  len_dat <- len_dat %>% select(Year=Yr, Fleet=FltSvy, Value=value, Length=Length) %>%
+    group_by(Year, Fleet, Length) %>%
+    summarise(Value=sum(Value)) %>%
+    group_by(Year, Fleet) %>%
+    mutate(Value=Value/sum(Value))
+
+  Data@CAL_mids <- MOM@cpars$Female$CAN_3$CAL_binsmid
+  nbins <- length(Data@CAL_mids)
+  by <-  Data@CAL_mids[2] -  Data@CAL_mids[1]
+
+  len_dat$Len_Mid <- len_dat$Length+0.5*by
+  Data@CAL_bins <- MOM@cpars$Female$CAN_3$CAL_bins
+
+  Data@CAL <- array(NA, dim=c(1,length(Data@Year), nbins))
+  for (yy in seq_along(Data@Year)) {
+    len_dat_y <- len_dat %>% filter(Year==Data@Year[yy])
+    if (nrow(len_dat_y)>0) {
+      # match bins
+      ind <- match(len_dat_y$Len_Mid, Data@CAL_mids)
+      Data@CAL[1,yy,] <- 0
+      Data@CAL[1,yy,ind] <- len_dat_y$Value * nsamp
+    }
+  }
+
+  Data@Vuln_CAL <- matrix(MOM@cpars$Female$CAN_3$retL[1,,nyears], nrow=1)
+
+  MOM@cpars$Female$CAN_3$retL[1,,nyears] %>% plot()
+  MOM@cpars$Female$CAN_3$SLarray[1,,nyears] %>% lines()
+
+  MOM@cpars$Female$CAN_3$V[1,,nyears] %>% plot()
+  MOM@cpars$Female$CAN_3$retA[1,,nyears] %>% lines()
 
   # aggregate all fleets into one
   MOM <- MOM %>% MSEtool::MOM_agg_fleets(.)
@@ -211,12 +261,23 @@ importOM <- function(i, nsim, proyears, OM_DF, SWOData) {
     MOM@cpars[[p]][[1]]$AddIbeta <- matrix(1, nrow=nsim, ncol=dim(Data@AddInd)[2])
     MOM@cpars[[p]][[1]]$I_beta <- rep(1, nsim)
     MOM@cpars[[p]][[1]]$Cobs_y <- matrix(1, nrow=nsim, ncol=nyears+MOM@proyears)
+
+    # Add CAL bins to cpars
+    MOM@cpars[[p]][[1]]$CAL_bins <-  Data@CAL_bins
+    MOM@cpars[[p]][[1]]$CAL_binsmid <- Data@CAL_mids
   }
 
+  # Drop Obs and Imp for other fleets
+  for (p in 1:n.stock) {
+    drop.fleet <- 2:(n.fleet+n.survey.fleet)
+    MOM@Obs[[p]] <- MOM@Obs[[p]][-drop.fleet]
+    MOM@Imps[[p]] <- MOM@Imps[[p]][-drop.fleet]
+  }
 
   # assign name
   vals <- OM_DF[i,]
   vals$OM.num <- vals$dir <- vals$OM.object <- NULL
+  vals[7] <- as.character(vals[7][1,1])
   name <- paste(names(vals), vals, collapse = ' ', sep=':')
 
   MOM@Name <- name

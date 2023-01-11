@@ -2,7 +2,7 @@
 library(dplyr)
 library(r4ss)
 
-# don't re-run as the models have no been re-conditioned using
+# don't re-run as the models have now been re-conditioned using
 # the Francis iterative re-weighting procedure
 #
 # This script does not do that and will overwrite those results!!
