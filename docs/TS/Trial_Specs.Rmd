@@ -3,13 +3,12 @@ title: "Specifications for MSE Trials for North Atlantic Swordfish"
 author: "Adrian Hordyk <adrian@bluematterscience.com>"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
+  bookdown::pdf_book:
+    keep_tex: true
   rmdformats::robobook:
     highlight: kate
     toc_depth: 2
     use_bookdown: yes
-header-includes:
-- \usepackage{lineno}
-- \linenumbers
 urlcolor: blue
 bibliography: "`r rbbt::bbt_write_bib('biblio.json', overwrite = TRUE)`"
 csl: fish-and-fisheries.csl
@@ -26,7 +25,7 @@ always_allow_html: true
 library(SWOMSE)
 library(dplyr)
 library(ggplot2)
-knitr::opts_chunk$set(echo=FALSE)
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE)
 
 MOM <- SWOMSE::MOM_000
 ```
@@ -57,13 +56,12 @@ Members of the Swordfish Species Group (hereafter the Group) are encouraged to p
 
 The document is written using the [Markdown](https://www.markdownguide.org/) format and can edited in any text editor. The source document is available on the [ICCAT/nswo-mse](https://github.com/ICCAT/nswo-mse/blob/master/docs/TS/Trial_Specs.Rmd) GitHub repository.
 
-The [ICCAT/nswo-mse](https://github.com/ICCAT/nswo-mse) is currently private and only available to members of the Group. Please contact [Adrian Hordyk](mailto:adrian@bluematterscience.com) or [Ai Kimoto](mailto:ai.kimoto@iccat.int) if you do not have access.
 
 Group members can make edits to the document either [directly in the online repository](https://github.com/ICCAT/nswo-mse/edit/master/docs/TS/Trial_Specs.Rmd) or by cloning the repository and submitting [pull requests](https://github.com/ICCAT/nswo-mse/pulls) with their edits. Alternatively, they can email questions or comments to [Adrian](mailto:adrian@bluematterscience.com). The former approach has the advantage that all comments, questions, and edits are immediately visible to all members of the Group.
 
 Group members can also use the [Discussions](https://github.com/ICCAT/nswo-mse/discussions) feature on the Github repository to post questions, comments, or points for discussion related to any aspect of this document or the MSE process in general.
 
-A HTML version of this document is available at the North Atlantic Swordfish MSE [homepage](https://iccat.github.io/nswo-mse/).
+This document is available at the North Atlantic Swordfish MSE [homepage](https://iccat.github.io/nswo-mse/).
 
 # Stock Assessment
 
@@ -94,6 +92,13 @@ DF <- DF[-19,]
 col.names <- colnames(DF)
 # col.names[4] <- 'CPUE Period'
 caption <- 'Summary table of the fishing fleets and indices of abundances included the 2022 stock assessment of North Atlantic swordfish.'
+DF$Name <- as.character(DF$Name)
+DF$Name <- gsub("-", ' ', DF$Name)
+DF$Name <- gsub("/", ' ', DF$Name)
+DF$Code <- gsub("-", ' ', DF$Code)
+DF$Name <- gsub("\\+", ' plus', DF$Name)
+DF$Code <- gsub("\\+", ' plus', DF$Code)
+DF$Code <- gsub("_", ' ', DF$Code)
 DF %>% knitr::kable(escape = F,
                     caption=caption,
                     booktabs=TRUE,
@@ -198,13 +203,11 @@ Other robustness test, for example examining the impact of changing environmenta
 
 ### OM Summary Report
 
-A [Summary Report](../Reports/OM_Summary/2022/OM_Summary_Report.html) summarizes the diagnostic checks, the calculated biological reference points, and the estimated stock status relative to those reference points, across the 216 operating models included in the OM Uncertainty Grid.
-
-A SCRS document is currently being prepared summarizing this information, and will be presented at the 2022 Species Group Meeting of the Swordfish Working Group. 
+A [Summary Report](../Reports/OM_Summary/2022/OM_Summary_Report.html) summarizes the diagnostic checks, the calculated biological reference points, and the estimated stock status relative to those reference points, across the Reference and Robustness operating models.
 
 ### OM Diagnostic Reports
 
-Individual diagnostic reports with objective function values and plots of model fits and patterns in residuals are available for each of the 216 OMs (and the 2022 assessment) on the North Atlantic Swordfish MSE [homepage](https://iccat.github.io/nswo-mse/).
+Individual diagnostic reports with objective function values and plots of model fits and patterns in residuals are available for each of the Reference and Robustness OMs (and the 2022 assessment) on the North Atlantic Swordfish MSE [homepage](https://iccat.github.io/nswo-mse/).
 
 # MSE Framework
 
@@ -242,13 +245,12 @@ The `SWOMSE` package can be installed directly from the [GitHub repository](http
 
 ```{r, eval=FALSE, echo=TRUE}
 # install.packages("remotes")
-options(timeout = 400)
 remotes::install_github("ICCAT/nswo-mse")
 ```
 
 ## Importing OMs into the MSE Framework {#importing-oms-into-mse-framework}
 
-The 216 OMs in the uncertainty grid, conditioned using SS3, were imported into MSE framework using the `SS2MOM` function in `MSEtool` (see [here](https://msetool.openmse.com/reference/SS2MOM.html) for details on the function).
+The OMs in the uncertainty grid, conditioned using SS3, were imported into MSE framework using the `SS2MOM` function in `MSEtool` (see [here](https://msetool.openmse.com/reference/SS2MOM.html) for details on the function).
 
 Previously, the 2-sex SS3 models were imported into a combined single-sex operating model in the MSE framework. The MSE framework was updated in 2022, and the imported operating models now maintain the separate sexes in the same manner as the SS3 assessment. Since the fishery is managed with a single overall total allowable catch (TAC), the individual fishing fleets were aggregated together in the operating models.
 
@@ -262,7 +264,7 @@ MOM_000@Name
 
 # Historical Spool-Up Period
 
-The historical spool-up period was generated by importing the output from the SS3 assessment models and running the MSE simulation framework to recreate the historical fishery dynamics. No additional uncertainty was added to the historical simulations; that is, all `r MOM@nsim` simulations were identical (e.g., same recruitment deviations) for the historical spool-up period.
+The historical spool-up period was generated by importing the output from the SS3 assessment models and running the MSE simulation framework to recreate the historical fishery dynamics. No additional uncertainty was added to the historical simulations; that is, all $`r MOM@nsim`$ simulations were identical (e.g., same recruitment deviations) for the historical spool-up period.
 
 The operating models have been conditioned on data up to and including 2020 (see the [Data section](#data)), and therefore the projection period for the MSE framework starts in the following year, i.e., 2021. Currently, model uses assumed catches for the first three years (2021 - 2023) and then implements the management procedures in the following year (i.e., 2024). See the [Future Catches](#future-catches) section for more information.  
 
@@ -300,7 +302,7 @@ The current simulation specifications for the MSE are:
 
 1.  Management interval: 3 (i.e., TAC updated every 3rd year)
 2.  Number of projection years: 30
-3.  Number of simulations per OM: `r MOM@nsim`
+3.  Number of simulations per OM: $`r MOM@nsim`$
 
 
 ## Assumptions
@@ -396,8 +398,5 @@ Based on feedback from the Commission's Panel 4, the following preliminary perfo
 | Long-term Yield  | As above                                                              | As above                                   | 11 - 30             | \-                             |                                |
 
 A Google sheet has also been created for the Group to add comments or additional [Performance Metrics](https://docs.google.com/spreadsheets/d/1NytREnFCZ6OPrhXT5E5Wi8Y22w-ZmENY8kEZqDH_FQE/edit?usp=sharing).
-
-#TODO 
-biomass performance metrics and Kobe space calculated for females 
 
 # References

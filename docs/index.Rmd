@@ -48,11 +48,11 @@ The MSE is being conducted with the open-source [openMSE](https://openmse.com/) 
 
 ## MSE Process Documentation
 
-1. [Trial Specifications Doc](TS/Trial_Specs.html)
+1. Trial Specifications Doc [(HTML)](TS/Trial_Specs.html) [(PDF)](TS/Trial_Specs.pdf)
 
-2. [CMP Development Guide](cMPdevelopment/CMP-Development-Guide.html)
+2. CMP Development Guide [(HTML)](cMPdevelopment/CMP-Development-Guide.html)
 
-3. [SWOMSE User Manual](UserManual/User_Manual.html)
+3. SWOMSE User Manual [(HTML)](UserManual/User_Manual.html)
 
 
 ## Operating Models
