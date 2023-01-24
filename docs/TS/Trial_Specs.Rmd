@@ -281,7 +281,7 @@ The catch data used in the OM conditioning are made available in the simulated d
 
 #### Primary Index
 
-At the [2020 Swordfish MSE technical meeting (4 -- 5 June 2020)](./Meeting_Reports/2020_SWO_MSE_1_ENG.pdf), the Group chose to use the Combined Index [@ortizUpdatedCombinedBiomass2017] as the primary index for the development of CMPs. This index was updated for the 2022 assessment. The Combined Index was imported into the `SWOMSE` framework and made available to the CMPs (Figure \@ref(fig:index-plot)).
+At the [2020 Swordfish MSE technical meeting (4 -- 5 June 2020)](../Meeting_Reports/2020_SWO_MSE_1_ENG.pdf), the Group chose to use the Combined Index [@ortizUpdatedCombinedBiomass2017] as the primary index for the development of CMPs. This index was updated for the 2022 assessment. The Combined Index was imported into the `SWOMSE` framework and made available to the CMPs (Figure \@ref(fig:index-plot)).
 
 
 ![(#fig:index-plot) The Combined Index for the North Atlantic swordfish fishery.](../../img/Combined_Index.png)
