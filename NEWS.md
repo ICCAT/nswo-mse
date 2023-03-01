@@ -1,3 +1,6 @@
+# SWOMSE 0.9.0
+* added function `FixedTAC` to the CMPs to use actual catches rather than TAC for the initial projection years
+
 # SWOMSE 0.8.0
 
 * Added a `NEWS.md` file to track changes to the package.
