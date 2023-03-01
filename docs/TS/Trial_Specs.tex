@@ -157,7 +157,7 @@
 
 \title{Specifications for MSE Trials for North Atlantic Swordfish}
 \author{Adrian Hordyk \href{mailto:adrian@bluematterscience.com}{\nolinkurl{adrian@bluematterscience.com}}}
-\date{24 January, 2023}
+\date{01 March, 2023}
 
 \begin{document}
 \maketitle
@@ -217,18 +217,18 @@ Previously, the swordfish operating models were based on the 2017 stock assessme
 
 A new stock assessment was conducted in 2022. The swordfish operating models have been updated based on this new assessment.
 
-The report for this assessment is currently in preparation (see SCRS/2022/124). The data used in the 2022 assessment, and the structure and assumptions of the assessment model are summarized in the sub-sections below.
+The report for the 2022 stock assessment is published in \href{https://www.iccat.int/Documents/CVSP/CV079_2022/n_2/CV079020392.pdf}{SCRS/2022/012}. Details of the 2022 assessment are published in \href{../SCRS_Papers/Schirripa_SCRS_2022_124.pdf}{SCRS/2022/124}. The data used in the 2022 assessment, and the structure and assumptions of the assessment model are summarized in the sub-sections below.
 
 \hypertarget{data}{%
 \subsection{Data}\label{data}}
 
 The assessment used landings data from 8 longline fleets (7 national fleets and `Other' representing all catches not accounted for in the national fleets) (Table \ref{tab:fleet-info} and Figure \ref{fig:data-fig}).
 
-There were 6 indices of abundance derived from catch-per-unit-effort (CPUE) data from the national fleets (Table \ref{tab:fleet-info} and Figure \ref{fig:data-fig}). Data from the Japan longline fleet was split into two phases: Early (1950 - 1993), and Late (1994 - 2020) due to changes in fishing practices in these periods. Similarly, the Chinese-Taipei longline fleet was split into two phases: Early (1950 - 1989) and Late (1990 - 2020). Five additional survey indices were developed from the age-specific (ages estimated from length data) CPUE from the Spain longline fleet (Table \ref{tab:fleet-info} and Figure \ref{fig:data-fig}).
+There were 6 indices of abundance derived from catch-per-unit-effort (CPUE) data from the national fleets (Table \ref{tab:fleet-info} and Figure \ref{fig:data-fig}). Data from the Japan longline fleet was split into two phases: Early (1950 - 1993), and Late (1994 - 2020) due to changes in fishing practices in these periods. Similarly, the Chinese-Taipei longline fleet was split into two phases: Early (1968 - 1989) and Late (1997 - 2020). Five additional survey indices were developed from the age-specific (ages estimated from length data) CPUE from the Spain longline fleet (Table \ref{tab:fleet-info} and Figure \ref{fig:data-fig}).
 
-Length composition data from 7 national fleets (Spain, U.S., Canada, Japan (Early, Late), Portugal, Chinese-Tapai, and Morocco) and mean weight data from two fleets (U.S. and Canada) was also used (Figure \ref{fig:data-fig}).
+Length composition data from 7 national longline fleets (Spain, U.S., Canada, Japan (Early, Late), Portugal, Chinese-Tapai (Early, Late), and Morocco) and the Canada/USA harpoon fleet (Figure \ref{fig:data-fig}). Mean weight data from two fleets (U.S. and Canada) were also used (Figure \ref{fig:data-fig}).
 
-The catchability coefficient (\emph{q}) for the CPUE indices for Canada, Japan, Portugal, Morocco, and the Spain age-specific survey indices, was made a function of the Atlantic Multidecadal Oscillation (AMO) (See Anon., 2017 for details).
+The catchability coefficient (\emph{q}) for the CPUE indices for Canada, Morocco, and the Age-1, Age-2, and Age-4 Spain age-specific survey indices, was made a function of the Atlantic Multidecadal Oscillation (AMO) (see \href{../SCRS_Papers/Schirripa_SCRS_2022_124.pdf}{SCRS/2022/124} for details).
 
 The effective sample size (ESS) for the length composition data was established by adjusting ESS until unity was reached between modeled ESS and the Francis suggested sample size (See Anon., 2017 for details).
 
@@ -337,7 +337,7 @@ The second level of recruitment variability (\(\sigma_R = 0.6\)) had a minor imp
 
 The fourth axis of uncertainty was intended to evaluate the effect of alternative relative weightings of the length composition data and the indices of abundance. The three levels reflect a complete down-weighting of the indices of abundance (0.05; effectively only fitting the model to the length composition data), leaving the relative weighting of the two data sources unchanged from that used in the assessment (1), and up-weighting the indices of abundance so the model ignores the length composition data (20). This was done because of apparent conflicting signals between the length composition data and some of the indices of abundance, and the high computation demand of conducting the recommended iterative re-weighting procedure across all OMs in the grid (Francis, 2011). However, this iterative re-weighting procedure has now been conducted for the new operating models based on the 2022 assessment, and therefore this axis of uncertainty has been modified to two levels: 1) fit the assessment to both length and CPUE data and conduct the iterative re-weighting procedure, and 2) only fit the model to the CPUE data. This second level is now treated as a robustness test (see below for more details).
 
-The fifth axis of uncertainty with the assumed 1\% increase in catchability for the indices of abundance had a relatively minor influence on both the predicted stock dynamics \href{https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_et_al_SCRS_2021_099.pdf}{Hordyk et al., 2021} and the performance of candidate management procedures \href{https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_SCRS_2021_161.pdf}{Hordyk, 2021}. The second level of this axis is now treated as a robustness test (see below for more details).
+The fifth axis of uncertainty with the assumed 1\% increase in catchability for the indices of abundance had a relatively minor influence on both the predicted stock dynamics \href{https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_et_al_SCRS_2021_099.pdf}{Hordyk et al., 2021} and the performance of candidate management procedures \href{https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_SCRS_2021_161.pdf}{Hordyk, 2021}. Therefore it was decided that the default assumption for the operating models was to use the same indices as were used in the 2022 stock assessment; .e., the indices were not adjusted for an assumed 1\% annual increase in changeability. The second level of this axis, where the indices are adjusted for an assumed increase in catchability, is now treated as a robustness test (see below for more details).
 
 In both the 2017 and 2022 stock assessments, the catchability coefficient (\emph{q}) for the CPUE indices for Canada, Japan, Portugal, Morocco, and the Spain age-specific survey indices, was made a function of the Atlantic Multidecadal Oscillation (AMO). Including this environmental covariate resulted in a better statistical fit to the data for these indices. The sixth axis of uncertainty examined the impact of not including this environmental covariate in the stock assessment. The analyses revealed that removing the environmental covariate from the assessment model had no detectable influence on either the predicted stock dynamics \href{https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_et_al_SCRS_2021_099.pdf}{Hordyk et al., 2021} or the performance of candidate management procedures \href{https://iccat.github.io/nswo-mse/SCRS_Papers//Hordyk_SCRS_2021_161.pdf}{Hordyk, 2021}. Therefore, the environmental covariate was included in all models in the OM grid. Further examination of the impact of changing environmental conditions on the performance of the candidate management procedures may be examined in additional robustness tests (see below for more details).
 
@@ -498,7 +498,7 @@ The catch data used in the OM conditioning are made available in the simulated d
 \hypertarget{primary-index}{%
 \paragraph{Primary Index}\label{primary-index}}
 
-At the \href{./Meeting_Reports/2020_SWO_MSE_1_ENG.pdf}{2020 Swordfish MSE technical meeting (4 -- 5 June 2020)}, the Group chose to use the Combined Index (Ortiz et al., 2017) as the primary index for the development of CMPs. This index was updated for the 2022 assessment. The Combined Index was imported into the \texttt{SWOMSE} framework and made available to the CMPs (Figure \ref{fig:index-plot}).
+At the \href{../Meeting_Reports/2020_SWO_MSE_1_ENG.pdf}{2020 Swordfish MSE technical meeting (4 -- 5 June 2020)}, the Group chose to use the Combined Index (Ortiz et al., 2017) as the primary index for the development of CMPs. This index was updated for the 2022 assessment. The Combined Index was imported into the \texttt{SWOMSE} framework and made available to the CMPs (Figure \ref{fig:index-plot}).
 
 \begin{figure}
 \centering
@@ -634,12 +634,12 @@ A \href{../cMPdevelopment/CMP-Development-Guide.html}{CMP Development Guide} is 
 Based on feedback from the Commission's Panel 4, the following preliminary performance metrics have been proposed for swordfish:
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1579}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.2105}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1579}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1579}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1579}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1579}}@{}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1667}}@{}}
 \toprule()
 \begin{minipage}[b]{\linewidth}\raggedright
 Name
