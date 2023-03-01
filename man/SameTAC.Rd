@@ -2,9 +2,12 @@
 % Please edit documentation in R/MPs.R
 \name{SameTAC}
 \alias{SameTAC}
-\title{Should the TAC remain unchanged?}
+\alias{FixedTAC}
+\title{Fixed TAC for the initial projection years}
 \usage{
 SameTAC(Initial_MP_Yr, Interval, Data)
+
+FixedTAC(Rec, Data)
 }
 \arguments{
 \item{Initial_MP_Yr}{The calendar year when the MP will first be implemented}
@@ -17,5 +20,5 @@ SameTAC(Initial_MP_Yr, Interval, Data)
 TRUE if the TAC should remain unchanged and FALSE otherwise
 }
 \description{
-Should the TAC remain unchanged?
+Fixed TAC for the initial projection years
 }

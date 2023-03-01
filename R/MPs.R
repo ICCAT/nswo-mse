@@ -1,6 +1,6 @@
 # Misc. Functions ----
 
-#' Should the TAC remain unchanged?
+#' Fixed TAC for the initial projection years
 #'
 #' @param Initial_MP_Yr The calendar year when the MP will first be implemented
 #' @param Interval The management interval where the TAC is updated
@@ -18,6 +18,20 @@ SameTAC <- function(Initial_MP_Yr, Interval, Data) {
   if (!(max(Data@Year)+1) %in% Imp_Years) return(TRUE)
 
   FALSE
+}
+
+#' @export
+#' @rdname SameTAC
+FixedTAC <- function(Rec, Data) {
+
+  df <- data.frame(Year=c(2021, 2022, 2023),
+                   Catch=c(9729, 13200, 13200))
+
+  if ((max(Data@Year)+1) %in% df$Year) {
+    ind <- match(max(Data@Year)+1, df$Year)
+    Rec@TAC <- df$Catch[ind]
+  }
+  Rec
 }
 
 
@@ -53,6 +67,7 @@ ITarget_1 <- function(x, Data,
   if (SameTAC(Initial_MP_Yr, Interval, Data)) {
     # Keep TAC unchanged from previous
     Rec@TAC <- Data@MPrec[x]
+    Rec <- FixedTAC(Rec, Data) # use actual catches if they are available
     return(Rec)
   }
 
@@ -111,6 +126,7 @@ ITarget_2 <- function(x, Data,
   Initial_MP_Yr <- 2024
   if (SameTAC(Initial_MP_Yr, Interval, Data)) {
     Rec@TAC <- Data@MPrec[x]
+    Rec <- FixedTAC(Rec, Data) # use actual catches if they are available
     return(Rec)
   }
 
@@ -148,6 +164,7 @@ SP_1 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
   Initial_MP_Yr <- 2024
   if (SameTAC(Initial_MP_Yr, Interval, Data)) {
     Rec@TAC <- Data@MPrec[x]
+    Rec <- FixedTAC(Rec, Data) # use actual catches if they are available
     return(Rec)
   }
 
@@ -171,6 +188,7 @@ SP_2 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
   Initial_MP_Yr <- 2024
   if (SameTAC(Initial_MP_Yr, Interval, Data)) {
     Rec@TAC <- Data@MPrec[x]
+    Rec <- FixedTAC(Rec, Data) # use actual catches if they are available
     return(Rec)
   }
 
@@ -198,6 +216,7 @@ SP_3 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
   Initial_MP_Yr <- 2024
   if (SameTAC(Initial_MP_Yr, Interval, Data)) {
     Rec@TAC <- Data@MPrec[x]
+    Rec <- FixedTAC(Rec, Data) # use actual catches if they are available
     return(Rec)
   }
 
@@ -239,6 +258,7 @@ SP_Fox_1 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
   Initial_MP_Yr <- 2024
   if (SameTAC(Initial_MP_Yr, Interval, Data)) {
     Rec@TAC <- Data@MPrec[x]
+    Rec <- FixedTAC(Rec, Data) # use actual catches if they are available
     return(Rec)
   }
 
@@ -262,6 +282,7 @@ SP_Fox_2 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
   Initial_MP_Yr <- 2024
   if (SameTAC(Initial_MP_Yr, Interval, Data)) {
     Rec@TAC <- Data@MPrec[x]
+    Rec <- FixedTAC(Rec, Data) # use actual catches if they are available
     return(Rec)
   }
 
@@ -290,6 +311,7 @@ SP_Fox_3 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
   Initial_MP_Yr <- 2024
   if (SameTAC(Initial_MP_Yr, Interval, Data)) {
     Rec@TAC <- Data@MPrec[x]
+    Rec <- FixedTAC(Rec, Data) # use actual catches if they are available
     return(Rec)
   }
 
@@ -335,6 +357,7 @@ SP_SS_1 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
   Initial_MP_Yr <- 2024
   if (SameTAC(Initial_MP_Yr, Interval, Data)) {
     Rec@TAC <- Data@MPrec[x]
+    Rec <- FixedTAC(Rec, Data) # use actual catches if they are available
     return(Rec)
   }
 
@@ -357,6 +380,7 @@ SP_SS_2 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
   Initial_MP_Yr <- 2024
   if (SameTAC(Initial_MP_Yr, Interval, Data)) {
     Rec@TAC <- Data@MPrec[x]
+    Rec <- FixedTAC(Rec, Data) # use actual catches if they are available
     return(Rec)
   }
 
@@ -384,6 +408,7 @@ SP_SS_3 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
   Initial_MP_Yr <- 2024
   if (SameTAC(Initial_MP_Yr, Interval, Data)) {
     Rec@TAC <- Data@MPrec[x]
+    Rec <- FixedTAC(Rec, Data) # use actual catches if they are available
     return(Rec)
   }
 
@@ -447,6 +472,7 @@ SPICT_1 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
   Initial_MP_Yr <- 2024
   if (SameTAC(Initial_MP_Yr, Interval, Data)) {
     Rec@TAC <- Data@MPrec[x]
+    Rec <- FixedTAC(Rec, Data) # use actual catches if they are available
     return(Rec)
   }
 
@@ -499,6 +525,7 @@ JABBA_1 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
   Initial_MP_Yr <- 2024
   if (SameTAC(Initial_MP_Yr, Interval, Data)) {
     Rec@TAC <- Data@MPrec[x]
+    Rec <- FixedTAC(Rec, Data) # use actual catches if they are available
     return(Rec)
   }
 
