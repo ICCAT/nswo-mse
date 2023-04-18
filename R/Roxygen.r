@@ -19,15 +19,6 @@
 NULL
 
 
-
-#' @name OM_DF
-#' @docType data
-#' @title North Atlantic Swordfish OM Data-Frame
-#' @description Summary of the North Atlantic Swordfish OM Parameters
-#'  
-NULL
-
-
 #' @name SWO-OMs
 #' @docType data
 #' @title Operating models
@@ -43,12 +34,6 @@ NULL
 #' @rdname SWO-OMs 
 'MOM_000'
 #' @rdname SWO-OMs 
-'MOM_127'
-#' @rdname SWO-OMs 
-'MOM_128'
-#' @rdname SWO-OMs 
-'MOM_129'
-#' @rdname SWO-OMs 
 'MOM_133'
 #' @rdname SWO-OMs 
 'MOM_134'
@@ -61,11 +46,11 @@ NULL
 #' @rdname SWO-OMs 
 'MOM_141'
 #' @rdname SWO-OMs 
-'MOM_130'
+'MOM_127'
 #' @rdname SWO-OMs 
-'MOM_131'
+'MOM_128'
 #' @rdname SWO-OMs 
-'MOM_132'
+'MOM_129'
 #' @rdname SWO-OMs 
 'MOM_136'
 #' @rdname SWO-OMs 
@@ -79,12 +64,6 @@ NULL
 #' @rdname SWO-OMs 
 'MOM_144'
 #' @rdname SWO-OMs 
-'MOM_145'
-#' @rdname SWO-OMs 
-'MOM_146'
-#' @rdname SWO-OMs 
-'MOM_147'
-#' @rdname SWO-OMs 
 'MOM_151'
 #' @rdname SWO-OMs 
 'MOM_152'
@@ -97,12 +76,6 @@ NULL
 #' @rdname SWO-OMs 
 'MOM_159'
 #' @rdname SWO-OMs 
-'MOM_181'
-#' @rdname SWO-OMs 
-'MOM_182'
-#' @rdname SWO-OMs 
-'MOM_183'
-#' @rdname SWO-OMs 
 'MOM_187'
 #' @rdname SWO-OMs 
 'MOM_188'
@@ -114,3 +87,21 @@ NULL
 'MOM_194'
 #' @rdname SWO-OMs 
 'MOM_195'
+
+#' @name OM_DF
+#' @docType data
+#' @title North Atlantic Swordfish OM Data-Frame
+#' @description Summary of the North Atlantic Swordfish OM Parameters
+#'  
+NULL
+
+
+
+#' @name OM_DF
+#' @docType data
+#' @title North Atlantic Swordfish OM Data-Frame
+#' @description Summary of the North Atlantic Swordfish OM Parameters
+#'  
+NULL
+
+
