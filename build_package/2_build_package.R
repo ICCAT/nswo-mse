@@ -1,12 +1,14 @@
 # Import OMs and Data and add to SWOMSE package
 
 
-nsim <- 48 # number of simulations per OM
-proyears <- 30 # number of projection years
+nsim <- 100 # number of simulations per OM
+proyears <- 33 # number of projection years
 
 OM.root <- 'G:/My Drive/1_Projects/North_Atlantic_Swordfish/OMs'
 OMgrid.dir <- file.path(OM.root,'grid_2022')
 OMgrid.dirs <- list.dirs(OMgrid.dir, recursive = TRUE)
+
+OMgrid.dirs <- OMgrid.dirs[!grepl('other_not_currently_used', OMgrid.dirs)]
 
 SSData <- r4ss::SS_readdat(file.path(OMgrid.dir, '000_base_case/SWOv5.dat'))
 
@@ -14,7 +16,8 @@ SSData <- r4ss::SS_readdat(file.path(OMgrid.dir, '000_base_case/SWOv5.dat'))
 # devtools::install_github("r4ss/r4ss", build_vignettes = TRUE, force=TRUE)
 
 library(r4ss); library(dplyr); library(tidyr)
-library(MSEtool); library(usethis); library(purrr)
+library(MSEtool); library(usethis); library(purrr);
+library(ggplot2)
 
 # ---- Delete existing data ----
 fls <- list.files('data')
@@ -60,6 +63,18 @@ cat("#' @name SWOData",
     file=file.path('R/', RoxygenFile))
 
 # ---- Create OM Data Frame -----
+
+title_case <- function(name) {
+  tt <- stringr::str_split(name, ' ')
+  chk <- lapply(tt, stringr::str_detect, "[[:upper:]]")[[1]]
+  for (i in seq_along(chk)) {
+    if (!chk[i])
+      if (nchar(tt[[1]][i])>1)
+        tt[[1]][i] <- stringr::str_to_title(tt[[1]][i])
+  }
+  paste(tt[[1]], collapse = ' ')
+}
+
 get_OM_details <- function(dir,  OMgrid.dir) {
 
   if (!any(grepl('Report.sso',list.files(dir)))) {
@@ -97,6 +112,7 @@ get_OM_details <- function(dir,  OMgrid.dir) {
       name <- strsplit(dir2, '/')[[1]][1]
       name <- sub("_", '. ', name)
       name <- sub("_", ' ', name)
+      name <- title_case(name)
       df$Class <- name
     }
 
@@ -126,18 +142,6 @@ OM_DF$`Include CAL` <- as.logical(OM_DF$`Include CAL`)
 
 OM_DF <- OM_DF %>% relocate(OM.object)
 
-usethis::use_data(OM_DF, overwrite = TRUE)
-
-cat("\n#' @name OM_DF",
-    "\n#' @docType data",
-    "\n#' @title North Atlantic Swordfish OM Data-Frame",
-    "\n#' @description Summary of the North Atlantic Swordfish OM Parameters",
-    "\n#'  ",
-    '\nNULL',
-    "\n\n\n",
-    sep="", append=TRUE,
-    file=file.path('R/', RoxygenFile))
-
 # ---- Import OMs ----
 
 docOM <- function(OMname) {
@@ -146,7 +150,6 @@ docOM <- function(OMname) {
       file=file.path('R/', RoxygenFile)
   )
 }
-
 
 importOM <- function(i, nsim, proyears, OM_DF, SWOData) {
   message(i)
@@ -313,6 +316,18 @@ purrr::map(1:nrow(OM_DF), importOM, nsim, proyears,
            OM_DF, SWOData)
 
 
+usethis::use_data(OM_DF, overwrite = TRUE)
+
+cat("\n#' @name OM_DF",
+    "\n#' @docType data",
+    "\n#' @title North Atlantic Swordfish OM Data-Frame",
+    "\n#' @description Summary of the North Atlantic Swordfish OM Parameters",
+    "\n#'  ",
+    '\nNULL',
+    "\n\n\n",
+    sep="", append=TRUE,
+    file=file.path('R/', RoxygenFile))
+
 # ---- Update SWO_Data with AddInd -----
 load('data/MOM_000.rda')
 
@@ -320,3 +335,199 @@ SWOData <- MOM_000@cpars[[1]][[1]]$Data
 
 usethis::use_data(SWOData, overwrite = TRUE)
 
+# ---- Make OM Table -----
+
+OM_desc <- read.csv(file.path(OMgrid.dir, 'OM_Description.csv'))
+OM_desc$OM.objects <- NA
+
+# add MOM objects
+for (i in 1:nrow(OM_desc)) {
+  cl <- OM_desc$Class[i]
+  df <- OM_DF %>% dplyr::filter(Class==cl)
+  OM_desc$OM.objects[i] <- paste(df$OM.object, collapse=', ')
+}
+
+OM_desc$Class <- factor(OM_desc$Class, levels=unique(OM_desc$Class), ordered = TRUE)
+
+
+
+# ---- Add Additional OMs (modifications of those in OM_DF) ----
+
+## R5. Increasing q
+
+df <- OM_DF %>% filter(Class == 'R4. Increase q')
+
+df$OM.object <- paste(df$OM.object, '(inc q in projections)')
+df$dir <- ''
+df$Class <- 'R5. Increasing q'
+df$OM.num <- ''
+
+OM_DF <- bind_rows(OM_DF, df)
+
+
+## R6. Implementation Error
+df <- OM_DF %>% filter(Class == 'Reference')
+
+add_overages <- function(MOM, overage=1.1, OM_DF) {
+  #load(paste0('data/', MOM, '.rda'))
+  #obj <- get(MOM)
+  #obj@Imps$Female[[1]]@TACFrac <- c(1.10, 1.10)
+  #obj@Imps$Male[[1]]@TACFrac <- c(1.10, 1.10)
+  nm <- paste0(MOM, '_overage')
+ # assign(nm, obj)
+
+  df <- OM_DF %>% filter(OM.object==MOM)
+  df$OM.object <- nm
+  df$dir <- ''
+  df$Class <- 'R6. Implementation Error'
+  df$OM.num <- ''
+  OM_DF <- bind_rows(OM_DF, df)
+
+  #do.call("use_data", list(as.name(nm), overwrite = TRUE))
+  OM_DF
+}
+
+for (i in 1:nrow(df)) {
+  MOM <- df$OM.object[i]
+  OM_DF <- add_overages(MOM, overage=1.1, OM_DF)
+}
+
+## R7. Climate Change - Recruitment
+
+### Scenarios
+
+base_case <- rep(1, proyears)
+decreasing <- seq(from=1, to=0.8, length.out=proyears)
+increasing <- seq(from=1, to=1.2, length.out=proyears)
+more_variable <- cbind(decreasing, increasing)
+
+pro_Years <- 2021:(2021+proyears-1)
+
+df1 <- data.frame(Scenario='Base Case', Values=base_case, Year=pro_Years)
+df2 <- data.frame(Scenario='Decreasing Trend', Values=decreasing, Year=pro_Years)
+df3 <- data.frame(Scenario='Increasing Trend', Values=increasing, Year=pro_Years)
+df4 <- data.frame(Scenario='Increased Variability', Values=c(decreasing, increasing), Year=pro_Years)
+
+rec_df <- bind_rows(df1, df2, df3, df4)
+rec_df$Scenario <- factor(rec_df$Scenario, levels=unique(rec_df$Scenario), ordered = TRUE)
+
+p1 <- ggplot(rec_df, aes(x=Year, y=Values)) +
+  facet_wrap(~Scenario, nrow=2) +
+  geom_line() +
+  geom_hline(yintercept = 1, linetype=2, color='darkgray') +
+  theme_bw() +
+  labs(x='Projection Years', y='Mean Trend Recruitment Deviations')
+
+ggsave('img/R7_Recruitment_Scenarios.png', p1, width=6, height=6)
+
+modify_recruit_devs <- function(MOM, rec_df, scenario='Decreasing Trend', trend=decreasing, OM_DF) {
+  load(paste0('data/', MOM, '.rda'))
+  obj <- get(MOM)
+
+  nyears <- obj@Fleets$Female[[1]]@nyears
+  p.ind <- nyears + obj@Stocks$Female@maxage + 1
+  p.ind <- p.ind:(p.ind+proyears-1)
+
+  if (!is.null(ncol(trend))) {
+    trend2 <- matrix(1, nrow=nsim, ncol=proyears)
+    for (i in 1:nsim) {
+
+
+      trend2[i,] <- runif(proyears, trend[,1], trend[,2])
+    }
+  } else {
+    trend2 <- t(replicate(nsim, trend))
+  }
+
+
+  obj@cpars$Female[[1]]$Perr_y[,p.ind] * trend2
+  obj@cpars$Male[[1]]$Perr_y[,p.ind] * trend2
+
+  nm <- paste(MOM, scenario, sep='_')
+  assign(nm, obj)
+
+  df <- OM_DF %>% filter(OM.object==MOM)
+  df$OM.object <- nm
+  df$dir <- ''
+  df$Class <- 'R7. Climate Change - Recruitment'
+  df$OM.num <- ''
+  OM_DF <- bind_rows(OM_DF, df)
+
+  do.call("use_data", list(as.name(nm), overwrite = TRUE))
+  OM_DF
+}
+
+df <- OM_DF %>% filter(Class == 'Reference')
+
+for (i in 1:nrow(df)) {
+  MOM <- df$OM.object[i]
+  OM_DF <- modify_recruit_devs(MOM, rec_df, scenario='Decreasing Trend', trend=decreasing, OM_DF)
+  OM_DF <- modify_recruit_devs(MOM, rec_df, scenario='Increasing Trend', trend=increasing, OM_DF)
+  OM_DF <- modify_recruit_devs(MOM, rec_df, scenario='Increased Variability', trend=more_variable, OM_DF)
+
+}
+
+## R8. Size Limit
+df <- OM_DF %>% filter(Class == 'Reference')
+
+df$OM.object <- paste(df$OM.object, '(modified size limit in CMP)')
+df$dir <- ''
+df$Class <- 'R8. Size Limit'
+df$OM.num <- ''
+
+OM_DF <- bind_rows(OM_DF, df)
+
+
+## R9. Alternative Management Cycles
+df <- OM_DF %>% filter(Class == 'Reference')
+
+df$OM.object <- paste(df$OM.object, '(modified in projections)')
+df$dir <- ''
+df$Class <- 'R9. Alternative Management Cycles'
+df$OM.num <- ''
+
+OM_DF <- bind_rows(OM_DF, df)
+
+
+# ---- Update OM_DF to include Additional OMs ----
+
+usethis::use_data(OM_DF, overwrite = TRUE)
+
+cat("\n#' @name OM_DF",
+    "\n#' @docType data",
+    "\n#' @title North Atlantic Swordfish OM Data-Frame",
+    "\n#' @description Summary of the North Atlantic Swordfish OM Parameters",
+    "\n#'  ",
+    '\nNULL',
+    "\n\n\n",
+    sep="", append=TRUE,
+    file=file.path('R/', RoxygenFile))
+
+
+# ---- Update OM table ----
+
+OM_desc <- read.csv(file.path(OMgrid.dir, 'OM_Description.csv'))
+OM_desc$OM.objects <- NA
+
+# add MOM objects
+for (i in 1:nrow(OM_desc)) {
+  cl <- OM_desc$Class[i]
+  df <- OM_DF %>% dplyr::filter(Class==cl)
+  OM_desc$OM.objects[i] <- paste(df$OM.object, collapse=', ')
+}
+
+OM_desc$Class <- factor(OM_desc$Class, levels=unique(OM_desc$Class), ordered = TRUE)
+
+
+usethis::use_data(OM_desc, overwrite = TRUE)
+
+
+# ---- Catches for Initial Projection Years ----
+
+Catchdf <- data.frame(Year=c(2021, 2022, 2023),
+                 Catch=c(9729, 13200, 13200),
+                 Details=c('Reported Catch',
+                           'Assumed Catch (equal to TAC)',
+                           'Assumed Catch (equal to TAC)'))
+
+usethis::use_data(Catchdf, overwrite = TRUE)
