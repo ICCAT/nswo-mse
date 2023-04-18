@@ -14,7 +14,7 @@ Depends:
     R (>= 3.5.0),
     dplyr,
     ggplot2,
-    MSEtool (>= 3.6.0),
+    MSEtool (>= 3.6.2),
     openMSE
 Imports:
     devtools,
