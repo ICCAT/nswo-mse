@@ -4,15 +4,15 @@
 \name{SWO-OMs}
 \alias{SWO-OMs}
 \alias{MOM_000}
-\alias{MOM_127}
-\alias{MOM_128}
-\alias{MOM_129}
 \alias{MOM_133}
 \alias{MOM_134}
 \alias{MOM_135}
 \alias{MOM_139}
 \alias{MOM_140}
 \alias{MOM_141}
+\alias{MOM_127}
+\alias{MOM_128}
+\alias{MOM_129}
 \alias{MOM_130}
 \alias{MOM_131}
 \alias{MOM_132}
@@ -119,12 +119,6 @@ An object of class \code{MOM} of length 1.
 \usage{
 MOM_000
 
-MOM_127
-
-MOM_128
-
-MOM_129
-
 MOM_133
 
 MOM_134
@@ -136,6 +130,12 @@ MOM_139
 MOM_140
 
 MOM_141
+
+MOM_127
+
+MOM_128
+
+MOM_129
 
 MOM_130
 
