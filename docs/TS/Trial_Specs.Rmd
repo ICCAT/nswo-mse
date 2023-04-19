@@ -200,6 +200,11 @@ The operating models have been classified into two categories: Reference OMs and
 
 caption <- 'Summary of the Base Case, Reference, and Robustness Operating Models.'
 
+OM_desc$Description <- gsub("%", ' percent', OM_desc$Description)
+OM_desc$Class <- gsub("-", ' ', OM_desc$Class)
+OM_desc$Purpose <- gsub("-", ' ', OM_desc$Purpose)
+
+
 OM_desc %>% knitr::kable(escape = F,
                     caption=caption,
                     booktabs=TRUE) %>%
@@ -247,7 +252,7 @@ This set of 6 operating models has the same assumptions as R4. Increase q, excep
 
 ## R6. Implementation Error
 
-This set of 6 operating models has the same assumptions as the Reference OMs, except that there is a consistent 10% overage in the TAC in each year. 
+This set of 6 operating models has the same assumptions as the Reference OMs, except that there is a consistent non-reported 10% overage in the TAC in each year. This test is designed to replicate illegal, unreported, or unregulated (IUU) fishing where the actual removals are 10% higher than the TAC and reported catches. 
 
 ## R7. Climate Change - Recruitment
 
@@ -276,16 +281,7 @@ These two scenarios are compared to the Reference OMs, which are designed to rep
 
 ## R9. Alternative Management Cycles
 
-This set of 6 operating models has the same assumptions as the Reference OMs with the exception that the management cycle is modified from the default assumption of 3 years (see [below](#interval) for details). 
-
-Three alternative management intervals are considered in addition to the default 3-year interval:
-
-1. 1-year management interval
-
-2. 2-year management interval
-
-3. 4-year management interval
-
+This set of 6 operating models has the same assumptions as the Reference OMs with the exception that the management cycle is modified from the default assumption of 3 years (see [below](#interval)) to a 4-year interval. 
 
 # OM Validation
 
@@ -412,7 +408,7 @@ In the MSE framework, the CMPs are always provided with the simulated fishery da
 
 Data lags are then handled in the CMP code, where the default assumption is that the catch and index data are lagged by 3 years. See the CMP (see the [CMP Development Guide](../cMPdevelopment/CMP-Development-Guide.html) for more details).
 
-## Management Interval (#interval)
+## Management Interval {#interval}
 
 At the 2021 [Intersessional meeting](/Meeting_Reports/2021_SWO_ENG.pdf), the Group proposed a 3-year MP advice interval (see Table 5 in the [Report of the 2021 ICCAT Intersessional Meeting of the Swordfish Species Group](../Meeting_Reports//2021_SWO_ENG.pdf)).
 
