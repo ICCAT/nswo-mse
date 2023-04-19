@@ -1770,7 +1770,7 @@ margin-left: 0 !important;
           <li><a href="#simulation-specifications" id="toc-simulation-specifications"><span class="toc-section-number">8.1</span> Simulation Specifications</a></li>
           <li><a href="#assumptions" id="toc-assumptions"><span class="toc-section-number">8.2</span> Assumptions</a></li>
           <li><a href="#generation-of-future-data" id="toc-generation-of-future-data"><span class="toc-section-number">8.3</span> Generation of Future Data</a></li>
-          <li><a href="#management-interval-interval" id="toc-management-interval-interval"><span class="toc-section-number">8.4</span> Management Interval (#interval)</a></li>
+          <li><a href="#interval" id="toc-interval"><span class="toc-section-number">8.4</span> Management Interval</a></li>
           </ul></li>
           <li><a href="#performance-metrics" id="toc-performance-metrics"><span class="toc-section-number">9</span> Performance Metrics</a></li>
           <li><a href="#candidate-management-procedures" id="toc-candidate-management-procedures"><span class="toc-section-number">10</span> Candidate Management Procedures</a>
@@ -1783,7 +1783,7 @@ margin-left: 0 !important;
         <ul class="authors">
           <li class="divider"></li>
                                 <li><span><i class="glyphicon glyphicon-user"></i> Adrian Hordyk <a href="mailto:adrian@bluematterscience.com" class="email">adrian@bluematterscience.com</a></span></li>
-                                         <li><span><i class="glyphicon glyphicon-calendar"></i> 18 April, 2023</span></li>
+                                         <li><span><i class="glyphicon glyphicon-calendar"></i> 19 April, 2023</span></li>
                   </ul>     
       </div>
       <div class="book-body fixed">
@@ -2118,7 +2118,7 @@ MOM_000
 Reference
 </td>
 <td style="text-align:left;">
-Span the key plausible uncertainties in natural mortality (M) and steepness of the Beverton-Holt stock-recruit relationship (h)
+Span the key plausible uncertainties in natural mortality (M) and steepness of the Beverton Holt stock recruit relationship (h)
 </td>
 <td style="text-align:left;">
 Same as Base Case with 3 levels of M (0.1, 0.2, 0.3) and 2 levels of h (0.75, 0.9)
@@ -2160,7 +2160,7 @@ MOM_136, MOM_137, MOM_138, MOM_142, MOM_143, MOM_144
 R3. Remove CAL
 </td>
 <td style="text-align:left;">
-Evaluate impact of only using indices of abundance in OM conditioning (i.e., don’t include catch-at-length data in the model fitting)
+Evaluate impact of only using indices of abundance in OM conditioning (i.e., don’t include catch at length data in the model fitting)
 </td>
 <td style="text-align:left;">
 Same as Reference, except OMs only conditioned on indices of abundance (not the catch-at-length data)
@@ -2177,7 +2177,7 @@ R4. Increase q
 Evaluate impact of an historical increase catchability that was not accounted for in the standardization of the indices of abundance
 </td>
 <td style="text-align:left;">
-Same as Reference, except an assumed 1% average annual increase in catchability during the historical period
+Same as Reference, except an assumed 1 percent average annual increase in catchability during the historical period
 </td>
 <td style="text-align:left;">
 MOM_187, MOM_188, MOM_189, MOM_193, MOM_194, MOM_195
@@ -2191,7 +2191,7 @@ R5. Increasing q
 Evaluate impact of catchability continuing to increase in projections
 </td>
 <td style="text-align:left;">
-Same as R4. Increase q, except the 1% average annual increase in catchability is assumed to continue in the projections
+Same as R4. Increase q, except the 1 percent average annual increase in catchability is assumed to continue in the projections
 </td>
 <td style="text-align:left;">
 MOM_187 (inc q in projections), MOM_188 (inc q in projections), MOM_189 (inc q in projections), MOM_193 (inc q in projections), MOM_194 (inc q in projections), MOM_195 (inc q in projections)
@@ -2202,10 +2202,10 @@ MOM_187 (inc q in projections), MOM_188 (inc q in projections), MOM_189 (inc q i
 R6. Implementation Error
 </td>
 <td style="text-align:left;">
-Evaluate impact of a overages in annual TAC
+Evaluate impact of illegal, unreported, or unregulated catches
 </td>
 <td style="text-align:left;">
-Same a Reference, except a consistent 10% overage in catch relative to TAC
+Same a Reference, except a consistent unreported 10 percent overage in catch relative to TAC
 </td>
 <td style="text-align:left;">
 MOM_133_overage, MOM_134_overage, MOM_135_overage, MOM_139_overage, MOM_140_overage, MOM_141_overage
@@ -2213,7 +2213,7 @@ MOM_133_overage, MOM_134_overage, MOM_135_overage, MOM_139_overage, MOM_140_over
 </tr>
 <tr>
 <td style="text-align:left;">
-R7. Climate Change - Recruitment
+R7. Climate Change Recruitment
 </td>
 <td style="text-align:left;">
 Evaluate impact of systematic pattern in recruitment deviations in projection periods; a proxy for impact of climate change on productivity
@@ -2244,7 +2244,7 @@ MOM_133 (modified size limit in CMP), MOM_134 (modified size limit in CMP), MOM_
 R9. Alternative Management Cycles
 </td>
 <td style="text-align:left;">
-Evaluate the impact of longer or shorter management cycles
+Evaluate the impact of a longer management cycle
 </td>
 <td style="text-align:left;">
 Same as Reference, except the management cycle is modified from the default 3 years
@@ -2293,7 +2293,7 @@ MOM_133 (modified in projections), MOM_134 (modified in projections), MOM_135 (m
 </div>
 <div id="r6.-implementation-error" class="section level2" number="5.8">
 <h2><span class="header-section-number">5.8</span> R6. Implementation Error</h2>
-<p>This set of 6 operating models has the same assumptions as the Reference OMs, except that there is a consistent 10% overage in the TAC in each year.</p>
+<p>This set of 6 operating models has the same assumptions as the Reference OMs, except that there is a consistent non-reported 10% overage in the TAC in each year. This test is designed to replicate illegal, unreported, or unregulated (IUU) fishing where the actual removals are 10% higher than the TAC and reported catches.</p>
 </div>
 <div id="r7.-climate-change---recruitment" class="section level2" number="5.9">
 <h2><span class="header-section-number">5.9</span> R7. Climate Change - Recruitment</h2>
@@ -2320,13 +2320,7 @@ MOM_133 (modified in projections), MOM_134 (modified in projections), MOM_135 (m
 </div>
 <div id="r9.-alternative-management-cycles" class="section level2" number="5.11">
 <h2><span class="header-section-number">5.11</span> R9. Alternative Management Cycles</h2>
-<p>This set of 6 operating models has the same assumptions as the Reference OMs with the exception that the management cycle is modified from the default assumption of 3 years (see <a href="#interval">below</a> for details).</p>
-<p>Three alternative management intervals are considered in addition to the default 3-year interval:</p>
-<ol style="list-style-type: decimal">
-<li><p>1-year management interval</p></li>
-<li><p>2-year management interval</p></li>
-<li><p>4-year management interval</p></li>
-</ol>
+<p>This set of 6 operating models has the same assumptions as the Reference OMs with the exception that the management cycle is modified from the default assumption of 3 years (see <a href="#interval">below</a>) to a 4-year interval.</p>
 </div>
 </div>
 <div id="om-validation" class="section level1" number="6">
@@ -2493,8 +2487,8 @@ Assumed Catch (equal to TAC)
 <p>Data lags are then handled in the CMP code, where the default assumption is that the catch and index data are lagged by 3 years. See the CMP (see the <a href="../cMPdevelopment/CMP-Development-Guide.html">CMP Development Guide</a> for more details).</p>
 </div>
 </div>
-<div id="management-interval-interval" class="section level2" number="8.4">
-<h2><span class="header-section-number">8.4</span> Management Interval (#interval)</h2>
+<div id="interval" class="section level2" number="8.4">
+<h2><span class="header-section-number">8.4</span> Management Interval</h2>
 <p>At the 2021 <a href="/Meeting_Reports/2021_SWO_ENG.pdf">Intersessional meeting</a>, the Group proposed a 3-year MP advice interval (see Table 5 in the <a href="../Meeting_Reports//2021_SWO_ENG.pdf">Report of the 2021 ICCAT Intersessional Meeting of the Swordfish Species Group</a>).</p>
 <p>The operating models have been conditioned on data up to 2020. As described <a href="#future-catches">above</a>, the catches in 2021 – 2023 are fixed to assumed values and the CMPs are first applied in 2024.</p>
 <p>The 3-yr management interval is applied within the CMP code (see the <a href="../cMPdevelopment/CMP-Development-Guide.html">CMP Development Guide</a> for more details).</p>
