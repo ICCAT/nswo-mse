@@ -1745,7 +1745,7 @@ margin-left: 0 !important;
           <li><a href="#operating-models" id="toc-operating-models"><span class="toc-section-number">5</span> Operating Models</a>
           <ul>
           <li><a href="#base-case" id="toc-base-case"><span class="toc-section-number">5.1</span> Base Case</a></li>
-          <li><a href="#reference-operating-models" id="toc-reference-operating-models"><span class="toc-section-number">5.2</span> Reference Operating Models</a></li>
+          <li><a href="#reference_models" id="toc-reference_models"><span class="toc-section-number">5.2</span> Reference Operating Models</a></li>
           <li><a href="#r1.-lower-steepness" id="toc-r1.-lower-steepness"><span class="toc-section-number">5.3</span> R1. Lower Steepness</a></li>
           <li><a href="#r2.-higher-sigmar" id="toc-r2.-higher-sigmar"><span class="toc-section-number">5.4</span> R2. Higher sigmaR</a></li>
           <li><a href="#r3.-remove-cal" id="toc-r3.-remove-cal"><span class="toc-section-number">5.5</span> R3. Remove CAL</a></li>
@@ -1772,11 +1772,19 @@ margin-left: 0 !important;
           <li><a href="#generation-of-future-data" id="toc-generation-of-future-data"><span class="toc-section-number">8.3</span> Generation of Future Data</a></li>
           <li><a href="#interval" id="toc-interval"><span class="toc-section-number">8.4</span> Management Interval</a></li>
           </ul></li>
-          <li><a href="#performance-metrics" id="toc-performance-metrics"><span class="toc-section-number">9</span> Performance Metrics</a></li>
+          <li><a href="#performance-metrics" id="toc-performance-metrics"><span class="toc-section-number">9</span> Performance Metrics</a>
+          <ul>
+          <li><a href="#general-notes-of-performance-metrics" id="toc-general-notes-of-performance-metrics"><span class="toc-section-number">9.1</span> General Notes of Performance Metrics</a></li>
+          <li><a href="#status" id="toc-status"><span class="toc-section-number">9.2</span> Status</a></li>
+          <li><a href="#safety" id="toc-safety"><span class="toc-section-number">9.3</span> Safety</a></li>
+          <li><a href="#yield" id="toc-yield"><span class="toc-section-number">9.4</span> Yield</a></li>
+          <li><a href="#stability" id="toc-stability"><span class="toc-section-number">9.5</span> Stability</a></li>
+          </ul></li>
           <li><a href="#candidate-management-procedures" id="toc-candidate-management-procedures"><span class="toc-section-number">10</span> Candidate Management Procedures</a>
           <ul>
           <li><a href="#tuning" id="toc-tuning"><span class="toc-section-number">10.1</span> Tuning of CMPs</a></li>
           </ul></li>
+          <li><a href="#reporting-of-results" id="toc-reporting-of-results"><span class="toc-section-number">11</span> Reporting of Results</a></li>
           <li><a href="#references" id="toc-references">References</a></li>
           </ul>
         </nav>
@@ -2259,7 +2267,7 @@ MOM_133 (modified in projections), MOM_134 (modified in projections), MOM_135 (m
 <h2><span class="header-section-number">5.1</span> Base Case</h2>
 <p>The Base Case operating model is the 2022 Stock Assessment. See the <a href="#stock-assessment">Stock Assessment section</a> for more details.</p>
 </div>
-<div id="reference-operating-models" class="section level2" number="5.2">
+<div id="reference_models" class="section level2" number="5.2">
 <h2><span class="header-section-number">5.2</span> Reference Operating Models</h2>
 <p>The Reference OMs are based on the Base Case Model and span the plausible range for the key uncertainties. The Candidate Management Procedures (CMPs) are tuned across the Reference OMs (see the <a href="#tuning">CMP Tuning section</a> for more details.</p>
 <p>Based on the analyses described <a href="#om-conditioning">above</a>, a set of 6 operating models were identified as the Reference OMs. These operating models spanned the three levels of <em>M</em> (0.1, 0.2, and 0.3) and two levels <em>h</em> (0.75 and 0.9).</p>
@@ -2497,6 +2505,279 @@ Assumed Catch (equal to TAC)
 </div>
 <div id="performance-metrics" class="section level1" number="9">
 <h1><span class="header-section-number">9</span> Performance Metrics</h1>
+<p>14 performance metrics (PMs) have been developed for the North Atlantic Swordfish MSE (Table <a href="#tab:PM-Description">9.1</a>). These PMs are grouped into four families:</p>
+<ol style="list-style-type: decimal">
+<li><p>Status: the probability the stock is in the green quadrant of the Kobe matrix</p></li>
+<li><p>Safety: the probability of the stock not falling below the biological limit reference point</p></li>
+<li><p>Yield: the catch in the projection years (ton)</p></li>
+<li><p>Stability: the variation in the TAC between management cycles</p></li>
+</ol>
+<div id="general-notes-of-performance-metrics" class="section level2" number="9.1">
+<h2><span class="header-section-number">9.1</span> General Notes of Performance Metrics</h2>
+<p>The performance metrics are calculated over all the simulations (100) in each operating model. For example, the <code>PGK_short</code> PM is calculated as the proportion of the 100 simulations where spawning biomass (<span class="math inline">\(SB\)</span>) is above <span class="math inline">\(SB_{MSY}\)</span> and fishing mortality (<span class="math inline">\(F\)</span>) is below <span class="math inline">\(F_{MSY}\)</span>.</p>
+<p>The performance metrics can also be calculated over several operating models, for example the entire <a href="#reference_models">Reference Set</a>. This is done by first combining the MSE results for each OM (e.g., the 6 Reference OMs) into a single set of results (in this example, resulting in 600 simulations (6 OMs multiplied by 100 simulations per OM)), and then calculating the performance metrics over all results.</p>
+<p>The following sub-sections provide the details on how each performance metric is calculated.</p>
+<table class="table table-striped" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:PM-Description">Table 9.1: </span>Summary of the North Atlantic Swordfish Performance Metrics.
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Family
+</th>
+<th style="text-align:left;">
+Name
+</th>
+<th style="text-align:left;">
+Description
+</th>
+<th style="text-align:left;">
+Minimum Acceptable Values
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Status
+</td>
+<td style="text-align:left;">
+PGK_short
+</td>
+<td style="text-align:left;">
+Probability of being in Green Zone of Kobe Space (SB&gt;SBMSY &amp; F&lt;FMSY) in year 10 (2033)
+</td>
+<td style="text-align:left;">
+51, 60, 70
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+</td>
+<td style="text-align:left;">
+PGK_med
+</td>
+<td style="text-align:left;">
+Probability of being in Green Zone of Kobe Space (SB&gt;SBMSY &amp; F&lt;FMSY) in years 6-10 (2026-2033)
+</td>
+<td style="text-align:left;">
+51, 60, 70
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+</td>
+<td style="text-align:left;">
+PGK_long
+</td>
+<td style="text-align:left;">
+Probability of being in Green Zone of Kobe Space (SB&gt;SBMSY &amp; F&lt;FMSY) in years 11-30 (2034-2053)
+</td>
+<td style="text-align:left;">
+51, 60, 70
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+</td>
+<td style="text-align:left;">
+PGK
+</td>
+<td style="text-align:left;">
+Probability of being in Green Zone of Kobe Space (SB&gt;SBMSY &amp; F&lt;FMSY) over all years (2024-2053)
+</td>
+<td style="text-align:left;">
+51, 60, 70
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+</td>
+<td style="text-align:left;">
+PGK_30
+</td>
+<td style="text-align:left;">
+Probability of being in Green Zone of Kobe Space (SB&gt;SBMSY &amp; F&lt;FMSY) in year 30 (2053)
+</td>
+<td style="text-align:left;">
+51, 60, 70
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+</td>
+<td style="text-align:left;">
+PNOF
+</td>
+<td style="text-align:left;">
+Probability of Not Overfishing (F&lt;FMSY) over all years (2024-2053)
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Safety
+</td>
+<td style="text-align:left;">
+LRP_short
+</td>
+<td style="text-align:left;">
+Probability of not breaching the limit reference point (SB&gt;0.4SBMSY) over years 1-10 (2024-2033)
+</td>
+<td style="text-align:left;">
+85, 90, 95
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+</td>
+<td style="text-align:left;">
+LRP_long
+</td>
+<td style="text-align:left;">
+Probability of not breaching the limit reference point (SB&gt;0.4SBMSY) over years 11-30 (2034-2053)
+</td>
+<td style="text-align:left;">
+85, 90, 95
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+</td>
+<td style="text-align:left;">
+LRP
+</td>
+<td style="text-align:left;">
+Probability of not breaching the limit reference point (SB&gt;0.4SBMSY) over all years (2024-2053)
+</td>
+<td style="text-align:left;">
+85, 90, 95
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Yield
+</td>
+<td style="text-align:left;">
+C1
+</td>
+<td style="text-align:left;">
+TAC (t) in the first implementation year (2024)
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+</td>
+<td style="text-align:left;">
+AvC10
+</td>
+<td style="text-align:left;">
+Median catches (t) over years 1-10 (2024-2033)
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+</td>
+<td style="text-align:left;">
+AvC30
+</td>
+<td style="text-align:left;">
+Median catches (t) over years 11-30 (2034-2053)
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Stability
+</td>
+<td style="text-align:left;">
+VarC
+</td>
+<td style="text-align:left;">
+Median variation in TAC (%) between management cycles over all years
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+</td>
+<td style="text-align:left;">
+MaxVarC
+</td>
+<td style="text-align:left;">
+Maximum variation in TAC (%) between management cycles over all years
+</td>
+<td style="text-align:left;">
+No minimum value and 25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="status" class="section level2" number="9.2">
+<h2><span class="header-section-number">9.2</span> Status</h2>
+<p>The Status PMs evaluate the probability that the stock is in the green quadrant of the Kobe matrix.</p>
+<div id="pgk_short" class="section level3" number="9.2.1">
+<h3><span class="header-section-number">9.2.1</span> PGK_short</h3>
+<p><strong>Calculates:</strong> Probability of being in Green Zone of Kobe Space (SB&gt;SBMSY &amp; F&lt;FMSY) in Year 10 (2033)</p>
+<p><strong>Equation</strong>:</p>
+<p><span class="math display">\[ \text{PGK_short} = a+b+c  \]</span></p>
+</div>
+<div id="pgk_med" class="section level3" number="9.2.2">
+<h3><span class="header-section-number">9.2.2</span> PGK_med</h3>
+</div>
+<div id="pgk_long" class="section level3" number="9.2.3">
+<h3><span class="header-section-number">9.2.3</span> PGK_long</h3>
+</div>
+<div id="pgk" class="section level3" number="9.2.4">
+<h3><span class="header-section-number">9.2.4</span> PGK</h3>
+</div>
+<div id="pgk_30" class="section level3" number="9.2.5">
+<h3><span class="header-section-number">9.2.5</span> PGK_30</h3>
+</div>
+<div id="pnof" class="section level3" number="9.2.6">
+<h3><span class="header-section-number">9.2.6</span> PNOF</h3>
+</div>
+</div>
+<div id="safety" class="section level2" number="9.3">
+<h2><span class="header-section-number">9.3</span> Safety</h2>
+<div id="lrp_short" class="section level3" number="9.3.1">
+<h3><span class="header-section-number">9.3.1</span> LRP_short</h3>
+</div>
+<div id="lrp_long" class="section level3" number="9.3.2">
+<h3><span class="header-section-number">9.3.2</span> LRP_long</h3>
+</div>
+<div id="lrp" class="section level3" number="9.3.3">
+<h3><span class="header-section-number">9.3.3</span> LRP</h3>
+</div>
+</div>
+<div id="yield" class="section level2" number="9.4">
+<h2><span class="header-section-number">9.4</span> Yield</h2>
+<div id="c1" class="section level3" number="9.4.1">
+<h3><span class="header-section-number">9.4.1</span> C1</h3>
+</div>
+<div id="avc10" class="section level3" number="9.4.2">
+<h3><span class="header-section-number">9.4.2</span> AvC10</h3>
+</div>
+<div id="avc30" class="section level3" number="9.4.3">
+<h3><span class="header-section-number">9.4.3</span> AvC30</h3>
+</div>
+</div>
+<div id="stability" class="section level2" number="9.5">
+<h2><span class="header-section-number">9.5</span> Stability</h2>
+<div id="varc" class="section level3" number="9.5.1">
+<h3><span class="header-section-number">9.5.1</span> VarC</h3>
+</div>
+<div id="maxvarc" class="section level3" number="9.5.2">
+<h3><span class="header-section-number">9.5.2</span> MaxVarC</h3>
 <p>TO BE UPDATED BASED ON NEW INFORMATION</p>
 <p>Based on feedback from the Commission’s Panel 4, the following preliminary performance metrics have been proposed for swordfish:</p>
 <table style="width:100%;">
@@ -2579,6 +2860,8 @@ Assumed Catch (equal to TAC)
 </table>
 <p>A Google sheet has also been created for the Group to add comments or additional <a href="https://docs.google.com/spreadsheets/d/1NytREnFCZ6OPrhXT5E5Wi8Y22w-ZmENY8kEZqDH_FQE/edit?usp=sharing">Performance Metrics</a>.</p>
 </div>
+</div>
+</div>
 <div id="candidate-management-procedures" class="section level1" number="10">
 <h1><span class="header-section-number">10</span> Candidate Management Procedures</h1>
 <p>TO BE UPDATED BASED ON NEW INFORMATION</p>
@@ -2589,6 +2872,10 @@ Assumed Catch (equal to TAC)
 <h2><span class="header-section-number">10.1</span> Tuning of CMPs</h2>
 <p>TO BE UPDATED BASED ON NEW INFORMATION</p>
 </div>
+</div>
+<div id="reporting-of-results" class="section level1" number="11">
+<h1><span class="header-section-number">11</span> Reporting of Results</h1>
+<p>TODO - describe Slick</p>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
