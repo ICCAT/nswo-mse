@@ -13,27 +13,18 @@
 \alias{MOM_127}
 \alias{MOM_128}
 \alias{MOM_129}
-\alias{MOM_130}
-\alias{MOM_131}
-\alias{MOM_132}
 \alias{MOM_136}
 \alias{MOM_137}
 \alias{MOM_138}
 \alias{MOM_142}
 \alias{MOM_143}
 \alias{MOM_144}
-\alias{MOM_145}
-\alias{MOM_146}
-\alias{MOM_147}
 \alias{MOM_151}
 \alias{MOM_152}
 \alias{MOM_153}
 \alias{MOM_157}
 \alias{MOM_158}
 \alias{MOM_159}
-\alias{MOM_181}
-\alias{MOM_182}
-\alias{MOM_183}
 \alias{MOM_187}
 \alias{MOM_188}
 \alias{MOM_189}
@@ -42,24 +33,6 @@
 \alias{MOM_195}
 \title{Operating models}
 \format{
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
 An object of class \code{MOM} of length 1.
 
 An object of class \code{MOM} of length 1.
@@ -137,12 +110,6 @@ MOM_128
 
 MOM_129
 
-MOM_130
-
-MOM_131
-
-MOM_132
-
 MOM_136
 
 MOM_137
@@ -155,12 +122,6 @@ MOM_143
 
 MOM_144
 
-MOM_145
-
-MOM_146
-
-MOM_147
-
 MOM_151
 
 MOM_152
@@ -172,12 +133,6 @@ MOM_157
 MOM_158
 
 MOM_159
-
-MOM_181
-
-MOM_182
-
-MOM_183
 
 MOM_187
 
