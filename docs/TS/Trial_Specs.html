@@ -1775,23 +1775,22 @@ margin-left: 0 !important;
           <li><a href="#performance-metrics" id="toc-performance-metrics"><span class="toc-section-number">9</span> Performance Metrics</a>
           <ul>
           <li><a href="#general-notes-of-performance-metrics" id="toc-general-notes-of-performance-metrics"><span class="toc-section-number">9.1</span> General Notes of Performance Metrics</a></li>
-          <li><a href="#status" id="toc-status"><span class="toc-section-number">9.2</span> Status</a></li>
-          <li><a href="#safety" id="toc-safety"><span class="toc-section-number">9.3</span> Safety</a></li>
-          <li><a href="#yield" id="toc-yield"><span class="toc-section-number">9.4</span> Yield</a></li>
-          <li><a href="#stability" id="toc-stability"><span class="toc-section-number">9.5</span> Stability</a></li>
+          <li><a href="#tuning" id="toc-tuning"><span class="toc-section-number">9.2</span> Tuning of Candidate Management Procedures</a></li>
           </ul></li>
-          <li><a href="#candidate-management-procedures" id="toc-candidate-management-procedures"><span class="toc-section-number">10</span> Candidate Management Procedures</a>
+          <li><a href="#candidate-management-procedures" id="toc-candidate-management-procedures"><span class="toc-section-number">10</span> Candidate Management Procedures</a></li>
+          <li><a href="#reporting-of-mse-results" id="toc-reporting-of-mse-results"><span class="toc-section-number">11</span> Reporting of MSE Results</a>
           <ul>
-          <li><a href="#tuning" id="toc-tuning"><span class="toc-section-number">10.1</span> Tuning of CMPs</a></li>
+          <li><a href="#summary-tables" id="toc-summary-tables"><span class="toc-section-number">11.1</span> Summary Tables</a></li>
+          <li><a href="#summary-plots" id="toc-summary-plots"><span class="toc-section-number">11.2</span> Summary Plots</a></li>
+          <li><a href="#interactive-application" id="toc-interactive-application"><span class="toc-section-number">11.3</span> Interactive Application</a></li>
           </ul></li>
-          <li><a href="#reporting-of-results" id="toc-reporting-of-results"><span class="toc-section-number">11</span> Reporting of Results</a></li>
           <li><a href="#references" id="toc-references">References</a></li>
           </ul>
         </nav>
         <ul class="authors">
           <li class="divider"></li>
                                 <li><span><i class="glyphicon glyphicon-user"></i> Adrian Hordyk <a href="mailto:adrian@bluematterscience.com" class="email">adrian@bluematterscience.com</a></span></li>
-                                         <li><span><i class="glyphicon glyphicon-calendar"></i> 19 April, 2023</span></li>
+                                         <li><span><i class="glyphicon glyphicon-calendar"></i> 21 April, 2023</span></li>
                   </ul>     
       </div>
       <div class="book-body fixed">
@@ -2507,16 +2506,16 @@ Assumed Catch (equal to TAC)
 <h1><span class="header-section-number">9</span> Performance Metrics</h1>
 <p>14 performance metrics (PMs) have been developed for the North Atlantic Swordfish MSE (Table <a href="#tab:PM-Description">9.1</a>). These PMs are grouped into four families:</p>
 <ol style="list-style-type: decimal">
-<li><p>Status: the probability the stock is in the green quadrant of the Kobe matrix</p></li>
-<li><p>Safety: the probability of the stock not falling below the biological limit reference point</p></li>
-<li><p>Yield: the catch in the projection years (ton)</p></li>
-<li><p>Stability: the variation in the TAC between management cycles</p></li>
+<li><p><strong>Status</strong>: the probability the stock is in the green quadrant of the Kobe matrix</p></li>
+<li><p><strong>Safety</strong>: the probability of the stock not falling below the biological limit reference point</p></li>
+<li><p><strong>Yield</strong>: the catch in the projection years (ton)</p></li>
+<li><p><strong>Stability</strong>: the variation in the TAC between management cycles</p></li>
 </ol>
 <div id="general-notes-of-performance-metrics" class="section level2" number="9.1">
 <h2><span class="header-section-number">9.1</span> General Notes of Performance Metrics</h2>
-<p>The performance metrics are calculated over all the simulations (100) in each operating model. For example, the <code>PGK_short</code> PM is calculated as the proportion of the 100 simulations where spawning biomass (<span class="math inline">\(SB\)</span>) is above <span class="math inline">\(SB_{MSY}\)</span> and fishing mortality (<span class="math inline">\(F\)</span>) is below <span class="math inline">\(F_{MSY}\)</span>.</p>
+<p>The performance metrics are calculated over all the simulations (100) in each operating model. For example, <em>PGK_short</em> is calculated as the proportion of the 100 simulations where the spawning biomass (<span class="math inline">\(SB\)</span>) is above <span class="math inline">\(SB_{MSY}\)</span> and fishing mortality (<span class="math inline">\(F\)</span>) is below <span class="math inline">\(F_{MSY}\)</span>.</p>
 <p>The performance metrics can also be calculated over several operating models, for example the entire <a href="#reference_models">Reference Set</a>. This is done by first combining the MSE results for each OM (e.g., the 6 Reference OMs) into a single set of results (in this example, resulting in 600 simulations (6 OMs multiplied by 100 simulations per OM)), and then calculating the performance metrics over all results.</p>
-<p>The following sub-sections provide the details on how each performance metric is calculated.</p>
+<p>The Minimum Acceptable Performance values listed in Table <a href="#tab:PM-Description">9.1</a> will be used as alternative values to determine if candidate management procedures meet the minimum performance criteria.</p>
 <table class="table table-striped" style="margin-left: auto; margin-right: auto;">
 <caption>
 <span id="tab:PM-Description">Table 9.1: </span>Summary of the North Atlantic Swordfish Performance Metrics.
@@ -2722,144 +2721,9 @@ No minimum value and 25
 </tbody>
 </table>
 </div>
-<div id="status" class="section level2" number="9.2">
-<h2><span class="header-section-number">9.2</span> Status</h2>
-<p>The Status PMs evaluate the probability that the stock is in the green quadrant of the Kobe matrix.</p>
-<div id="pgk_short" class="section level3" number="9.2.1">
-<h3><span class="header-section-number">9.2.1</span> PGK_short</h3>
-<p><strong>Calculates:</strong> Probability of being in Green Zone of Kobe Space (SB&gt;SBMSY &amp; F&lt;FMSY) in Year 10 (2033)</p>
-<p><strong>Equation</strong>:</p>
-<p><span class="math display">\[ \text{PGK_short} = a+b+c  \]</span></p>
-</div>
-<div id="pgk_med" class="section level3" number="9.2.2">
-<h3><span class="header-section-number">9.2.2</span> PGK_med</h3>
-</div>
-<div id="pgk_long" class="section level3" number="9.2.3">
-<h3><span class="header-section-number">9.2.3</span> PGK_long</h3>
-</div>
-<div id="pgk" class="section level3" number="9.2.4">
-<h3><span class="header-section-number">9.2.4</span> PGK</h3>
-</div>
-<div id="pgk_30" class="section level3" number="9.2.5">
-<h3><span class="header-section-number">9.2.5</span> PGK_30</h3>
-</div>
-<div id="pnof" class="section level3" number="9.2.6">
-<h3><span class="header-section-number">9.2.6</span> PNOF</h3>
-</div>
-</div>
-<div id="safety" class="section level2" number="9.3">
-<h2><span class="header-section-number">9.3</span> Safety</h2>
-<div id="lrp_short" class="section level3" number="9.3.1">
-<h3><span class="header-section-number">9.3.1</span> LRP_short</h3>
-</div>
-<div id="lrp_long" class="section level3" number="9.3.2">
-<h3><span class="header-section-number">9.3.2</span> LRP_long</h3>
-</div>
-<div id="lrp" class="section level3" number="9.3.3">
-<h3><span class="header-section-number">9.3.3</span> LRP</h3>
-</div>
-</div>
-<div id="yield" class="section level2" number="9.4">
-<h2><span class="header-section-number">9.4</span> Yield</h2>
-<div id="c1" class="section level3" number="9.4.1">
-<h3><span class="header-section-number">9.4.1</span> C1</h3>
-</div>
-<div id="avc10" class="section level3" number="9.4.2">
-<h3><span class="header-section-number">9.4.2</span> AvC10</h3>
-</div>
-<div id="avc30" class="section level3" number="9.4.3">
-<h3><span class="header-section-number">9.4.3</span> AvC30</h3>
-</div>
-</div>
-<div id="stability" class="section level2" number="9.5">
-<h2><span class="header-section-number">9.5</span> Stability</h2>
-<div id="varc" class="section level3" number="9.5.1">
-<h3><span class="header-section-number">9.5.1</span> VarC</h3>
-</div>
-<div id="maxvarc" class="section level3" number="9.5.2">
-<h3><span class="header-section-number">9.5.2</span> MaxVarC</h3>
-<p>TO BE UPDATED BASED ON NEW INFORMATION</p>
-<p>Based on feedback from the Commission’s Panel 4, the following preliminary performance metrics have been proposed for swordfish:</p>
-<table style="width:100%;">
-<colgroup>
-<col width="16%" />
-<col width="16%" />
-<col width="16%" />
-<col width="16%" />
-<col width="16%" />
-<col width="16%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Description</th>
-<th>Statistic</th>
-<th>Time Period (Years)</th>
-<th>Minimum Acceptable Probability</th>
-<th>Notes</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Safety - Short</td>
-<td>Maintain low probability of stock declining to unacceptably low level</td>
-<td>Prob. SB &lt; SB<sub>lim</sub></td>
-<td>1 - 10</td>
-<td>5 - 10%</td>
-<td>SB<sub>lim</sub> defined as 0.4 SB<sub>MSY</sub></td>
-</tr>
-<tr class="even">
-<td>Safety - Medium</td>
-<td>As above</td>
-<td>As above</td>
-<td>11 - 30</td>
-<td>5 - 10%</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>Status - Short</td>
-<td>Maintain stock in green quadrant of the Kobe matrix</td>
-<td>Prob SB &gt; SB<sub>MSY</sub> &amp; F &lt; F<sub>MSY</sub></td>
-<td>1 - 10</td>
-<td>50 - 60%</td>
-<td></td>
-</tr>
-<tr class="even">
-<td>Status - Medium</td>
-<td>As above</td>
-<td>As above</td>
-<td>11 - 30</td>
-<td>50 - 60%</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>Stability</td>
-<td>Minimize large inter-annual changes in yield</td>
-<td>Average annual variability in yield (AAVY)</td>
-<td>1 - 30</td>
-<td>Maximum AAVY of 15 - 25%</td>
-<td></td>
-</tr>
-<tr class="even">
-<td>Short-term Yield</td>
-<td>Maximize yield while meeting other objectives</td>
-<td>Average catch</td>
-<td>1 - 10</td>
-<td>-</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>Long-term Yield</td>
-<td>As above</td>
-<td>As above</td>
-<td>11 - 30</td>
-<td>-</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<p>A Google sheet has also been created for the Group to add comments or additional <a href="https://docs.google.com/spreadsheets/d/1NytREnFCZ6OPrhXT5E5Wi8Y22w-ZmENY8kEZqDH_FQE/edit?usp=sharing">Performance Metrics</a>.</p>
-</div>
+<div id="tuning" class="section level2" number="9.2">
+<h2><span class="header-section-number">9.2</span> Tuning of Candidate Management Procedures</h2>
+<p>The Candidate Management Procedures will be tuned to the three minimum acceptable values for <code>PGK_30</code> (51, 60, and 70%); i.e., there will be three versions of each CMP corresponding to these three tuning targets.</p>
 </div>
 </div>
 <div id="candidate-management-procedures" class="section level1" number="10">
@@ -2868,14 +2732,20 @@ No minimum value and 25
 <p>At this point, the candidate management procedures have not yet been developed.</p>
 <p>The Group decided that CMP development work should involve the national scientists. A small group was formed at the November 2020 MSE technical meeting, lead by Dr K. Gillespie, with the aim of continuing the CMP development work in 2021.</p>
 <p>A <a href="../cMPdevelopment/CMP-Development-Guide.html">CMP Development Guide</a> is available on the swordfish <a href="https://iccat.github.io/">MSE homepage</a>.</p>
-<div id="tuning" class="section level2" number="10.1">
-<h2><span class="header-section-number">10.1</span> Tuning of CMPs</h2>
 <p>TO BE UPDATED BASED ON NEW INFORMATION</p>
 </div>
+<div id="reporting-of-mse-results" class="section level1" number="11">
+<h1><span class="header-section-number">11</span> Reporting of MSE Results</h1>
+<div id="summary-tables" class="section level2" number="11.1">
+<h2><span class="header-section-number">11.1</span> Summary Tables</h2>
 </div>
-<div id="reporting-of-results" class="section level1" number="11">
-<h1><span class="header-section-number">11</span> Reporting of Results</h1>
+<div id="summary-plots" class="section level2" number="11.2">
+<h2><span class="header-section-number">11.2</span> Summary Plots</h2>
+</div>
+<div id="interactive-application" class="section level2" number="11.3">
+<h2><span class="header-section-number">11.3</span> Interactive Application</h2>
 <p>TODO - describe Slick</p>
+</div>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
