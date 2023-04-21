@@ -2,28 +2,49 @@
 % Please edit documentation in R/PMs.R
 \name{PMs}
 \alias{PMs}
-\alias{Safety_S}
-\alias{Safety_M}
-\alias{Status_S}
-\alias{Status_M}
-\alias{Stability}
-\alias{Yield_S}
-\alias{Yield_M}
+\alias{PGK_short}
+\alias{PGK_med}
+\alias{PGK_long}
+\alias{PGK}
+\alias{PGK_30}
+\alias{PNOF}
+\alias{LRP_short}
+\alias{LRP_long}
+\alias{LRP}
+\alias{C1}
+\alias{AvC10}
+\alias{AvC30}
+\alias{VarC}
+\alias{MaxVarC}
 \title{Swordfish Performance Metrics functions}
 \usage{
-Safety_S(MMSEobj = NULL, Ref = 0.4, Yrs = 10)
+PGK_short(MMSEobj = NULL, Ref = 1, Yrs = 13)
 
-Safety_M(MMSEobj = NULL, Ref = 0.4, Yrs = c(11, 30))
+PGK_med(MMSEobj = NULL, Ref = 1, Yrs = c(9, 13))
 
-Status_S(MMSEobj = NULL, Ref = 1, Yrs = 10)
+PGK_long(MMSEobj = NULL, Ref = 1, Yrs = c(14, 33))
 
-Status_M(MMSEobj = NULL, Ref = 1, Yrs = c(11, 30))
+PGK(MMSEobj = NULL, Ref = 1, Yrs = c(4, 33))
 
-Stability(MMSEobj = NULL, Ref = 0.25, Yrs = NULL)
+PGK_30(MMSEobj = NULL, Ref = 1, Yrs = 33)
 
-Yield_S(MMSEobj = NULL, Ref = 1, Yrs = 10)
+PNOF(MMSEobj = NULL, Ref = 1, Yrs = c(4, 33))
 
-Yield_M(MMSEobj = NULL, Ref = 1, Yrs = c(11, 30))
+LRP_short(MMSEobj = NULL, Ref = 0.4, Yrs = c(4, 13))
+
+LRP_long(MMSEobj = NULL, Ref = 0.4, Yrs = c(14, 33))
+
+LRP(MMSEobj = NULL, Ref = 0.4, Yrs = c(4, 33))
+
+C1(MMSEobj = NULL, Ref = 1, Yrs = c(4, 4))
+
+AvC10(MMSEobj = NULL, Ref = NULL, Yrs = c(4, 13))
+
+AvC30(MMSEobj = NULL, Ref = 1, Yrs = c(14, 33))
+
+VarC(MMSEobj = NULL, Ref = 1, Yrs = c(4, 33))
+
+MaxVarC(MMSEobj = NULL, Ref = 1, Yrs = c(4, 33))
 }
 \arguments{
 \item{MMSEobj}{An object of class `MMSE`}
@@ -40,18 +61,36 @@ Swordfish Performance Metrics functions
 }
 \section{Functions}{
 \itemize{
-\item \code{Safety_S()}: Probability Female Spawning Biomass is > 0.4SBMSY over first 10 years
+\item \code{PGK_short()}: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Year 10 (2033)
 
-\item \code{Safety_M()}: Probability Female Spawning Biomass is > 0.4SBMSY over last 20 years
+\item \code{PGK_med()}: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 6-10 (2026-2033)
 
-\item \code{Status_S()}: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) over first  10 years
+\item \code{PGK_long()}: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 11-30 (2034-2053)
 
-\item \code{Status_M()}: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) over last  20 years
+\item \code{PGK()}: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) over all years (2024-2053)
 
-\item \code{Stability()}: Probability Annual Variability in Yield < 25%
+\item \code{PGK_30()}: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Year 30 (2053)
 
-\item \code{Yield_S()}: Average Yield in first 10 years
+\item \code{PNOF()}: Probability of Not Overfishing (F<FMSY) over all years (2024-2053)
 
-\item \code{Yield_M()}: Average Yield in last 20 years
+\item \code{LRP_short()}: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) over years 1-10 (2024-2033)
+
+\item \code{LRP_long()}: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) over years 11-30 (2034-2053)
+
+\item \code{LRP()}: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) over all years (2024-2053)
+
+\item \code{C1()}: TAC in the First Implementation Year (2024)
+
+\item \code{AvC10()}: Median catches (t) over years 1-10 (2024-2033)
+
+\item \code{AvC30()}: Median catches (t) over years 11-30 (2034-2053)
+
+\item \code{VarC()}: Median variation in TAC (\%) between management cycles over all years
+
+\item \code{MaxVarC()}: Maximum variation in TAC (\%) between management cycles over all years
 
 }}
+\concept{Safety}
+\concept{Stability}
+\concept{Status}
+\concept{Yield}
