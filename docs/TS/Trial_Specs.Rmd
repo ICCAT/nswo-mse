@@ -19,6 +19,11 @@ always_allow_html: true
 .csl-entry {
     margin-bottom: 12px;
 }
+
+.book .book-body .page-inner {
+    max-width: 1200px;
+}
+
 ```
 
 ```{r, include=FALSE}
@@ -26,7 +31,7 @@ library(SWOMSE)
 library(dplyr)
 library(ggplot2)
 knitr::opts_chunk$set(echo=FALSE, warning=FALSE)
-
+options(scipen=999)
 MOM <- SWOMSE::MOM_000
 ```
 
@@ -119,7 +124,7 @@ DF %>% knitr::kable(escape = F,
 
 ```
 
-![(#fig:data-fig) Summary of the data used in the 2022 stock assessment.](../../img/Data_overview.png)
+![(#fig:data-fig) Summary of the data used in the 2022 stock assessment.](../../img/Data_overview.png){width=50%}
 
 ## Model Structure {#model-structure}
 
@@ -216,7 +221,7 @@ OM_desc %>% knitr::kable(escape = F,
 
 The Base Case operating model is the 2022 Stock Assessment. See the [Stock Assessment section](#stock-assessment) for more details.
 
-## Reference Operating Models
+## Reference Operating Models {#reference_models}
 
 The Reference OMs are based on the Base Case Model and span the plausible range for the key uncertainties. The Candidate Management Procedures (CMPs) are tuned across the Reference OMs (see the [CMP Tuning section](#tuning) for more details.
 
@@ -266,7 +271,7 @@ Figure \@ref(fig:rec-scen) shows the Base Case (no trend in recruitment deviatio
 
 3. Increased Variability: additional variability is added to the future recruitment by sampling between the upper and lower bounds shown in the plot. 
 
-![(#fig:rec-scen) The Base Case and 3 scenarios for persistent patterns in recruitment deviations in the projection years.](../../img/R7_Recruitment_Scenarios.png)
+![(#fig:rec-scen) The Base Case and 3 scenarios for persistent patterns in recruitment deviations in the projection years.](../../img/R7_Recruitment_Scenarios.png){width=50%}
 
 
 ## R8. Size Limit
@@ -308,7 +313,7 @@ The observed fishery data was imported into the MSE framework and made available
 
 The catch data used in the OM conditioning are made available in the simulated data that is provided to the CMPs (Figure \@ref(fig:catch-plot)).
 
-![(#fig:catch-plot) The historical total catch and total allowable catch (TAC) for the North Atlantic swordfish.](../../img/Catch_TAC.png)
+![(#fig:catch-plot) The historical total catch and total allowable catch (TAC) for the North Atlantic swordfish.](../../img/Catch_TAC.png){width=50%}
 
 ### Indices of Abundance
 
@@ -316,13 +321,13 @@ The catch data used in the OM conditioning are made available in the simulated d
 
 At the [2020 Swordfish MSE technical meeting (4 -- 5 June 2020)](../Meeting_Reports/2020_SWO_MSE_1_ENG.pdf), the Group chose to use the Combined Index [@ortizUpdatedCombinedBiomass2017] as the primary index for the development of CMPs. This index was updated for the 2022 assessment. The Combined Index was imported into the `SWOMSE` framework and made available to the CMPs (Figure \@ref(fig:index-plot)).
 
-![(#fig:index-plot) The Combined Index for the North Atlantic swordfish fishery.](../../img/Combined_Index.png)
+![(#fig:index-plot) The Combined Index for the North Atlantic swordfish fishery.](../../img/Combined_Index.png){width=50%}
 
 #### Other Indices
 
 The additional individual fishery-dependent and survey indices are also imported into the MSE framework and made available to the CMPs (Figure \@ref(fig:addindex-plot)).
 
-![(#fig:addindex-plot) The additional individual fishery-dependent and survey indices for the North Atlantic swordfish fishery.](../../img/Individual_Indices.png)
+![(#fig:addindex-plot) The additional individual fishery-dependent and survey indices for the North Atlantic swordfish fishery.](../../img/Individual_Indices.png){width=50%}
 
 # Closed-Loop Simulation Testing
 
@@ -420,23 +425,220 @@ Robustness Set 9 (R9) evaluates the impact of alternative management intervals.
 
 # Performance Metrics
 
-TO BE UPDATED BASED ON NEW INFORMATION
+```{r PMcalc, include=FALSE}
+PMs <- suppressMessages(avail('PM', 'SWOMSE'))
+ref <- OM_DF %>% filter(Class=='Reference')
 
-Based on feedback from the Commission's Panel 4, the following preliminary performance metrics have been proposed for swordfish:
+```
 
-| Name             | Description                                                           | Statistic                                  | Time Period (Years) | Minimum Acceptable Probability | Notes                          |
-|------------|------------|------------|------------|------------|------------|
-| Safety - Short   | Maintain low probability of stock declining to unacceptably low level | Prob. SB \< SB~lim~                        | 1 - 10              | 5 - 10%                        | SB~lim~ defined as 0.4 SB~MSY~ |
-| Safety - Medium  | As above                                                              | As above                                   | 11 - 30             | 5 - 10%                        |                                |
-| Status - Short   | Maintain stock in green quadrant of the Kobe matrix                   | Prob SB \> SB~MSY~ & F \< F~MSY~           | 1 - 10              | 50 - 60%                       |                                |
-| Status - Medium  | As above                                                              | As above                                   | 11 - 30             | 50 - 60%                       |                                |
-| Stability        | Minimize large inter-annual changes in yield                          | Average annual variability in yield (AAVY) | 1 - 30              | Maximum AAVY of 15 - 25%       |                                |
-| Short-term Yield | Maximize yield while meeting other objectives                         | Average catch                              | 1 - 10              | \-                             |                                |
-| Long-term Yield  | As above                                                              | As above                                   | 11 - 30             | \-                             |                                |
+`r length(PMs)` performance metrics (PMs) have been developed for the North Atlantic Swordfish MSE (Table \@ref(tab:PM-Description)). These PMs are grouped into four families:
 
-A Google sheet has also been created for the Group to add comments or additional [Performance Metrics](https://docs.google.com/spreadsheets/d/1NytREnFCZ6OPrhXT5E5Wi8Y22w-ZmENY8kEZqDH_FQE/edit?usp=sharing).
+1. **Status**: the probability the stock is in the green quadrant of the Kobe matrix
+
+2. **Safety**: the probability of the stock not falling below the biological limit reference point
+
+3. **Yield**: the catch in the projection years (ton)
+
+4. **Stability**: the variation in the TAC between management cycles
+
+## Summary of Performance Metrics
+
+The performance metrics are calculated over all the simulations (`r MOM@nsim`) in each operating model. For example, *PGK_short* is calculated as the proportion of the `r MOM@nsim` simulations where the spawning biomass ($SB$) is above $SB_{MSY}$ and fishing mortality ($F$) is below $F_{MSY}$. 
+
+The performance metrics can also be calculated over several operating models, for example the entire [Reference Set](#reference_models). This is done by first combining the MSE results for each OM (e.g., the `r nrow(ref)` Reference OMs) into a single set of results (in this example, resulting in `r nrow(ref)*MOM@nsim` simulations (`r nrow(ref)` OMs multiplied by `r MOM@nsim` simulations per OM)), and then calculating the performance metrics over all results. 
+
+The Minimum Acceptable Performance values listed in Table \@ref(tab:PM-Description) will be used as alternative values to determine if candidate management procedures meet the minimum performance criteria. 
+
+More details on the individual performance metrics are in the sections below.
+
+```{r PM-Description}
+
+caption <- 'Summary of the North Atlantic Swordfish Performance Metrics.'
+
+PM_desc %>% knitr::kable(escape = T,
+                         caption=caption,
+                         booktabs=TRUE) %>%
+  kableExtra::kable_styling("striped", full_width = T) %>%
+  kableExtra::column_spec(1, bold=T)
+
+```
+
+```{r loadMSEs, cache=FALSE, include=FALSE}
+mselist <- readRDS('../../dev/PM_dev.mse')
+MSE_all <- combine_MMSE(mselist, 'Reference OMs')
+
+MSE_1 <- mselist[[1]]
+MSE_2 <- mselist[[2]]
+MSE_3 <- mselist[[3]]
+MSE_4 <- mselist[[4]]
+MSE_5 <- mselist[[5]]
+MSE_6 <- mselist[[6]]
+
+PMlist <- readRDS('../../dev/PMlist.rda')
+```
+
+## Status
+
+### PGK_10
+
+`PGK_10` calculates the probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in year 10 (2033). This is calculated as the proportion of the total number of simulations that are in the Green Zone of Kobe Space in 2033.
+
+Figure \@ref(fig:PGK10) shows an example for an operating model with 10 simulations. The value for `PGK_10` in this example is: `r PMlist$PGK_10`.
+
+![(#fig:PGK10) An example of time-series plots of F/FMSY and SB/SBMSY for a single MP. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in 2033 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/PGK_10.png){width=75%}
+
+### PGK_med
+
+`PGK_med` calculates the probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) over years 6--10 (2029--2033). This is calculated as the proportion of the total points (number of simulations x number of years) that are in the Green Zone of Kobe Space.
+
+Figure \@ref(fig:PGKmed) shows an example for an operating model with 10 simulations. The value for `PGK_med` in this example is: `r PMlist$PGK_med`.
+
+![(#fig:PGKmed) An example of time-series plots of F/FMSY and SB/SBMSY for a single MP. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in years 2029--2033 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/PGK_med.png){width=75%}
+
+
+### PGK_long
+
+`PGK_long` calculates the probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) over years 11--30 (2034--2053). This is calculated as the proportion of the total points (number of simulations x number of years) that are in the Green Zone of Kobe Space.
+
+Figure \@ref(fig:PGKlong) shows an example for an operating model with 10 simulations. The value for `PGK_long` in this example is: `r PMlist$PGK_long`.
+
+![(#fig:PGKlong) An example of time-series plots of F/FMSY and SB/SBMSY for a single MP. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in years 2034--2053 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/PGK_long.png){width=75%}
+
+
+### PGK
+
+`PGK` calculates the probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) over all years (2024--2053). This is calculated as the proportion of the total points (number of simulations x number of years) that are in the Green Zone of Kobe Space.
+
+Figure \@ref(fig:PGK) shows an example for an operating model with 10 simulations. The value for `PGK` in this example is: `r PMlist[['PGK']]`.
+
+![(#fig:PGK) An example of time-series plots of F/FMSY and SB/SBMSY for a single MP. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/PGK.png){width=75%}
+
+### PGK_30
+
+`PGK_30` calculates the probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in year (2053). This is calculated as the proportion of the total number of simulations that are in the Green Zone of Kobe Space.
+
+Figure \@ref(fig:PGK30) shows an example for an operating model with 10 simulations. The value for `PGK_30` in this example is: `r PMlist$PGK_30`.
+
+![(#fig:PGK30) An example of time-series plots of F/FMSY and SB/SBMSY for a single MP. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in 2053 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/PGK_30.png){width=75%}
+
+### POF and PNOF
+
+`POF` calculates the probability of over-fishing (F>FMSY) over all years (2024--2053). This is calculated as the proportion of the total number of points (number of simulations x number of years) where F is greater than FMSY.
+
+Figure \@ref(fig:POF) shows an example for an operating model with 10 simulations. The value for `POF` in this example is: `r PMlist$POF`.
+
+`PNOF` reports the probability of not overfishing, calculated as $1-\text{POF}$, i.e. `r 1-PMlist$POF`.
+
+![(#fig:POF) An example of a time-series plot of F/FMSY for a single MP. This OM has 10 simulations, shown as the colored lines. Simulations where F<FMSY are indicated with a green point, and red points indicate F>FMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/POF.png){width=75%}
+
+
+## Safety
+
+### LRP_short and nLRP_short
+
+`LRP_short` calculates the probability of breaching the limit reference point (LRP; SB<0.4SBMSY) in any of the first 10 years (2024-2033). 
+
+This is calculated as the proportion of simulations where SB<0.4SBMSY in any of the first 10 years.
+
+Figure \@ref(fig:LRPshort) shows an example for an operating model with 10 simulations. The value for `LRP_short` in this example is: `r PMlist$LRP_short`.
+
+`nLRP_short` reports the probability of not breaching the LRP, calculated as $1-\text{LRP_short}$, i.e. `r 1-PMlist$LRP_short`.
+
+![(#fig:LRPshort) An example of a time-series plot of SB/SBMSY for a single MP. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/LRP_short.png){width=75%}
+
+
+### LRP_long and nLRP_long
+
+`LRP_long` calculates the probability of breaching the limit reference point (LRP; SB<0.4SBMSY) in any of years 11-30 (2034-2053).
+
+This is calculated as the proportion of simulations where SB<0.4SBMSY in any of the last  20 years.
+
+Figure \@ref(fig:LRPlong) shows an example for an operating model with 10 simulations. The value for `LRP_long` in this example is: `r PMlist$LRP_long`.
+
+`nLRP_long` reports the probability of not breaching the LRP, calculated as $1-\text{LRP_long}$, i.e. `r 1-PMlist$LRP_long`.
+
+![(#fig:LRPlong) An example of a time-series plot of SB/SBMSY for a single MP. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/LRP_long.png){width=75%}
+
+
+### LRP and nLRP
+
+`LRP` calculates the probability of breaching the limit reference point (LRP; SB<0.4SBMSY) in any of the projection years (2024-2053).
+
+This is calculated as the proportion of simulations where SB<0.4SBMSY in any year.
+
+Figure \@ref(fig:LRP) shows an example for an operating model with 10 simulations. The value for `LRP` in this example is: `r PMlist$LRP`.
+
+`nLRP` reports the probability of not breaching the LRP, calculated as $1-\text{LRP}$, i.e. `r 1-PMlist$LRP`.
+
+![(#fig:LRP) An example of a time-series plot of SB/SBMSY for a single MP. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/LRP.png){width=75%}
+
+## Yield
+
+### C1
+
+`C1` calculates the median TAC (t) in the first year (2024). This is calculated as the median across the simulations of the 2024 TAC (in most cases the TAC will be the same for all simulations in the first implementation year).  
+
+Figure \@ref(fig:C1) shows an example for an operating model with 10 simulations. The value for `C1` in this example is: `r round(PMlist$C1,0)`.
+
+![(#fig:C1) An example of time-series plots of the TAC for a single MP. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.](../../img/PMs/C1.png){width=75%}
+
+
+### AvC10
+
+`AvC10` calculates the median landed catch (t) in the first 10 years (2024--2033). This is calculated as the median catch across the simulations and years. 
+
+Figure \@ref(fig:AvC10) shows an example for an operating model with 10 simulations. The value for `AvC10` in this example is: `r round(PMlist$AvC10,0)`.
+
+![(#fig:AvC10) An example of time-series plots of the TAC for a single MP. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.](../../img/PMs/AvC10.png){width=75%}
+
+### AvC30
+
+`AvC30` calculates the median landed catch (t) in the last 20 years (2034--2053). This is calculated as the median catch across the simulations and years. 
+
+Figure \@ref(fig:AvC30) shows an example for an operating model with 10 simulations. The value for `AvC30` in this example is: `r round(PMlist$AvC30,0)`.
+
+![(#fig:AvC30) An example of time-series plots of the TAC for a single MP. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.](../../img/PMs/AvC30.png){width=75%}
+
+## Stability 
+
+### VarC and MaxVarC
+
+`VarC` calculates the median absolute change in the TAC between management cycles. `MaxVarC` reports the maximum change in TAC across all years and simulations.
+
+These values are calculated as the absolute relative change in the TAC from one management cycle to the next. 
+
+Figure \@ref(fig:VarC) shows an example for an operating model with 10 simulations. The value for `VarC` in this example is: `r PMlist$VarC`. The value for `MaxVarC` in this example is: `r PMlist$MaxVarC`.
+
+![(#fig:VarC) An example of time-series plots of the relative change in the TAC between management cycles for a single MP. This OM has 10 simulations, shown as the colored lines. The median and maximum absolute change are shown in the top left corner.](../../img/PMs/VarC.png){width=75%}
 
 # Candidate Management Procedures
+
+## Tuning of Candidate Management Procedures {#tuning}
+
+```{r, echo=FALSE}
+PM_tuning <- read.csv('../../dev/MP_tuning/Tuning_Target_Codes.csv')
+
+```
+
+During development, the Candidate Management Procedures are tuned to achieve specific performance outcomes. These performance outcomes are calculated across all the Reference OMs; i.e, the MSE results from each Reference OM are aggregated together. `r nrow(PM_tuning)` different tuning targets have been specified (Table \@ref(tab:PM-tuning)). 
+
+There will be `r nrow(PM_tuning)` versions of each CMP corresponding to metrics and targets described in Table \@ref(tab:PM-tuning). The names of the CMPs include the tuning code (e.g., 'a', 'b', etc) as a subscript at the end.
+
+```{r PM-tuning}
+
+caption <- 'The codes, metrics, targets, and maximum allowed change in TAC, used for the tuning of the CMPs.'
+
+PM_tuning <- read.csv('../../dev/MP_tuning/Tuning_Target_Codes.csv')
+
+PM_tuning %>% knitr::kable(escape = F,
+                    caption=caption,
+                    booktabs=TRUE) %>%
+  kableExtra::kable_styling("striped", full_width = T)
+
+```
+
+## Overview of Candidate Management Procedures
+
 
 TO BE UPDATED BASED ON NEW INFORMATION
 
@@ -446,8 +648,19 @@ The Group decided that CMP development work should involve the national scientis
 
 A [CMP Development Guide](../cMPdevelopment/CMP-Development-Guide.html) is available on the swordfish [MSE homepage](https://iccat.github.io/).
 
-## Tuning of CMPs {#tuning}
 
 TO BE UPDATED BASED ON NEW INFORMATION
+
+# Reporting of MSE Results
+
+## Summary Tables
+
+## Summary Plots
+
+## Interactive Application 
+
+TODO - describe Slick
+
+
 
 # References
