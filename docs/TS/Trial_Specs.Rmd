@@ -475,6 +475,49 @@ MSE_5 <- mselist[[5]]
 MSE_6 <- mselist[[6]]
 
 PMlist <- readRDS('../../dev/PMlist.rda')
+
+for (i in 1:length(PMlist)) {
+  if (is.numeric(PMlist[[i]]))
+    PMlist[[i]] <- round(PMlist[[i]],2)
+}
+
+
+```
+
+## Peformance Metrics Examples
+
+The following sections show figures and statistics for examples from each family of Performance Metrics. These results include two example candidate management procedures (`r PMlist$MPs`) (see [Candidate Management Procedures](#CMPs)), with a single operating model that includes `r MSE_1@nsim` stochastic simulations. 
+
+### Summary Table 
+
+Table \@ref(tab:PMtable) shows the summary performance statistics for the example CMPs. More details for each individual performance metric are in the sub-sections below.
+
+```{r PMtable}
+
+caption <- 'Summary of Performance Metric values for some example CMPs.'
+
+PM_df <- do.call('rbind', PMlist)
+colnames(PM_df) <- PMlist$MPs
+PM_df <- PM_df[1:(nrow(PM_df)-1),]
+
+PM_df <- PM_df %>% data.frame() %>%
+  mutate_at(c(1,2), as.numeric) %>%
+  mutate_at(c(1,2), round, 2)
+
+PM_df$Name <- rownames(PM_df)
+
+PM_table <- left_join(PM_desc, PM_df, by = join_by(Name))
+PM_table$`Minimum Acceptable Values` <- NULL
+PM_table <- PM_table %>% na.exclude()
+
+rownames(PM_table) <- NULL
+PM_table %>% knitr::kable(escape = F,
+                          caption=caption,
+                          booktabs=TRUE) %>%
+  kableExtra::kable_styling("striped", full_width = T) %>%
+  kableExtra::column_spec(1, bold=T)
+
+
 ```
 
 ## Status
@@ -483,53 +526,53 @@ PMlist <- readRDS('../../dev/PMlist.rda')
 
 `PGK_10` calculates the probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in year 10 (2033). This is calculated as the proportion of the total number of simulations that are in the Green Zone of Kobe Space in 2033.
 
-Figure \@ref(fig:PGK10) shows an example for an operating model with 10 simulations. The value for `PGK_10` in this example is: `r PMlist$PGK_10`.
+Figure \@ref(fig:PGK10) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `PGK_10` in this example are: `r PMlist$PGK_10`.
 
-![(#fig:PGK10) An example of time-series plots of F/FMSY and SB/SBMSY for a single MP. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in 2033 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/PGK_10.png){width=75%}
+![(#fig:PGK10) An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in 2033 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/PGK_10.png){width=75%}
 
 ### PGK_med
 
 `PGK_med` calculates the probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) over years 6--10 (2029--2033). This is calculated as the proportion of the total points (number of simulations x number of years) that are in the Green Zone of Kobe Space.
 
-Figure \@ref(fig:PGKmed) shows an example for an operating model with 10 simulations. The value for `PGK_med` in this example is: `r PMlist$PGK_med`.
+Figure \@ref(fig:PGKmed) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `PGK_med` in this example are: `r PMlist$PGK_med`.
 
-![(#fig:PGKmed) An example of time-series plots of F/FMSY and SB/SBMSY for a single MP. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in years 2029--2033 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/PGK_med.png){width=75%}
+![(#fig:PGKmed) An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in years 2029--2033 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/PGK_med.png){width=75%}
 
 
 ### PGK_long
 
 `PGK_long` calculates the probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) over years 11--30 (2034--2053). This is calculated as the proportion of the total points (number of simulations x number of years) that are in the Green Zone of Kobe Space.
 
-Figure \@ref(fig:PGKlong) shows an example for an operating model with 10 simulations. The value for `PGK_long` in this example is: `r PMlist$PGK_long`.
+Figure \@ref(fig:PGKlong) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `PGK_long` in this example are: `r PMlist$PGK_long`.
 
-![(#fig:PGKlong) An example of time-series plots of F/FMSY and SB/SBMSY for a single MP. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in years 2034--2053 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/PGK_long.png){width=75%}
+![(#fig:PGKlong) An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in years 2034--2053 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/PGK_long.png){width=75%}
 
 
 ### PGK
 
 `PGK` calculates the probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) over all years (2024--2053). This is calculated as the proportion of the total points (number of simulations x number of years) that are in the Green Zone of Kobe Space.
 
-Figure \@ref(fig:PGK) shows an example for an operating model with 10 simulations. The value for `PGK` in this example is: `r PMlist[['PGK']]`.
+Figure \@ref(fig:PGK) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `PGK` in this example are: `r PMlist[['PGK']]`.
 
-![(#fig:PGK) An example of time-series plots of F/FMSY and SB/SBMSY for a single MP. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/PGK.png){width=75%}
+![(#fig:PGK) An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/PGK.png){width=75%}
 
 ### PGK_30
 
 `PGK_30` calculates the probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in year (2053). This is calculated as the proportion of the total number of simulations that are in the Green Zone of Kobe Space.
 
-Figure \@ref(fig:PGK30) shows an example for an operating model with 10 simulations. The value for `PGK_30` in this example is: `r PMlist$PGK_30`.
+Figure \@ref(fig:PGK30) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `PGK_30` in this example are: `r PMlist$PGK_30`.
 
-![(#fig:PGK30) An example of time-series plots of F/FMSY and SB/SBMSY for a single MP. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in 2053 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/PGK_30.png){width=75%}
+![(#fig:PGK30) An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in 2053 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/PGK_30.png){width=75%}
 
 ### POF and PNOF
 
 `POF` calculates the probability of over-fishing (F>FMSY) over all years (2024--2053). This is calculated as the proportion of the total number of points (number of simulations x number of years) where F is greater than FMSY.
 
-Figure \@ref(fig:POF) shows an example for an operating model with 10 simulations. The value for `POF` in this example is: `r PMlist$POF`.
+Figure \@ref(fig:POF) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `POF` in this example are: `r PMlist$POF`.
 
 `PNOF` reports the probability of not overfishing, calculated as $1-\text{POF}$, i.e. `r 1-PMlist$POF`.
 
-![(#fig:POF) An example of a time-series plot of F/FMSY for a single MP. This OM has 10 simulations, shown as the colored lines. Simulations where F<FMSY are indicated with a green point, and red points indicate F>FMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/POF.png){width=75%}
+![(#fig:POF) An example of a time-series plot of F/FMSY for a two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where F<FMSY are indicated with a green point, and red points indicate F>FMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/POF.png){width=75%}
 
 
 ## Safety
@@ -540,11 +583,11 @@ Figure \@ref(fig:POF) shows an example for an operating model with 10 simulation
 
 This is calculated as the proportion of simulations where SB<0.4SBMSY in any of the first 10 years.
 
-Figure \@ref(fig:LRPshort) shows an example for an operating model with 10 simulations. The value for `LRP_short` in this example is: `r PMlist$LRP_short`.
+Figure \@ref(fig:LRPshort) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `LRP_short` in this example are: `r PMlist$LRP_short`.
 
 `nLRP_short` reports the probability of not breaching the LRP, calculated as $1-\text{LRP_short}$, i.e. `r 1-PMlist$LRP_short`.
 
-![(#fig:LRPshort) An example of a time-series plot of SB/SBMSY for a single MP. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/LRP_short.png){width=75%}
+![(#fig:LRPshort) An example of a time-series plot of SB/SBMSY for a two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/LRP_short.png){width=75%}
 
 
 ### LRP_long and nLRP_long
@@ -553,11 +596,11 @@ Figure \@ref(fig:LRPshort) shows an example for an operating model with 10 simul
 
 This is calculated as the proportion of simulations where SB<0.4SBMSY in any of the last  20 years.
 
-Figure \@ref(fig:LRPlong) shows an example for an operating model with 10 simulations. The value for `LRP_long` in this example is: `r PMlist$LRP_long`.
+Figure \@ref(fig:LRPlong) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The value for `LRP_long` in this example are: `r PMlist$LRP_long`.
 
 `nLRP_long` reports the probability of not breaching the LRP, calculated as $1-\text{LRP_long}$, i.e. `r 1-PMlist$LRP_long`.
 
-![(#fig:LRPlong) An example of a time-series plot of SB/SBMSY for a single MP. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/LRP_long.png){width=75%}
+![(#fig:LRPlong) An example of a time-series plot of SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/LRP_long.png){width=75%}
 
 
 ### LRP and nLRP
@@ -566,11 +609,11 @@ Figure \@ref(fig:LRPlong) shows an example for an operating model with 10 simula
 
 This is calculated as the proportion of simulations where SB<0.4SBMSY in any year.
 
-Figure \@ref(fig:LRP) shows an example for an operating model with 10 simulations. The value for `LRP` in this example is: `r PMlist$LRP`.
+Figure \@ref(fig:LRP) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The value for `LRP` in this example are: `r PMlist$LRP`.
 
 `nLRP` reports the probability of not breaching the LRP, calculated as $1-\text{LRP}$, i.e. `r 1-PMlist$LRP`.
 
-![(#fig:LRP) An example of a time-series plot of SB/SBMSY for a single MP. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/LRP.png){width=75%}
+![(#fig:LRP) An example of a time-series plot of SB/SBMSY for a two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/LRP.png){width=75%}
 
 ## Yield
 
@@ -578,26 +621,26 @@ Figure \@ref(fig:LRP) shows an example for an operating model with 10 simulation
 
 `C1` calculates the median TAC (t) in the first year (2024). This is calculated as the median across the simulations of the 2024 TAC (in most cases the TAC will be the same for all simulations in the first implementation year).  
 
-Figure \@ref(fig:C1) shows an example for an operating model with 10 simulations. The value for `C1` in this example is: `r round(PMlist$C1,0)`.
+Figure \@ref(fig:C1) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `C1` in this example are: `r round(PMlist$C1,0)`.
 
-![(#fig:C1) An example of time-series plots of the TAC for a single MP. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.](../../img/PMs/C1.png){width=75%}
+![(#fig:C1) An example of time-series plots of the TAC for two CMPs. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.](../../img/PMs/C1.png){width=75%}
 
 
 ### AvC10
 
 `AvC10` calculates the median landed catch (t) in the first 10 years (2024--2033). This is calculated as the median catch across the simulations and years. 
 
-Figure \@ref(fig:AvC10) shows an example for an operating model with 10 simulations. The value for `AvC10` in this example is: `r round(PMlist$AvC10,0)`.
+Figure \@ref(fig:AvC10) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `AvC10` in this example are: `r round(PMlist$AvC10,0)`.
 
-![(#fig:AvC10) An example of time-series plots of the TAC for a single MP. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.](../../img/PMs/AvC10.png){width=75%}
+![(#fig:AvC10) An example of time-series plots of the TAC for a two CMPs. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.](../../img/PMs/AvC10.png){width=75%}
 
 ### AvC30
 
 `AvC30` calculates the median landed catch (t) in the last 20 years (2034--2053). This is calculated as the median catch across the simulations and years. 
 
-Figure \@ref(fig:AvC30) shows an example for an operating model with 10 simulations. The value for `AvC30` in this example is: `r round(PMlist$AvC30,0)`.
+Figure \@ref(fig:AvC30) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `AvC30` in this example are: `r round(PMlist$AvC30,0)`.
 
-![(#fig:AvC30) An example of time-series plots of the TAC for a single MP. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.](../../img/PMs/AvC30.png){width=75%}
+![(#fig:AvC30) An example of time-series plots of the TAC for two CMPs. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.](../../img/PMs/AvC30.png){width=75%}
 
 ## Stability 
 
@@ -607,11 +650,11 @@ Figure \@ref(fig:AvC30) shows an example for an operating model with 10 simulati
 
 These values are calculated as the absolute relative change in the TAC from one management cycle to the next. 
 
-Figure \@ref(fig:VarC) shows an example for an operating model with 10 simulations. The value for `VarC` in this example is: `r PMlist$VarC`. The value for `MaxVarC` in this example is: `r PMlist$MaxVarC`.
+Figure \@ref(fig:VarC) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `VarC` in this example are: `r PMlist$VarC`. The value for `MaxVarC` in this example are: `r PMlist$MaxVarC`.
 
-![(#fig:VarC) An example of time-series plots of the relative change in the TAC between management cycles for a single MP. This OM has 10 simulations, shown as the colored lines. The median and maximum absolute change are shown in the top left corner.](../../img/PMs/VarC.png){width=75%}
+![(#fig:VarC) An example of time-series plots of the relative change in the TAC between management cycles for two CMPs. This OM has 10 simulations, shown as the colored lines. The median and maximum absolute change are shown in the top left corner.](../../img/PMs/VarC.png){width=75%}
 
-# Candidate Management Procedures
+# Candidate Management Procedures {#CMPs}
 
 ## Tuning of Candidate Management Procedures {#tuning}
 
@@ -639,17 +682,76 @@ PM_tuning %>% knitr::kable(escape = F,
 
 ## Overview of Candidate Management Procedures
 
+```{r MPoverview, results="asis"}
 
-TO BE UPDATED BASED ON NEW INFORMATION
+caption <- 'Summary of the  Candidate Management Procedures.'
 
-At this point, the candidate management procedures have not yet been developed.
-
-The Group decided that CMP development work should involve the national scientists. A small group was formed at the November 2020 MSE technical meeting, lead by Dr K. Gillespie, with the aim of continuing the CMP development work in 2021.
-
-A [CMP Development Guide](../cMPdevelopment/CMP-Development-Guide.html) is available on the swordfish [MSE homepage](https://iccat.github.io/).
+CMP_DF <- readRDS('../../dev/MP_description.rda')
+CMP_DF$Author <- NULL
 
 
-TO BE UPDATED BASED ON NEW INFORMATION
+CMP_DF %>% knitr::kable(escape = F,
+                    caption=caption,
+                    booktabs=TRUE) %>%
+  kableExtra::kable_styling("striped", full_width = T)
+
+```
+
+For tunings *a* -- *d*, all MPs are subject to a constraint on the maximum absolute change in TAC between management cycles (Table \@ref(tab:PM-tuning)).
+
+## Index Ratio  (IR)
+
+### IR1
+
+Iteratively adjusts the TAC in each management cycle $(m)$ based on the ratio of the mean Combined Index $(I)$ over the last 3 years to the mean Combined Index over the last 5 years: 
+
+\begin{equation} 
+  \text{TAC}_{m+1} = \text{TAC}_{m} \delta I_{\text{rat}} 
+  (\#eq:IR1)
+\end{equation} 
+
+where $\delta$ is a tuning parameter (see Table \@ref(tab:PM-tuning)) and $I_{\text{rat}} = \frac{\bar{I}_{[m-2:m]}}{\bar{I}_{[m-4:m]}}$. 
+
+
+
+### IR2
+
+Same as `IR1` except that the index ratio is calculated over the last 2 and 6 years:
+
+\begin{equation} 
+ I_{\text{rat}} = \frac{\bar{I}_{[m-1:m]}}{\bar{I}_{[m-5:m]}} 
+  (\#eq:IR2)
+\end{equation} 
+
+
+## Surplus Production (SP)
+
+### SP1
+
+A Schaefer surplus production model (`SAMtool::SP`) is fitted to the Combined Index and the catch data. The TAC is set according to a harvest control rule (HCR) based on the HCR developed for the [North Atlantic Albacore](https://www.iccat.int/Documents/Recs/compendiopdf-e/2021-04-e.pdf). 
+
+$$
+F_\text{set} = 
+\begin{cases}
+    F_\text{targ} & \text{if } B_\text{curr} \geq B_\text{thresh} \\
+    F_\text{targ} (-0.367 + 1.167 \frac{B_\text{curr}}{ B_\text{thresh}}) & \text{if }  B_\text{lim} < B_\text{curr} < B_\text{thresh} \\
+    F_\text{min}  & \text{otherwise}
+\end{cases}
+  (\#eq:SP1)
+$$
+
+where $B_\text{curr}$ and $B_\text{thresh}$ are current biomass and $B_\text{MSY}$ estimated by the assessment model, $B_\text{lim}$ is $0.4B_\text{thresh}$, and  $F_\text{targ}$ and $F_\text{min}$ are $\delta 0.8 F_\text{MSY}$ and $\delta 0.1 F_\text{MSY}$ respectively, where $F_\text{MSY}$ is estimated by the assessment model, and $\delta$ is a tuning parameter (see Table \@ref(tab:PM-tuning)). 
+
+The TAC is then calculated as:
+$$
+\text{TAC} = \frac{F_\text{set}}{Z}(1-e^{-Z}) B_\text{curr}
+$$
+where $Z = 0.2 +F_\text{set}$. 
+
+### SP2 
+
+A Fox production model (`SAMtool::SP_Fox`) is used together with the HCR described for `SP1`.
+
 
 # Reporting of MSE Results
 
