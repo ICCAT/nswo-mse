@@ -20,6 +20,8 @@ library(SWOMSE)
 
 # Introduction
 
+**Note: This document has been updated in May 2023. Structure of CMPs has changed slightly from previous versions**
+
 This document describes how to develop Management Procedures (MPs) and use them in the North Swordfish MSE (SWOMSE) framework.
 
 `SWOMSE` is an R package designed to evaluate alternative management policies for the North Atlantic Swordfish fishery. The package is built based on the `openMSE` framework. The `openMSE` package is automatically installed when `SWOMSE` is installed, and all `openMSE` functions are available to the user when the `SWOMSE` package is loaded.
@@ -59,7 +61,7 @@ You can access help documentation for any of these built-in functions in the usu
 ?DBSRA
 ```
 
-These built-in MPs can be used within the `SWOMSE` framework, but should be applied within a wrapper function to ensure that they maintain the specific requirements of the North Atlantic Swordfish MSE process (see [Using Built-In MPs](#using-built-in-mps) for examples). 
+These built-in MPs can be used within the `SWOMSE` framework, but should be applied within a wrapper function to ensure that they maintain the specific requirements of the North Atlantic Swordfish MSE process.
 
 # Overview of an MP Function
 
@@ -84,16 +86,23 @@ Finally, MP functions must be assigned class `MP` so that the MSE framework reco
 
 ## North Atlantic Swordfish Specific MP Arguments
 
-MPs within the `SWOMSE` framework require two additional arguments specific to the North Atlantic MSE process:
-`Data_Lag` and `Interval`. 
+MPs within the `SWOMSE` framework require four additional arguments specific to the North Atlantic MSE process:
+`Data_Lag`, `Interval`, `tunepar`, and `mc`. 
 
 ### `Data_Lag`
 `Data_Lag` specifies the lag in available data from the current year when the MP is being applied. In the MSE framework, the MPs are always provided with the simulated fishery data up to the previous year. For example, if a MP is implemented in the simulated projections in year $t$, the catch and indices of abundance data provided to the MP are up to and including year $t-1$. 
 
-The `Data_Lag` argument is used inside the MP code to add an additional lag to the fishery data. The default value for `Data_Lag` is 2, which means the data provided to the MPs will be from 3 years before the current year. See the help documentation in `?Lag_Data` for more information. 
+The `Data_Lag` argument is used inside the MP code to add an additional lag to the fishery data. The default value for `Data_Lag` is 1, which means the data provided to the MPs will be from 2 years before the current year. See the help documentation in `?Lag_Data` for more information. 
 
 ### `Interval` 
 The `Interval` argument is used to set the management interval when the TAC advice is updated. The default value in the North Atlantic Swordfish MSE process is a 3-year management interval (see the [Trial Specifications Document](../TS/Trial_Specs.html#management-interval) for more details).   
+
+### `tunepar`
+The `tunepar` argument is used for tuning the CMPs to specific performance metric targets (see [Tuning CMPs](#tuning)). All CMPs must include `tunepar` as a tuning parameter within the CMP (e.g., `tunepar` could be the target exploitation rate).
+
+### `mc`
+`mc` describes the maximum absolute change in the TAC between management cycles. It is specified as a fraction, e.g., `mc=0.25` means the TAC cannot increase/decrease by more than 25% from one management cycle to the next. The constraint on maximum change in the TAC is ignored if `mc=NA`. This parameter is included in the tuning (see [Tuning CMPs](#tuning)). 
+
 
 # Custom Management Procedures
 
@@ -104,16 +113,15 @@ Here we start with a simple example to demonstrate the key components of develop
 This custom MP uses the `AvC` (average catch) MP from the `DLMtool` package and available within the `SWOMSE` framework. The MPs built into the `openMSE` framework can easily be used by creating a wrapper function with the additional `Data_Lag` and `Interval` arguments, and a few additional lines of code:
 
 ```{r}
-Average_Catch <- function(x, Data, Data_Lag=2, Interval=3, ...) {
+Average_Catch <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25, ...) {
   
   # 1. Create a `Rec` (recommendation) object
   Rec <- new('Rec')
   
   # 2. Check if TAC needs to be updated 
-  Initial_MP_Yr <- 2024
-  if (SameTAC(Initial_MP_Yr, Interval, Data)) {
-    # Keep TAC unchanged from previous
+   if (SameTAC(Initial_MP_Yr, Interval, Data)) {
     Rec@TAC <- Data@MPrec[x]
+    Rec <- FixedTAC(Rec, Data) # use actual catches if they are available
     return(Rec)
   }
   
@@ -125,14 +133,20 @@ Average_Catch <- function(x, Data, Data_Lag=2, Interval=3, ...) {
   # function from the `DLMtool` package
   Rec <- DLMtool::AvC(x, Data, ...)
   
-  # 5. Return the `Rec` object
+  # 5. Apply the tuning parameter
+  TAC <- tunepar * Rec@TAC
+  
+  # 6. Maximum allowed change in TAC
+  Rec@TAC <- MaxChange(TAC, Data@MPrec[x], mc)
+  
+  # 7. Return the `Rec` object
   Rec
 }
-# 6. Assign function to class `MP`
+# 8. Assign function to class `MP`
 class(Average_Catch) <- 'MP'
 ```
 
-As indicated by the in-code comments, this custom MP has 6 sections:
+As indicated by the in-code comments, this custom MP has 8 sections:
 
 1. Create an object of class `Rec`. This object is returned by the function and contains the management recommendation(s). See the [help documentation](https://openmse.com/object-rec/) for more information on the `Rec` object. 
 
@@ -142,9 +156,13 @@ As indicated by the in-code comments, this custom MP has 6 sections:
 
 4. Apply the MP-specific code using the lagged data. Here we are simply using the built-in MP called `AvC` from the `DLMtool` package. We pass the arguments `x` and `Data` and it returns an object of class `Rec`.
 
-5. The final line in the MP code returns the `Rec` object.
+5. Apply the tuning parameter, here it adjusts the historical mean catch by `tunepar`.
 
-6. After a custom MP is developed, it must be assigned to class `MP` so that the `SWOMSE` framework recognizes the function as a management procedure. 
+6. Apply the maximum change in TAC constraint (if applicable)
+
+7. The final line in the MP code returns the `Rec` object.
+
+8. After a custom MP is developed, it must be assigned to class `MP` so that the `SWOMSE` framework recognizes the function as a management procedure. 
 
 All custom MPs in the `SWOMSE` framework should follow this same structure.
 
@@ -155,17 +173,16 @@ Here we create a custom model-free MP that calculates the average index over the
 
 ```{r}
 ITarget_1 <- function(x, Data,
-                      Data_Lag=2, Interval=3,
-                      yrsmth = 5, mc = 0.2, multi=1,
+                      Data_Lag=1, Interval=3,
+                      yrsmth = 5, mc = 0.2, tunepar=1,
                       ...) {
   # 1. Create a `Rec` (recommendation) object
   Rec <- new('Rec')
 
   # 2. Check if TAC needs to be updated 
-  Initial_MP_Yr <- 2024
-  if (SameTAC(Initial_MP_Yr, Interval, Data)) {
-    # Keep TAC unchanged from previous
+   if (SameTAC(Initial_MP_Yr, Interval, Data)) {
     Rec@TAC <- Data@MPrec[x]
+    Rec <- FixedTAC(Rec, Data) # use actual catches if they are available
     return(Rec)
   }
 
@@ -179,17 +196,16 @@ ITarget_1 <- function(x, Data,
   # year index for `yrsmth` most recent years
   yr_ind <- max(1, n_years-yrsmth+1):n_years
 
-  # index target - mean index x `multi`
-  Ind_Target <- mean(Data@Ind[x, ], na.rm=TRUE) * multi
+  # index target - mean index x `tunepar`
+  Ind_Target <- mean(Data@Ind[x, ], na.rm=TRUE) * tunepar
 
   # ratio of mean recent index to Ind_Target
   deltaI <- mean(Data@Ind[x, yr_ind], na.rm=TRUE)/Ind_Target
 
-  # max/min change in TAC
-  if (deltaI < (1 - mc)) deltaI <- 1 - mc
-  if (deltaI > (1 + mc)) deltaI <- 1 + mc
-
-  Rec@TAC <- Data@MPrec[x] * deltaI
+  TAC <- Data@MPrec[x] * deltaI
+  
+  Rec@TAC <- MaxChange(TAC, Data@MPrec[x], mc)
+  
   # 5. Return the `Rec` object
   Rec
 }
@@ -202,23 +218,23 @@ Here we create a second iterative TAC index targeting method. This one uses the 
 
 ```{r}
 ITarget_2 <- function(x, Data,
-                      Data_Lag=2, Interval=3,
-                      yrsmth = 5, xx = 0, Imulti=1.5,
+                      Data_Lag=1, Interval=3,
+                      yrsmth = 5, xx = 0, tunepar=1.5,
                       ...) {
   Rec <- new('Rec')
   
-  Initial_MP_Yr <- 2024
-  if (SameTAC(Initial_MP_Yr, Interval, Data)) {
+   if (SameTAC(Initial_MP_Yr, Interval, Data)) {
     Rec@TAC <- Data@MPrec[x]
+    Rec <- FixedTAC(Rec, Data) # use actual catches if they are available
     return(Rec)
   }
 
   Data <- Lag_Data(Data, Data_Lag)
   Data@Year <- Data@Year[1:length(Data@Cat[1,])]
-  Rec <- DLMtool::Itarget1(x, Data, yrsmth = yrsmth, xx=xx, Imulti=Imulti, ...)
+  Rec <- DLMtool::Itarget1(x, Data, yrsmth = yrsmth, xx=xx, Imulti=tunepar, ...)
+  Rec@TAC <- MaxChange(Rec@TAC, Data@MPrec[x], mc)
   Rec
 }
-# 7. Assign function to class `MP`
 class(ITarget_2) <- 'MP'
 ```
 
@@ -233,27 +249,51 @@ Alternative harvest control rules can easily be developed by modifying this part
 
 ### `openMSE` Surplus Production Assessment 1 
 
-This MP uses the `SP` assessment model from the `SAMtool` package. This model is conditioned on catch and estimates a predicted index. The assumes continuous surplus production and fishing is modeled with sub-annual time steps, and is designed to approximate the behavior of ASPIC (Prager 1994). See `?SP` for more details.
+This MP uses the `SP` assessment model from the `SAMtool` package. The assumes continuous surplus production and fishing is modeled with sub-annual time steps, and is designed to approximate the behavior of ASPIC (Prager 1994). See `?SP` for more details.
 
-Following the assumptions used in the ASPIC application to this stock, this model assumes the stock biomass in the initial year is 85% of the average unfished biomass (K. Gillespie, pers. comms., September 2022). 
+The MP includes a HCR that linearly reduces F when B/BMSY < 1.
+
 
 ```{r}
-SP_1 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
+SP_1 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25, ...) {
+
   Rec <- new('Rec')
-  
-  Initial_MP_Yr <- 2024
+
+  # Does TAC need to be updated? (or set a fixed catch if before Initial_MP_Yr)
   if (SameTAC(Initial_MP_Yr, Interval, Data)) {
     Rec@TAC <- Data@MPrec[x]
+    Rec <- FixedTAC(Rec, Data) # use actual catches if they are available
     return(Rec)
   }
 
+  # Lag Data
   Data <- Lag_Data(Data, Data_Lag)
-  
-  # apply assessment model 
-  Mod <- SAMtool::SP(x, Data, fix_dep=TRUE, start=list(dep=0.85))
-  
-  # harvest control rule - TAC = MSY
-  Rec@TAC <- Mod@MSY
+
+  # apply SP assessment model
+  Mod <- SAMtool::SP(x, Data)
+
+  # harvest control rule
+  # based on: https://www.iccat.int/Documents/Recs/compendiopdf-e/2017-04-e.pdf
+  Bthresh <- Mod@BMSY
+  Blim <- 0.4 * Bthresh
+  Ftar <- 0.8 * tunepar * Mod@FMSY
+  Fmin <- 0.1 * tunepar * Mod@FMSY
+  Bcurr <- Mod@B[length(Mod@B)]
+
+  if (Bcurr>=Bthresh) {
+    Fmort <- Ftar
+  } else if (Bcurr>Blim) {
+    Fmort <- Ftar * (-0.367 + 1.167*  Bcurr/Bthresh)
+  } else {
+    Fmort <- Fmin
+  }
+
+  M <- 0.2 # assumed natural mortality
+  Z <- M+Fmort
+  TAC <-  Fmort/Z*(1-exp(-Z))*Bcurr
+
+  # Maximum allowed change in TAC
+  Rec@TAC <- MaxChange(TAC, Data@MPrec[x], mc)
   Rec
 }
 class(SP_1) <- 'MP'
@@ -266,90 +306,55 @@ This MP uses the `SP_Fox` assessment model from the `SAMtool` package, which fix
 
 This model is conditioned on catch and estimates a predicted index. The assumes continuous surplus production and fishing is modeled with sub-annual time steps, and is designed to approximate the behavior of ASPIC (Prager 1994). See `?SP_Fox` for more details.
 
-Following the assumptions used in the ASPIC application to this stock, this model assumes the stock biomass in the initial year is 85% of the average unfished biomass (K. Gillespie, pers. comms., September 2022). 
+The MP includes a HCR that linearly reduces F when B/BMSY < 1.
+
 
 ```{r}
-SP_Fox_1 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
+SP_Fox_1 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25, ...) {
+
   Rec <- new('Rec')
-  
-  Initial_MP_Yr <- 2024
+
+  # Does TAC need to be updated? (or set a fixed catch if before Initial_MP_Yr)
   if (SameTAC(Initial_MP_Yr, Interval, Data)) {
     Rec@TAC <- Data@MPrec[x]
+    Rec <- FixedTAC(Rec, Data) # use actual catches if they are available
     return(Rec)
   }
 
+  # Lag Data
   Data <- Lag_Data(Data, Data_Lag)
-  
-  # apply assessment model 
-  Mod <- SAMtool::SP_Fox(x, Data, fix_dep=TRUE, start=list(dep=0.85))
-  
-  # harvest control rule - TAC = MSY
-  Rec@TAC <- Mod@MSY
+
+  # apply SP assessment model
+  Mod <- SAMtool::SP_Fox(x, Data)
+
+  # harvest control rule
+  # based on: https://www.iccat.int/Documents/Recs/compendiopdf-e/2017-04-e.pdf
+  Bthresh <- Mod@BMSY
+  Blim <- 0.4 * Bthresh
+  Ftar <- 0.8 * tunepar * Mod@FMSY
+  Fmin <- 0.1 * tunepar * Mod@FMSY
+  Bcurr <- Mod@B[length(Mod@B)]
+
+  if (Bcurr>=Bthresh) {
+    Fmort <- Ftar
+  } else if (Bcurr>Blim) {
+    Fmort <- Mod@FMSY * (-0.367 + 1.167*  Bcurr/Bthresh)
+  } else {
+    Fmort <- Fmin
+  }
+
+  M <- 0.2 # assumed natural mortality
+  Z <- M+Fmort
+  TAC <-  Fmort/Z*(1-exp(-Z))*Bcurr
+
+  # Maximum allowed change in TAC
+  Rec@TAC <- MaxChange(TAC, Data@MPrec[x], mc)
   Rec
 }
 class(SP_Fox_1) <- 'MP'
 
 ```
 
-
-### Assessment Model from External Package (`JABBA`)
-
-Custom MPs can also use assessment models from other R packages. In this example, we use the [JABBA](https://github.com/jabbamodel/JABBA) assessment model. This MP requires the `JABBA` package to be installed on the system, as well as the `rjags` package and the [JAGS](https://mcmc-jags.sourceforge.io/) software.
-
-This MP uses the same assumptions used in the recent application of the JABBA model to the North Atlantic Swordfish (K. Gillespie, pers. comms., September 2022). 
-
-Note: The `JABBA` model is a state-space model and takes a long time to run in closed-loop! Before you test it in the MSE framework, you may wish to test with a small number of simulations (e.g., `MOM@nsim = 5`) to get a sense of how the assessment model will perform and how long it will take to run. 
-
-```{r}
-JABBA_1 <- function(x, Data, Data_Lag=2, Interval=3, ...) {
-  
-  # check for dependencies
-  chk <- require(JABBA, quietly=TRUE)
-  if (!chk) stop('package `JABBA` must be installed')
-  
-  chk <- require(rjags, quietly=TRUE)
-  if (!chk) stop('package `rjags` must be installed')
-  
-  Rec <- new('Rec')
-  
-  Initial_MP_Yr <- 2024
-  if (SameTAC(Initial_MP_Yr, Interval, Data)) {
-    Rec@TAC <- Data@MPrec[x]
-    return(Rec)
-  }
-
-  Data <- Lag_Data(Data, Data_Lag)
-                   
-  # structure data to suit JABBA 
-  catch <- data.frame(Data@Year[1:length(Data@Cat[x,])], Data@Cat[x,])
-  index <- data.frame(Data@Year[1:length(Data@Cat[x,])],Data@Ind[x,])
-  index_se <- data.frame(Data@Year[1:length(Data@Cat[x,])], Data@CV_Ind[x,])
-  index_se[,2] <- 0.23
-  
-  input <- JABBA::build_jabba(catch=catch,
-                      cpue=index,
-                      se=index_se,
-                      catch.cv=0.01,
-                      assessment="SWO",
-                      scenario = "1",
-                      model.type = "Schaefer",
-                      sigma.est = FALSE,
-                      fixed.obsE = 0.01,
-                      r.prior = c(0.42, 0.4),
-                      psi.dist='beta',
-                      psi.prior=c(0.95, 0.05),
-                      verbose=FALSE)
-  
-  # apply assessment model
-  Mod <- JABBA::fit_jabba(input,quickmcmc=TRUE, verbose=FALSE)
-  
-  # harvest control rule - TAC = MSY
-  Rec@TAC <- Mod$estimates[8,1]
-  Rec
-}
-class(JABBA_1) <- 'MP'
-
-```
 
 # Applying MPs to Real Fishery Data
 
@@ -363,13 +368,13 @@ ITarget_1(1, SWOData)
 ITarget_2(1, SWOData)
 SP_1(1, SWOData)
 SP_Fox_1(1, SWOData)
-JABBA_1(1, SWOData)
+
 ```
 
 We can also run all 5 MPs at the same time:
 
 ```{r}
-TACs <- applyMP(SWOData, MPs=c('Average_Catch', 'ITarget_1', 'ITarget_2', 'SP_1', 'SP_Fox_1', 'JABBA_1'), reps=1)
+TACs <- applyMP(SWOData, MPs=c('Average_Catch', 'ITarget_1', 'ITarget_2', 'SP_1', 'SP_Fox_1'), reps=1)
 data.frame(MP=TACs[[2]]@MPs, TAC=TACs[[2]]@TAC[,1,1])
 ```
 
@@ -382,7 +387,7 @@ Data <- SWOData # make a copy
 Data@Year <- 1950:2023 # set Year up to 2023
 
 # Apply MPs to new Data object
-TACs <- applyMP(Data, MPs=c('Average_Catch', 'ITarget_1', 'ITarget_2', 'SP_1', 'SP_Fox_1', 'JABBA_1'), reps=1)
+TACs <- applyMP(Data, MPs=c('Average_Catch', 'ITarget_1', 'ITarget_2', 'SP_1', 'SP_Fox_1'), reps=1)
 data.frame(MP=TACs[[2]]@MPs, TAC=round(TACs[[2]]@TAC[,1,1],0))
 
 ```
@@ -391,5 +396,8 @@ It's clear which of these MPs is likely to provide the highest TAC in 2024. But 
 
 To determine this, we need to evaluate them in using closed-loop simulation testing. A description of how to conduct the closed-loop simulation testing in available in `SWOMSE` package [User Manual](https://iccat.github.io/nswo-mse/UserManual/User_Manual.html).
 
-# Tuning Candidate Management Procedures
+# Tuning Candidate Management Procedures {#tuning}
+
+
+
 
