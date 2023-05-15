@@ -1,0 +1,5 @@
+Code,Name,Class,Author,Description
+IR1,Index Ratio 1,Model-Free,A. Hordyk,Adjusts the TAC based on ratio of the mean Combined Index over the last 3 years to the mean index over the previous 3 years before that
+IR2,Index Ratio 2,Model-Free,A. Hordyk,"Same as IR1, but mean index values are calculated as over the 2 most recent years and the 2 years before that"
+SP1,Surplus Production 1,Model-Based,A. Hordyk,"Schaefer surplus production model, with a HCR that linearly reduces F when estimated B/BMSY is < 0.8BMSY"
+SP2,Surplus Production 2,Model-Based,A. Hordyk,"Same as SP1, but uses a Fox production model"
