@@ -1,0 +1,126 @@
+---
+title: "`r paste('Index Diagnostic Report:', params$MOM)`"
+author: "Adrian Hordyk <adrian@bluematterscience.com>"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  bookdown::html_document2:
+    toc: yes
+    toc_float: yes
+    number_sections: yes
+    use_bookdown: yes
+subtitle: North Atlantic Swordfish MSE
+always_allow_html: true
+params:
+  MOM: "MOM_133"
+---
+
+```{r, include=FALSE}
+library(knitr)
+library(DT)
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE)
+options(scipen=999)
+
+```
+
+# OM Specifications
+
+```{r}
+df <- OM_DF %>% filter(OM.object== params$MOM)
+df$dir <- NULL
+DT::datatable(df, options=list(dom = "t"))
+```
+
+# Historical Indices
+
+## Combined Index 
+
+```{r}
+nm <- paste0(params$MOM, '_hist_index.png')
+img.file <- file.path('RefOMs', nm)
+```
+
+![(#fig:hist1) a) The standardized biomass (black) and the Combined Index (blue) for `r params$MOM`. b) The log deviations. c) The multiplicative deviations](`r img.file`)
+
+
+```{r}
+indices <- c('SPN_1', "CAN_3", 'JPN_LATE_5', 'CHT_LATE_8', 'MOR_9',
+             'US_Survey_12', 'PORT_Survey_13')
+```
+
+
+```{r}
+IndList <- AddIndList()
+
+img.file <- list()
+names <- list()
+text <- list()
+for (ll in seq_along(indices)) {
+  ind <- indices[ll]
+  names[[ll]] <- IndList[[ind]]$Name 
+  nm <- paste0(params$MOM, "_", ind, '_hist_index.png')
+  img.file[[ll]] <- file.path('RefOMs', nm)
+  ind <- gsub('_', "-", ind)
+  fig.cap <- paste0('![(#fig:', ind)
+  text[[ll]] <- paste0(fig.cap, 'a) The standardized biomass (black) and the ', names[[ll]], ' Index (blue) for ',
+                       params$MOM, '. b) The log deviations. c) The multiplicative deviations.](',img.file[[ll]],')')
+}
+```
+
+```{r, results='asis'}
+for (ll in seq_along(indices)) {
+  ind <- indices[ll]
+  cat('\n## ', names[[ll]], '\n')
+  cat(text[[ll]])
+  
+  cat('\n')
+  
+}
+
+```
+
+
+# Projections
+
+
+## Combined Index
+
+```{r}
+nm <- paste0(params$MOM, '_proj_index.png')
+img.file <- file.path('RefOMs', nm)
+```
+
+![(#fig:proj1) The standardized biomass (black) and Combined Index (color) for 3 simulations (colums) and 7 CMPs (rows)](`r img.file`)
+
+
+
+```{r}
+
+IndList <- AddIndList()
+
+img.file <- list()
+names <- list()
+text <- list()
+for (ll in seq_along(indices)) {
+  ind <- indices[ll]
+  names[[ll]] <- IndList[[ind]]$Name 
+  nm <- paste0(params$MOM, "_", ind, '_proj_index.png')
+  img.file[[ll]] <- file.path('RefOMs', nm)
+  ind <- paste0(gsub('_', "-", ind), 'proj)')
+  fig.cap <- paste0('![(#fig:', ind)
+  text[[ll]] <- paste0(fig.cap, ' The standardized biomass (black) and the ', names[[ll]], ' Index (color) for 3 simulations (colums) and 7 CMPs (rows)]', '(',img.file[[ll]],')')
+}
+```
+
+```{r, results='asis'}
+for (ll in seq_along(indices)) {
+  ind <- indices[ll]
+  cat('\n## ', names[[ll]], '\n')
+  cat(text[[ll]])
+  
+  cat('\n')
+  
+}
+
+```
+
+
