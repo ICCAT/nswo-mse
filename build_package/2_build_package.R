@@ -248,12 +248,6 @@ importOM <- function(i, nsim, proyears, OM_DF, SWOData) {
 
   Data@Vuln_CAL <- matrix(MOM@cpars$Female$CAN_3$retL[1,,nyears], nrow=1)
 
-  MOM@cpars$Female$CAN_3$retL[1,,nyears] %>% plot()
-  MOM@cpars$Female$CAN_3$SLarray[1,,nyears] %>% lines()
-
-  MOM@cpars$Female$CAN_3$V[1,,nyears] %>% plot()
-  MOM@cpars$Female$CAN_3$retA[1,,nyears] %>% lines()
-
   # aggregate all fleets into one
   MOM <- MOM %>% MSEtool::MOM_agg_fleets(.)
 
@@ -531,3 +525,30 @@ Catchdf <- data.frame(Year=c(2021, 2022, 2023),
                            'Assumed Catch (equal to TAC)'))
 
 usethis::use_data(Catchdf, overwrite = TRUE)
+
+# ----- Index Dataframe ----
+
+ind_names <- dimnames(SWOData@AddInd[1,,])[[1]]
+l <- strsplit(ind_names, '_')
+ind_names2 <- sapply(l,"[[",1)
+
+drop <- c(3,5, 10:14) # early indices and the age-specific indices
+
+Index_Code <- data.frame(Code=c('Comb', ind_names2[-drop]),
+                         Index=c('Ind', which(ind_names %in% ind_names[-drop])),
+                         Description=c('Combined Index',
+                                       'EU-Spain Longline (LL)',
+                                       'Canada LL',
+                                       'Japan LL',
+                                       'Chinese Taipei LL',
+                                       'Morocco LL',
+                                       'USA LL',
+                                       'EU-Portugal LL'))
+
+
+usethis::use_data(Index_Code, overwrite = TRUE)
+
+
+Initial_MP_Yr <- 2024
+usethis::use_data(Initial_MP_Yr, overwrite = TRUE)
+
