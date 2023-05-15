@@ -29,6 +29,31 @@ forecast$MSY <- 2
 r4ss::SS_writeforecast(forecast, base.dir, overwrite = TRUE)
 
 
+# ---- Run new h =0.7 and h=0.82 models ----
+# 28 April 2023
+
+scenarios <- list(
+  # M
+  M=c(0.1,0.2,0.3),
+  # sigmaR
+  sigmaR=c(0.2),
+  # steepness
+  steepness=c(0.7, 0.82),
+  #CPUE lambda
+  cpuelambda= c(1),
+  # CPUE LL q
+  llq=c(1),
+  #environmental effects
+  env=c(7)
+) # }}}
+
+grid <- expand.grid(scenarios,stringsAsFactors=FALSE)
+
+
+
+
+
+
 # ---- Condition OM Grid ----
 scenarios <- list(
   # M
@@ -138,6 +163,8 @@ run_ss_grid <- function(dir) {
 
 OM.dirs <- list.dirs(OM.grid.dir, recursive = FALSE)
 
+# only run new h models
+OM.dirs <- OM.dirs[2:7]
 # Split into groups (system seems to start to lag if I run the entire set in one go)
 
 OM.dir.list <- split(OM.dirs, ceiling(seq_along(OM.dirs)/cpus))
