@@ -407,11 +407,9 @@ Following the assumption of the stock assessment, the observed catches in the pr
 
 ### Data Lags
 
-Data lags of several years are common for many fisheries. For example, the 2022 assessment used data up to and including 2020. Assuming a CMP will be used to generate a TAC recommendation for 2023 based on this data, this is a data lag of 3 years.
-
 In the MSE framework, the CMPs are always provided with the simulated fishery data up to the previous year. That is, if a CMP is implemented in year $t$, the catch and indices of abundance data provided to the CMP are up to and including year $t-1$.
 
-Data lags are then handled in the CMP code, where the default assumption is that the catch and index data are lagged by 3 years. See the CMP (see the [CMP Development Guide](../cMPdevelopment/CMP-Development-Guide.html) for more details).
+Data lags are then handled in the CMP code, where the default assumption is that the catch and index data are lagged by 2 years. See the CMP (see the [CMP Development Guide](../cMPdevelopment/CMP-Development-Guide.html) for more details).
 
 ## Management Interval {#interval}
 
@@ -665,7 +663,7 @@ PM_tuning <- read.csv('../../dev/MP_tuning/Tuning_Target_Codes.csv')
 
 During development, the Candidate Management Procedures are tuned to achieve specific performance outcomes. These performance outcomes are calculated across all the Reference OMs; i.e, the MSE results from each Reference OM are aggregated together. `r nrow(PM_tuning)` different tuning targets have been specified (Table \@ref(tab:PM-tuning)). 
 
-There will be `r nrow(PM_tuning)` versions of each CMP corresponding to metrics and targets described in Table \@ref(tab:PM-tuning). The names of the CMPs include the tuning code (e.g., 'a', 'b', etc) as a subscript at the end.
+There will be `r nrow(PM_tuning)` versions of each CMP corresponding to metrics and targets described in Table \@ref(tab:PM-tuning). The names of the CMPs include the tuning code (e.g., 'a', 'b', etc).
 
 ```{r PM-tuning}
 
@@ -684,7 +682,7 @@ PM_tuning %>% knitr::kable(escape = F,
 
 ```{r MPoverview, results="asis"}
 
-caption <- 'Summary of the  Candidate Management Procedures.'
+caption <- 'Summary of the Candidate Management Procedures.'
 
 CMP_DF <- readRDS('../../dev/MP_description.rda')
 CMP_DF$Author <- NULL
