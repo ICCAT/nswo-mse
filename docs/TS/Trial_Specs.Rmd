@@ -509,7 +509,7 @@ PM_table$`Minimum Acceptable Values` <- NULL
 PM_table <- PM_table %>% na.exclude()
 
 rownames(PM_table) <- NULL
-PM_table %>% knitr::kable(escape = F,
+PM_table %>% knitr::kable(escape = T,
                           caption=caption,
                           booktabs=TRUE) %>%
   kableExtra::kable_styling("striped", full_width = T) %>%
@@ -615,28 +615,28 @@ Figure \@ref(fig:LRP) shows an example of two CMPs (`r PMlist$MPs`) for an opera
 
 ## Yield
 
-### C1
+### TAC1
 
-`C1` calculates the median TAC (t) in the first year (2024). This is calculated as the median across the simulations of the 2024 TAC (in most cases the TAC will be the same for all simulations in the first implementation year).  
+`TAC1` calculates the median TAC (t) in the first year (2024). This is calculated as the median across the simulations of the 2024 TAC (in most cases the TAC will be the same for all simulations in the first implementation year).  
 
-Figure \@ref(fig:C1) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `C1` in this example are: `r round(PMlist$C1,0)`.
+Figure \@ref(fig:C1) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `TAC1` in this example are: `r round(PMlist$TAC1,0)`.
 
 ![(#fig:C1) An example of time-series plots of the TAC for two CMPs. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.](../../img/PMs/C1.png){width=75%}
 
 
-### AvC10
+### AvTAC10
 
-`AvC10` calculates the median landed catch (t) in the first 10 years (2024--2033). This is calculated as the median catch across the simulations and years. 
+`AvTAC10` calculates the median landed catch (t) in the first 10 years (2024--2033). This is calculated as the median catch across the simulations and years. 
 
-Figure \@ref(fig:AvC10) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `AvC10` in this example are: `r round(PMlist$AvC10,0)`.
+Figure \@ref(fig:AvC10) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `AvTAC10` in this example are: `r round(PMlist$AvTAC10,0)`.
 
 ![(#fig:AvC10) An example of time-series plots of the TAC for a two CMPs. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.](../../img/PMs/AvC10.png){width=75%}
 
 ### AvC30
 
-`AvC30` calculates the median landed catch (t) in the last 20 years (2034--2053). This is calculated as the median catch across the simulations and years. 
+`AvTAC30` calculates the median landed catch (t) in the last 20 years (2034--2053). This is calculated as the median catch across the simulations and years. 
 
-Figure \@ref(fig:AvC30) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `AvC30` in this example are: `r round(PMlist$AvC30,0)`.
+Figure \@ref(fig:AvC30) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `AvTAC30` in this example are: `r round(PMlist$AvTAC30,0)`.
 
 ![(#fig:AvC30) An example of time-series plots of the TAC for two CMPs. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.](../../img/PMs/AvC30.png){width=75%}
 
