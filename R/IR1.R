@@ -63,7 +63,7 @@ class(IR1_b) <- "MP"
 #' @describeIn IR1 Tuned to PGK_30 = 0.6 across Reference OMs.
 #' @export
 IR1_c <- IR1
-formals(IR1_c)$tunepar <- 0.939
+formals(IR1_c)$tunepar <- 0.964
 class(IR1_c) <- "MP"
 
 
