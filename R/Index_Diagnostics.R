@@ -150,26 +150,6 @@ AddIndList <- function() {
 
 
 
-for (om in 1:length(RefOMs$OM.object)) {
-  MMSE <- MSElist[[om]]
-  MMSE@multiHist <- multiHistList[[om]]
-
-  B_at_age <-  get_Biomass_at_Age(MMSE)
-
-  Additional.Indices <- get_Add_Indices.MMSE(MMSE, Names=names(AddIndList()))
-
-  for (ind in c("SPN_1", "CAN_3", "JPN_LATE_5", "CHT_LATE_8", "MOR_9",
-                "US_Survey_12", "PORT_Survey_13")) {
-    p <- Compare_Additional_Index(B_at_age, Additional.Indices,ind)
-
-    nm <- paste(RefOMs$OM.object[om], ind, sep='_')
-    ggsave(paste0('dev/Index_Diagnostic/RefOMs/', nm, '.png'), p$p)
-
-
-  }
-
-
-}
 
 Compare_Additional_Index <- function(MMSE, index, nsims=3, seed=101, plot=TRUE) {
 
