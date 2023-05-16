@@ -494,10 +494,10 @@ VarC <- function (MMSEobj = NULL, Ref=1, Yrs=c(4,33))  {
   PMobj@Name <- 'VarC: Median Variation in TAC (%) between management cycles'
   PMobj@Caption <- 'Median Variation in TAC (%) between management cycles'
 
-  TAC <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum)
+  TAC <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum, na.rm=TRUE)
 
   # get management cycle
-  interval <- min(apply(TAC[,1,], 1, firstChange))
+  interval <- min(apply(TAC[,1,], 1, firstChange), na.rm=TRUE)
 
   yrs <- seq_along(Yrs[1]:Yrs[2])
   change_yrs <- seq(1, by=interval, to=max(yrs))
@@ -506,9 +506,9 @@ VarC <- function (MMSEobj = NULL, Ref=1, Yrs=c(4,33))  {
   y2 <- change_yrs[2:length(change_yrs)]
 
   if (MMSEobj@nMPs > 1) {
-    AAVY <- apply(((((TAC[, , y2] - TAC[, , y1])/TAC[, , y1])^2)^0.5), c(1, 2), median)
+    AAVY <- apply(((((TAC[, , y2] - TAC[, , y1])/TAC[, , y1])^2)^0.5), c(1, 2), median, na.rm=TRUE)
   } else {
-    AAVY <- array(apply(((((TAC[, 1, y2] - TAC[, 1, y1])/TAC[, 1, y1])^2)^0.5), 1, median))
+    AAVY <- array(apply(((((TAC[, 1, y2] - TAC[, 1, y1])/TAC[, 1, y1])^2)^0.5), 1, median, na.rm=TRUE))
   }
 
   PMobj@Stat <- AAVY
@@ -533,10 +533,10 @@ MaxVarC <- function (MMSEobj = NULL, Ref=1, Yrs=c(4,33))  {
   PMobj@Name <- 'MaxVarC: Maximum Variation in TAC (%) between management cycles'
   PMobj@Caption <- 'Maximum Variation in TAC (%) between management cycles'
 
-  TAC <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum)
+  TAC <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum, na.rm=TRUE)
 
   # get management cycle
-  interval <- min(apply(TAC[,1,], 1, firstChange))
+  interval <- min(apply(TAC[,1,], 1, firstChange), na.rm=TRUE)
 
   yrs <- seq_along(Yrs[1]:Yrs[2])
   change_yrs <- seq(1, by=interval, to=max(yrs))
