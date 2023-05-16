@@ -10,11 +10,27 @@
 \alias{Var_TS}
 \title{Plot time-series of Projections}
 \usage{
-F_FMSY_TS(MMSE, year_range = NULL, mp = NA, fill = "GK", ptsize = 2)
+F_FMSY_TS(MMSE, year_range = NULL, mp = NA, fill = "GK", ptsize = 2, ncol = 3)
 
-SB_SBMSY_TS(MMSE, year_range = NULL, mp = NA, fill = "GK", ref = 1, ptsize = 2)
+SB_SBMSY_TS(
+  MMSE,
+  year_range = NULL,
+  mp = NA,
+  fill = "GK",
+  ref = 1,
+  ptsize = 2,
+  ncol = 3
+)
 
-Kobe(MMSE, year_range = NULL, mp = NA, fill = "GK", ptsize = 2)
+Kobe(
+  MMSE,
+  year_range = NULL,
+  mp = NA,
+  fill = "GK",
+  ptsize = 2,
+  ncol = 3,
+  alpha = 0.1
+)
 
 TAC_TS(MMSE, year_range = NULL, mp = NA, hline = NULL)
 

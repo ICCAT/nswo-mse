@@ -46,7 +46,7 @@ IR1_c(
   Data,
   Data_Lag = 1,
   Interval = 3,
-  tunepar = 0.939,
+  tunepar = 0.964,
   mc = 0.25,
   yrs = c(3, 3),
   ...
