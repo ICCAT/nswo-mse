@@ -191,7 +191,7 @@ NULL
 #' @param fill Green Kobe 'GK' or Overfishing 'OF'. Anything else is ignored.
 #' @describeIn TSplots Plot time-series of F/FMSY
 #' @export
-F_FMSY_TS <- function(MMSE, year_range=NULL, mp=NA, fill='GK', ptsize=2) {
+F_FMSY_TS <- function(MMSE, year_range=NULL, mp=NA, fill='GK', ptsize=2, ncol=3) {
   DF <- MakePerformanceDF(MMSE)
   DF$F_FMSY[DF$F_FMSY>2] <- 2
   breaks.vec <- seq(min(DF$Year), max(DF$Year), by = "2 years")
@@ -240,7 +240,7 @@ F_FMSY_TS <- function(MMSE, year_range=NULL, mp=NA, fill='GK', ptsize=2) {
 #' @param fill Green Kobe 'GK' or Limit Reference Point 'LRP'. Anything else is ignored.
 #' @describeIn TSplots Plot time-series of SB/SBMSY
 #' @export
-SB_SBMSY_TS <- function(MMSE, year_range=NULL, mp=NA, fill='GK', ref=1, ptsize=2) {
+SB_SBMSY_TS <- function(MMSE, year_range=NULL, mp=NA, fill='GK', ref=1, ptsize=2, ncol=3) {
   DF <- MakePerformanceDF(MMSE)
   DF$SB_SBMSY[DF$SB_SBMSY>2] <- 2
   breaks.vec <- seq(min(DF$Year), max(DF$Year), by = "2 years")
@@ -262,7 +262,7 @@ SB_SBMSY_TS <- function(MMSE, year_range=NULL, mp=NA, fill='GK', ref=1, ptsize=2
   }
 
   p <- ggplot(DF, aes(x=Year, y=SB_SBMSY)) +
-    facet_grid(~MP) +
+    facet_wrap(~MP, ncol=ncol) +
     expand_limits(y=c(0,2)) +
     geom_hline(yintercept = ref, color='darkgray', linetype=2) +
     theme_bw()  +
@@ -295,7 +295,8 @@ SB_SBMSY_TS <- function(MMSE, year_range=NULL, mp=NA, fill='GK', ref=1, ptsize=2
 #' @param fill Green Kobe 'GK', Limit Reference Point 'LRP', of Overfishing 'OF'
 #' @describeIn TSplots Kobe plot
 #' @export
-Kobe <- function(MMSE, year_range=NULL, mp=NA, fill='GK', ptsize=2) {
+Kobe <- function(MMSE, year_range=NULL, mp=NA, fill='GK', ptsize=2,
+                 ncol=3, alpha=0.1) {
   DF <- MakePerformanceDF(MMSE)
   kobe_df <- bind_rows(
     data.frame(x=c(0,0, 1, 1), y=c(0,1, 1,0), fill='bl'),
@@ -358,8 +359,8 @@ Kobe <- function(MMSE, year_range=NULL, mp=NA, fill='GK', ptsize=2) {
 
 
   p <- ggplot(df) +
-    facet_grid(~MP) +
-    geom_polygon(data = kobe_df, alpha = 0.3, aes(x=x, y=y, fill=fill, alpha=alpha)) +
+    facet_wrap(~MP, ncol=ncol) +
+    geom_polygon(data = kobe_df, alpha = alpha, aes(x=x, y=y, fill=fill, alpha=alpha)) +
     scale_fill_manual(values=c('#F8DC7A',  '#67C18B', "#D8775D", '#FDBD56')) +
     expand_limits(x=c(0,2), y=c(0,2)) +
     geom_hline(yintercept = 1, color='darkgray', linetype=2) +
