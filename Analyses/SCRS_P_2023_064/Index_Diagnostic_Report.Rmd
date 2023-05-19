@@ -1,0 +1,76 @@
+---
+title: "Additional Indices Diagnostic Report"
+author: "Adrian Hordyk <adrian@bluematterscience.com>"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  bookdown::html_document2:
+    toc: yes
+    toc_float: yes
+    number_sections: yes
+    use_bookdown: yes
+subtitle: North Atlantic Swordfish MSE
+always_allow_html: true
+
+---
+
+```{r, include=FALSE}
+library(knitr)
+library(DT)
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE)
+options(scipen=999)
+
+```
+
+# OM Specifications
+
+```{r}
+df <- OM_DF %>% filter(Class=='Reference')
+df$dir <- NULL
+DT::datatable(df, options=list(dom = "t"))
+```
+
+# Statistical Properties 
+
+```{r}
+add_ind_stats <- readRDS('Additional_Indices/add_ind_stats.rda')
+
+tt <- add_ind_stats %>% group_by(OM, Index) %>% 
+  mutate(SD=round(sd,2), AC=round(ac,2)) %>% 
+  select(OM, Index, SD, AC)
+
+tt$OM <- factor(tt$OM, ordered = TRUE, levels=unique(tt$OM))
+tt$Index <- factor(tt$Index, ordered = TRUE, levels=unique(tt$Index))
+DT::datatable(tt, options = list(pageLength = 50), filter = 'top')
+
+
+```
+
+
+
+```{r}
+indices <- c('SPN_1', "CAN_3", 'JPN_LATE_5', 'CHT_LATE_8', 'MOR_9',
+             'US_Survey_12', 'PORT_Survey_13')
+OMs <- df$OM.object
+```
+
+```{r, results='asis'}
+for (om in OMs) {
+  cat('\n# ', om, '\n')
+  
+  for (ind in seq_along(indices)) {
+    cat('\n## ', indices[ind], '\n')
+    
+     nm <- paste0('Additional_Indices/', om, "_", indices[ind], '.png')
+    
+     ind_name <- indices[ind]
+     ind_name <- gsub('_', '-',ind_name)
+     fig.cap <- paste0('![(#fig:', ind_name)
+     
+     cat(paste0(fig.cap, 'a) The standardized predicted population (black) and the ', ind_name, ' Index (colored). b) The selectivity curve associated with the index (only terminal year shown). c) The multiplicative deviations. d) The log deviations and summary statistics.](',nm,')'))
+  
+     cat('\n\n')
+    
+  }
+}
+
+```
