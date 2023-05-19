@@ -208,7 +208,7 @@ F_FMSY_TS <- function(MMSE, year_range=NULL, mp=NA, fill='GK', ptsize=2, ncol=3)
   }
 
   p <- ggplot(DF, aes(x=Year, color=Sim, y=F_FMSY)) +
-    facet_grid(~MP) +
+    facet_wrap(~MP,ncol=ncol) +
     expand_limits(y=c(0,2)) +
     geom_hline(yintercept = 1, color='darkgray', linetype=2) +
     geom_line() +
@@ -394,7 +394,7 @@ Kobe <- function(MMSE, year_range=NULL, mp=NA, fill='GK', ptsize=2,
 #' @describeIn TSplots Time-series of projected TAC
 #' @param hline Optional. Horizontal line to indicate summary statistic. Numeric length MP.
 #' @export
-TAC_TS <- function(MMSE, year_range=NULL, mp=NA, hline=NULL) {
+TAC_TS <- function(MMSE, year_range=NULL, mp=NA, hline=NULL, ncol=3) {
   DF <- MakePerformanceDF(MMSE)
   breaks.vec <- seq(min(DF$Year), max(DF$Year), by = "2 years")
 
@@ -409,7 +409,7 @@ TAC_TS <- function(MMSE, year_range=NULL, mp=NA, hline=NULL) {
   }
 
   p <- ggplot(DF, aes(x=Year, color=Sim, y=TAC)) +
-    facet_grid(~MP) +
+    facet_wrap(~MP, ncol=ncol) +
     expand_limits(y=c(0,2)) +
     geom_line() +
     theme_bw() +
@@ -432,7 +432,7 @@ TAC_TS <- function(MMSE, year_range=NULL, mp=NA, hline=NULL) {
 
 #' @describeIn TSplots Time-series of projected catch
 #' @export
-Catch_TS <- function(MMSE, year_range=NULL, mp=NA, hline=NULL) {
+Catch_TS <- function(MMSE, year_range=NULL, mp=NA, hline=NULL, ncol=3) {
   DF <- MakePerformanceDF(MMSE)
   breaks.vec <- seq(min(DF$Year), max(DF$Year), by = "2 years")
 
@@ -447,7 +447,7 @@ Catch_TS <- function(MMSE, year_range=NULL, mp=NA, hline=NULL) {
   }
 
   p <- ggplot(DF, aes(x=Year, color=Sim, y=Catch)) +
-    facet_grid(~MP) +
+    facet_wrap(~MP, ncol=ncol) +
     expand_limits(y=c(0,2)) +
     geom_line() +
     theme_bw() +
@@ -469,7 +469,7 @@ Catch_TS <- function(MMSE, year_range=NULL, mp=NA, hline=NULL) {
 
 #' @describeIn TSplots Time-series of percent change in TAC between management cycles
 #' @export
-Var_TS <- function(MMSE, mp=NA) {
+Var_TS <- function(MMSE, mp=NA, ncol=3) {
   DF <- MakePerformanceDF(MMSE)
   breaks.vec <- seq(min(DF$Year), max(DF$Year), by = "2 years")
 
@@ -541,7 +541,7 @@ Var_TS <- function(MMSE, mp=NA) {
   text_df$lab <- paste('Median = ', paste0(text_df$med, "%, Maximum = ", paste0(text_df$max, "%")))
 
   p <- ggplot(DF) +
-    facet_grid(~MP) +
+    facet_wrap(~MP, ncol=ncol) +
     expand_limits(y=c(0)) +
     geom_line(aes(x=Year, color=Sim, y=Change)) +
     geom_point(size=2, aes(x=Year, color=Sim, y=Change)) +
