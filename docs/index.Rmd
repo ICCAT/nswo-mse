@@ -136,19 +136,12 @@ DT::datatable(DF, escape=1,
 
 The overall [OM Summary Report](Reports/OM_Summary/2022/OM_Summary_Report.html) summarizes the diagnostic checks, the calculated biological reference points, and the estimated stock status relative to those reference points, for all operating models included in the OM Uncertainty Grid.  
 
-### Index Diagnostic Reports 
+### Additional Index Diagnostic Report 
 
-Diagnostic Reports for the Combined and Additional Indices for the Reference OMs:
+Diagnostic Report for the Additional Indices for the Reference OMs:
 
-```{r, results='asis'}
-fls <- list.files('Index_Diagnostics',)
-for (fl in fls) {
-  nm <- strsplit(fl, ".html")[[1]]
-  txt <- paste0('\n 1. ', '[', nm, ']', '(Index_Diagnostics/', fl, ')')
-  cat(txt)
-}
+[Additional Index Diagnostic Report](Index_Diagnostics/Additional_Index_Diagnostics.html).
 
-```
 
 
 
