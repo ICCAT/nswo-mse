@@ -5,6 +5,8 @@ library(MSEgraph)
 
 RefOMs <- OM_DF %>% filter(Class=='Reference')
 
+Index_select_dir <- 'G:/My Drive/1_PROJECTS/North_Atlantic_Swordfish/OMs/OM_objects/Index_Selectivity'
+
 ## Historical Simulations - 10 Sims ##
 multiHistList <- list()
 
@@ -111,15 +113,13 @@ for (om in 1:length(RefOMs$OM.object)) {
 
 
 ## Other Indices
-all_indices <- names(AddIndList())
-
 indices <- c('SPN_1', "CAN_3", 'JPN_LATE_5', 'CHT_LATE_8', 'MOR_9',
              'US_Survey_12', 'PORT_Survey_13')
 
 for (om in 1:length(RefOMs$OM.object)) {
   MMSE <- MSElist[[om]]
   for (index in indices) {
-    p <- Compare_Additional_Index(MMSE, index)
+    p <- Compare_Additional_Index(MMSE, index, MOM=RefOMs$OM.object[om])
     DF <- p$DF
     DF$OM <- RefOMs$OM.object[om]
     sims <- unique(DF$Sim)
