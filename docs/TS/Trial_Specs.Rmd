@@ -765,7 +765,7 @@ E_{\text{rat}} = \frac{\text{ER}_\text{hist}}{\text{ER}_\text{curr}}
 (\#eq:Erat)
 $$
 $$
-\text{ER}_\text{hist} = \frac{\bar{C}_{2018-2020}}{\bar{I}_{2018-2020}}
+\text{ER}_\text{hist} = \frac{\bar{C}_{2016-2020}}{\bar{I}_{2016-2020}}
 (\#eq:Ehist)
 $$
 $$
