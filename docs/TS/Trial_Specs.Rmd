@@ -632,7 +632,7 @@ Figure \@ref(fig:AvC10) shows an example of two CMPs (`r PMlist$MPs`) for an ope
 
 ![(#fig:AvC10) An example of time-series plots of the TAC for a two CMPs. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.](../../img/PMs/AvC10.png){width=75%}
 
-### AvC30
+### AvTAC30
 
 `AvTAC30` calculates the median landed catch (t) in the last 20 years (2034--2053). This is calculated as the median catch across the simulations and years. 
 
