@@ -211,7 +211,7 @@ F_FMSY_TS <- function(MMSE, year_range=NULL, mp=NA, fill='GK', ptsize=2, ncol=3)
     facet_wrap(~MP,ncol=ncol) +
     expand_limits(y=c(0,2)) +
     geom_hline(yintercept = 1, color='darkgray', linetype=2) +
-    geom_line() +
+    geom_line(alpha=0.6) +
     theme_bw() +
     scale_x_date(date_labels="%Y", breaks=breaks.vec)+
     theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
@@ -270,9 +270,9 @@ SB_SBMSY_TS <- function(MMSE, year_range=NULL, mp=NA, fill='GK', ref=1, ptsize=2
     scale_x_date(date_labels="%Y", breaks=breaks.vec)+
     theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
     guides(color='none') +
-    geom_line(aes(group=Sim))
+    geom_line(aes(group=Sim), alpha=0.6)
   if (fill!='LRP') {
-    p <- p + geom_line(aes(color=Sim))
+    p <- p + geom_line(aes(color=Sim), alpha=0.6)
   }
 
   if (fill=='GK') {
@@ -464,8 +464,11 @@ Catch_TS <- function(MMSE, year_range=NULL, mp=NA, hline=NULL, ncol=3) {
       geom_hline(data=hline_df, aes(yintercept=yintercept), linetype=2)
   }
 
-  p + geom_point(data=DF2, size=2, shape = 21, aes(fill=Sim)) +
-    guides(fill='none')
+  if (!is.null(year_range))
+    p <- p + geom_point(data=DF2, size=2, shape = 21, aes(fill=Sim))
+
+  p + guides(fill='none')
+
 }
 
 
@@ -560,3 +563,68 @@ Var_TS <- function(MMSE, mp=NA, ncol=3) {
 }
 
 
+
+SB_SBMSY_Box <- function(MMSE, year_range=NULL, mp=NA, ref=1,ncol=3) {
+  DF <- MakePerformanceDF(MMSE)
+  DF$SB_SBMSY[DF$SB_SBMSY>2] <- 2
+  breaks.vec <- seq(min(DF$Year), max(DF$Year), by = "2 years")
+
+  if (!all(is.na(mp))) {
+    DF <- DF %>% filter(MP %in% mp)
+  }
+
+  Years <- lubridate::year(DF$Year)
+
+  DF2 <- DF
+  if (!is.null(year_range)) {
+    DF2 <- DF %>% ungroup() %>% filter(Years %in% year_range)
+  }
+
+
+  p <- ggplot(DF, aes(x=Year, y=SB_SBMSY)) +
+    facet_wrap(~MP, ncol=ncol) +
+    expand_limits(y=c(0,2)) +
+    geom_hline(yintercept = ref, color='darkgray', linetype=2) +
+    theme_bw()  +
+    scale_x_date(date_labels="%Y", breaks=breaks.vec)+
+    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+    guides(color='none') +
+    geom_boxplot(aes(group=Year), fill='gray')
+
+  p + coord_cartesian(clip = 'off') +
+    labs(y=expression(SB/SB[MSY]))
+
+}
+
+
+F_FMSY_Box <- function(MMSE, year_range=NULL, mp=NA, ref=1,ncol=3) {
+  DF <- MakePerformanceDF(MMSE)
+  DF$F_FMSY[DF$F_FMSY>2] <- 2
+  breaks.vec <- seq(min(DF$Year), max(DF$Year), by = "2 years")
+
+  if (!all(is.na(mp))) {
+    DF <- DF %>% filter(MP %in% mp)
+  }
+
+  Years <- lubridate::year(DF$Year)
+
+  DF2 <- DF
+  if (!is.null(year_range)) {
+    DF2 <- DF %>% ungroup() %>% filter(Years %in% year_range)
+  }
+
+
+  p <- ggplot(DF, aes(x=Year, y=F_FMSY)) +
+    facet_wrap(~MP, ncol=ncol) +
+    expand_limits(y=c(0,2)) +
+    geom_hline(yintercept = ref, color='darkgray', linetype=2) +
+    theme_bw()  +
+    scale_x_date(date_labels="%Y", breaks=breaks.vec)+
+    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+    guides(color='none') +
+    geom_boxplot(aes(group=Year), fill='gray')
+
+  p + coord_cartesian(clip = 'off') +
+    labs(y=expression(F/F[MSY]))
+
+}
