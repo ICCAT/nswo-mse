@@ -1,4 +1,5 @@
 
+## redundant - see \Analyses\SCRS_P_2023_064
 
 
 #' Get the Index from `PPD@Ind` slot in an MMSE object
@@ -35,113 +36,27 @@ get_Index <- function(MMSE, Name="Combined Index", Stock=1, Fleet=1) {
 
 #' @describeIn get_Index Get the additional indices
 #' @export
-get_Add_Indices <- function(MMSE, Names=NULL, Stock=1, Fleet=1) {
-  Years <- get_Years(MMSE@multiHist)
-  Years <- Years %>% filter(Year<max(Year))
 
-  nMPs <- MMSE@nMPs
-  MPs <- MMSE@MPs[[1]]
-
-  AddIndList <- list()
-  dd <- dim(MMSE@PPD[[Stock]][[Fleet]][[1]]@AddInd)
-  n.indices <- dd[2]
-  if (is.null(Names))
-    Names <- paste('Additional Index: ', 1:n.indices)
-
-  if (length(Names)!=n.indices)
-    stop('Length `Names` does not equal ', n.indices)
-
-  for (mm in 1:nMPs) {
-    templist <- list()
-    for (ind in 1:n.indices) {
-      Ind <- MMSE@PPD[[Stock]][[Fleet]][[mm]]@AddInd[,ind,]
-      templist[[ind]] <- data.frame(Sim=1:nsim,
-                                    Year=rep(Years$Year, each=nsim),
-                                    Value=as.vector(Ind), Index=Names[ind], MP=MPs[mm] )
-    }
-    AddIndList[[mm]] <- do.call('rbind', templist)
-  }
-  df <- do.call('rbind', AddIndList)
-  df <- left_join(df, Years, by = join_by('Year', 'Sim', 'Age', 'Model'))
-  df$include <- FALSE
-  df$include[df$Period=='Historical' & !is.na(df$Value)] <- TRUE
-  df
-}
 
 #' @describeIn get_Index Creates a dataframe and plot comparing the index and standardized biomass
 #' @export
-Compare_Index <- function(MMSE, nsims=3, seed=101, name='Combined Index', plot=TRUE) {
-
-  B_at_age <-  get_Biomass_at_Age(MMSE)
-  B_DF <- B_at_age  %>%
-    group_by(Year, Sim, MP, Period) %>%
-    summarize(Value=sum(Biomass))
-
-  Index_DF <- get_Index(MMSE,name)
 
 
-  nsim <- length(unique(B_DF$Sim))
-  mps <- unique(Index_DF$MP)
-  set.seed(seed)
-
-  sims <- sample(1:nsim, nsims)
-
-  BiomassDF <- B_DF %>% filter(Sim %in% sims)
-  IndexDF <- Index_DF %>% filter(Sim %in% sims)
-
-  # Standardize
-  nonNA <- IndexDF %>% filter(Sim==min(Sim), Period=='Historical', is.na(Value)==FALSE, MP==mps[1])
-  IndexDF$include <- FALSE
-  BiomassDF$include <- FALSE
-  IndexDF$include[IndexDF$Year %in% nonNA$Year] <- TRUE
-  BiomassDF$include[BiomassDF$Year %in% nonNA$Year] <- TRUE
-
-  IndMean <- IndexDF %>% ungroup() %>% filter(Sim==min(Sim), Period=='Historical', is.na(Value)==FALSE, MP==mps[1], include==TRUE) %>%
-    summarise(mean=mean(Value))
-
-  BMean <- BiomassDF %>% ungroup() %>% filter(Sim==min(Sim), Period=='Historical', is.na(Value)==FALSE, MP==mps[1], include==TRUE) %>%
-    summarise(mean=mean(Value))
-
-  BiomassDF <- BiomassDF %>% group_by(Sim, MP) %>%  mutate(BSt=Value/BMean$mean)
-  IndexDF <- IndexDF %>% group_by(Sim, MP, Index) %>%  mutate(ISt=Value/IndMean$mean)
-
-  BDF <- BiomassDF %>%  filter(Year<max(Year)) %>% select(Year, Sim, MP, Biomass=Value, BSt, Period)
-  IDF <- IndexDF %>% select(Year, Sim, MP, Index, Value , ISt)
-
-  DF <- left_join(IDF, BDF, by=c('Sim', 'Year', 'MP'))
-  DF <- DF %>% group_by(MP, Sim) %>% mutate(I_err=ISt/BSt)
-  DF$MP <- factor(DF$MP, levels=unique(DF$MP), ordered = TRUE)
-
-  p <- ggplot(DF, aes(x=Year)) +
-    facet_grid(Sim~MP) +
-    geom_line(aes(y=BSt)) +
-    geom_line(aes(y=ISt, color=Period)) +
-    theme_bw() +
-    labs(y='Standardized Biomass/Index',
-         title='Combined Index')
-
-  out <- list()
-  out$p <- p
-  out$DF <- DF
-  if (plot)
-    suppressWarnings(print(p))
-  invisible(out)
-
-}
-
-AddIndList <- function() {
-  dd <- dimnames(MOM_000@cpars$Female[[1]]$Data@AddInd)
+AddIndList <- function(MOM) {
+  mom <- get(MOM)
+  dd <- dimnames(mom@cpars$Female[[1]]$Data@AddInd)
   nms <- dd[[2]]
   n.indices <- length(nms)
   index_df <- Fleet_DF %>% filter(Code%in% nms)
   out <- list()
   for (i in seq_along(nms)) {
     nm <- nms[i]
-    out[[nm]]$Index <- MOM_000@cpars$Female[[1]]$Data@AddInd[1,i,]
+    out[[nm]]$Index <- mom@cpars$Female[[1]]$Data@AddInd[1,i,]
     out[[nm]]$Name <- as.character(index_df$Name[match(nm, index_df$Code)])
     out[[nm]]$Name <- gsub('Taipai', 'Taipei', out[[nm]]$Name)
-    out[[nm]]$Select <- MOM_000@cpars$Female[[1]]$Data@AddIndV[1,i,]
-    units <- MOM_000@cpars$Female[[1]]$Data@AddIunits[i]
+    out[[nm]]$Select <- readRDS(file.path(Index_select_dir, paste0(MOM, '.rda'))) %>%
+      filter(Fleet==nm)
+    units <- mom@cpars$Female[[1]]$Data@AddIunits[i]
     if (units) out[[nm]]$Units <- 'Biomass'
     if (!units) out[[nm]]$Units <- 'Number'
   }
@@ -151,10 +66,10 @@ AddIndList <- function() {
 
 
 
-Compare_Additional_Index <- function(MMSE, index, nsims=3, seed=101, plot=TRUE) {
+Compare_Additional_Index <- function(MMSE, index, MOM, nsims=3, seed=101, plot=TRUE) {
 
   B_at_age <-  get_Biomass_at_Age(MMSE)
-  Additional.Indices <- get_Add_Indices.MMSE(MMSE, Names=names(AddIndList()))
+  Additional.Indices <- get_Add_Indices(MMSE, Names=names(AddIndList(MOM)))
 
   nsim <- length(unique(B_at_age$Sim))
   mps <- unique(Additional.Indices$MP)
@@ -171,7 +86,7 @@ Compare_Additional_Index <- function(MMSE, index, nsims=3, seed=101, plot=TRUE) 
   IndexDF$include[IndexDF$Year %in% nonNA$Year] <- TRUE
   BiomassDF$include[BiomassDF$Year %in% nonNA$Year] <- TRUE
 
-  indlist <- AddIndList()
+  indlist <- AddIndList(MOM)
 
   ind <- match(index, names(indlist))
   ind_info <- indlist[[ind]]
@@ -186,8 +101,25 @@ Compare_Additional_Index <- function(MMSE, index, nsims=3, seed=101, plot=TRUE) 
       select(Year, Sim, Age, Period, Model, MP, Value, include)
   }
 
-  selectdf <- data.frame(Age=OM$Age %>% unique(), V=ind_info$Select)
-  df <- left_join(OM, selectdf, by = join_by(Age))
+  selectdf <- ind_info$Select %>% rename(Model=Sex) %>% mutate(Age=as.numeric(Age))
+
+  selectdf$Sim <- unique(OM$Sim)[1]
+  selectdflist <- list()
+  selectdflist[[1]] <- selectdf
+  temp <- selectdf
+  for (ii in 2:nsim) {
+    temp$Sim <- ii
+    selectdflist[[ii]] <- temp
+  }
+  selectdf <- do.call('rbind', selectdflist)
+
+  head(selectdf)
+  head(OM)
+
+
+  df <- left_join(OM, selectdf, by = join_by('Age', 'Sim'))
+
+
   df$AdjusVal <- df$Value*df$V
 
   df2 <- df %>% group_by(Year,Sim,Period,MP, include) %>% summarise(OM_val=sum(AdjusVal))
