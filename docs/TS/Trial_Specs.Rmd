@@ -669,8 +669,6 @@ There will be `r nrow(PM_tuning)` versions of each CMP corresponding to metrics 
 
 caption <- 'The codes, metrics, targets, and maximum allowed change in TAC, used for the tuning of the CMPs.'
 
-PM_tuning <- read.csv('../../dev/MP_tuning/Tuning_Target_Codes.csv')
-
 PM_tuning %>% knitr::kable(escape = F,
                     caption=caption,
                     booktabs=TRUE) %>%
@@ -695,32 +693,7 @@ CMP_DF %>% knitr::kable(escape = F,
 
 ```
 
-For tunings *a* -- *d*, all MPs are subject to a constraint on the maximum absolute change in TAC between management cycles (Table \@ref(tab:PM-tuning)).
-
-## Index Ratio  (IR)
-
-### IR1
-
-Iteratively adjusts the TAC in each management cycle $(m)$ based on the ratio of the mean Combined Index $(I)$ over the last 3 years to the mean Combined Index over the last 5 years: 
-
-\begin{equation} 
-  \text{TAC}_{m+1} = \text{TAC}_{m} \delta I_{\text{rat}} 
-  (\#eq:IR1)
-\end{equation} 
-
-where $\delta$ is a tuning parameter (see Table \@ref(tab:PM-tuning)) and $I_{\text{rat}} = \frac{\bar{I}_{[m-2:m]}}{\bar{I}_{[m-4:m]}}$. 
-
-
-
-### IR2
-
-Same as `IR1` except that the index ratio is calculated over the last 2 and 6 years:
-
-\begin{equation} 
- I_{\text{rat}} = \frac{\bar{I}_{[m-1:m]}}{\bar{I}_{[m-5:m]}} 
-  (\#eq:IR2)
-\end{equation} 
-
+All MPs are subject to a constraint on the maximum absolute change in TAC between management cycles. 
 
 ## Surplus Production (SP)
 
@@ -749,6 +722,57 @@ where $Z = 0.2 +F_\text{set}$.
 ### SP2 
 
 A Fox production model (`SAMtool::SP_Fox`) is used together with the HCR described for `SP1`.
+
+
+## Index Ratio  (IR)
+
+### IR1
+
+Iteratively adjusts the TAC in each management cycle $(m)$ based on the ratio of the mean Combined Index $(I)$ over the last 3 years to the mean Combined Index over the 3 previous years: 
+
+\begin{equation} 
+  \text{TAC}_{m} = \text{TAC}_{m-1} \delta I_{\text{rat}} 
+  (\#eq:IR1)
+\end{equation} 
+
+where $\delta$ is a tuning parameter (see Table \@ref(tab:PM-tuning)) and $I_{\text{rat}} = \frac{\bar{I}_{[y-2:y]}}{\bar{I}_{[y-5:y-3]}}$. 
+
+
+
+### IR2
+
+Same as `IR1` except that the index ratio is calculated over the last 2 and the previous 2 years before that:
+
+\begin{equation} 
+ I_{\text{rat}} = \frac{\bar{I}_{[y-1:y]}}{\bar{I}_{[y-3:y-2]}} 
+  (\#eq:IR2)
+\end{equation} 
+
+
+## Constant Exploitation (CE)
+
+### CE 
+
+This MP aims to keep the exploitation rate at a constant level. The current relative exploitation rate is calculated as the mean of the catches from 2016 -- 2020 divided by the mean Combined Index over this same period.
+
+$$ 
+  \text{TAC}_{m} = \delta \text{TAC}_{m-1}  E_{\text{rat}} 
+  (\#eq:CE)
+$$
+
+$$
+E_{\text{rat}} = \frac{\text{ER}_\text{hist}}{\text{ER}_\text{curr}}
+(\#eq:Erat)
+$$
+$$
+\text{ER}_\text{hist} = \frac{\bar{C}_{2018-2020}}{\bar{I}_{2018-2020}}
+(\#eq:Ehist)
+$$
+$$
+\text{ER}_\text{curr} = \frac{\bar{C}_{y-2:y}}{\bar{I}_{y-2:y}}
+(\#eq:Ecurr)
+$$
+
 
 
 # Reporting of MSE Results
