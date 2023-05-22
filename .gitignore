@@ -7,3 +7,4 @@ doc
 Meta
 docs/UserManual/MOM_000.hist
 docs/UserManual/MOM_000.mmse
+*.mmse
