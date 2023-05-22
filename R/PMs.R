@@ -598,7 +598,8 @@ PM_table <- function(MMSE, PMs=NULL) {
 #'
 #' @return A `ggplot` object
 #' @export
-TradeOff <- function(PM_vals, PMs, xlim=NULL, ylim=NULL) {
+TradeOff <- function(PM_vals, PMs, xlim=NULL, ylim=NULL, vline=NULL,
+                     hline=NULL) {
 
   df <- PM_vals %>% select(MP, Name, Value) %>%  filter(Name %in% PMs) %>%
     tidyr::pivot_wider(., names_from=Name, values_from = Value)
@@ -606,6 +607,11 @@ TradeOff <- function(PM_vals, PMs, xlim=NULL, ylim=NULL) {
   captions <- paste0(PM_vals$Name[match(PMs, PM_vals$Name)], ': ', PM_vals$caption[match(PMs, PM_vals$Name)])
 
   p <- ggplot(df)
+
+  if (!is.null(vline))
+    p <- p + geom_vline(xintercept = vline, linetype=2, color='darkgray')
+  if (!is.null(hline))
+    p <- p + geom_hline(yintercept = hline, linetype=2, color='darkgray')
 
   # limits
   if (!is.null(xlim)) {
@@ -624,6 +630,6 @@ TradeOff <- function(PM_vals, PMs, xlim=NULL, ylim=NULL) {
     theme_bw() +
     labs(x=captions[1], y=captions[2])
 
-  p
+  p + guides(color='none')
 }
 
