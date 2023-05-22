@@ -233,7 +233,8 @@ F_FMSY_TS <- function(MMSE, year_range=NULL, mp=NA, fill='GK', ptsize=2, ncol=3)
       labs(fill='Overfishing', y=expression(F/F[MSY]))
   }
 
-  p + coord_cartesian(clip = 'off')
+  p + coord_cartesian(clip = 'off') +
+    labs(y=expression(F/F[MSY]))
 }
 
 
@@ -286,7 +287,8 @@ SB_SBMSY_TS <- function(MMSE, year_range=NULL, mp=NA, fill='GK', ref=1, ptsize=2
       scale_fill_manual(values=c('red', 'green'), drop=FALSE) +
       scale_color_manual(values=c('red', 'green'), drop=FALSE)
   }
-  p + coord_cartesian(clip = 'off')
+  p + coord_cartesian(clip = 'off') +
+    labs(y=expression(SB/SB[MSY]))
 
 
 }
