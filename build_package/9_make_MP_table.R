@@ -16,6 +16,7 @@ for (mm in 1:nrow(MP_description)) {
 
 }
 
+MP_description <- MP_description %>% arrange(Class)
 
 saveRDS(MP_description, 'dev/MP_description.rda')
 
