@@ -144,6 +144,37 @@ OM_DF <- OM_DF %>% relocate(OM.object)
 
 # ---- Import OMs ----
 
+# ----- Make Index Selectivity Dataframe ----
+OM.object <- file.path(OM.root, 'OM_objects')
+out.dir <- file.path(OM.object, 'Replists')
+replistfiles <- list.files(out.dir)
+for (i in seq_along((replistfiles))) {
+  message(i)
+  replistfile <- replistfiles[i]
+  mom.num <- paste0('MOM_', strsplit(replistfile, '_')[[1]][1])
+  replist <- readRDS(file.path(out.dir, replistfile, 'replist.rda'))
+  age_select <- replist$ageselex
+
+  fleet_names <- replist$FleetNames
+  fleet_index <- seq_along(fleet_names)
+  fleet_index_list <- list()
+  for (fl in fleet_index) {
+    df <- age_select %>% filter(Fleet==fl, Factor=='Asel2') %>%
+      tidyr::pivot_longer(., cols=8:ncol(age_select), names_to = 'Age',
+                          values_to='Select') %>%
+      select(Fleet_id=Fleet, Year=Yr, Sex, Age, Select)
+    df$Sex[df$Sex==1] <- 'Female'
+    df$Sex[df$Sex==2] <- 'Male'
+    df$Fleet <- fleet_names[fl]
+    df$MOM <- mom.num
+    df <- df %>% filter(Year>=1950)
+    fleet_index_list[[fl]] <- df
+  }
+  df <- do.call('rbind', fleet_index_list)
+  saveRDS(df, file.path(OM.object, 'Index_Selectivity', paste0(mom.num, '.rda')))
+}
+
+
 docOM <- function(OMname) {
   cat("#' @rdname SWO-OMs \n", "'", OMname, "'\n",
       sep="", append=TRUE,
@@ -249,26 +280,26 @@ importOM <- function(i, nsim, proyears, OM_DF, SWOData) {
   Data@Vuln_CAL <- matrix(MOM@cpars$Female$CAN_3$retL[1,,nyears], nrow=1)
 
   # aggregate all fleets into one
-  MOM <- MOM %>% MSEtool::MOM_agg_fleets(.)
+  MOM_com <- MOM %>% MSEtool::MOM_agg_fleets(.)
 
-  MOM@proyears <- proyears
+  MOM_com@proyears <- proyears
   # add data to female and male stocks
   for (p in 1:n.stock) {
-    MOM@cpars[[p]][[1]]$Data <- Data
-    MOM@cpars[[p]][[1]]$AddIbeta <- matrix(1, nrow=nsim, ncol=dim(Data@AddInd)[2])
-    MOM@cpars[[p]][[1]]$I_beta <- rep(1, nsim)
-    MOM@cpars[[p]][[1]]$Cobs_y <- matrix(1, nrow=nsim, ncol=nyears+MOM@proyears)
+    MOM_com@cpars[[p]][[1]]$Data <- Data
+    MOM_com@cpars[[p]][[1]]$AddIbeta <- matrix(1, nrow=nsim, ncol=dim(Data@AddInd)[2])
+    MOM_com@cpars[[p]][[1]]$I_beta <- rep(1, nsim)
+    MOM_com@cpars[[p]][[1]]$Cobs_y <- matrix(1, nrow=nsim, ncol=nyears+MOM_com@proyears)
 
     # Add CAL bins to cpars
-    MOM@cpars[[p]][[1]]$CAL_bins <-  Data@CAL_bins
-    MOM@cpars[[p]][[1]]$CAL_binsmid <- Data@CAL_mids
+    MOM_com@cpars[[p]][[1]]$CAL_bins <-  Data@CAL_bins
+    MOM_com@cpars[[p]][[1]]$CAL_binsmid <- Data@CAL_mids
   }
 
   # Drop Obs and Imp for other fleets
   for (p in 1:n.stock) {
     drop.fleet <- 2:(n.fleet+n.survey.fleet)
-    MOM@Obs[[p]] <- MOM@Obs[[p]][-drop.fleet]
-    MOM@Imps[[p]] <- MOM@Imps[[p]][-drop.fleet]
+    MOM_com@Obs[[p]] <- MOM_com@Obs[[p]][-drop.fleet]
+    MOM_com@Imps[[p]] <- MOM_com@Imps[[p]][-drop.fleet]
   }
 
   # assign name
@@ -277,14 +308,36 @@ importOM <- function(i, nsim, proyears, OM_DF, SWOData) {
   vals[7] <- as.character(vals[7][1,1])
   name <- paste(names(vals), vals, collapse = ' ', sep=':')
 
-  MOM@Name <- name
-  n.fleet <- length(MOM@cpars[[1]])
+  MOM_com@Name <- name
+  n.fleet <- length(MOM_com@cpars[[1]])
 
   # map real data across stocks - data is not sex-specific
-  MOM@cpars[[1]][[1]]$Real.Data.Map <- matrix(1, nrow=n.fleet, ncol=n.stock)
+  MOM_com@cpars[[1]][[1]]$Real.Data.Map <- matrix(1, nrow=n.fleet, ncol=n.stock)
 
   name <- OM_DF$OM.object[i]
-  assign(name, MOM)
+
+
+  # Add Index Vulnerability to cpars
+  index_fleets <- dimnames(MOM_com@cpars[[1]][[1]]$Data@AddInd)[[2]]
+  IndexV <- readRDS(file.path(OM.object, 'Index_Selectivity', paste0(name, '.rda'))) %>%
+    filter(Fleet %in% index_fleets)
+
+  nstock <- MOM_com@Stocks %>% length()
+  nage <- length(unique(IndexV$Age))
+  nsurvey <- length(index_fleets)
+  AddIndV <- array(IndexV$Select, dim=c(nage, nstock, nyears, nsurvey ))
+
+  # add projection years
+  AddIndV_proj <- replicate(proyears, AddIndV[,,nyears,]) %>% aperm(.,c(1,2,4,3))
+  AddIndV <- abind::abind(AddIndV, AddIndV_proj, along=3)
+
+  AddIndV <- aperm(AddIndV, c(1,2,4,3))
+
+  for (p in 1:n.stock) {
+    MOM_com@cpars[[p]][[1]]$AddIndV <- AddIndV[,p,,]
+  }
+
+  assign(name, MOM_com)
 
   do.call("use_data", list(as.name(name), overwrite = TRUE))
   docOM(name)
@@ -551,4 +604,7 @@ usethis::use_data(Index_Code, overwrite = TRUE)
 
 Initial_MP_Yr <- 2024
 usethis::use_data(Initial_MP_Yr, overwrite = TRUE)
+
+
+
 
