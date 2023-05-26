@@ -47,8 +47,8 @@ CRs[3] <- (CRs[2] * CRs[2]/CRs[1])
 hs <- CR2h(CRs)
 hs
 
-points(hs, CRs, pch=16, cex=3)
-abline(h=CRs, lty=3)
+points(hs, CRs2, pch=16, cex=3)
+abline(h=CRs2, lty=3)
 
 
 -log(0.001)/0.1
@@ -58,10 +58,35 @@ abline(h=CRs, lty=3)
 69/34
 34/23
 
-CRs <- h2CR(c(0.7, 0.8))
+CRs <- h2CR(c(0.69, 0.88))
+CRs
+
+tt <- exp(mean(log(CRs)))
+
+exp(sum(log(CRs))/2)
+
+CRs2 <- c(CRs[1], tt, CRs[2])
+
+CRs2[2]/CRs2[1]
+CRs2[3]/CRs2[2]
+
+(CRs2[2] * CRs2[2]/CRs2[1])
+(CRs2[2] * CRs2[2]/CRs2[3])
+
+CRs2
+hs <- CR2h(CRs2)
+
+
+
+
+
 CRs[3] <- (CRs[2] * CRs[2]/CRs[1])
 hs <- CR2h(CRs)
 hs
 
+CRs
 
+
+h2CR(0.9)
+h2CR(0.8989)
 
