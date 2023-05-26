@@ -385,7 +385,8 @@ AvC10 <- function(MMSEobj=NULL, Ref=NULL, Yrs=c(4,13)) {
   PMobj@Name <- 'AvC10: Median catches (t) over years 1-10'
   PMobj@Caption <- 'Median catch (t) 2024 - 2033'
 
-  PMobj@Stat <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4), sum)
+  Stat_y <- apply(MMSEobj@Catch[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum)
+  PMobj@Stat <- apply(Stat_y, c(1,2), median)
   PMobj@Ref <- 1
   PMobj@Prob <- calcProb(PMobj@Stat, MMSEobj) # no probability to calculate
 
@@ -408,7 +409,8 @@ AvTAC10 <- function(MMSEobj=NULL, Ref=NULL, Yrs=c(4,13)) {
   PMobj@Name <- 'AvC10: Median TAC (t) over years 1-10'
   PMobj@Caption <- 'Median TAC (t) 2024 - 2033'
 
-  PMobj@Stat <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4), sum)
+  Stat_y <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum)
+  PMobj@Stat <- apply(Stat_y, c(1,2), median)
   PMobj@Ref <- 1
   PMobj@Prob <- calcProb(PMobj@Stat, MMSEobj) # no probability to calculate
 
@@ -432,7 +434,8 @@ AvC30 <- function(MMSEobj=NULL, Ref=1, Yrs=c(14,33)) {
   PMobj@Name <- 'AvC10: Median catches (t) over years 11-30'
   PMobj@Caption <- 'Median catch (t) 2034 - 2053'
 
-  PMobj@Stat <- apply(MMSEobj@Catch[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4), sum)
+  Stat_y <- apply(MMSEobj@Catch[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum)
+  PMobj@Stat <- apply(Stat_y, c(1,2), median)
   PMobj@Ref <- Ref
   PMobj@Prob <- calcProb(PMobj@Stat, MMSEobj) # no probability to calculate
 
@@ -454,7 +457,8 @@ AvTAC30 <- function(MMSEobj=NULL, Ref=1, Yrs=c(14,33)) {
   PMobj@Name <- 'AvC10: Median TAC (t) over years 11-30'
   PMobj@Caption <- 'Median TAC (t) 2034 - 2053'
 
-  PMobj@Stat <- apply(MMSEobj@Catch[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4), sum)
+  Stat_y <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum)
+  PMobj@Stat <- apply(Stat_y, c(1,2), median)
   PMobj@Ref <- Ref
   PMobj@Prob <- calcProb(PMobj@Stat, MMSEobj) # no probability to calculate
 
