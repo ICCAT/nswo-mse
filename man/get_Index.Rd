@@ -2,21 +2,12 @@
 % Please edit documentation in R/Index_Diagnostics.R
 \name{get_Index}
 \alias{get_Index}
-\alias{get_Add_Indices}
-\alias{Compare_Index}
+\alias{AddIndList}
 \title{Get the Index from `PPD@Ind` slot in an MMSE object}
 \usage{
 get_Index(MMSE, Name = "Combined Index", Stock = 1, Fleet = 1)
 
-get_Add_Indices(MMSE, Names = NULL, Stock = 1, Fleet = 1)
-
-Compare_Index(
-  MMSE,
-  nsims = 3,
-  seed = 101,
-  name = "Combined Index",
-  plot = TRUE
-)
+AddIndList(MOM)
 }
 \arguments{
 \item{MMSE}{An object of class `MMSE`}
@@ -35,8 +26,6 @@ Get the Index from `PPD@Ind` slot in an MMSE object
 }
 \section{Functions}{
 \itemize{
-\item \code{get_Add_Indices()}: Get the additional indices
-
-\item \code{Compare_Index()}: Creates a dataframe and plot comparing the index and standardized biomass
+\item \code{AddIndList()}: Get the additional indices
 
 }}
