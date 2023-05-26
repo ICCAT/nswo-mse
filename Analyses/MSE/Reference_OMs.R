@@ -17,22 +17,18 @@ for (i in seq_along(Ref_OMs$OM.object)) {
 rerun <- FALSE
 if (rerun) {
   mselist <- list()
-
   for (i in seq_along(Ref_OMs$OM.object)) {
     mse <- ProjectMOM(histlist[[i]], MPs=MPs)
     nm <- Ref_OMs$OM.object[i]
     saveRDS(mse, paste0('Analyses/MSE/', nm, '.mmse'))
     mselist[[i]] <- mse
   }
-
   saveRDS(mselist, 'Analyses/MSE/MSElist.mmse')
-
 } else {
   mselist <- readRDS('Analyses/MSE/MSElist.mmse')
 }
 
 MSE_all <- combine_MMSE(mselist, 'Reference OMs')
-
 
 PM_vals <- PM_table(MSE_all)
 
