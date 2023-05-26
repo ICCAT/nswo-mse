@@ -32,11 +32,11 @@ Kobe(
   alpha = 0.1
 )
 
-TAC_TS(MMSE, year_range = NULL, mp = NA, hline = NULL)
+TAC_TS(MMSE, year_range = NULL, mp = NA, hline = NULL, ncol = 3)
 
-Catch_TS(MMSE, year_range = NULL, mp = NA, hline = NULL)
+Catch_TS(MMSE, year_range = NULL, mp = NA, hline = NULL, ncol = 3)
 
-Var_TS(MMSE, mp = NA)
+Var_TS(MMSE, mp = NA, ncol = 3)
 }
 \arguments{
 \item{MMSE}{An object of class `MMSE`}
