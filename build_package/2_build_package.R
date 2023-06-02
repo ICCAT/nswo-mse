@@ -1,7 +1,6 @@
 # Import OMs and Data and add to SWOMSE package
 
-
-nsim <- 100 # number of simulations per OM
+nsim <- 50 # number of simulations per OM
 proyears <- 33 # number of projection years
 
 OM.root <- 'G:/My Drive/1_Projects/North_Atlantic_Swordfish/OMs'
@@ -144,37 +143,6 @@ OM_DF <- OM_DF %>% relocate(OM.object)
 
 # ---- Import OMs ----
 
-# ----- Make Index Selectivity Dataframe ----
-OM.object <- file.path(OM.root, 'OM_objects')
-out.dir <- file.path(OM.object, 'Replists')
-replistfiles <- list.files(out.dir)
-for (i in seq_along((replistfiles))) {
-  message(i)
-  replistfile <- replistfiles[i]
-  mom.num <- paste0('MOM_', strsplit(replistfile, '_')[[1]][1])
-  replist <- readRDS(file.path(out.dir, replistfile, 'replist.rda'))
-  age_select <- replist$ageselex
-
-  fleet_names <- replist$FleetNames
-  fleet_index <- seq_along(fleet_names)
-  fleet_index_list <- list()
-  for (fl in fleet_index) {
-    df <- age_select %>% filter(Fleet==fl, Factor=='Asel2') %>%
-      tidyr::pivot_longer(., cols=8:ncol(age_select), names_to = 'Age',
-                          values_to='Select') %>%
-      select(Fleet_id=Fleet, Year=Yr, Sex, Age, Select)
-    df$Sex[df$Sex==1] <- 'Female'
-    df$Sex[df$Sex==2] <- 'Male'
-    df$Fleet <- fleet_names[fl]
-    df$MOM <- mom.num
-    df <- df %>% filter(Year>=1950)
-    fleet_index_list[[fl]] <- df
-  }
-  df <- do.call('rbind', fleet_index_list)
-  saveRDS(df, file.path(OM.object, 'Index_Selectivity', paste0(mom.num, '.rda')))
-}
-
-
 docOM <- function(OMname) {
   cat("#' @rdname SWO-OMs \n", "'", OMname, "'\n",
       sep="", append=TRUE,
@@ -187,7 +155,8 @@ importOM <- function(i, nsim, proyears, OM_DF, SWOData) {
   SS.dir <- file.path(OMgrid.dir, OM_DF$dir[i])
 
   # import MOM
-  MOM <- SS2MOM(SS.dir, nsim=nsim, proyears = proyears, interval = 1)
+  replist <- r4ss::SS_output(SS.dir)
+  MOM <- SS2MOM(replist, nsim=nsim, proyears = proyears, interval = 1)
 
   # get fleet-specific indices
   nyears <- MOM@Fleets[[1]][[1]]@nyears
@@ -199,7 +168,7 @@ importOM <- function(i, nsim, proyears, OM_DF, SWOData) {
   Data@AddInd <- array(NA, dim=c(1, n.fleet+n.survey.fleet, nyears))
   Data@CV_AddInd <- Data@AddInd
   n_age <- MOM@Stocks[[1]]@maxage+1
-  Data@AddIndV <-   array(NA, dim=c(1, n.fleet+n.survey.fleet, n_age))
+  Data@AddIndV <- array(NA, dim=c(1, n.fleet+n.survey.fleet, n_age))
   Data@AddIunits <- rep(1,n.fleet+n.survey.fleet) # to be updated
 
   fleet.ind.units <- c(1,0,0,0,0,1,0,0,1,0,0) # from SWOv5.dat
@@ -230,11 +199,35 @@ importOM <- function(i, nsim, proyears, OM_DF, SWOData) {
   dimnames(Data@AddInd)[[2]] <- Fleet_DF$Code
   dimnames(Data@AddInd)[[3]] <- SWOData@Year
 
+  # Calculate vulnerability schedules for fleet-specific indices
+  nstock <- 2
+  nage <- MOM@Stocks[[1]]@maxage + 1
+  nind <- n.fleet+n.survey.fleet
+  AddIV <- array(NA, dim=c(nstock, nage, nind, nyears+proyears))
+
+  age_select <- replist$ageselex
+  fleet_names <- replist$FleetNames
+  fleet_index <- seq_along(fleet_names)
+  fleet_index_list <- list()
+  for (fl in fleet_index) {
+    df <- age_select %>% filter(Fleet==fl, Factor=='Asel2') %>%
+      tidyr::pivot_longer(., cols=8:ncol(age_select), names_to = 'Age',
+                          values_to='Select') %>%
+      select(Fleet_id=Fleet, Year=Yr, Sex, Age, Select) %>%
+      filter(Year>=replist$startyr)
+    for (s in unique(df$Sex)) {
+      temp <-  df %>% filter(Sex==s)
+      AddIV[s,,fl,1:nyears] <- temp$Select
+      AddIV[s,,fl,(nyears+1):(nyears+proyears)] <- AddIV[s,,fl,nyears]
+    }
+  }
+
   # drop the combined index (already in Data@Ind)
   Data@AddInd <- Data@AddInd[,-19,, drop=FALSE]
   Data@CV_AddInd <- Data@CV_AddInd[,-19,, drop=FALSE]
   Data@AddIunits <- Data@AddIunits[-19]
   Data@AddIndV <- Data@AddIndV[,-19,, drop=FALSE]
+  AddIV <- AddIV[,,-19, ,drop=FALSE]
 
   # drop empty indices
   max.vals <- suppressWarnings(apply(Data@AddInd[1,,], 1, max, na.rm=TRUE))
@@ -243,6 +236,23 @@ importOM <- function(i, nsim, proyears, OM_DF, SWOData) {
   Data@CV_AddInd <- Data@CV_AddInd[,-ind,, drop=FALSE]
   Data@AddIunits <- Data@AddIunits[-ind]
   Data@AddIndV <- Data@AddIndV[,-ind,, drop=FALSE]
+  AddIV <- AddIV[,,-ind, ,drop=FALSE]
+
+  # drop early indices
+  ind <- which(rowSums(Data@AddInd[1,,60:71], na.rm=T)==0)
+  Data@AddInd <- Data@AddInd[,-ind,, drop=FALSE]
+  Data@CV_AddInd <- Data@CV_AddInd[,-ind,, drop=FALSE]
+  Data@AddIunits <- Data@AddIunits[-ind]
+  Data@AddIndV <- Data@AddIndV[,-ind,, drop=FALSE]
+  AddIV <- AddIV[,,-ind, ,drop=FALSE]
+
+  # drop age-specific indices
+  ind <- which(grepl('Age-', dimnames(Data@AddInd)[[2]]))
+  Data@AddInd <- Data@AddInd[,-ind,, drop=FALSE]
+  Data@CV_AddInd <- Data@CV_AddInd[,-ind,, drop=FALSE]
+  Data@AddIunits <- Data@AddIunits[-ind]
+  Data@AddIndV <- Data@AddIndV[,-ind,, drop=FALSE]
+  AddIV <- AddIV[,,-ind, ,drop=FALSE]
 
   # Add catch-at-length data
   CAL_fleets <- 3 # use CAN LL CAL data - longest with logistic selectivity
@@ -283,6 +293,7 @@ importOM <- function(i, nsim, proyears, OM_DF, SWOData) {
   MOM_com <- MOM %>% MSEtool::MOM_agg_fleets(.)
 
   MOM_com@proyears <- proyears
+
   # add data to female and male stocks
   for (p in 1:n.stock) {
     MOM_com@cpars[[p]][[1]]$Data <- Data
@@ -293,6 +304,11 @@ importOM <- function(i, nsim, proyears, OM_DF, SWOData) {
     # Add CAL bins to cpars
     MOM_com@cpars[[p]][[1]]$CAL_bins <-  Data@CAL_bins
     MOM_com@cpars[[p]][[1]]$CAL_binsmid <- Data@CAL_mids
+
+    # Add additional index vulnerability schedules
+    v_sched <- replicate(nsim,AddIV[p,,,])
+    v_sched <- aperm(v_sched, c(4,1:3))
+    MOM_com@cpars[[p]][[1]]$AddIV <- v_sched
   }
 
   # Drop Obs and Imp for other fleets
@@ -314,28 +330,12 @@ importOM <- function(i, nsim, proyears, OM_DF, SWOData) {
   # map real data across stocks - data is not sex-specific
   MOM_com@cpars[[1]][[1]]$Real.Data.Map <- matrix(1, nrow=n.fleet, ncol=n.stock)
 
+  # Combined Index - years to calculate deviations
+  years <- replist$startyr:replist$endyr
+  ind_yrs <- 1999:2020
+  MOM_com@cpars[[1]][[1]]$Ind_Yrs <-match(ind_yrs, years)
+
   name <- OM_DF$OM.object[i]
-
-
-  # Add Index Vulnerability to cpars
-  index_fleets <- dimnames(MOM_com@cpars[[1]][[1]]$Data@AddInd)[[2]]
-  IndexV <- readRDS(file.path(OM.object, 'Index_Selectivity', paste0(name, '.rda'))) %>%
-    filter(Fleet %in% index_fleets)
-
-  nstock <- MOM_com@Stocks %>% length()
-  nage <- length(unique(IndexV$Age))
-  nsurvey <- length(index_fleets)
-  AddIndV <- array(IndexV$Select, dim=c(nage, nstock, nyears, nsurvey ))
-
-  # add projection years
-  AddIndV_proj <- replicate(proyears, AddIndV[,,nyears,]) %>% aperm(.,c(1,2,4,3))
-  AddIndV <- abind::abind(AddIndV, AddIndV_proj, along=3)
-
-  AddIndV <- aperm(AddIndV, c(1,2,4,3))
-
-  for (p in 1:n.stock) {
-    MOM_com@cpars[[p]][[1]]$AddIndV <- AddIndV[,p,,]
-  }
 
   assign(name, MOM_com)
 
@@ -399,73 +399,73 @@ OM_desc$Class <- factor(OM_desc$Class, levels=unique(OM_desc$Class), ordered = T
 
 
 # ---- Add Additional OMs (modifications of those in OM_DF) ----
+#
+# ## R5. Increasing q
+#
+# df <- OM_DF %>% filter(Class == 'R4. Increase q')
+#
+# df$OM.object <- paste(df$OM.object, '(inc q in projections)')
+# df$dir <- ''
+# df$Class <- 'R5. Increasing q'
+# df$OM.num <- ''
+#
+# OM_DF <- bind_rows(OM_DF, df)
+#
+#
+# ## R6. Implementation Error
+# df <- OM_DF %>% filter(Class == 'Reference')
+#
+# add_overages <- function(MOM, overage=1.1, OM_DF) {
+#   #load(paste0('data/', MOM, '.rda'))
+#   #obj <- get(MOM)
+#   #obj@Imps$Female[[1]]@TACFrac <- c(1.10, 1.10)
+#   #obj@Imps$Male[[1]]@TACFrac <- c(1.10, 1.10)
+#   nm <- paste0(MOM, '_overage')
+#  # assign(nm, obj)
+#
+#   df <- OM_DF %>% filter(OM.object==MOM)
+#   df$OM.object <- nm
+#   df$dir <- ''
+#   df$Class <- 'R6. Implementation Error'
+#   df$OM.num <- ''
+#   OM_DF <- bind_rows(OM_DF, df)
+#
+#   #do.call("use_data", list(as.name(nm), overwrite = TRUE))
+#   OM_DF
+# }
 
-## R5. Increasing q
-
-df <- OM_DF %>% filter(Class == 'R4. Increase q')
-
-df$OM.object <- paste(df$OM.object, '(inc q in projections)')
-df$dir <- ''
-df$Class <- 'R5. Increasing q'
-df$OM.num <- ''
-
-OM_DF <- bind_rows(OM_DF, df)
-
-
-## R6. Implementation Error
-df <- OM_DF %>% filter(Class == 'Reference')
-
-add_overages <- function(MOM, overage=1.1, OM_DF) {
-  #load(paste0('data/', MOM, '.rda'))
-  #obj <- get(MOM)
-  #obj@Imps$Female[[1]]@TACFrac <- c(1.10, 1.10)
-  #obj@Imps$Male[[1]]@TACFrac <- c(1.10, 1.10)
-  nm <- paste0(MOM, '_overage')
- # assign(nm, obj)
-
-  df <- OM_DF %>% filter(OM.object==MOM)
-  df$OM.object <- nm
-  df$dir <- ''
-  df$Class <- 'R6. Implementation Error'
-  df$OM.num <- ''
-  OM_DF <- bind_rows(OM_DF, df)
-
-  #do.call("use_data", list(as.name(nm), overwrite = TRUE))
-  OM_DF
-}
-
-for (i in 1:nrow(df)) {
-  MOM <- df$OM.object[i]
-  OM_DF <- add_overages(MOM, overage=1.1, OM_DF)
-}
+# for (i in 1:nrow(df)) {
+#   MOM <- df$OM.object[i]
+#   OM_DF <- add_overages(MOM, overage=1.1, OM_DF)
+# }
 
 ## R7. Climate Change - Recruitment
 
 ### Scenarios
 
-base_case <- rep(1, proyears)
-decreasing <- seq(from=1, to=0.8, length.out=proyears)
-increasing <- seq(from=1, to=1.2, length.out=proyears)
-more_variable <- cbind(decreasing, increasing)
-
-pro_Years <- 2021:(2021+proyears-1)
-
-df1 <- data.frame(Scenario='Base Case', Values=base_case, Year=pro_Years)
-df2 <- data.frame(Scenario='Decreasing Trend', Values=decreasing, Year=pro_Years)
-df3 <- data.frame(Scenario='Increasing Trend', Values=increasing, Year=pro_Years)
-df4 <- data.frame(Scenario='Increased Variability', Values=c(decreasing, increasing), Year=pro_Years)
-
-rec_df <- bind_rows(df1, df2, df3, df4)
-rec_df$Scenario <- factor(rec_df$Scenario, levels=unique(rec_df$Scenario), ordered = TRUE)
-
-p1 <- ggplot(rec_df, aes(x=Year, y=Values)) +
-  facet_wrap(~Scenario, nrow=2) +
-  geom_line() +
-  geom_hline(yintercept = 1, linetype=2, color='darkgray') +
-  theme_bw() +
-  labs(x='Projection Years', y='Mean Trend Recruitment Deviations')
-
-ggsave('img/R7_Recruitment_Scenarios.png', p1, width=6, height=6)
+# base_case <- rep(1, proyears)
+# decreasing <- seq(from=1, to=0.8, length.out=proyears)
+# increasing <- seq(from=1, to=1.2, length.out=proyears)
+# more_variable <- cbind(decreasing, increasing)
+#
+# pro_Years <- 2021:(2021+proyears-1)
+#
+# df1 <- data.frame(Scenario='Base Case', Values=base_case, Year=pro_Years)
+# df2 <- data.frame(Scenario='Decreasing Trend', Values=decreasing, Year=pro_Years)
+# df3 <- data.frame(Scenario='Increasing Trend', Values=increasing, Year=pro_Years)
+# df4 <- data.frame(Scenario='Increased Variability', Values=c(decreasing, increasing), Year=pro_Years)
+#
+# rec_df <- bind_rows(df1, df2, df3, df4)
+# rec_df$Scenario <- factor(rec_df$Scenario, levels=unique(rec_df$Scenario), ordered = TRUE)
+#
+# p1 <- ggplot(rec_df, aes(x=Year, y=Values)) +
+#   facet_wrap(~Scenario, nrow=2) +
+#   geom_line() +
+#   geom_hline(yintercept = 1, linetype=2, color='darkgray') +
+#   theme_bw() +
+#   labs(x='Projection Years', y='Mean Trend Recruitment Deviations')
+#
+# ggsave('img/R7_Recruitment_Scenarios.png', p1, width=6, height=6)
 
 modify_recruit_devs <- function(MOM, rec_df, scenario='Decreasing Trend', trend=decreasing, OM_DF) {
   load(paste0('data/', MOM, '.rda'))
@@ -503,42 +503,42 @@ modify_recruit_devs <- function(MOM, rec_df, scenario='Decreasing Trend', trend=
   do.call("use_data", list(as.name(nm), overwrite = TRUE))
   OM_DF
 }
-
-df <- OM_DF %>% filter(Class == 'Reference')
-
-for (i in 1:nrow(df)) {
-  MOM <- df$OM.object[i]
-  OM_DF <- modify_recruit_devs(MOM, rec_df, scenario='Decreasing Trend', trend=decreasing, OM_DF)
-  OM_DF <- modify_recruit_devs(MOM, rec_df, scenario='Increasing Trend', trend=increasing, OM_DF)
-  OM_DF <- modify_recruit_devs(MOM, rec_df, scenario='Increased Variability', trend=more_variable, OM_DF)
-
-}
+#
+# df <- OM_DF %>% filter(Class == 'Reference')
+#
+# for (i in 1:nrow(df)) {
+#   MOM <- df$OM.object[i]
+#   OM_DF <- modify_recruit_devs(MOM, rec_df, scenario='Decreasing Trend', trend=decreasing, OM_DF)
+#   OM_DF <- modify_recruit_devs(MOM, rec_df, scenario='Increasing Trend', trend=increasing, OM_DF)
+#   OM_DF <- modify_recruit_devs(MOM, rec_df, scenario='Increased Variability', trend=more_variable, OM_DF)
+#
+# }
 
 ## R8. Size Limit
-df <- OM_DF %>% filter(Class == 'Reference')
-
-df$OM.object <- paste(df$OM.object, '(modified size limit in CMP)')
-df$dir <- ''
-df$Class <- 'R8. Size Limit'
-df$OM.num <- ''
-
-OM_DF <- bind_rows(OM_DF, df)
+# df <- OM_DF %>% filter(Class == 'Reference')
+#
+# df$OM.object <- paste(df$OM.object, '(modified size limit in CMP)')
+# df$dir <- ''
+# df$Class <- 'R8. Size Limit'
+# df$OM.num <- ''
+#
+# OM_DF <- bind_rows(OM_DF, df)
 
 
 ## R9. Alternative Management Cycles
-df <- OM_DF %>% filter(Class == 'Reference')
-
-df$OM.object <- paste(df$OM.object, '(modified in projections)')
-df$dir <- ''
-df$Class <- 'R9. Alternative Management Cycles'
-df$OM.num <- ''
-
-OM_DF <- bind_rows(OM_DF, df)
-
+# df <- OM_DF %>% filter(Class == 'Reference')
+#
+# df$OM.object <- paste(df$OM.object, '(modified in projections)')
+# df$dir <- ''
+# df$Class <- 'R9. Alternative Management Cycles'
+# df$OM.num <- ''
+#
+# OM_DF <- bind_rows(OM_DF, df)
+#
 
 # ---- Update OM_DF to include Additional OMs ----
 
-usethis::use_data(OM_DF, overwrite = TRUE)
+# usethis::use_data(OM_DF, overwrite = TRUE)
 
 cat("\n#' @name OM_DF",
     "\n#' @docType data",
@@ -585,10 +585,8 @@ ind_names <- dimnames(SWOData@AddInd[1,,])[[1]]
 l <- strsplit(ind_names, '_')
 ind_names2 <- sapply(l,"[[",1)
 
-drop <- c(3,5, 10:14) # early indices and the age-specific indices
-
-Index_Code <- data.frame(Code=c('Comb', ind_names2[-drop]),
-                         Index=c('Ind', which(ind_names %in% ind_names[-drop])),
+Index_Code <- data.frame(Code=c('Comb', ind_names2),
+                         Index=c('Ind', ind_names),
                          Description=c('Combined Index',
                                        'EU-Spain Longline (LL)',
                                        'Canada LL',
@@ -604,6 +602,16 @@ usethis::use_data(Index_Code, overwrite = TRUE)
 
 Initial_MP_Yr <- 2024
 usethis::use_data(Initial_MP_Yr, overwrite = TRUE)
+
+
+# ----- PM Table -----
+
+PM_desc <- read.csv(file.path('dev', 'PM_Description.csv'))
+
+colnames(PM_desc)[4] <- trimws(gsub('\\.', ' ', colnames(PM_desc)[4]))
+
+usethis::use_data(PM_desc, overwrite = TRUE)
+
 
 
 
