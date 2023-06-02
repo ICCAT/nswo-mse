@@ -297,7 +297,7 @@ Tune <- function(MP_name, Tuning_OMs, TuneTarget,
     trial <- test_vals
   }
 
-  MSEtool:::message('\nScoping', MP_name, 'across', n.OM, 'OM(s):', paste0(Tuning_OMs, collapse=', '))
+  MSEtool:::message('\nTuning', MP_name, 'across', n.OM, 'OM(s):', paste0(Tuning_OMs, collapse=', '))
   MSEtool:::message('Tuning for', PMmetric, '=', Target)
 
   vals_array <- array(NA, c(maxit,3))
@@ -332,13 +332,14 @@ Tune <- function(MP_name, Tuning_OMs, TuneTarget,
     elapse1 <- Sys.time() - st
     MSEtool:::message_info(paste0(round(as.numeric(elapse1,2, units = "mins"), 2), " Minutes"))
 
-    MMSE <- combine_MMSE(MMSEList, 'name')
     nm <- paste(MP_name, PMmetric, Target, i, sep="_")
     nm <- paste0(nm, '.mmse')
     if (!dir.exists(file.path(Tune_dir, 'tune_MMSE'))) {
       dir.create(file.path(Tune_dir, 'tune_MMSE'))
     }
-    saveRDS(MMSE, file.path(Tune_dir, 'tune_MMSE', nm))
+    saveRDS(MMSEList, file.path(Tune_dir, 'tune_MMSE', nm))
+
+    MMSE <- combine_MMSE(MMSEList, 'name')
 
     # Calculate PMs
     PM_results <- PM_table(MMSE,msg=FALSE)
