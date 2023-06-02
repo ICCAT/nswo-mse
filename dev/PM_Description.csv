@@ -1,19 +1,19 @@
 Family,Name,Description,Minimum Acceptable Values (\%)
-Status,PGK_10,Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in year 10 (2033),"51, 60, 70"
-,PGK_med,Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in years 6-10 (2029-2033),"51, 60, 70"
-,PGK_long,Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in years 11-30 (2034-2053),"51, 60, 70"
+Status,PGK_short,Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in years 1-10 (2024-2033),"51, 60, 70"
+,PGK_6_10,Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in years 6-10 (2029-2033),"51, 60, 70"
+,PGK_med,Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in years 11-20 (2034-2043),"51, 60, 70"
+,PGK_long,Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in years 21-30 (2044-2053),"51, 60, 70"
 ,PGK,Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) over all years (2024-2053),"51, 60, 70"
 ,PGK_30,Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in year 30 (2053),"51, 60, 70"
 ,POF,Probability of Overfishing (F>FMSY) over all years (2024-2053),
 ,PNOF,Probability of Not Overfishing (F<FMSY) over all years (2024-2053),
 Safety,LRP_short,Probability of breaching the limit reference point (SB<0.4SBMSY) in any of the first 10 years (2024-2033),"5, 10, 15"
-,LRP_long,Probability of breaching the limit reference point (SB<0.4SBMSY) in any of years 11-30 (2034-2053),"5, 10, 15"
+,LRP_med,Probability of breaching the limit reference point (SB<0.4SBMSY) in any of years 11-20 (2034-2043),"5, 10, 15"
+,LRP_long,Probability of breaching the limit reference point (SB<0.4SBMSY) in any of years 21-30 (2044-2053),"5, 10, 15"
 ,LRP,Probability of breaching the limit reference point (SB<0.4SBMSY) in any year (2024-2053),"5, 10, 15"
-,nLRP_short,Probability of not breaching the limit reference point (SB>0.4SBMSY) in any of the first 10 years (2024-2033),"85, 90, 95"
-,nLRP_long,Probability of not breaching the limit reference point (SB>0.4SBMSY) in any of years 11-30 (2034-2053),"85, 90, 95"
-,nLRP,Probability of not breaching the limit reference point (SB>0.4SBMSY) in any year (2024-2053),"85, 90, 95"
 Yield,TAC1,TAC (t) in the first implementation year (2024),
-,AvTAC10,Median catches (t) over years 1-10 (2024-2033),
-,AvTAC30,Median catches (t) over years 11-30 (2034-2053),
+,AvTAC_short,Median catches (t) over years 1-10 (2024-2033),
+,AvTAC_med,Median catches (t) over years 11-20 (2034-2043),
+,AvTAC_long,Median catches (t) over years 21-30 (2044-2053),
 Stability,VarC,Median variation in TAC (%) between management cycles over all years,
 ,MaxVarC,Maximum variation in TAC (%) between management cycles over all years,No minimum value and 25
