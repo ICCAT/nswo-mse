@@ -156,6 +156,7 @@ importOM <- function(i, nsim, proyears, OM_DF, SWOData) {
 
   # import MOM
   replist <- r4ss::SS_output(SS.dir)
+
   MOM <- SS2MOM(replist, nsim=nsim, proyears = proyears, interval = 1)
 
   # get fleet-specific indices
@@ -361,7 +362,6 @@ cat("#' @name SWO-OMs",
 
 purrr::map(1:nrow(OM_DF), importOM, nsim, proyears,
            OM_DF, SWOData)
-
 
 usethis::use_data(OM_DF, overwrite = TRUE)
 

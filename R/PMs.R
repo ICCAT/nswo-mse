@@ -79,7 +79,7 @@ PGK_6_10 <- function (MMSEobj = NULL, Ref = 1, Yrs = c(9,13))  {
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
   PMobj <- new("PMobj")
-  PMobj@Name <- "PKG_short: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 6-10 (2029-2033)"
+  PMobj@Name <- "PKG_6_10: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 6-10 (2029-2033)"
   PMobj@Caption <- "Prob. Green Zone of Kobe Space (2029-2033)"
 
   PMobj@Ref <- Ref
@@ -592,8 +592,14 @@ PM_table <- function(MMSE, PMs=NULL, msg=TRUE) {
     if (class(fun)!='PM')
       stop(PMs[i], ' not a valid function of class `PM`')
 
-    PMlist[[PMs[i]]] <- fun
+    PMlist[[i]] <- fun
   }
+
+
+  PMlist[[2]]
+  pm <- PMlist[[2]](MMSE)
+  pm
+
 
   PM_Values <- list()
   for (i in seq_along(PMs)) {
@@ -609,8 +615,14 @@ PM_table <- function(MMSE, PMs=NULL, msg=TRUE) {
                                  caption=caption)
   }
 
-  do.call(rbind.data.frame, PM_Values) %>%
+  df <- do.call(rbind.data.frame, PM_Values) %>%
     rename(Name=PM)
+
+  df %>% filter(Name=='PGK_6_10')
+
+  ######################
+
+  df
 
 }
 

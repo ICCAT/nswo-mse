@@ -4,12 +4,14 @@
 \alias{PM_table}
 \title{Calculate Performance Metrics}
 \usage{
-PM_table(MMSE, PMs = NULL)
+PM_table(MMSE, PMs = NULL, msg = TRUE)
 }
 \arguments{
 \item{MMSE}{An object of class `MMSE`}
 
 \item{PMs}{Optional. Names of `PM` functions to use. Otherwise all available PMs will be calculated.}
+
+\item{msg}{Logical. Print messages?}
 }
 \value{
 A `data.frame`

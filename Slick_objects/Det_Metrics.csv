@@ -1,0 +1,10 @@
+Label,Code,Description
+PGK_short,PGK_short,PKG_short: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 1-10 (2024-2033)
+PGK_med,PGK_med,PKG_med: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 11-20 (2034-2043)
+PGK_long,PGK_long,PGK_long: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 21-30 (2044-2053)
+nLRP_short,nLRP_short,nLRP_short: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any of the first 10 years (2024-2033)
+nLRP_med,nLRP_med,nLRP_med: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any of years 11-20 (2034-2043)
+nLRP_long,nLRP_long,nLRP_long: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) n any of years 21-30 (2044-2053))
+rAvTAC_short,rAvTAC_short,rAvTAC_short: Median TAC (t) over years 1-10 relative to the highest median TAC in this period
+rAvTAC_med,rAvTAC_med,rAvTAC_med: Median TAC (t) over years 11-20 relative to the highest medianTAC in this period
+rAvTAC_long,rAvTAC_long,rAvTAC_long: Median TAC (t) over years 21-30 relative to the highest medianTAC in this period

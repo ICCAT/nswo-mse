@@ -2,16 +2,7 @@
 ## redundant - see \Analyses\SCRS_P_2023_064
 
 
-#' Get the Index from `PPD@Ind` slot in an MMSE object
-#'
-#' @param MMSE An object of class `MMSE`
-#' @param Name Name for the index.
-#' @param Stock Stock index number. Default to 1
-#' @param Fleet Fleet index number. Default to 1
-#'
-#' @return A data.frame
-#' @export
-#'
+
 get_Index <- function(MMSE, Name="Combined Index", Stock=1, Fleet=1) {
   nsim <- MMSE@nsim
   nMPs <- MMSE@nMPs
@@ -34,12 +25,6 @@ get_Index <- function(MMSE, Name="Combined Index", Stock=1, Fleet=1) {
   df
 }
 
-#' @describeIn get_Index Get the additional indices
-#' @export
-
-
-#' @describeIn get_Index Creates a dataframe and plot comparing the index and standardized biomass
-#' @export
 
 
 AddIndList <- function(MOM) {

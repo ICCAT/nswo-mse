@@ -23,8 +23,12 @@ if (rerun_hist) {
 
 # Run Forward Projections
 
+MP1 <- IR1
+
+MP2 <- IR1
+
 rerun_proj <- FALSE
-mps <- c("IR1_a", "IR1_g")
+mps <- c("MP1", "MP2")
 if (rerun_proj) {
   mselist <- list()
   for (i in 1:nrow(RefOMs)) {
@@ -36,6 +40,8 @@ if (rerun_proj) {
 }
 
 MSE_all <- combine_MMSE(mselist, 'Reference OMs')
+
+
 
 MSE_1 <- mselist[[1]]
 MSE_2 <- mselist[[2]]
@@ -51,14 +57,13 @@ height <- 12
 
 
 mps <- c("IR1_a", "IR1_g")
-MSEobj <- MSE_5
+MSEobj <- MSE_2
 
-### PGK_10 - Year = 2033 ----
-
+### PGK_short - Year = 2024 - 2033 ----
 
 mpind <- which(MSEobj@MPs[[1]] %in% mps)
 
-year_range <- 2033
+year_range <- 2024:2033
 
 p1 <- F_FMSY_TS(MSEobj, year_range, mp=mps)
 p2 <- SB_SBMSY_TS(MSEobj, year_range, mp=mps)
@@ -74,14 +79,39 @@ p <- plot_grid(p, legend, Kobe(MSEobj, year_range, mp=mps)+ coord_equal(clip = '
           rel_widths = c(3, .4))
 p
 
-ggsave('img/PMs/PGK_10.png', p, width=width, height=height)
+ggsave('img/PMs/PGK_short.png', p, width=width, height=height)
 
-pp <- PGK_10(MSEobj)
-PMlist$PGK_10 <- pp@Mean[mpind]
+pp <- PGK_short(MSEobj)
+PMlist$PGK_short <- pp@Mean[mpind]
 
+### PGK_6_10 - Year = 2029 - 2033 ----
 
-### PGK_med - Years 2029 -- 2033 ----
+mpind <- which(MSEobj@MPs[[1]] %in% mps)
+
 year_range <- 2029:2033
+
+p1 <- F_FMSY_TS(MSEobj, year_range, mp=mps)
+p2 <- SB_SBMSY_TS(MSEobj, year_range, mp=mps)
+
+p <- cowplot::plot_grid(p1 + theme(legend.position="none"),
+                        p2+ theme(legend.position="none"),
+                        nrow=2)
+legend <- get_legend(
+  # create some space to the left of the legend
+  p1 + theme(legend.box.margin = margin(0, 0, 0, 12))
+)
+p <- plot_grid(p, legend, Kobe(MSEobj, year_range, mp=mps)+ coord_equal(clip = 'off'),
+               rel_widths = c(3, .4))
+p
+
+ggsave('img/PMs/PGK_6_10.png', p, width=width, height=height)
+
+pp <- PGK_6_10(MSEobj)
+PMlist$PGK_6_10 <- pp@Mean[mpind]
+
+
+### PGK_med - Years 2034 -- 2043 ----
+year_range <- 2034:2043
 
 mpind <- which(MSEobj@MPs[[1]] %in% mps)
 
@@ -106,9 +136,8 @@ pp <- PGK_med(MSEobj)
 PMlist$PGK_med <- pp@Mean[mpind]
 
 
-
-### PGK_long - Years 2034-- 2053 ----
-year_range <- 2034:2053
+### PGK_long - Years 2044-- 2053 ----
+year_range <- 2044:2053
 
 mpind <- which(MSEobj@MPs[[1]] %in% mps)
 
@@ -132,7 +161,6 @@ ggsave('img/PMs/PGK_long.png', p, width=width, height=height)
 
 pp <- PGK_long(MSEobj)
 PMlist$PGK_long <- pp@Mean[mpind]
-
 
 
 ### PGK - Years 2024-- 2053 ----
@@ -199,10 +227,10 @@ p1 <- F_FMSY_TS(MSEobj,year_range, fill='OF', mp=mps)
 p1
 
 p <- plot_grid(p1, Kobe(MSEobj, year_range, fill='OF', mp=mps)+ coord_equal(clip = 'off'),
-          nrow=2)
+          nrow=2, align='h', axis='l')
 p
 
-ggsave('img/PMs/POF.png', p, width=width, height=height)
+ggsave('img/PMs/POF.png', p, width=width, height=8)
 
 pp <- POF(MSEobj)
 PMlist$POF <- pp@Mean[mpind]
@@ -220,14 +248,29 @@ p1 <- SB_SBMSY_TS(MSEobj, year_range, fill='LRP', ref=0.4, mp=mps)
 p <- plot_grid(p1, Kobe(MSEobj, year_range, fill='LRP', mp=mps)+ coord_equal(clip = 'off'),
           nrow=2)
 p
-ggsave('img/PMs/LRP_short.png', p, width=width, height=height)
+ggsave('img/PMs/LRP_short.png', p, width=width, height=8)
 
 pp <- LRP_short(MSEobj)
 PMlist$LRP_short <- pp@Mean[mpind]
 
+### LRP_med - Year = 2034:2043 ----
+year_range <- 2034:2043
 
-### LRP_long - Year = 2034:2053 ----
-year_range <- 2034:2053
+mpind <- which(MSEobj@MPs[[1]] %in% mps)
+
+p1 <- SB_SBMSY_TS(MSEobj, year_range, fill='LRP', ref=0.4, mp=mps)
+
+p <-  plot_grid(p1, Kobe(MSEobj, year_range, fill='LRP', mp=mps)+ coord_equal(clip = 'off'),
+                nrow=2)
+p
+ggsave('img/PMs/LRP_med.png', p, width=width, height=8)
+
+pp <- LRP_med(MSEobj)
+PMlist$LRP_med <- pp@Mean[mpind]
+
+
+### LRP_long - Year = 2044:2053 ----
+year_range <- 2044:2053
 
 mpind <- which(MSEobj@MPs[[1]] %in% mps)
 
@@ -236,7 +279,7 @@ p1 <- SB_SBMSY_TS(MSEobj, year_range, fill='LRP', ref=0.4, mp=mps)
 p <-  plot_grid(p1, Kobe(MSEobj, year_range, fill='LRP', mp=mps)+ coord_equal(clip = 'off'),
           nrow=2)
 p
-ggsave('img/PMs/LRP_long.png', p, width=width, height=height)
+ggsave('img/PMs/LRP_long.png', p, width=width, height=8)
 
 pp <- LRP_long(MSEobj)
 PMlist$LRP_long <- pp@Mean[mpind]
@@ -271,28 +314,39 @@ p
 ggsave('img/PMs/C1.png', p, width=width, height=4)
 
 
-### AvC10 ----
+### AvTAC_short ----
 year_range <- 2024:2033
 
-pp <- AvTAC10(MSEobj)
-PMlist$AvTAC10 <- pp@Mean[mpind]
+pp <- AvTAC_short(MSEobj)
+PMlist$AvTAC_short <- pp@Mean[mpind]
 
-p <- TAC_TS(MSEobj, year_range, mp=mps, hline=PMlist$AvTAC10)
+p <- TAC_TS(MSEobj, year_range, mp=mps, hline=PMlist$AvTAC_short)
 p
 
-ggsave('img/PMs/AvC10.png', p,width=width, height=4)
+ggsave('img/PMs/AvTAC_short.png', p,width=width, height=4)
+
+### AvTAC_med ----
+year_range <- 2034:2043
+
+pp <- AvTAC_med(MSEobj)
+PMlist$AvTAC_med <- pp@Mean[mpind]
+
+p <- TAC_TS(MSEobj, year_range, mp=mps, hline=PMlist$AvTAC_med)
+p
+
+ggsave('img/PMs/AvTAC_med.png', p,width=width, height=4)
 
 
-### AvC30 ----
-year_range <- 2034:2053
+### AvTAC_long ----
+year_range <- 2044:2053
 
-pp <- AvTAC30(MSEobj)
-PMlist$AvTAC30 <- pp@Mean[mpind]
+pp <- AvTAC_long(MSEobj)
+PMlist$AvTAC_long <- pp@Mean[mpind]
 
 
-p <- TAC_TS(MSEobj, year_range, mp=mps, hline=PMlist$AvTAC30)
+p <- TAC_TS(MSEobj, year_range, mp=mps, hline=PMlist$AvTAC_long)
 
-ggsave('img/PMs/AvC30.png', p, width=width, height=4)
+ggsave('img/PMs/AvTAC_long.png', p, width=width, height=4)
 
 
 ## Stability ----

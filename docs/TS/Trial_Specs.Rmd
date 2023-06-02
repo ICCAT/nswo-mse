@@ -447,7 +447,7 @@ ref <- OM_DF %>% filter(Class=='Reference')
 
 2. **Safety**: the probability of the stock not falling below the biological limit reference point
 
-3. **Yield**: the catch in the projection years (ton)
+3. **Yield**: the TAC in the projection years (ton)
 
 4. **Stability**: the variation in the TAC between management cycles
 
@@ -651,7 +651,7 @@ Figure \@ref(fig:C1) shows an example of two CMPs (`r PMlist$MPs`) for an operat
 
 ### AvTAC_short
 
-`AvTAC_short` calculates the median landed catch (t) in the first 10 years (2024--2033). This is calculated as the median catch across the simulations and years. 
+`AvTAC_short` calculates the median TAC (t) in the first 10 years (2024--2033). This is calculated as the median TAC across the simulations and years. 
 
 Figure \@ref(fig:AvC10) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `AvTAC_short` in this example are: `r round(PMlist$AvTAC_short,0)`.
 
@@ -659,7 +659,7 @@ Figure \@ref(fig:AvC10) shows an example of two CMPs (`r PMlist$MPs`) for an ope
 
 ### AvTAC_med
 
-`AvTAC_med` calculates the median landed catch (t) in years 11 -- 20 (2034--2043). This is calculated as the median catch across the simulations and years. 
+`AvTAC_med` calculates the median TAC (t) in years 11 -- 20 (2034--2043). This is calculated as the median TAC across the simulations and years. 
 
 Figure \@ref(fig:AvCmed) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `AvTAC_med` in this example are: `r round(PMlist$AvTAC_med,0)`.
 
@@ -668,7 +668,7 @@ Figure \@ref(fig:AvCmed) shows an example of two CMPs (`r PMlist$MPs`) for an op
 
 ### AvTAC_long
 
-`AvTAC_long` calculates the median landed catch (t) in the last 10 years (2044--2053). This is calculated as the median catch across the simulations and years. 
+`AvTAC_long` calculates the median TAC (t) in the last 10 years (2044--2053). This is calculated as the median TAC across the simulations and years. 
 
 Figure \@ref(fig:AvC30) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `AvTAC_long` in this example are: `r round(PMlist$AvTAC_long,0)`.
 

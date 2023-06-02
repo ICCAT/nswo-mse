@@ -1,0 +1,213 @@
+---
+title: "OM Summary Report"
+author: "Adrian Hordyk <adrian@bluematterscience.com>"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    number_sections: yes
+subtitle: 'North Atlantic Swordfish MSE '
+always_allow_html: true
+---
+
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(htmltools)
+library(ggplot2)
+library(SWOMSE)
+knitr::opts_chunk$set(echo = FALSE)
+
+fig.num <- tab.num <- 0
+fig.cap <- function() {
+  fig.num <<- fig.num +1
+  paste0('Figure ',  fig.num, '.')
+
+} 
+tab.cap <- function() {
+  tab.num <<- tab.num +1
+  paste0('Table ',  tab.num, '.')
+}
+
+```
+
+# Introduction
+
+This report summarizes the diagnostic checks, the calculated biological reference points, and the estimated stock status relative to those reference points, for all operating models included in the OM Uncertainty Grid.  
+
+## Operating Models 
+
+`r tab.cap()` Summary table of the operating model uncertainty grid. `OM.num` can be used to reference the operating models in the tables and figures below. 
+
+```{r}
+DF <- OM_DF
+DF <- DF %>% select(OM.num, M, sigmaR, steepness, `Include CAL`, llq, Class)
+DF <- DF %>% mutate(across(1:6, as.factor))
+DF$Class <- factor(DF$Class, levels=unique(DF$Class), ordered=TRUE)
+
+DT::datatable(DF, 
+              colnames=c('OM Number',
+                         'M',
+                         'sigmaR',
+                         'Steepness (h)',
+                         'Include CAL',
+                         'Assumed historical increase in catchability',
+                         'Class'),
+              rownames= FALSE,
+              filter = 'top',
+              extensions = 'Buttons',
+              options = list(
+                pageLength = 10, 
+                autoWidth = TRUE,
+                sDom  = '<"top">Bflrt<"bottom">ip',
+                buttons='csv')
+)
+
+
+```
+# Model Diagnostic Checks
+
+## Report Estimated Parameters Near Bounds
+
+`r tab.cap()` Table of estimated parameters within 1% of the bounds.
+
+```{r}
+Check_Bounds_DF <- readRDS('Check_Bounds_DF.rda')
+
+Check_Bounds_DF <- Check_Bounds_DF %>% mutate(across(1:2, as.factor))
+Check_Bounds_DF <- Check_Bounds_DF %>% select(OM.num, Class, Min, Max, Value, Parameter) %>%
+  relocate(OM.num, Class, Parameter)
+
+Check_Bounds_DF$Parameter <- factor(Check_Bounds_DF$Parameter)
+Check_Bounds_DF$Class <- factor(Check_Bounds_DF$Class, levels=unique(Check_Bounds_DF$Class),
+                                     ordered = TRUE)
+DT::datatable(Check_Bounds_DF,
+              rownames= FALSE,
+              filter = 'top',
+              extensions = 'Buttons',
+              options = list(
+                pageLength = 10, 
+                autoWidth = TRUE,
+                sDom  = '<"top">Bflrt<"bottom">ip',
+                buttons='csv')
+)
+
+```
+
+## Check for Convergence: Invertible Hessian and Final Gradient
+
+`r tab.cap()` Table of log determinant of the Hessian matrix, (finite values indicate invertible Hessian), the maximum final gradient, high_grad (true if the final gradient for one or more parameters are > 0.0001), and the final gradient values for the estimated parameter(s).
+
+```{r}
+Check_Convergence_DF <- readRDS('Check_Convergence_DF.rda')
+
+Check_Convergence_DF <- Check_Convergence_DF %>% select(OM.num, Class,  log_det_hessian, invertible,
+                                              max_final_gradient, 
+                                              Gradient, Parameter) %>%
+  relocate(OM.num, Class, Parameter)
+
+Check_Convergence_DF$Class <- factor(Check_Convergence_DF$Class, levels=unique(Check_Convergence_DF$Class),
+                                     ordered = TRUE)
+DT::datatable(Check_Convergence_DF,
+              rownames= FALSE,
+              filter = 'top',
+              extensions = 'Buttons',
+              options = list(
+                pageLength = 10, 
+                autoWidth = TRUE,
+                sDom  = '<"top">Bflrt<"bottom">ip',
+                buttons='csv')
+)
+
+
+```
+
+## Check for Highly Correlated Parameters
+
+`r tab.cap()` Table of operating model parameters that have correlation factor > 0.95.
+
+```{r}
+
+Check_Correlation_DF <- readRDS('Check_Correlation_DF.rda')
+
+DF <- Check_Correlation_DF
+DF$OM.num <- factor(DF$OM.num, levels=unique(DF$OM.num),
+                                     ordered = TRUE)
+DF$Class <- factor(DF$Class, levels=unique(DF$Class),
+                                     ordered = TRUE)
+DT::datatable(DF,
+              rownames= FALSE,
+              filter = 'top',
+              extensions = 'Buttons',
+              options = list(
+                pageLength = 10, 
+                autoWidth = TRUE,
+                sDom  = '<"top">Bflrt<"bottom">ip',
+                buttons='csv')
+)
+
+
+```
+
+
+# Summary Tables
+
+`r tab.cap()` Summary table of the calculated biological reference points and estimated stock status in the terminal year for the OMs in the uncertainty grid. 
+
+```{r}
+ReferencePoint_DF <- readRDS('ReferencePoint_DF.rda')
+
+RefPointDF <- ReferencePoint_DF %>% select(OM.num, Class, SB0, SBMSY, FMSY, MSY_d, MSY_r, SB, SB_SB0, SB_SBMSY, F_FMSY)
+
+RefPointDF <- left_join(OM_DF %>% select(OM.num, M, steepness),RefPointDF, by='OM.num')
+RefPointDF$OM.num <- factor(RefPointDF$OM.num)
+RefPointDF$Class <- factor(RefPointDF$Class, levels=unique(RefPointDF$Class),ordered=TRUE)
+RefPointDF$M <- factor(RefPointDF$M)
+RefPointDF$steepness <- factor(RefPointDF$steepness)
+
+RefPointDF <- RefPointDF %>% mutate(across(where(is.numeric), round, digits=2))
+
+DT::datatable(RefPointDF,
+              rownames= FALSE,
+              filter = 'top',
+              extensions = 'Buttons',
+              options = list(
+                pageLength = 10, 
+                autoWidth = TRUE,
+                sDom  = '<"top">Bflrt<"bottom">ip',
+                buttons='csv')
+)
+```
+
+
+# Time-Series Plots  
+
+
+```{r}
+imgs <- list.files(file.path('../../../../img/OM_Summary_Report/'))
+
+plots <- c('SSB', 'F', 'Depletion', 'B.Bmsy', 'F.Fmsy')
+headings <- c('SSB', 'Fishing mortality (F)', 'SB/SB~0~', 'SB/SB~MSY~', 'F/F~MSY~')
+text <- c('spawning stock biomass (SSB)',
+          'fishing mortality (F)',
+          'relative spawning biomass (SB/SB0)',
+          'relative spawning biomass (SB/SB_MSY)',
+          'relative fishing mortality (F/F_MSY)')
+
+nrobust <- OM_DF %>% filter(Class!='Base Case', Class!='Reference') %>% distinct(Class) %>% nrow()
+```
+
+```{r, results='asis', width=6, height=6}
+
+for (i in seq_along(plots)) {
+ this.fig <- imgs[grepl(plots[i], imgs)]
+ cat('\n##', headings[i], '\n')
+ cat('\n![](', file.path('../../../../img/OM_Summary_Report/', this.fig), ')')
+ this.fig.num <- fig.cap()
+ caption<- paste('\n\n', this.fig.num, 'Time-series of estimated', text[i], 
+                     'with three levels natural mortality (M; columns) and three levels steepness (h; rows), and the Reference OMs and', nrobust, 'sets of Robustness OMs (colors). The black dashed line represents the predictions from the 2022 Base Case stock assessment.\n\n\n')
+                     
+ cat(caption)
+}
+```

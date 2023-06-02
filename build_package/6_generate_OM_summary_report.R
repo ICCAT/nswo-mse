@@ -4,7 +4,7 @@ library(dplyr)
 library(ggplot2)
 
 img_dir <- 'img/OM_Summary_Report'
-obj_dir <- 'docs/Reports/OM_Summary/2022'
+obj_dir <- 'docs/Reports/OM_Summary/2023'
 
 # Generate OM Summary Report ----
 

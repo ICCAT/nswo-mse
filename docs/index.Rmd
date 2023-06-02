@@ -64,8 +64,8 @@ The 2022 stock assessment was used as a base case model for developing the Opera
 A set of 9 operating models have been identified as the main reference set. These operating models had the same structural and data assumptions as the 2022 Base Case assessment, with the exception that the natural mortality (*M*) and steepness (*h*) of the Beverton-Holt stock-recruitment relationship each spanned three levels of uncertainty:
 
 1. *M* = 0.1, 0.2, and 0.3
-2. *h* = 0.6, 0.75, and 0.9
- 
+2. *h* = 0.69, 0.80, and 0.88
+
 ### Robustness Operating Models 
 
 #### R1. Higher Recruitment Variability
@@ -134,15 +134,9 @@ DT::datatable(DF, escape=1,
 
 ### OM Summary Report
 
+> Note: the summary report refers to previous OMs and will be updated soon.
+
 The overall [OM Summary Report](Reports/OM_Summary/2022/OM_Summary_Report.html) summarizes the diagnostic checks, the calculated biological reference points, and the estimated stock status relative to those reference points, for all operating models included in the OM Uncertainty Grid.  
-
-### Additional Index Diagnostic Report 
-
-Diagnostic Report for the Additional Indices for the Reference OMs:
-
-[Additional Index Diagnostic Report](Index_Diagnostics/Additional_Index_Diagnostics.html).
-
-
 
 
 

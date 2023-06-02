@@ -7,4 +7,11 @@ doc
 Meta
 docs/UserManual/MOM_000.hist
 docs/UserManual/MOM_000.mmse
+docs/UserManual/MOM_001.hist
+docs/UserManual/MOM_001.mmse
 *.mmse
+
+dev/
+Analyses/
+Hist_Objects/
+Tuning_Objects/tune_MMSE
