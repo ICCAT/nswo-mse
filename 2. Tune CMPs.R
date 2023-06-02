@@ -1,53 +1,41 @@
 library(SWOMSE)
 
+
+## --- Setup ---
+
+# Need to run 1. Simulate OMs.R first to simulate the historical fishery
+# dynamics for the Reference OMs and save the multiHist objects to
+# 'Hist_Objects' folder in the root directory
+
+
 # Tuning OMs (Reference OMs)
 Tuning_OMs <- OM_DF %>% filter(Class=='Reference')
 Tuning_OMs <- Tuning_OMs$OM.object
 
 # Tuning Targets
-TuneTargets <- read.csv('dev/MP_tuning/Tuning_Target_Codes.csv')
+TuneTargets <- read.csv('Tuning_Objects/Tuning_Target_Codes.csv')
 TuneTargets
 
 # --- Scope CMP Performance over Range of Tuning Values ----
 
-Scope_MPs <- 'CE_un'
+# 1. Source the MP functions
+# 2. Loop over MPs and conduct scoping
+
+Scope_MPs <- c('CE_un', 'IR1', 'IR2', 'SP1', 'SP2', 'SP3')
 
 for (i in seq_along(Scope_MPs)) {
   MP_name <- Scope_MPs[i]
   Scope(MP_name, Tuning_OMs, TuneTargets)
+  Plot_Scope(MP_name)
 }
 
 
-Plot_Scope()
-
-Plot_Scope <- function(MP=NULL, Tune_dir='Tuning_Objects') {
-  fls <- list.files(Tune_dir, pattern='.scope')
-
-  out <- list()
-  for (i in seq_along(fls)) {
-    out[[i]] <- readRDS(file.path(Tune_dir, fls[i]))
-  }
-  df <- do.call('rbind', out)
-  df$PM <- factor(df$PM, ordered = TRUE, levels=unique(df$PM))
-
-  p <- ggplot(df, aes(x=tune_val, y=PM_value)) +
-    facet_grid(MP~PM) +
-    geom_point() +
-    geom_line() +
-    expand_limits(y=c(0,1)) +
-    theme_bw()
-
-  print(p)
-
-  out <- list()
-  out$df <- df
-  out$p <- p
-  invisible(out)
-
-}
 
 
-# ---- Tune an MP ----
+
+
+
+# ---- Tune an MP to a specific PM Target ----
 
 MP_name <- 'IR2'
 TuneTarget <- TuneTargets %>% filter(Code=='a')

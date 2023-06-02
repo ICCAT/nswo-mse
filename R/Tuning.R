@@ -136,6 +136,42 @@ Scope <- function(MP_name, Tuning_OMs, TuneTargets, Hist_dir='Hist_Objects',
 }
 
 
+#' Plot the results of scoping for an MP
+#'
+#' @param MP Name of the MP
+#' @param Tune_dir Directory where scoping results are saved
+#'
+#' @return invisible list with ggplot object and data.frame
+#' @export
+Plot_Scope <- function(MP, Tune_dir='Tuning_Objects') {
+  fls <- list.files(Tune_dir, pattern='.scope')
+
+  if (!paste0(MP, '.scope') %in% fls) {
+    stop(paste0(MP, '.scope'), ' not found in ', Tune_dir )
+  } else {
+    fl <- fls[fls==paste0(MP, '.scope')]
+  }
+
+  df <- readRDS(file.path(Tune_dir, fl))
+  df$PM <- factor(df$PM, ordered = TRUE, levels=unique(df$PM))
+
+  p <- ggplot(df, aes(x=tune_val, y=PM_value)) +
+    facet_grid(MP~PM) +
+    geom_point() +
+    geom_line() +
+    expand_limits(y=c(0,1)) +
+    theme_bw()
+
+  print(p)
+
+  out <- list()
+  out$df <- df
+  out$p <- p
+  invisible(out)
+
+}
+
+
 #' Tune an MP
 #'
 #' @param MP_name Name of an `MP` function
@@ -152,7 +188,6 @@ Scope <- function(MP_name, Tuning_OMs, TuneTargets, Hist_dir='Hist_Objects',
 #'
 #' @return saves results to `Tune_dir` and insivibly returns data.frame
 #' @export
-
 Tune <- function(MP_name, Tuning_OMs, TuneTarget,
                  Hist_dir='Hist_Objects',
                  Tune_dir='Tuning_Objects',
