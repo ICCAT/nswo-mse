@@ -50,27 +50,3 @@ CE <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25,
   Rec
 }
 
-
-
-# ---- Tuned CMPs ----
-#' @describeIn CE Tuned to PGK_med = 0.6 across Reference OMs.
-#' @export
-CE_a <- CE
-formals(CE_a)$tunepar <- 0.868
-class(CE_a) <- "MP"
-
-
-#' @describeIn CE Tuned to PGK_long = 0.6 across Reference OMs.
-#' @export
-CE_b <- CE
-formals(CE_b)$tunepar <- 1.00677727272727
-class(CE_b) <- "MP"
-
-
-#' @describeIn CE Tuned to PGK_30 = 0.6 across Reference OMs.
-#' @export
-CE_c <- CE
-formals(CE_c)$tunepar <- 1.03783724340176
-class(CE_c) <- "MP"
-
-

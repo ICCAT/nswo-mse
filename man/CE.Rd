@@ -2,9 +2,6 @@
 % Please edit documentation in R/CE.R
 \name{CE}
 \alias{CE}
-\alias{CE_a}
-\alias{CE_b}
-\alias{CE_c}
 \title{Constant Exploitation}
 \usage{
 CE(
@@ -13,39 +10,6 @@ CE(
   Data_Lag = 1,
   Interval = 3,
   tunepar = 1,
-  mc = 0.25,
-  yrs = c(5, 3),
-  ...
-)
-
-CE_a(
-  x,
-  Data,
-  Data_Lag = 1,
-  Interval = 3,
-  tunepar = 0.868,
-  mc = 0.25,
-  yrs = c(5, 3),
-  ...
-)
-
-CE_b(
-  x,
-  Data,
-  Data_Lag = 1,
-  Interval = 3,
-  tunepar = 1.00677727272727,
-  mc = 0.25,
-  yrs = c(5, 3),
-  ...
-)
-
-CE_c(
-  x,
-  Data,
-  Data_Lag = 1,
-  Interval = 3,
-  tunepar = 1.03783724340176,
   mc = 0.25,
   yrs = c(5, 3),
   ...
@@ -77,12 +41,3 @@ This MP aims to keep the exploitation rate at a constant level. The current rela
 exploitation rate is calculated as the mean of the catches from 2016:2020 divided
 by the mean Combined Index over this same period.
 }
-\section{Functions}{
-\itemize{
-\item \code{CE_a()}: Tuned to PGK_med = 0.6 across Reference OMs.
-
-\item \code{CE_b()}: Tuned to PGK_long = 0.6 across Reference OMs.
-
-\item \code{CE_c()}: Tuned to PGK_30 = 0.6 across Reference OMs.
-
-}}

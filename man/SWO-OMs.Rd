@@ -4,71 +4,17 @@
 \name{SWO-OMs}
 \alias{SWO-OMs}
 \alias{MOM_000}
-\alias{MOM_133}
-\alias{MOM_134}
-\alias{MOM_135}
-\alias{MOM_139}
-\alias{MOM_140}
-\alias{MOM_141}
-\alias{MOM_127}
-\alias{MOM_128}
-\alias{MOM_129}
-\alias{MOM_136}
-\alias{MOM_137}
-\alias{MOM_138}
-\alias{MOM_142}
-\alias{MOM_143}
-\alias{MOM_144}
-\alias{MOM_151}
-\alias{MOM_152}
-\alias{MOM_153}
-\alias{MOM_157}
-\alias{MOM_158}
-\alias{MOM_159}
-\alias{MOM_187}
-\alias{MOM_188}
-\alias{MOM_189}
-\alias{MOM_193}
-\alias{MOM_194}
-\alias{MOM_195}
+\alias{MOM_001}
+\alias{MOM_002}
+\alias{MOM_003}
+\alias{MOM_004}
+\alias{MOM_005}
+\alias{MOM_006}
+\alias{MOM_007}
+\alias{MOM_008}
+\alias{MOM_009}
 \title{Operating models}
 \format{
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
 An object of class \code{MOM} of length 1.
 
 An object of class \code{MOM} of length 1.
@@ -92,59 +38,23 @@ An object of class \code{MOM} of length 1.
 \usage{
 MOM_000
 
-MOM_133
+MOM_001
 
-MOM_134
+MOM_002
 
-MOM_135
+MOM_003
 
-MOM_139
+MOM_004
 
-MOM_140
+MOM_005
 
-MOM_141
+MOM_006
 
-MOM_127
+MOM_007
 
-MOM_128
+MOM_008
 
-MOM_129
-
-MOM_136
-
-MOM_137
-
-MOM_138
-
-MOM_142
-
-MOM_143
-
-MOM_144
-
-MOM_151
-
-MOM_152
-
-MOM_153
-
-MOM_157
-
-MOM_158
-
-MOM_159
-
-MOM_187
-
-MOM_188
-
-MOM_189
-
-MOM_193
-
-MOM_194
-
-MOM_195
+MOM_009
 }
 \description{
 North Atlantic Swordfish Operating Models

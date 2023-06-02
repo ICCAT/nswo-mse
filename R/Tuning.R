@@ -1,3 +1,142 @@
+
+#' Scope the Performance of a CMP across different tuning values
+#'
+#' Calculates performance metrics for a range of tuning values. Uses the Reference
+#' OMs with 20 simulations
+#'
+#' @param MP_name Name of an `MP` function
+#' @param Tuning_OMs Names of the `MOM` objects to tune over
+#' @param TuneTargets A data.frame of tuning metrics and targets
+#' @param Hist_dir Directory where `.hist` objects are saved
+#' @param Tune_dir Directory where scoping results will be saved
+#' @param test_vals Optional test values to use
+#' @param parallel Logical. Run in parallel? (recommended)
+#'
+#' @return An invisible data.frame
+#' @export
+Scope <- function(MP_name, Tuning_OMs, TuneTargets, Hist_dir='Hist_Objects',
+                  Tune_dir='Tuning_Objects',
+                  test_vals=NULL,
+                  parallel=TRUE) {
+
+  MP <- try(get(MP_name), silent=TRUE)
+  if (class(MP)=='try-error')
+    stop(MP_name, ' not found. Have you sourced ', MP_name, '.R?')
+
+  n.OM <- length(Tuning_OMs)
+
+  if (parallel)
+    if(!snowfall::sfIsRunning())
+      setup()
+
+  if (is.null(Hist_dir))
+    stop('Must specify location of the multiHist objects corresponding to `MOM_objects`')
+
+  histFiles <- list.files(Hist_dir, pattern='.hist')
+  if (any(!Tuning_OMs %in% tools::file_path_sans_ext(histFiles))) {
+    stop("'.hist' files not found for all `Tuning_OMs` in directory: ", file.path(getwd(), Hist_dir))
+  }
+
+  # ---- Performance Metrics ----
+  PMs <- unique(TuneTargets$Metric)
+  PMlist <- lapply(PMs, get)
+
+  # ---- Tuning MPs ----
+  MP1 <- function(x,Data,tunepar, ...) MP(x,Data,tunepar=par1, ...)
+  MP2 <- function(x,Data,tunepar, ...) MP(x,Data,tunepar=par2, ...)
+  MP3 <- function(x,Data,tunepar, ...) MP(x,Data,tunepar=par3, ...)
+  MP4 <- function(x,Data,tunepar, ...) MP(x,Data,tunepar=par4, ...)
+  MP5 <- function(x,Data,tunepar, ...) MP(x,Data,tunepar=par5, ...)
+  MP6 <- function(x,Data,tunepar, ...) MP(x,Data,tunepar=par6, ...)
+  MP7 <- function(x,Data,tunepar, ...) MP(x,Data,tunepar=par7, ...)
+  MP8 <- function(x,Data,tunepar, ...) MP(x,Data,tunepar=par8, ...)
+
+
+  class(MP1) <- class(MP2) <- class(MP3) <- class(MP4) <- class(MP5) <-
+    class(MP6) <- class(MP7) <- class(MP8) <-  "MP"
+
+  assign("MP1", MP1, envir=globalenv())
+  assign("MP2", MP2, envir=globalenv())
+  assign("MP3", MP3, envir=globalenv())
+  assign("MP4", MP4, envir=globalenv())
+  assign("MP5", MP5, envir=globalenv())
+  assign("MP6", MP6, envir=globalenv())
+  assign("MP7", MP7, envir=globalenv())
+  assign("MP8", MP8, envir=globalenv())
+
+
+  # --- export MPs to cluster ----
+  if (parallel) {
+    MSEtool:::message_info('Exporting MPs to cluster')
+    snowfall::sfExport(list=c('MP', 'MP1', 'MP2', 'MP3', 'MP4', 'MP5', 'MP6',
+                              'MP7', 'MP8', 'Tuning_OMs', 'Hist_dir'))
+    sfLibrary("SWOMSE", character.only = TRUE, verbose=FALSE)
+  }
+
+  runTuning_8 <- function(om, Tuning_OMs) {
+    MOM <- get(Tuning_OMs[om])
+    MOM@nsim <- 20
+    multiHist <- SimulateMOM(MOM, silent=T, parallel=FALSE)
+    ProjectMOM(multiHist, MPs=c("MP1","MP2","MP3", 'MP4', 'MP5', 'MP6', 'MP7', 'MP8'),
+               silent=TRUE,parallel = FALSE, checkMPs=FALSE)
+
+  }
+
+  # --- Scoping Values ----
+  if (is.null(test_vals))
+    test_vals <- seq(0.5, 1.5, length.out=8)
+
+  if (length(test_vals)!=8)
+    stop('`test_vals` must be length 8')
+
+  assign("par1", test_vals[1], envir=globalenv())
+  assign("par2", test_vals[2], envir=globalenv())
+  assign("par3", test_vals[3], envir=globalenv())
+  assign("par4", test_vals[4], envir=globalenv())
+  assign("par5", test_vals[5], envir=globalenv())
+  assign("par6", test_vals[6], envir=globalenv())
+  assign("par7", test_vals[7], envir=globalenv())
+  assign("par8", test_vals[8], envir=globalenv())
+
+
+  if (parallel) {
+    snowfall::sfExport(list=c('par1', 'par2', 'par3', 'par4', 'par5', 'par6',
+                              'par7', 'par8'))
+  }
+
+  # --- Run closed-loop ---
+  MSEtool:::message('\nScoping', MP_name, 'across', n.OM, 'OM(s):', paste0(Tuning_OMs, collapse=', '))
+
+  st <- Sys.time()
+  if (parallel) {
+    MMSEList <- sfLapply(1:n.OM, runTuning_8, Tuning_OMs=Tuning_OMs)
+  } else {
+    MMSEList <- lapply(1:n.OM, runTuning_8, Tuning_OMs=Tuning_OMs)
+  }
+
+  elapse1 <- Sys.time() - st
+  MSEtool:::message_info(paste0(round(as.numeric(elapse1,2, units = "mins"), 2), " Minutes"))
+
+  MMSE <- combine_MMSE(MMSEList, 'name')
+
+  PM_val_list <- list()
+  for (i in 1:length(PMlist)) {
+    val <- PMlist[[i]](MMSE)
+    PM_val_list[[i]] <- data.frame(MP=MP_name, PM=PMs[i], tune_val=test_vals, PM_value=val@Mean)
+
+  }
+
+  df <- do.call('rbind', PM_val_list)
+  df$Date <- Sys.time()
+  df$elapse <- paste0(round(as.numeric(elapse1,2, units = "mins"), 2), " Minutes")
+
+  nm <- paste0(MP_name, '.scopedf')
+  saveRDS(df, file.path(Tune_dir, nm))
+  invisible(df)
+}
+
+
+
 #' Tune a Candidate Management Procedure with 1 Tuning Parameter
 #'
 #' @param MOM_objects Character vector. Names of the `MOM` objects to tune over

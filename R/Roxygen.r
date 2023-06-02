@@ -34,59 +34,23 @@ NULL
 #' @rdname SWO-OMs 
 'MOM_000'
 #' @rdname SWO-OMs 
-'MOM_133'
+'MOM_001'
 #' @rdname SWO-OMs 
-'MOM_134'
+'MOM_002'
 #' @rdname SWO-OMs 
-'MOM_135'
+'MOM_003'
 #' @rdname SWO-OMs 
-'MOM_139'
+'MOM_004'
 #' @rdname SWO-OMs 
-'MOM_140'
+'MOM_005'
 #' @rdname SWO-OMs 
-'MOM_141'
+'MOM_006'
 #' @rdname SWO-OMs 
-'MOM_127'
+'MOM_007'
 #' @rdname SWO-OMs 
-'MOM_128'
+'MOM_008'
 #' @rdname SWO-OMs 
-'MOM_129'
-#' @rdname SWO-OMs 
-'MOM_136'
-#' @rdname SWO-OMs 
-'MOM_137'
-#' @rdname SWO-OMs 
-'MOM_138'
-#' @rdname SWO-OMs 
-'MOM_142'
-#' @rdname SWO-OMs 
-'MOM_143'
-#' @rdname SWO-OMs 
-'MOM_144'
-#' @rdname SWO-OMs 
-'MOM_151'
-#' @rdname SWO-OMs 
-'MOM_152'
-#' @rdname SWO-OMs 
-'MOM_153'
-#' @rdname SWO-OMs 
-'MOM_157'
-#' @rdname SWO-OMs 
-'MOM_158'
-#' @rdname SWO-OMs 
-'MOM_159'
-#' @rdname SWO-OMs 
-'MOM_187'
-#' @rdname SWO-OMs 
-'MOM_188'
-#' @rdname SWO-OMs 
-'MOM_189'
-#' @rdname SWO-OMs 
-'MOM_193'
-#' @rdname SWO-OMs 
-'MOM_194'
-#' @rdname SWO-OMs 
-'MOM_195'
+'MOM_009'
 
 #' @name OM_DF
 #' @docType data

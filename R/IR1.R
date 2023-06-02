@@ -44,26 +44,3 @@ IR1 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25,
   Rec
 }
 
-# ---- Tuned CMPs ----
-
-#' @describeIn IR1 Tuned to PGK_med = 0.6 across Reference OMs.
-#' @export
-IR1_a <- IR1
-formals(IR1_a)$tunepar <- 0.791
-class(IR1_a) <- "MP"
-
-
-#' @describeIn IR1 Tuned to PGK_long = 0.6 across Reference OMs.
-#' @export
-IR1_b <- IR1
-formals(IR1_b)$tunepar <- 0.929
-class(IR1_b) <- "MP"
-
-
-#' @describeIn IR1 Tuned to PGK_30 = 0.6 across Reference OMs.
-#' @export
-IR1_c <- IR1
-formals(IR1_c)$tunepar <- 0.964
-class(IR1_c) <- "MP"
-
-

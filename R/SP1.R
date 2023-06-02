@@ -56,26 +56,3 @@ SP1 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25, ...) {
   Rec
 }
 
-
-# ---- Tuned CMPs ----
-#' @describeIn SP1 Tuned to PGK_med = 0.6 across Reference OMs.
-#' @export
-SP1_a <- SP1
-formals(SP1_a)$tunepar <- 2.404
-class(SP1_a) <- "MP"
-
-
-#' @describeIn SP1 Tuned to PGK_long = 0.6 across Reference OMs.
-#' @export
-SP1_b <- SP1
-formals(SP1_b)$tunepar <- 3.174
-class(SP1_b) <- "MP"
-
-
-#' @describeIn SP1 Tuned to PGK_30 = 0.6 across Reference OMs.
-#' @export
-SP1_c <- SP1
-formals(SP1_c)$tunepar <- 3.518
-class(SP1_c) <- "MP"
-
-

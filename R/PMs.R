@@ -46,16 +46,16 @@ is_GK <- function(x, f, b) {
 
 ## Status ----
 
-#' @describeIn PMs Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Year 10 (2033)
+#' @describeIn PMs Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 1-10 (2024-2033)
 #' @family Status
 #' @export
-PGK_10 <- function (MMSEobj = NULL, Ref = 1, Yrs = c(13,13))  {
+PGK_short <- function (MMSEobj = NULL, Ref = 1, Yrs = c(4,13))  {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
   PMobj <- new("PMobj")
-  PMobj@Name <- "PKG_short: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Year 10 (2029-2033)"
-  PMobj@Caption <- "Prob. Green Zone of Kobe Space (2033)"
+  PMobj@Name <- "PKG_short: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 1-10 (2024-2033)"
+  PMobj@Caption <- "Prob. Green Zone of Kobe Space (2024-2033)"
 
   PMobj@Ref <- Ref
   tt <- MMSEobj@SB_SBMSY[, 1,, Yrs[1]:Yrs[2]] > 1 & MMSEobj@F_FMSY[, 1,1, , Yrs[1]:Yrs[2]] < 1
@@ -68,20 +68,44 @@ PGK_10 <- function (MMSEobj = NULL, Ref = 1, Yrs = c(13,13))  {
   PMobj
 
 }
-class(PGK_10) <- 'PM'
-
+class(PGK_short) <- 'PM'
 
 
 #' @describeIn PMs Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 6-10 (2029-2033)
 #' @family Status
 #' @export
-PGK_med <- function (MMSEobj = NULL, Ref = 1, Yrs = c(9,13))  {
+PGK_6_10 <- function (MMSEobj = NULL, Ref = 1, Yrs = c(9,13))  {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
   PMobj <- new("PMobj")
   PMobj@Name <- "PKG_short: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 6-10 (2029-2033)"
   PMobj@Caption <- "Prob. Green Zone of Kobe Space (2029-2033)"
+
+  PMobj@Ref <- Ref
+  tt <- MMSEobj@SB_SBMSY[, 1,, Yrs[1]:Yrs[2]] > 1 & MMSEobj@F_FMSY[, 1,1, , Yrs[1]:Yrs[2]] < 1
+  if (is.null(dim(tt)))
+    tt <- matrix(tt, nrow=MMSEobj@nsim, ncol=1)
+  PMobj@Stat <- tt
+  PMobj@Prob <- calcProb(PMobj@Stat, MMSEobj)
+  PMobj@Mean <- calcMean(PMobj@Prob)
+  PMobj@MPs <- MMSEobj@MPs[[1]]
+  PMobj
+
+}
+class(PGK_6_10) <- 'PM'
+
+
+#' @describeIn PMs Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 11-20 (2034-2043)
+#' @family Status
+#' @export
+PGK_med <- function (MMSEobj = NULL, Ref = 1, Yrs = c(14,23))  {
+  if(!inherits(MMSEobj,'MMSE'))
+    stop('This PM method is designed for objects of class `MMSE`')
+  Yrs <- ChkYrs(Yrs, MMSEobj)
+  PMobj <- new("PMobj")
+  PMobj@Name <- "PKG_med: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 11-20 (2034-2043)"
+  PMobj@Caption <- "Prob. Green Zone of Kobe Space (2034-2043)"
 
   PMobj@Ref <- Ref
   PMobj@Stat <- MMSEobj@SB_SBMSY[, 1,, Yrs[1]:Yrs[2]] > 1 & MMSEobj@F_FMSY[, 1,1, , Yrs[1]:Yrs[2]] < 1
@@ -93,16 +117,16 @@ PGK_med <- function (MMSEobj = NULL, Ref = 1, Yrs = c(9,13))  {
 class(PGK_med) <- 'PM'
 
 
-#' @describeIn PMs Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 11-30 (2034-2053)
+#' @describeIn PMs Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 21-30 (2044-2053)
 #' @family Status
 #' @export
-PGK_long <- function (MMSEobj = NULL, Ref = 1, Yrs = c(14,33))  {
+PGK_long <- function (MMSEobj = NULL, Ref = 1, Yrs = c(24,33))  {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
   PMobj <- new("PMobj")
-  PMobj@Name <- "PGK_long: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 11-30 (2034-2053)"
-  PMobj@Caption <- "Prob. Green Zone of Kobe Space (2034-2053)"
+  PMobj@Name <- "PGK_long: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 21-30 (2044-2053)"
+  PMobj@Caption <- "Prob. Green Zone of Kobe Space (2044-2053)"
 
   PMobj@Ref <- Ref
   PMobj@Stat <- MMSEobj@SB_SBMSY[, 1,, Yrs[1]:Yrs[2]] > 1 & MMSEobj@F_FMSY[, 1,1, , Yrs[1]:Yrs[2]] < 1
@@ -227,18 +251,90 @@ LRP_short <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(4,13))  {
 }
 class(LRP_short) <- 'PM'
 
-
-#' @describeIn PMs Probability of breaching the limit reference point (SSB<0.4SSB_MSY) in any of years 11-30 (2034-2053)
+#' @describeIn PMs Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any of the first 10 years (2024-2033)
 #' @family Safety
 #' @export
-LRP_long <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(14,33))  {
+nLRP_short <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(4,13))  {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
 
   PMobj <- new("PMobj")
-  PMobj@Name <- "LRP_short: Probability of breaching the limit reference point (SSB<0.4SSB_MSY) n any of years 11-30 (2034-2053))"
-  PMobj@Caption <- "Prob. SB < 0.4SBMSY (2034-2053)"
+  PMobj@Name <- "nLRP_short: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any of the first 10 years (2024-2033)"
+  PMobj@Caption <- "Prob. SB > 0.4SBMSY (2024-2033)"
+
+  PMobj@Ref <- Ref
+  PMobj@Stat <- MMSEobj@SB_SBMSY[, 1,, Yrs[1]:Yrs[2]]
+
+  PMobj@Prob <- calcProb(PMobj@Stat > PMobj@Ref, MMSEobj)
+  Prob  <- array(as.logical(PMobj@Prob), dim=dim(PMobj@Prob))
+  PMobj@Mean <- colSums(Prob)/nrow(Prob)
+  PMobj@MPs <- MMSEobj@MPs[[1]]
+  PMobj
+}
+class(nLRP_short) <- 'PM'
+
+
+#' @describeIn PMs Probability of breaching the limit reference point (SSB<0.4SSB_MSY) in any of years 11-20 (2034-2043)
+#' @family Safety
+#' @export
+LRP_med <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(14,23))  {
+  if(!inherits(MMSEobj,'MMSE'))
+    stop('This PM method is designed for objects of class `MMSE`')
+  Yrs <- ChkYrs(Yrs, MMSEobj)
+
+  PMobj <- new("PMobj")
+  PMobj@Name <- "LRP_short: Probability of breaching the limit reference point (SSB<0.4SSB_MSY) in any of years 11-20 (2034-2043)"
+  PMobj@Caption <- "Prob. SB < 0.4SBMSY (2034-2043)"
+
+  PMobj@Ref <- Ref
+  PMobj@Stat <- MMSEobj@SB_SBMSY[, 1,, Yrs[1]:Yrs[2]]
+
+  PMobj@Prob <- calcProb(PMobj@Stat < PMobj@Ref, MMSEobj)
+  Prob  <- array(as.logical(PMobj@Prob), dim=dim(PMobj@Prob))
+  PMobj@Mean <- colSums(Prob)/nrow(Prob)
+  PMobj@MPs <- MMSEobj@MPs[[1]]
+  PMobj
+}
+class(LRP_med) <- 'PM'
+
+#' @describeIn PMs Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any of years 11-20 (2034-2043)
+#' @family Safety
+#' @export
+nLRP_med <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(14,23))  {
+  if(!inherits(MMSEobj,'MMSE'))
+    stop('This PM method is designed for objects of class `MMSE`')
+  Yrs <- ChkYrs(Yrs, MMSEobj)
+
+  PMobj <- new("PMobj")
+  PMobj@Name <- "nLRP_med: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any of years 11-20 (2034-2043)"
+  PMobj@Caption <- "Prob. SB > 0.4SBMSY (2034-2043)"
+
+  PMobj@Ref <- Ref
+  PMobj@Stat <- MMSEobj@SB_SBMSY[, 1,, Yrs[1]:Yrs[2]]
+
+  PMobj@Prob <- calcProb(PMobj@Stat > PMobj@Ref, MMSEobj)
+  Prob  <- array(as.logical(PMobj@Prob), dim=dim(PMobj@Prob))
+  PMobj@Mean <- colSums(Prob)/nrow(Prob)
+  PMobj@MPs <- MMSEobj@MPs[[1]]
+  PMobj
+}
+class(nLRP_med) <- 'PM'
+
+
+
+
+#' @describeIn PMs Probability of breaching the limit reference point (SSB<0.4SSB_MSY) in any of years 21-30 (2044-2053)
+#' @family Safety
+#' @export
+LRP_long <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(24,33))  {
+  if(!inherits(MMSEobj,'MMSE'))
+    stop('This PM method is designed for objects of class `MMSE`')
+  Yrs <- ChkYrs(Yrs, MMSEobj)
+
+  PMobj <- new("PMobj")
+  PMobj@Name <- "LRP_long: Probability of breaching the limit reference point (SSB<0.4SSB_MSY) n any of years 21-30 (2044-2053))"
+  PMobj@Caption <- "Prob. SB < 0.4SBMSY (2044-2053)"
 
   PMobj@Ref <- Ref
   PMobj@Stat <- MMSEobj@SB_SBMSY[, 1,, Yrs[1]:Yrs[2]]
@@ -250,6 +346,31 @@ LRP_long <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(14,33))  {
   PMobj
 }
 class(LRP_long) <- 'PM'
+
+#' @describeIn PMs Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any of years 21-30 (2044-2053)
+#' @family Safety
+#' @export
+nLRP_long <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(24,33))  {
+  if(!inherits(MMSEobj,'MMSE'))
+    stop('This PM method is designed for objects of class `MMSE`')
+  Yrs <- ChkYrs(Yrs, MMSEobj)
+
+  PMobj <- new("PMobj")
+  PMobj@Name <- "nLRP_long: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) n any of years 21-30 (2044-2053))"
+  PMobj@Caption <- "Prob. SB > 0.4SBMSY (2044-2053)"
+
+  PMobj@Ref <- Ref
+  PMobj@Stat <- MMSEobj@SB_SBMSY[, 1,, Yrs[1]:Yrs[2]]
+
+  PMobj@Prob <- calcProb(PMobj@Stat > PMobj@Ref, MMSEobj)
+  Prob  <- array(as.logical(PMobj@Prob), dim=dim(PMobj@Prob))
+  PMobj@Mean <- colSums(Prob)/nrow(Prob)
+  PMobj@MPs <- MMSEobj@MPs[[1]]
+  PMobj
+}
+class(nLRP_long) <- 'PM'
+
+
 
 #' @describeIn PMs Probability of breaching the limit reference point (SSB<0.4SSB_MSY) in any year (2024-2053)
 #' @family Safety
@@ -274,77 +395,6 @@ LRP <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(4,33))  {
 }
 class(LRP) <- 'PM'
 
-
-
-#' @describeIn PMs Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any of the first 10 years (2024-2033)
-#' @family Safety
-#' @export
-nLRP_short <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(4,13))  {
-  if(!inherits(MMSEobj,'MMSE'))
-    stop('This PM method is designed for objects of class `MMSE`')
-  Yrs <- ChkYrs(Yrs, MMSEobj)
-
-  PMobj <- new("PMobj")
-  PMobj@Name <- "LRP_short: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any of the first 10 years (2024-2033)"
-  PMobj@Caption <- "Prob. SB > 0.4SBMSY (2024-2033)"
-
-  PMobj@Ref <- Ref
-  PMobj@Stat <- MMSEobj@SB_SBMSY[, 1,, Yrs[1]:Yrs[2]]
-
-  PMobj@Prob <- calcProb(PMobj@Stat > PMobj@Ref, MMSEobj)
-  Prob  <- array(PMobj@Prob==1, dim=dim(PMobj@Prob))
-  PMobj@Mean <- colSums(Prob)/nrow(Prob)
-  PMobj@MPs <- MMSEobj@MPs[[1]]
-  PMobj
-}
-class(nLRP_short) <- 'PM'
-
-
-#' @describeIn PMs Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any of years 11-30 (2034-2053)
-#' @family Safety
-#' @export
-nLRP_long <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(14,33))  {
-  if(!inherits(MMSEobj,'MMSE'))
-    stop('This PM method is designed for objects of class `MMSE`')
-  Yrs <- ChkYrs(Yrs, MMSEobj)
-
-  PMobj <- new("PMobj")
-  PMobj@Name <- "LRP_short: Probability ofnot  breaching the limit reference point (SSB>0.4SSB_MSY) n any of years 11-30 (2034-2053))"
-  PMobj@Caption <- "Prob. SB > 0.4SBMSY (2034-2053)"
-
-  PMobj@Ref <- Ref
-  PMobj@Stat <- MMSEobj@SB_SBMSY[, 1,, Yrs[1]:Yrs[2]]
-
-  PMobj@Prob <- calcProb(PMobj@Stat > PMobj@Ref, MMSEobj)
-  Prob  <- array(PMobj@Prob==1, dim=dim(PMobj@Prob))
-  PMobj@Mean <- colSums(Prob)/nrow(Prob)
-  PMobj@MPs <- MMSEobj@MPs[[1]]
-  PMobj
-}
-class(nLRP_long) <- 'PM'
-
-#' @describeIn PMs Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any year (2024-2053)
-#' @family Safety
-#' @export
-nLRP <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(4,33))  {
-  if(!inherits(MMSEobj,'MMSE'))
-    stop('This PM method is designed for objects of class `MMSE`')
-  Yrs <- ChkYrs(Yrs, MMSEobj)
-
-  PMobj <- new("PMobj")
-  PMobj@Name <- "LRP_short: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) over all years (2024-2053)"
-  PMobj@Caption <- "Prob. SB > 0.4SBMSY (2024-2053)"
-
-  PMobj@Ref <- Ref
-  PMobj@Stat <- MMSEobj@SB_SBMSY[, 1,, Yrs[1]:Yrs[2]]
-
-  PMobj@Prob <- calcProb(PMobj@Stat > PMobj@Ref, MMSEobj)
-  Prob  <- array(PMobj@Prob==1, dim=dim(PMobj@Prob))
-  PMobj@Mean <- colSums(Prob)/nrow(Prob)
-  PMobj@MPs <- MMSEobj@MPs[[1]]
-  PMobj
-}
-class(nLRP) <- 'PM'
 
 ## Yield ----
 
@@ -371,36 +421,10 @@ TAC1 <- function(MMSEobj=NULL, Ref=1, Yrs=c(4,4)) {
 class(TAC1) <- 'PM'
 
 
-
-#' @describeIn PMs Median catches (t) over years 1-10 (2024-2033)
-#' @family Yield
-#' @export
-AvC10 <- function(MMSEobj=NULL, Ref=NULL, Yrs=c(4,13)) {
-  if(!inherits(MMSEobj,'MMSE'))
-    stop('This PM method is designed for objects of class `MMSE`')
-  Yrs <- ChkYrs(Yrs, MMSEobj)
-
-
-  PMobj <- new("PMobj")
-  PMobj@Name <- 'AvC10: Median catches (t) over years 1-10'
-  PMobj@Caption <- 'Median catch (t) 2024 - 2033'
-
-  Stat_y <- apply(MMSEobj@Catch[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum)
-  PMobj@Stat <- apply(Stat_y, c(1,2), median)
-  PMobj@Ref <- 1
-  PMobj@Prob <- calcProb(PMobj@Stat, MMSEobj) # no probability to calculate
-
-  PMobj@Mean <- calcMedian(PMobj@Prob)
-  PMobj@MPs <- MMSEobj@MPs[[1]]
-  PMobj
-}
-class(AvC10) <- 'PM'
-
-
 #' @describeIn PMs Median TAC (t) over years 1-10 (2024-2033)
 #' @family Yield
 #' @export
-AvTAC10 <- function(MMSEobj=NULL, Ref=NULL, Yrs=c(4,13)) {
+AvTAC_short <- function(MMSEobj=NULL, Ref=NULL, Yrs=c(4,13)) {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
@@ -414,61 +438,59 @@ AvTAC10 <- function(MMSEobj=NULL, Ref=NULL, Yrs=c(4,13)) {
   PMobj@Ref <- 1
   PMobj@Prob <- calcProb(PMobj@Stat, MMSEobj) # no probability to calculate
 
-  PMobj@Mean <- calcMedian(PMobj@Prob)
+  PMobj@Mean <- apply(Stat_y, 2, median)
   PMobj@MPs <- MMSEobj@MPs[[1]]
   PMobj
 }
-class(AvTAC10) <- 'PM'
+class(AvTAC_short) <- 'PM'
 
 
 
-#' @describeIn PMs Median catches (t) over years 11-30 (2034-2053)
+#' @describeIn PMs Median TAC (t) over years 11-20 (2034-2043)
 #' @family Yield
 #' @export
-AvC30 <- function(MMSEobj=NULL, Ref=1, Yrs=c(14,33)) {
+AvTAC_med <- function(MMSEobj=NULL, Ref=1, Yrs=c(14,23)) {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
 
   PMobj <- new("PMobj")
-  PMobj@Name <- 'AvC10: Median catches (t) over years 11-30'
-  PMobj@Caption <- 'Median catch (t) 2034 - 2053'
-
-  Stat_y <- apply(MMSEobj@Catch[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum)
-  PMobj@Stat <- apply(Stat_y, c(1,2), median)
-  PMobj@Ref <- Ref
-  PMobj@Prob <- calcProb(PMobj@Stat, MMSEobj) # no probability to calculate
-
-  PMobj@Mean <- calcMedian(PMobj@Prob)
-  PMobj@MPs <- MMSEobj@MPs[[1]]
-  PMobj
-}
-class(AvC30) <- 'PM'
-
-#' @describeIn PMs Median TAC (t) over years 11-30 (2034-2053)
-#' @family Yield
-#' @export
-AvTAC30 <- function(MMSEobj=NULL, Ref=1, Yrs=c(14,33)) {
-  if(!inherits(MMSEobj,'MMSE'))
-    stop('This PM method is designed for objects of class `MMSE`')
-  Yrs <- ChkYrs(Yrs, MMSEobj)
-
-  PMobj <- new("PMobj")
-  PMobj@Name <- 'AvC10: Median TAC (t) over years 11-30'
-  PMobj@Caption <- 'Median TAC (t) 2034 - 2053'
+  PMobj@Name <- 'AvC10: Median TAC (t) over years 11-20'
+  PMobj@Caption <- 'Median TAC (t) 2034 - 2043'
 
   Stat_y <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum)
   PMobj@Stat <- apply(Stat_y, c(1,2), median)
   PMobj@Ref <- Ref
   PMobj@Prob <- calcProb(PMobj@Stat, MMSEobj) # no probability to calculate
 
-  PMobj@Mean <- calcMedian(PMobj@Prob)
+  PMobj@Mean <- apply(Stat_y, 2, median)
   PMobj@MPs <- MMSEobj@MPs[[1]]
   PMobj
 }
-class(AvTAC30) <- 'PM'
+class(AvTAC_med) <- 'PM'
 
+#' @describeIn PMs Median TAC (t) over years 21-30 (2034-2053)
+#' @family Yield
+#' @export
+AvTAC_long <- function(MMSEobj=NULL, Ref=1, Yrs=c(24,33)) {
+  if(!inherits(MMSEobj,'MMSE'))
+    stop('This PM method is designed for objects of class `MMSE`')
+  Yrs <- ChkYrs(Yrs, MMSEobj)
 
+  PMobj <- new("PMobj")
+  PMobj@Name <- 'AvC10: Median TAC (t) over years 21-30'
+  PMobj@Caption <- 'Median TAC (t) 2044 - 2053'
+
+  Stat_y <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum)
+  PMobj@Stat <- apply(Stat_y, c(1,2), median)
+  PMobj@Ref <- Ref
+  PMobj@Prob <- calcProb(PMobj@Stat, MMSEobj) # no probability to calculate
+
+  PMobj@Mean <- apply(Stat_y, 2, median)
+  PMobj@MPs <- MMSEobj@MPs[[1]]
+  PMobj
+}
+class(AvTAC_long) <- 'PM'
 
 ## Stability ----
 
@@ -554,11 +576,11 @@ class(MaxVarC) <- 'PM'
 #'
 #' @param MMSE An object of class `MMSE`
 #' @param PMs Optional. Names of `PM` functions to use. Otherwise all available PMs will be calculated.
-#'
+#' @param msg Logical. Print messages?
 #' @return A `data.frame`
 #' @export
 #'
-PM_table <- function(MMSE, PMs=NULL) {
+PM_table <- function(MMSE, PMs=NULL, msg=TRUE) {
   if (is.null(PMs))
     PMs <- PM_desc$Name
 
@@ -576,7 +598,7 @@ PM_table <- function(MMSE, PMs=NULL) {
   PM_Values <- list()
   for (i in seq_along(PMs)) {
     nm <- PMs[i]
-    message('Calculating: ', nm)
+    if (msg) message('Calculating: ', nm)
     MPs <- MMSE@MPs[[1]]
     pm <- PMlist[[i]](MMSE)
     val <- pm@Mean

@@ -2,9 +2,6 @@
 % Please edit documentation in R/IR1.R, R/IR2.R
 \name{IR1}
 \alias{IR1}
-\alias{IR1_a}
-\alias{IR1_b}
-\alias{IR1_c}
 \alias{IR2}
 \title{Index Ratio 1}
 \usage{
@@ -14,39 +11,6 @@ IR1(
   Data_Lag = 1,
   Interval = 3,
   tunepar = 1,
-  mc = 0.25,
-  yrs = c(3, 3),
-  ...
-)
-
-IR1_a(
-  x,
-  Data,
-  Data_Lag = 1,
-  Interval = 3,
-  tunepar = 0.791,
-  mc = 0.25,
-  yrs = c(3, 3),
-  ...
-)
-
-IR1_b(
-  x,
-  Data,
-  Data_Lag = 1,
-  Interval = 3,
-  tunepar = 0.929,
-  mc = 0.25,
-  yrs = c(3, 3),
-  ...
-)
-
-IR1_c(
-  x,
-  Data,
-  Data_Lag = 1,
-  Interval = 3,
-  tunepar = 0.964,
   mc = 0.25,
   yrs = c(3, 3),
   ...
@@ -90,12 +54,6 @@ to the mean index over the 3 years before that (y-5):(y-3)
 }
 \section{Functions}{
 \itemize{
-\item \code{IR1_a()}: Tuned to PGK_med = 0.6 across Reference OMs.
-
-\item \code{IR1_b()}: Tuned to PGK_long = 0.6 across Reference OMs.
-
-\item \code{IR1_c()}: Tuned to PGK_30 = 0.6 across Reference OMs.
-
 \item \code{IR2()}: Same as IR1, but mean index values are calculated over last 2 years and the previous 2 years before that
 
 }}

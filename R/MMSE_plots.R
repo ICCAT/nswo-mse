@@ -258,7 +258,7 @@ SB_SBMSY_TS <- function(MMSE, year_range=NULL, mp=NA, fill='GK', ref=1, ptsize=2
   }
 
   if (fill=='LRP') {
-    DF2 <- DF2 %>% group_by(Sim) %>% mutate(LRP_line=ifelse(any(LRP==TRUE), TRUE, FALSE)) %>% ungroup()
+    DF2 <- DF2 %>% group_by(Sim, MP) %>% mutate(LRP_line=ifelse(any(LRP==TRUE), TRUE, FALSE)) %>% ungroup()
     DF2$LRP_line <- factor(DF2$LRP_line, levels=c(TRUE, FALSE), ordered = TRUE)
   }
 
@@ -476,7 +476,7 @@ Catch_TS <- function(MMSE, year_range=NULL, mp=NA, hline=NULL, ncol=3) {
 #' @export
 Var_TS <- function(MMSE, mp=NA, ncol=3) {
   DF <- MakePerformanceDF(MMSE)
-  breaks.vec <- seq(min(DF$Year), max(DF$Year), by = "2 years")
+  breaks.vec <- seq(min(DF$Year), max(DF$Year), by = "3 years")
 
   if (!all(is.na(mp))) {
     DF <- DF %>% filter(MP %in% mp)
@@ -545,11 +545,11 @@ Var_TS <- function(MMSE, mp=NA, ncol=3) {
   text_df$max <- round(text_df$max*100, 2)
   text_df$lab <- paste('Median = ', paste0(text_df$med, "%, Maximum = ", paste0(text_df$max, "%")))
 
+
   p <- ggplot(DF) +
     facet_wrap(~MP, ncol=ncol) +
     expand_limits(y=c(0)) +
-    geom_line(aes(x=Year, color=Sim, y=Change)) +
-    geom_point(size=2, aes(x=Year, color=Sim, y=Change)) +
+    geom_violin(aes(x=Year, y=Change, group=Year)) +
     theme_bw() +
     geom_hline(yintercept = 0, linetype=2) +
     theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
