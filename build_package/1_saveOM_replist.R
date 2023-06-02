@@ -173,7 +173,7 @@ for (i in seq_along(rep.dirs)) {
 
   SizeSelect <- replist$sizeselex %>% dplyr::rename(index=Fleet, year=Yr)
   SizeSelect <- SizeSelect %>% tidyr::pivot_longer(6:ncol(SizeSelect),
-                                                   'Length.Class', values_to="Prob")
+                                                   names_to='Length.Class', values_to="Prob")
   SizeSelect <- left_join(SizeSelect, Fleet_DF, by="index")
   SizeSelect$Length.Class <- as.numeric(SizeSelect$Length.Class)
 
