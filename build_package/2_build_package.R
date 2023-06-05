@@ -613,6 +613,9 @@ colnames(PM_desc)[4] <- trimws(gsub('\\.', ' ', colnames(PM_desc)[4]))
 usethis::use_data(PM_desc, overwrite = TRUE)
 
 
+# ----- Tuning Codes ----
 
+TuneTargets <- read.csv('build_package/Tuning_Target_Codes.csv')
 
+usethis::use_data(TuneTargets, overwrite = TRUE)
 

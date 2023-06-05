@@ -14,7 +14,8 @@
 #'
 #' @return An invisible data.frame
 #' @export
-Scope <- function(MP_name, Tuning_OMs, TuneTargets, Hist_dir='Hist_Objects',
+Scope <- function(MP_name, Tuning_OMs, TuneTargets,
+                  Hist_dir='Hist_Objects',
                   Tune_dir='Tuning_Objects',
                   test_vals=NULL,
                   parallel=TRUE) {
@@ -34,7 +35,7 @@ Scope <- function(MP_name, Tuning_OMs, TuneTargets, Hist_dir='Hist_Objects',
 
   histFiles <- list.files(Hist_dir, pattern='.hist')
   if (any(!Tuning_OMs %in% tools::file_path_sans_ext(histFiles))) {
-    stop("'.hist' files not found for all `Tuning_OMs` in directory: ", file.path(getwd(), Hist_dir))
+    stop("'.hist' files not found for all `Tuning_OMs` in directory: ", file.path( Hist_dir))
   }
 
   # ---- Performance Metrics ----
@@ -50,7 +51,6 @@ Scope <- function(MP_name, Tuning_OMs, TuneTargets, Hist_dir='Hist_Objects',
   MP6 <- function(x,Data,tunepar, ...) MP(x,Data,tunepar=par6, ...)
   MP7 <- function(x,Data,tunepar, ...) MP(x,Data,tunepar=par7, ...)
   MP8 <- function(x,Data,tunepar, ...) MP(x,Data,tunepar=par8, ...)
-
 
   class(MP1) <- class(MP2) <- class(MP3) <- class(MP4) <- class(MP5) <-
     class(MP6) <- class(MP7) <- class(MP8) <-  "MP"
@@ -116,6 +116,14 @@ Scope <- function(MP_name, Tuning_OMs, TuneTargets, Hist_dir='Hist_Objects',
 
   elapse1 <- Sys.time() - st
   MSEtool:::message_info(paste0(round(as.numeric(elapse1,2, units = "mins"), 2), " Minutes"))
+
+  # save scoping MMSE list
+  nm <- paste0(MP_name, '.mmse')
+  if (!dir.exists(file.path(Tune_dir, 'scope_MMSE'))) {
+    dir.create(file.path(Tune_dir, 'scope_MMSE'))
+  }
+  saveRDS(MMSEList, file.path(Tune_dir, 'scope_MMSE', nm))
+
 
   MMSE <- combine_MMSE(MMSEList, 'name')
 
@@ -213,7 +221,7 @@ Tune <- function(MP_name, Tuning_OMs, TuneTarget,
 
   histFiles <- list.files(Hist_dir, pattern='.hist')
   if (any(!Tuning_OMs %in% tools::file_path_sans_ext(histFiles))) {
-    stop("'.hist' files not found for all `Tuning_OMs` in directory: ", file.path(getwd(), Hist_dir))
+    stop("'.hist' files not found for all `Tuning_OMs` in directory: ", file.path(Hist_dir))
   }
 
   # ---- Performance Metric ----
@@ -282,8 +290,16 @@ Tune <- function(MP_name, Tuning_OMs, TuneTarget,
       tune_obj <- readRDS(file.path(Tune_dir, paste0(MP_name, '.tune')))
       tune_obj <- tune_obj %>% filter(Name==PMmetric)
 
-      test_vals <- c(test_vals, tune_obj$test_vals)
-      PM_vals <- c(PM_vals, tune_obj$Value)
+      scopedf <- data.frame(test_vals=test_vals, test_vals2=round(test_vals,2), PM_vals=PM_vals, type='Scope')
+      tunedf <- data.frame(test_vals=tune_obj$test_vals, test_vals2=round(tune_obj$test_vals,2), PM_vals=tune_obj$Value, type='Tune')
+
+      ii <- which(scopedf$test_vals2 %in% tunedf$test_vals2)
+      if (length(ii)>0) {
+        scopedf <-scopedf[-ii,]
+      }
+      temp_df <- bind_rows(scopedf, tunedf)
+      test_vals <- temp_df$test_vals
+      PM_vals <- temp_df$PM_vals
     }
     test_vals <- test_vals[order(PM_vals)]
     PM_vals <- PM_vals[order(PM_vals)]
@@ -347,11 +363,17 @@ Tune <- function(MP_name, Tuning_OMs, TuneTarget,
     PM_results$i <- i
     PM_results$elapse <- elapse1
     PM_results$MP <- MP_name
-
+    PM_results$Target <- Target
+    PM_results$PMmetric <- PMmetric
     results_list[[i]] <- PM_results
 
     # write out results_list
     results_df <- do.call('rbind', results_list)
+
+    if (file.exists(file.path(Tune_dir, paste0(MP_name, '.tune')))) {
+      load_results <- readRDS(file.path(Tune_dir, paste0(MP_name, '.tune')))
+      results_df <- bind_rows(results_df, load_results)
+    }
     saveRDS(results_df, file.path(Tune_dir, paste0(MP_name, '.tune')))
 
     # Tuning PM
@@ -412,6 +434,10 @@ Tune <- function(MP_name, Tuning_OMs, TuneTarget,
 
     if (is.na(dif)) {
       break()
+      # which.min(abs(tune_vals-Target))
+
+
+
     }
 
     MSEtool:::message_info(paste0('Tuning Parameters: ', paste(round(vals_array[i,],rnd), collapse=" ")))
@@ -432,73 +458,113 @@ Tune <- function(MP_name, Tuning_OMs, TuneTarget,
 
 }
 
+#' Plot the results of tuning for an MP
+#'
+#' @param MP Name of the MP
+#' @param PM name of the performance metric
+#' @param Target target for the PM
+#' @param Tune_dir Directory where scoping results are saved
+#' @param plot Logical. Show the plot?
+#'
+#' @return the tuning parameter
+#' @export
+Plot_Tune <- function(MP, PM='PGK_6_10', Target=0.6, Tune_dir='Tuning_Objects', plot=TRUE) {
 
+  fls <- list.files(Tune_dir, pattern='.tune')
 
+  if (!paste0(MP, '.tune') %in% fls) {
+    stop(paste0(MP, '.tune'), ' not found in ', Tune_dir )
+  } else {
+    fl <- fls[fls==paste0(MP, '.tune')]
+  }
 
-write_rmd <- function(i, df) {
-  tune_info <- paste('Tuned to', df$metric[i], '=', df$target[i], 'across Reference OMs.')
-  # maxchange <- df$mc[i]
-  # if (!is.na(maxchange)) {
-  #   maxchangeinfo <- paste0('With a maximum absolute change of ', maxchange*100, '% in TAC between management cycles.')
-  # } else {
-  #   maxchangeinfo <- 'With no constraint on maximum absolute change in TAC between management cycles.'
-  # }
+  df <- readRDS(file.path(Tune_dir, fl))
+  df <- df %>% filter(Name==PM) %>% arrange(test_vals) %>%
+    distinct(Value, test_vals)
 
-  if (df$Code[i] == 'NA') return(NULL)
+  ind <- which.min(abs(df$Value - Target))
+  if (df$Value[ind] > Target) {
+    tt <- df %>% filter(Value<Target)
+    ind2 <- which.min(abs(tt$Value - Target))
+    val2 <- tt$test_vals[ind2]
+    ind2 <- which(df$test_vals==val2)
+  }
+  if (df$Value[ind] < Target) {
+    tt <- df %>% filter(Value>Target)
+    ind2 <- which.min(abs(tt$Value - Target))
+    val2 <- tt$test_vals[ind2]
+    ind2 <- which(df$test_vals==val2)
+  }
 
-  MP <- strsplit(df$Name,'_')[[1]][1]
+  y <- df$test_vals[c(ind, ind2)]
+  x <- df$Value[c(ind, ind2)]
 
-  oxygen_text <- ''
-  oxygen_text[1] <-  paste("#' @describeIn", MP, tune_info)
-  oxygen_text[2] <-  paste("#' @export")
-  MP_text <- paste(df$Name[i], '<-', MP)
+  proposed <- try(suppressWarnings(approx(x, y, xout=Target)$y[[1]]), silent=TRUE)
 
-  arg_text <- ''
-  arg_text[1] <- paste0('formals(', df$Name[i], ')$tunepar <- ', df$tunepar[i])
-  # arg_text[2] <- paste0('formals(', df$Name[i], ')$mc <- ', df$mc[i])
+  if (class(proposed)=='try-error') {
+    p <- ggplot(df, aes(x=test_vals , y=Value)) +
+      geom_point() +
+      geom_line() +
+      expand_limits(y=c(0,1)) +
+      theme_bw() +
+      geom_hline(yintercept=Target, linetype=2) +
+      labs(x='Tuning Parameter', y=PM) +
+      expand_limits(y=c(0,1))
+    print(p)
+    return(NA)
+  }
 
-  class_text <- paste0('class(', df$Name[i], ') <- "MP"')
+  pdf <- bind_rows(df[c(ind, ind2),], data.frame(test_vals=proposed, Value=Target))
 
-  c(oxygen_text, MP_text, arg_text, class_text, '\n')
+  if (plot) {
+    p <- ggplot(pdf, aes(x=test_vals , y=Value)) +
+      geom_point() +
+      geom_line() +
+      expand_limits(y=c(0,1)) +
+      theme_bw() +
+      geom_hline(yintercept=Target, linetype=2) +
+      labs(x='Tuning Parameter', y=PM) +
+      expand_limits(y=c(0,1))
+    print(p)
+  }
+
+  proposed
 }
 
 
 
-get_MP_info <- function(fl, tune.dir) {
-  obj <- readRDS(file.path(tune.dir, fl))
-  # TuneTarget <- read.csv(file.path('dev/MP_tuning', 'Tuning_Target_Codes.csv'))
+#' Document an MP
+#'
+#' @param MP_name Name of an `MP` function
+#' @param TuneTargets A data.frame of tuning metrics and targets
+#' @param Tune_dir Directory where scoping results are saved
+#'
+#' @return Nothing
+#' @export
+Document_MP <- function(MP_name, TuneTargets=NULL,  Tune_dir='Tuning_Objects') {
 
-  tt <- TuneTarget %>% filter(Target%in%obj$tunetarg,
-                              Metric %in% obj$tuneMetric
-                            )
-  Code <- tt$Code
-  if (length(Code)<1) Code <- 'NA'
-
-  MP_family <- (obj$MP_name %>% strsplit(., '_'))[[1]][1]
-  data.frame(Code=Code,
-             Name=paste(obj$MP_name, Code, sep="_"),
-             Family=MP_family,
-             target=obj$tunetarg,
-             metric=obj$tuneMetric,
-             tunepar=obj$tune_val,
-             file=fl)
-}
-
-
-
-document_MP <- function(MP, tune.dir) {
-  MP.tune.files <- list.files(tune.dir, pattern=MP, full.names = FALSE)
-
-  if(length(MP.tune.files)<1)
-    stop('No tuning objects found in ', tune.dir, ' for MP: ', MP)
-
-  MP.file <- paste0('R/', MP, '.R')
+  MP.file <- paste0('R/', MP_name, '.R')
   if(!file.exists(MP.file))
     stop(MP.file, ' does not exist')
 
-  df <- lapply(MP.tune.files, get_MP_info, tune.dir=tune.dir) %>% do.call('rbind', .) %>% arrange(Code)
+  MP_family <- (MP_name %>% strsplit(., '_'))[[1]][1]
+
+  out <- list()
+  for (i in 1:nrow(TuneTargets)) {
+    tune_val <- Plot_Tune(MP_name, PM=TuneTargets$Metric[i], Target=TuneTargets$Target[i], plot=FALSE)
+    out[[i]] <- data.frame(Code= TuneTargets$Code[i],
+                           Name=paste(MP_name, TuneTargets$Code[i], sep="_"),
+                           Family=MP_family,
+                           target=TuneTargets$Target[i],
+                           metric=TuneTargets$Metric[i],
+                           tunepar=tune_val)
+  }
+
+
+  df <- do.call('rbind', out) %>% filter(is.na(tunepar)==FALSE)
+
   n <- nrow(df)
-  MSEtool:::message(n, 'tuned CMPs found for', MP)
+  MSEtool:::message(n, 'tuned CMPs found for', MP_name)
   MSEtool:::message_info('Writing tuned CMPs to', MP.file)
 
   txt <- readLines(MP.file)
@@ -528,3 +594,30 @@ document_MP <- function(MP, tune.dir) {
   }
 }
 
+
+write_rmd <- function(i, df) {
+  tune_info <- paste('Tuned to', df$metric[i], '=', df$target[i], 'across Reference OMs.')
+  # maxchange <- df$mc[i]
+  # if (!is.na(maxchange)) {
+  #   maxchangeinfo <- paste0('With a maximum absolute change of ', maxchange*100, '% in TAC between management cycles.')
+  # } else {
+  #   maxchangeinfo <- 'With no constraint on maximum absolute change in TAC between management cycles.'
+  # }
+
+  if (df$Code[i] == 'NA') return(NULL)
+
+  MP <- strsplit(df$Name,'_')[[1]][1]
+
+  oxygen_text <- ''
+  oxygen_text[1] <-  paste("#' @describeIn", MP, tune_info)
+  oxygen_text[2] <-  paste("#' @export")
+  MP_text <- paste(df$Name[i], '<-', MP)
+
+  arg_text <- ''
+  arg_text[1] <- paste0('formals(', df$Name[i], ')$tunepar <- ', df$tunepar[i])
+  # arg_text[2] <- paste0('formals(', df$Name[i], ')$mc <- ', df$mc[i])
+
+  class_text <- paste0('class(', df$Name[i], ') <- "MP"')
+
+  c(oxygen_text, MP_text, arg_text, class_text, '\n')
+}

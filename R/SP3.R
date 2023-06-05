@@ -43,3 +43,33 @@ SP3 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25, ...) {
   Rec
 }
 
+
+# ---- Tuned CMPs ----
+#' @describeIn SP3 Tuned to PGK_6_10 = 0.6 across Reference OMs.
+#' @export
+SP3_a <- SP3
+formals(SP3_a)$tunepar <- 1.00732609275053
+class(SP3_a) <- "MP"
+
+
+#' @describeIn SP3 Tuned to PGK_med = 0.6 across Reference OMs.
+#' @export
+SP3_b <- SP3
+formals(SP3_b)$tunepar <- 1.07142857142857
+class(SP3_b) <- "MP"
+
+
+#' @describeIn SP3 Tuned to PGK_6_10 = 0.51 across Reference OMs.
+#' @export
+SP3_e <- SP3
+formals(SP3_e)$tunepar <- 1.05251409774436
+class(SP3_e) <- "MP"
+
+
+#' @describeIn SP3 Tuned to LRP = 0.05 across Reference OMs.
+#' @export
+SP3_h <- SP3
+formals(SP3_h)$tunepar <- 1.05535714285714
+class(SP3_h) <- "MP"
+
+
