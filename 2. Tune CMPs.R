@@ -21,7 +21,7 @@ TuneTargets
 # 1. Source the MP functions
 # 2. Loop over MPs and conduct scoping
 
-Scope_MPs <- c('IT1')
+Scope_MPs <- c('SP2un')
 
 for (i in seq_along(Scope_MPs)) {
   MP_name <- Scope_MPs[i]
