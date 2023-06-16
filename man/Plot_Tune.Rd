@@ -4,27 +4,17 @@
 \alias{Plot_Tune}
 \title{Plot the results of tuning for an MP}
 \usage{
-Plot_Tune(
-  MP,
-  PM = "PGK_6_10",
-  Target = 0.6,
-  Tune_dir = "Tuning_Objects",
-  plot = TRUE
-)
+Plot_Tune(MP_name, Tune_dir = "Tuning_Objects", plot = TRUE)
 }
 \arguments{
-\item{MP}{Name of the MP}
-
-\item{PM}{name of the performance metric}
-
-\item{Target}{target for the PM}
+\item{MP_name}{Name of the MP}
 
 \item{Tune_dir}{Directory where scoping results are saved}
 
 \item{plot}{Logical. Show the plot?}
 }
 \value{
-the tuning parameter
+list ggplot object and data.frame
 }
 \description{
 Plot the results of tuning for an MP

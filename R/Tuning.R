@@ -458,77 +458,109 @@ Tune <- function(MP_name, Tuning_OMs, TuneTarget,
 
 }
 
+
+get_tune_val <- function(df, PM='PGK_6_10', Target=0.6) {
+  df <- df %>% filter(Name==PM) %>% arrange(test_vals) %>%
+    distinct(Value, test_vals, MP)
+
+  MP <- unique(df$MP)
+
+  ind <- which.min(abs(df$Value - Target))
+
+  if (df$Value[ind] == Target) {
+    proposed <- df$test_vals[ind]
+    ind2 <- ind+1
+
+
+  } else {
+    if (df$Value[ind] > Target) {
+      tt <- df %>% filter(Value<Target)
+      ind2 <- which.min(abs(tt$Value - Target))
+      val2 <- tt$test_vals[ind2]
+      ind2 <- which(df$test_vals==val2)
+    }
+    if (df$Value[ind] < Target) {
+      tt <- df %>% filter(Value>Target)
+      ind2 <- which.min(abs(tt$Value - Target))
+      val2 <- tt$test_vals[ind2]
+      ind2 <- which(df$test_vals==val2)
+    }
+
+    y <- df$test_vals[c(ind, ind2)]
+    x <- df$Value[c(ind, ind2)]
+    proposed <- try(suppressWarnings(approx(x, y, xout=Target)$y[[1]]), silent=TRUE)
+
+  }
+
+  if (class(proposed)!='try-error') {
+    pdf <- bind_rows(df[c(ind, ind2),], data.frame(test_vals=proposed, Value=Target))
+  } else {
+    pdf <- df
+  }
+
+  pdf$PM <- PM
+  pdf$Target <- Target
+  pdf$MP <- MP
+  pdf
+}
+
 #' Plot the results of tuning for an MP
 #'
-#' @param MP Name of the MP
-#' @param PM name of the performance metric
-#' @param Target target for the PM
+#' @param MP_name Name of the MP
 #' @param Tune_dir Directory where scoping results are saved
 #' @param plot Logical. Show the plot?
 #'
-#' @return the tuning parameter
+#' @return list ggplot object and data.frame
 #' @export
-Plot_Tune <- function(MP, PM='PGK_6_10', Target=0.6, Tune_dir='Tuning_Objects', plot=TRUE) {
-
+Plot_Tune <- function(MP_name, Tune_dir='Tuning_Objects', plot=TRUE) {
   fls <- list.files(Tune_dir, pattern='.tune')
+  nm <- paste0(MP_name, '.tune')
+  if (!nm %in% fls)
+    stop(nm, ' not found in ', Tune_dir)
+  df <- readRDS(file.path(Tune_dir, nm))
+  MP_family <- (MP_name %>% strsplit(., '_'))[[1]][1]
 
-  if (!paste0(MP, '.tune') %in% fls) {
-    stop(paste0(MP, '.tune'), ' not found in ', Tune_dir )
-  } else {
-    fl <- fls[fls==paste0(MP, '.tune')]
+  MP.file <- paste0('R/', MP_name, '.R')
+  if(!file.exists(MP.file))
+    stop(MP.file, ' does not exist')
+
+  # loop over TuneTargets
+  df_out <- list()
+  df_out2 <- list()
+  for (j in 1:nrow(TuneTargets)) {
+    df_out[[j]] <- get_tune_val(df, PM=TuneTargets$Metric[j], Target=TuneTargets$Target[j])
+    tuned <- df_out[[j]] %>% filter(round(Value,2)==Target)
+    if (nrow(tuned)>0) {
+      ind <- which.min(abs(tuned$Value-tuned$Target))
+      tune_val <- tuned$test_vals[ind]
+
+      df_out2[[j]] <- data.frame(Code= TuneTargets$Code[j],
+                                 Name=paste(MP_name, TuneTargets$Code[j], sep="_"),
+                                 Family=MP_family,
+                                 target=TuneTargets$Target[j],
+                                 metric=TuneTargets$Metric[j],
+                                 tunepar=tune_val)
+    }
+
   }
 
-  df <- readRDS(file.path(Tune_dir, fl))
-  df <- df %>% filter(Name==PM) %>% arrange(test_vals) %>%
-    distinct(Value, test_vals)
+  pdf <- do.call('rbind', df_out)
+  df <- do.call('rbind', df_out2)
 
-  ind <- which.min(abs(df$Value - Target))
-  if (df$Value[ind] > Target) {
-    tt <- df %>% filter(Value<Target)
-    ind2 <- which.min(abs(tt$Value - Target))
-    val2 <- tt$test_vals[ind2]
-    ind2 <- which(df$test_vals==val2)
-  }
-  if (df$Value[ind] < Target) {
-    tt <- df %>% filter(Value>Target)
-    ind2 <- which.min(abs(tt$Value - Target))
-    val2 <- tt$test_vals[ind2]
-    ind2 <- which(df$test_vals==val2)
-  }
-
-  y <- df$test_vals[c(ind, ind2)]
-  x <- df$Value[c(ind, ind2)]
-
-  proposed <- try(suppressWarnings(approx(x, y, xout=Target)$y[[1]]), silent=TRUE)
-
-  if (class(proposed)=='try-error') {
-    p <- ggplot(df, aes(x=test_vals , y=Value)) +
-      geom_point() +
-      geom_line() +
-      expand_limits(y=c(0,1)) +
-      theme_bw() +
-      geom_hline(yintercept=Target, linetype=2) +
-      labs(x='Tuning Parameter', y=PM) +
-      expand_limits(y=c(0,1))
-    print(p)
-    return(NA)
-  }
-
-  pdf <- bind_rows(df[c(ind, ind2),], data.frame(test_vals=proposed, Value=Target))
+  p <- ggplot(pdf, aes(x=test_vals, y=Value)) +
+    facet_grid(~PM, scales='free') +
+    geom_line() +
+    expand_limits(y=c(0,1)) +
+    geom_hline(aes(yintercept=Target), linetype=2) +
+    theme_bw()
 
   if (plot) {
-    p <- ggplot(pdf, aes(x=test_vals , y=Value)) +
-      geom_point() +
-      geom_line() +
-      expand_limits(y=c(0,1)) +
-      theme_bw() +
-      geom_hline(yintercept=Target, linetype=2) +
-      labs(x='Tuning Parameter', y=PM) +
-      expand_limits(y=c(0,1))
     print(p)
   }
-
-  proposed
+  out <- list()
+  out$p <- p
+  out$df <- df
+  out
 }
 
 
@@ -536,35 +568,16 @@ Plot_Tune <- function(MP, PM='PGK_6_10', Target=0.6, Tune_dir='Tuning_Objects', 
 #' Document an MP
 #'
 #' @param MP_name Name of an `MP` function
-#' @param TuneTargets A data.frame of tuning metrics and targets
 #' @param Tune_dir Directory where scoping results are saved
-#'
+#' @param plot logical. Show the plot?
 #' @return Nothing
 #' @export
-Document_MP <- function(MP_name, TuneTargets=NULL,  Tune_dir='Tuning_Objects') {
-
-  MP.file <- paste0('R/', MP_name, '.R')
-  if(!file.exists(MP.file))
-    stop(MP.file, ' does not exist')
-
-  MP_family <- (MP_name %>% strsplit(., '_'))[[1]][1]
-
-  out <- list()
-  for (i in 1:nrow(TuneTargets)) {
-    tune_val <- Plot_Tune(MP_name, PM=TuneTargets$Metric[i], Target=TuneTargets$Target[i], plot=FALSE)
-    out[[i]] <- data.frame(Code= TuneTargets$Code[i],
-                           Name=paste(MP_name, TuneTargets$Code[i], sep="_"),
-                           Family=MP_family,
-                           target=TuneTargets$Target[i],
-                           metric=TuneTargets$Metric[i],
-                           tunepar=tune_val)
-  }
-
-
-  df <- do.call('rbind', out) %>% filter(is.na(tunepar)==FALSE)
-
-  n <- nrow(df)
+Document_MP <- function(MP_name, Tune_dir='Tuning_Objects', plot=TRUE) {
+  tdf <- Plot_Tune(MP_name, plot=plot)
+  df_mp <- tdf$df
+  n <- nrow(df_mp)
   MSEtool:::message(n, 'tuned CMPs found for', MP_name)
+  MP.file <- paste0('R/', MP_name, '.R')
   MSEtool:::message_info('Writing tuned CMPs to', MP.file)
 
   txt <- readLines(MP.file)
@@ -587,11 +600,12 @@ Document_MP <- function(MP_name, TuneTargets=NULL,  Tune_dir='Tuning_Objects') {
   txt <- readLines(MP.file)
   begin.tune <- which(grepl('# ---- Tuned CMPs ----', txt))
 
-  txt.list <- lapply(1:nrow(df), write_rmd, df=df)
+  txt.list <- lapply(1:nrow(df_mp), write_rmd, df=df_mp)
 
   for (i in seq_along(txt.list)) {
     cat(txt.list[[i]],file=MP.file, sep="\n", append = TRUE)
   }
+
 }
 
 

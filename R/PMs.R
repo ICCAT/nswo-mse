@@ -381,7 +381,7 @@ LRP <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(4,33))  {
   Yrs <- ChkYrs(Yrs, MMSEobj)
 
   PMobj <- new("PMobj")
-  PMobj@Name <- "LRP_short: Probability of breaching the limit reference point (SSB<0.4SSB_MSY) over all years (2024-2053)"
+  PMobj@Name <- "LRP: Probability of breaching the limit reference point (SSB<0.4SSB_MSY) over all years (2024-2053)"
   PMobj@Caption <- "Prob. SB < 0.4SBMSY (2024-2053)"
 
   PMobj@Ref <- Ref
@@ -394,6 +394,29 @@ LRP <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(4,33))  {
   PMobj
 }
 class(LRP) <- 'PM'
+
+#' @describeIn PMs Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any year (2024-2053)
+#' @family Safety
+#' @export
+nLRP <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(4,33))  {
+  if(!inherits(MMSEobj,'MMSE'))
+    stop('This PM method is designed for objects of class `MMSE`')
+  Yrs <- ChkYrs(Yrs, MMSEobj)
+
+  PMobj <- new("PMobj")
+  PMobj@Name <- "LRP: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) over all years (2024-2053)"
+  PMobj@Caption <- "Prob. SB > 0.4SBMSY (2024-2053)"
+
+  PMobj@Ref <- Ref
+  PMobj@Stat <- MMSEobj@SB_SBMSY[, 1,, Yrs[1]:Yrs[2]]
+
+  PMobj@Prob <- calcProb(PMobj@Stat < PMobj@Ref, MMSEobj)
+  Prob  <- array(as.logical(PMobj@Prob), dim=dim(PMobj@Prob))
+  PMobj@Mean <- 1-colSums(Prob)/nrow(Prob)
+  PMobj@MPs <- MMSEobj@MPs[[1]]
+  PMobj
+}
+class(nLRP) <- 'PM'
 
 
 ## Yield ----
@@ -434,6 +457,7 @@ AvTAC_short <- function(MMSEobj=NULL, Ref=NULL, Yrs=c(4,13)) {
   PMobj@Caption <- 'Median TAC (t) 2024 - 2033'
 
   Stat_y <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum)
+
   PMobj@Stat <- apply(Stat_y, c(1,2), median)
   PMobj@Ref <- 1
   PMobj@Prob <- calcProb(PMobj@Stat, MMSEobj) # no probability to calculate
@@ -444,6 +468,33 @@ AvTAC_short <- function(MMSEobj=NULL, Ref=NULL, Yrs=c(4,13)) {
 }
 class(AvTAC_short) <- 'PM'
 
+#' @describeIn PMs Median TAC relative to MSY over years 1-10 (2024-2033)
+#' @family Yield
+#' @export
+rAvTAC_short <- function(MMSEobj=NULL, Ref=NULL, Yrs=c(4,13)) {
+  if(!inherits(MMSEobj,'MMSE'))
+    stop('This PM method is designed for objects of class `MMSE`')
+  Yrs <- ChkYrs(Yrs, MMSEobj)
+
+  PMobj <- new("PMobj")
+  PMobj@Name <- 'AvC10: Median relative TAC over years 1-10'
+  PMobj@Caption <- 'Median relative TAC 2024 - 2033'
+
+  Stat_y <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum)
+
+  MSYs <- apply(MMSEobj@RefPoint$ByYear$MSY, c(1,3,4), sum)
+  nyears <- MMSEobj@nyears
+  MSYs <- MSYs[,,nyears+Yrs[1]:Yrs[2]]
+
+  PMobj@Stat <- apply(Stat_y/MSYs, c(1,2), median)
+  PMobj@Ref <- 1
+  PMobj@Prob <- calcProb(PMobj@Stat, MMSEobj) # no probability to calculate
+
+  PMobj@Mean <- apply(Stat_y/MSYs, 2, median)
+  PMobj@MPs <- MMSEobj@MPs[[1]]
+  PMobj
+}
+class(rAvTAC_short) <- 'PM'
 
 
 #' @describeIn PMs Median TAC (t) over years 11-20 (2034-2043)
@@ -469,6 +520,34 @@ AvTAC_med <- function(MMSEobj=NULL, Ref=1, Yrs=c(14,23)) {
 }
 class(AvTAC_med) <- 'PM'
 
+#' @describeIn PMs Median TAC relative to MSY over years 11-20 (2034-2043)
+#' @family Yield
+#' @export
+rAvTAC_med <- function(MMSEobj=NULL, Ref=1, Yrs=c(14,23)) {
+  if(!inherits(MMSEobj,'MMSE'))
+    stop('This PM method is designed for objects of class `MMSE`')
+  Yrs <- ChkYrs(Yrs, MMSEobj)
+
+  PMobj <- new("PMobj")
+  PMobj@Name <- 'AvC10: Median relative TAC over years 11-20'
+  PMobj@Caption <- 'Median relative TAC 2034 - 2043'
+
+  Stat_y <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum)
+
+  MSYs <- apply(MMSEobj@RefPoint$ByYear$MSY, c(1,3,4), sum)
+  nyears <- MMSEobj@nyears
+  MSYs <- MSYs[,,nyears+Yrs[1]:Yrs[2]]
+
+  PMobj@Stat <- apply(Stat_y/MSYs, c(1,2), median)
+  PMobj@Ref <- Ref
+  PMobj@Prob <- calcProb(PMobj@Stat, MMSEobj) # no probability to calculate
+
+  PMobj@Mean <- apply(Stat_y/MSYs, 2, median)
+  PMobj@MPs <- MMSEobj@MPs[[1]]
+  PMobj
+}
+class(rAvTAC_med) <- 'PM'
+
 #' @describeIn PMs Median TAC (t) over years 21-30 (2034-2053)
 #' @family Yield
 #' @export
@@ -491,6 +570,34 @@ AvTAC_long <- function(MMSEobj=NULL, Ref=1, Yrs=c(24,33)) {
   PMobj
 }
 class(AvTAC_long) <- 'PM'
+
+#' @describeIn PMs Median TAC relative to MSY over years 21-30 (2034-2053)
+#' @family Yield
+#' @export
+rAvTAC_long <- function(MMSEobj=NULL, Ref=1, Yrs=c(24,33)) {
+  if(!inherits(MMSEobj,'MMSE'))
+    stop('This PM method is designed for objects of class `MMSE`')
+  Yrs <- ChkYrs(Yrs, MMSEobj)
+
+  PMobj <- new("PMobj")
+  PMobj@Name <- 'AvC10: Median relative TAC over years 21-30'
+  PMobj@Caption <- 'Median relative TAC 2044 - 2053'
+
+  Stat_y <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum)
+
+  MSYs <- apply(MMSEobj@RefPoint$ByYear$MSY, c(1,3,4), sum)
+  nyears <- MMSEobj@nyears
+  MSYs <- MSYs[,,nyears+Yrs[1]:Yrs[2]]
+
+  PMobj@Stat <- apply(Stat_y/MSYs, c(1,2), median)
+  PMobj@Ref <- Ref
+  PMobj@Prob <- calcProb(PMobj@Stat, MMSEobj) # no probability to calculate
+
+  PMobj@Mean <- apply(Stat_y/MSYs, 2, median)
+  PMobj@MPs <- MMSEobj@MPs[[1]]
+  PMobj
+}
+class(rAvTAC_long) <- 'PM'
 
 ## Stability ----
 
@@ -582,7 +689,7 @@ class(MaxVarC) <- 'PM'
 #'
 PM_table <- function(MMSE, PMs=NULL, msg=TRUE) {
   if (is.null(PMs))
-    PMs <- PM_desc$Name
+    PMs <- avail('PM', 'SWOMSE')
 
   PMlist <- list()
   for (i in seq_along(PMs)) {
@@ -594,11 +701,6 @@ PM_table <- function(MMSE, PMs=NULL, msg=TRUE) {
 
     PMlist[[i]] <- fun
   }
-
-
-  PMlist[[2]]
-  pm <- PMlist[[2]](MMSE)
-  pm
 
 
   PM_Values <- list()
@@ -629,22 +731,75 @@ PM_table <- function(MMSE, PMs=NULL, msg=TRUE) {
 
 #' Create a Trade-Off Plot
 #'
-#' @param PM_vals A data.frame generated by `PM_table`
+#' @param MMSE An object of class `MMSE`
 #' @param PMs Character length 2. Names of `PM` functions to plot
 #' @param xlim Optional. Numeric length 1. Minimum value for x
 #' @param ylim Optional. Numeric length 1. Minimum value for y
+#' @param vline Optional. Numeric vector for vertical lines
+#' @param hline Optional. Numeric vector for horizontal lines
+#' @param quants Numeric vector length 2 of quantiles for error bars. Only shown
+#' for TAC PMs. Ignored if NULL
+#' @param inc.leg logical. Include the legend?
 #'
 #' @return A `ggplot` object
 #' @export
-TradeOff <- function(PM_vals, PMs, xlim=NULL, ylim=NULL, vline=NULL,
-                     hline=NULL) {
+TradeOff <- function(MMSE, PMs, xlim=NULL, ylim=NULL, vline=NULL,
+                     hline=NULL, quants=c(0.1, 0.9), inc.leg=TRUE) {
 
-  df <- PM_vals %>% select(MP, Name, Value) %>%  filter(Name %in% PMs) %>%
-    tidyr::pivot_wider(., names_from=Name, values_from = Value)
+  # Calculate PMs
+  if (length(PMs)!=2)
+    stop('PMs must be length 2 with PM functions')
 
-  captions <- paste0(PM_vals$Name[match(PMs, PM_vals$Name)], ': ', PM_vals$caption[match(PMs, PM_vals$Name)])
+  PMlist <- list()
+  for (i in seq_along(PMs)) {
+    fun <- get(PMs[i])
+    PMlist[[i]] <- fun(MMSE)
+  }
 
-  p <- ggplot(df)
+  # Make data.frame
+  Captions <- list()
+  PM_val <- list()
+  for (i in seq_along(PMs)) {
+    Captions[[i]] <- paste0(PMs[i], ": ", PMlist[[i]]@Caption)
+    PM_val[[i]] <- PMlist[[i]]@Mean
+  }
+
+  df <- data.frame(MP=MMSE@MPs[[1]], PM_val[[1]], PM_val[[2]])
+  colnames(df)[2:3] <- c('x', 'y')
+
+
+  # calculate quantiles
+  if (!is.null(quants)) {
+    quants_list <- list()
+
+    for (i in seq_along(PMs)) {
+      if (grepl('TAC', PMlist[[i]]@Name)) {
+        quants_list[[i]] <- t(apply(PMlist[[i]]@Stat, 2, quantile, quants))
+
+      } else {
+        quants_list[[i]] <- matrix(NA, nrow=MMSE@nMPs, ncol=2)
+        colnames(quants_list[[i]]) <-  paste0(quants*100, '%')
+      }
+    }
+
+    quant_df <- data.frame(MP=MMSE@MPs[[1]], quants_list[[1]], quants_list[[2]])
+    colnames(quant_df)[2:ncol(quant_df)] <- c(paste0('x', c('min', 'max')),
+                                              paste0('y', c('min', 'max')))
+
+    pdf <- left_join(df, quant_df, by='MP')
+  } else {
+    pdf <- df
+  }
+
+
+  # rename MPs
+  mat <- matrix(unlist(pdf$MP %>% strsplit(., '_')), nrow=MMSE@nMPs, byrow=T)
+  pdf$MP <- mat[,1]
+  pdf$Code <- mat[,2]
+  pdf <- left_join(pdf, TuneTargets, by='Code')
+  pdf$Target <- factor(pdf$Target)
+
+  p <- ggplot(pdf)
 
   if (!is.null(vline))
     p <- p + geom_vline(xintercept = vline, linetype=2, color='darkgray')
@@ -661,13 +816,21 @@ TradeOff <- function(PM_vals, PMs, xlim=NULL, ylim=NULL, vline=NULL,
     p <- p +geom_polygon(data=ylimdata, aes(x=x, y=y), fill='red', alpha=0.1)
   }
   p <- p +
-    geom_point(aes(x=.data[[PMs[1]]], y=.data[[PMs[2]]], color=MP), size=2) +
+    geom_point(aes(x=x, y=y, color=MP, shape=Target), size=2) +
     expand_limits(x=c(0,1),
                   y=c(0,1)) +
-    ggrepel::geom_text_repel(aes(x=.data[[PMs[1]]], y=.data[[PMs[2]]], label=MP), show.legend = FALSE) +
+    ggrepel::geom_text_repel(aes(x=x, y=y, label=MP), show.legend = FALSE) +
     theme_bw() +
-    labs(x=captions[1], y=captions[2])
+    labs(x=Captions[[1]], y=Captions[[2]],
+         shape=unique(pdf$Metric))
+  p <-  p + guides(color='none')
 
-  p + guides(color='none')
+  if (!inc.leg | length(unique(pdf$Code))<2)
+    p <-  p + guides(shape='none')
+
+  # add quantiles
+  if (!is.null(quants))
+    p <- p + geom_errorbar(aes(x=x, ymin=ymin, ymax=ymax, color=MP), alpha=0.5)
+  p
 }
 

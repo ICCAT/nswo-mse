@@ -4,14 +4,14 @@
 \alias{Document_MP}
 \title{Document an MP}
 \usage{
-Document_MP(MP_name, TuneTargets, Tune_dir = "Tuning_Objects")
+Document_MP(MP_name, Tune_dir = "Tuning_Objects", plot = TRUE)
 }
 \arguments{
 \item{MP_name}{Name of an `MP` function}
 
-\item{TuneTargets}{A data.frame of tuning metrics and targets}
-
 \item{Tune_dir}{Directory where scoping results are saved}
+
+\item{plot}{logical. Show the plot?}
 }
 \value{
 Nothing

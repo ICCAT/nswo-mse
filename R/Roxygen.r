@@ -69,11 +69,3 @@ NULL
 NULL
 
 
-#' @rdname SWO-OMs 
-'MOM_001'
-#' @rdname SWO-OMs 
-'MOM_002'
-#' @rdname SWO-OMs 
-'MOM_003'
-#' @rdname SWO-OMs 
-'MOM_002'

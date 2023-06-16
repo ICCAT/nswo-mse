@@ -21,7 +21,7 @@ TuneTargets
 # 1. Source the MP functions
 # 2. Loop over MPs and conduct scoping
 
-Scope_MPs <- c('SP2un')
+Scope_MPs <- c('CEcr', 'CEcr2', 'CEcr3', 'CEcr4', 'CEcr5')
 
 for (i in seq_along(Scope_MPs)) {
   MP_name <- Scope_MPs[i]
@@ -32,13 +32,12 @@ for (i in seq_along(Scope_MPs)) {
 
 # ---- Tune an MP to a specific PM Target ----
 
-# a PGK_6_10 = 0.6
+Tune_MPs <-c('CEcr', 'CEcr2', 'CEcr3', 'CEcr4', 'CEcr5')
 
-Tune_MPs <- c('SP1')
 TuneTarget <- TuneTargets %>% filter(Code=='a')
 
 for (i in seq_along(Tune_MPs)) {
-  MP_name <- Tune_MPs[i]
+  MP_name <- Scope_MPs[i]
   Tune(MP_name, Tuning_OMs, TuneTarget)
 }
 
@@ -48,15 +47,7 @@ for (i in seq_along(Tune_MPs)) {
 
 
 
-# d LRP = 0.15
 
-Tune_MPs <- c('CE', 'CE_un', 'IR1', 'IR2', 'SP1', 'SP2', 'SP3')
-TuneTarget <- TuneTargets %>% filter(Code=='d')
-
-for (i in seq_along(Tune_MPs)) {
-  MP_name <- Tune_MPs[i]
-  Tune(MP_name, Tuning_OMs, TuneTarget)
-}
 
 
 

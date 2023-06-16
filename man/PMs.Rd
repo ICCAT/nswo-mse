@@ -17,10 +17,14 @@
 \alias{LRP_long}
 \alias{nLRP_long}
 \alias{LRP}
+\alias{nLRP}
 \alias{TAC1}
 \alias{AvTAC_short}
+\alias{rAvTAC_short}
 \alias{AvTAC_med}
+\alias{rAvTAC_med}
 \alias{AvTAC_long}
+\alias{rAvTAC_long}
 \alias{VarC}
 \alias{MaxVarC}
 \title{Swordfish Performance Metrics functions}
@@ -55,13 +59,21 @@ nLRP_long(MMSEobj = NULL, Ref = 0.4, Yrs = c(24, 33))
 
 LRP(MMSEobj = NULL, Ref = 0.4, Yrs = c(4, 33))
 
+nLRP(MMSEobj = NULL, Ref = 0.4, Yrs = c(4, 33))
+
 TAC1(MMSEobj = NULL, Ref = 1, Yrs = c(4, 4))
 
 AvTAC_short(MMSEobj = NULL, Ref = NULL, Yrs = c(4, 13))
 
+rAvTAC_short(MMSEobj = NULL, Ref = NULL, Yrs = c(4, 13))
+
 AvTAC_med(MMSEobj = NULL, Ref = 1, Yrs = c(14, 23))
 
+rAvTAC_med(MMSEobj = NULL, Ref = 1, Yrs = c(14, 23))
+
 AvTAC_long(MMSEobj = NULL, Ref = 1, Yrs = c(24, 33))
+
+rAvTAC_long(MMSEobj = NULL, Ref = 1, Yrs = c(24, 33))
 
 VarC(MMSEobj = NULL, Ref = 1, Yrs = c(4, 33))
 
@@ -112,13 +124,21 @@ Swordfish Performance Metrics functions
 
 \item \code{LRP()}: Probability of breaching the limit reference point (SSB<0.4SSB_MSY) in any year (2024-2053)
 
+\item \code{nLRP()}: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any year (2024-2053)
+
 \item \code{TAC1()}: TAC in the First Implementation Year (2024)
 
 \item \code{AvTAC_short()}: Median TAC (t) over years 1-10 (2024-2033)
 
+\item \code{rAvTAC_short()}: Median TAC relative to MSY over years 1-10 (2024-2033)
+
 \item \code{AvTAC_med()}: Median TAC (t) over years 11-20 (2034-2043)
 
+\item \code{rAvTAC_med()}: Median TAC relative to MSY over years 11-20 (2034-2043)
+
 \item \code{AvTAC_long()}: Median TAC (t) over years 21-30 (2034-2053)
+
+\item \code{rAvTAC_long()}: Median TAC relative to MSY over years 21-30 (2034-2053)
 
 \item \code{VarC()}: Median variation in TAC (\%) between management cycles over all years
 

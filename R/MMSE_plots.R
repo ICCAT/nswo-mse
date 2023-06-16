@@ -30,10 +30,47 @@ combine_MMSE <- function(MMSElist, name) {
     vals <- lapply(MMSElist, slot, sl)
     slot(MMSE_out, sl) <- do.call(abind:::abind, c(vals, along = 1))
   }
+
+  # add MSY reference points
+  MSYlist <- list()
+  for (i in 1:length(MMSElist)) {
+    MSYlist[[i]] <- MMSElist[[i]]@RefPoint$ByYear$MSY
+  }
+
+  MMSE_out@RefPoint$ByYear$MSY <- do.call(abind:::abind, c(MSYlist, along = 1))
+
   MMSE_out@Name <- name
   MMSE_out
 }
 
+#' Subset an MMSE object by MP
+#'
+#' @param MMSE An object of class `MMSE`
+#' @param name The names of the MPs to keep
+#'
+#' @return An object of class `MMSE`
+#' @export
+Sub_MMSE <- function(MMSE, MPs=NA) {
+  MMSE_out <- MMSE
+  mp_ind <- match(MPs, MMSE@MPs[[1]])
+
+  slots <- c('SB_SBMSY', 'F_FMSY', 'N', 'B', 'SSB', 'VB', 'Catch', 'Removals', 'TAC')
+  for (sl in slots) {
+    vals <- slot(MMSE, sl)
+    if (length(dim(vals))==5) {
+      slot(MMSE_out, sl) <- vals[,,, mp_ind,,drop=FALSE]
+    } else if (length(dim(vals))==6) {
+      slot(MMSE_out, sl) <- vals[,,,mp_ind,,,drop=FALSE]
+    } else {
+      slot(MMSE_out, sl) <- vals[,,mp_ind,,drop=FALSE]
+    }
+  }
+
+  MMSE_out@RefPoint$ByYear$MSY <- MMSE_out@RefPoint$ByYear$MSY[,,mp_ind,]
+  MMSE_out@MPs[[1]] <- MMSE@MPs[[1]][mp_ind]
+  MMSE_out@nMPs <- length(MMSE_out@MPs[[1]])
+  MMSE_out
+}
 
 get_TS_results <- function(MMSE, sl) {
 
@@ -628,3 +665,167 @@ F_FMSY_Box <- function(MMSE, year_range=NULL, mp=NA, ref=1,ncol=3) {
     labs(y=expression(F/F[MSY]))
 
 }
+
+
+#' Time-series plot of SB/SBMSY and TAC
+#'
+#' @param MMSE An object of class `MMSE`
+#' @param relY Logical. Make TAC relative to MSY?
+#'
+#' @return A `ggplot` object
+#' @export
+TS_plot <- function(MMSE, relY=TRUE) {
+
+  MPs <- MMSE@MPs[[1]]
+  nMPs <- MMSE@nMPs
+
+  CurrentYr <- MMSE@Fleets[[1]][[1]]@CurrentYr
+  nyears <- MMSE@nyears
+  proyears <- MMSE@proyears
+  proj.yrs <- (CurrentYr+1):(CurrentYr[1]+proyears)
+
+
+  SB_SBMSY_list <- list()
+  TAC_list <- list()
+  for (mm in 1:nMPs) {
+    SB_SBMSY_list[[mm]] <- data.frame(median=apply(MMSE@SB_SBMSY[,1,mm,], 2, median),
+                                      t(apply(MMSE@SB_SBMSY[,1,mm,], 2, quantile, c(0.25, 0.75))),
+                                      t(apply(MMSE@SB_SBMSY[,1,mm,], 2, quantile, c(0.1, 0.9))),
+                                      Year=proj.yrs,
+                                      MP=MPs[mm])
+
+    # yield
+    TAC <- apply(MMSE@TAC, c(1,2, 4,5), sum)
+    MSY <- MMSE@RefPoint$ByYear$MSY[,,,(nyears+1):(nyears+proyears)]
+    TAC <- apply(TAC, c(1,3,4), sum)
+    MSY <- apply(MSY, c(1,3,4), sum)
+
+    if (relY)
+      TAC <- TAC/MSY
+
+    TAC_list[[mm]] <- data.frame(median=apply(TAC[,mm,], 2, median),
+                                 t(apply(TAC[,mm,], 2, quantile, c(0.25, 0.75))),
+                                 t(apply(TAC[,mm,], 2, quantile, c(0.1, 0.9))),
+                                 Year=proj.yrs,
+                                 MP=MPs[mm])
+
+  }
+
+  SB_SBMSY_df <- do.call('rbind', SB_SBMSY_list)
+  SB_SBMSY_df$Var <- 'SB/SBMSY'
+  SB_SBMSY_df$yline1 <- 1
+  SB_SBMSY_df$yline2 <- 0.4
+
+  TAC_df <- do.call('rbind', TAC_list)
+  TAC_df$Var <- 'TAC'
+  TAC_df$yline1 <- 1
+  TAC_df$yline2 <- NA
+
+
+  df <- bind_rows(SB_SBMSY_df, TAC_df)
+  df <- df %>% filter(Year>=2024)
+  df$MP <- factor(df$MP, levels=MMSE@MPs[[1]], ordered = TRUE)
+
+
+  alpha <- 0.7
+  fill1 <- 'darkgrey'
+  fill2 <- 'lightgrey'
+  ggplot(df, aes(x=Year)) +
+    facet_grid(Var~MP, scales='free') +
+    geom_ribbon(aes(ymin=X10. , ymax=X90.), fill=fill1, alpha=alpha) +
+    geom_ribbon(aes(ymin=X25. , ymax=X75.), fill=fill2, alpha=alpha) +
+    geom_line(aes(y=median)) +
+    expand_limits(y=0) +
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+    theme_bw() +
+    labs(x='Projection Year', y='Median (percentiles)') +
+    geom_hline(aes(yintercept=yline1), linetype=2) +
+    geom_hline(aes(yintercept=yline2), linetype=3)
+
+}
+
+## Kobe Plot -----
+
+#' Kobe Time Plot
+#'
+#' @param MMSE An object of class `MMSE`
+#'
+#' @return A `ggplot` object
+#' @export
+Kobe_Time <- function(MMSE) {
+
+  nMPs <- MMSE@nMPs
+  nrow <- ceiling(nMPs/4)
+
+  res_list <- lapply(1:nMPs, Kobe_Time_MP, MMSE=MMSE)
+
+  df1 <- do.call('rbind', res_list) %>% filter(Year>=2024)
+
+  df <- df1 %>% tidyr::pivot_longer(., cols=1:4)
+  df$name <- factor(df$name, levels=c('br', 'tr', 'bl', 'tl'), ordered = TRUE)
+
+  df$MP <- factor(df$MP, levels=MMSE@MPs[[1]], ordered = TRUE)
+  cols <- c('green', 'orange', 'yellow', 'red')
+  ggplot(df, aes(x=Year, y=value, fill=name)) +
+    facet_wrap(~MP, nrow=nrow) +
+    geom_bar(position="stack", stat="identity", width = 1) +
+    scale_x_continuous(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0)) +
+    scale_fill_manual(values=cols) +
+    guides(fill='none') +
+    labs(y="Percent of total simulatons (%)",
+         x='Projection Year') +
+    theme_bw()
+
+}
+
+Kobe_Time_MP <- function(mm, MMSE) {
+  nsim <- MMSE@nsim
+  CurrentYr <- MMSE@Fleets[[1]][[1]]@CurrentYr
+  proyears <- MMSE@proyears
+  proj.yrs <- (CurrentYr+1):(CurrentYr[1]+proyears)
+  MP <- MMSE@MPs[[1]][mm]
+  results_list <- list()
+  for (y in seq_along(proj.yrs)) {
+    bl <- sum(MMSE@SB_SBMSY[,1,mm,y] < 1 &  MMSE@F_FMSY[,1,1, mm,y] < 1)/nsim * 100
+    tl <- sum(MMSE@SB_SBMSY[,1,mm,y] < 1 &  MMSE@F_FMSY[,1,1, mm,y] > 1)/nsim * 100
+    br <- sum(MMSE@SB_SBMSY[,1,mm,y] > 1 &  MMSE@F_FMSY[,1,1, mm,y] < 1)/nsim * 100
+    tr <- sum(MMSE@SB_SBMSY[,1,mm,y] > 1 &  MMSE@F_FMSY[,1,1, mm,y] > 1)/nsim * 100
+
+    results_list[[y]] <- data.frame(bl=round(bl,2),
+                                    tl=round(tl,2),
+                                    br=round(br,2),
+                                    tr=round(tr,2),
+                                    Year=proj.yrs[y],
+                                    MP=MP)
+
+  }
+
+  do.call('rbind', results_list)
+
+}
+
+
+## Violin Var C ----
+
+#' Violin Plot for Median Absolute Change in TAC
+#'
+#' @param MMSE An object of class `MMSE`
+#'
+#' @return A `ggplot` object
+#' @export
+VarC_Violin <- function(MMSE) {
+  tt <- VarC(MMSE)
+
+  df <- data.frame(Sim=1:MMSE@nsim, MP=rep(MMSE@MPs[[1]], each=MMSE@nsim), Var=as.vector(tt@Stat))
+  df$MP <- factor(df$MP, levels=MMSE@MPs[[1]], ordered = TRUE)
+  df$Var <- df$Var * 100
+  ggplot(df, aes(x=MP, y=Var, fill=MP)) +
+    geom_violin(scale='width') +
+    theme_bw() +
+    guides(fill='none') +
+    labs(x='Candiate Management Procedure',
+         y='Median absolute change in TAC (%)')
+}
+
+
