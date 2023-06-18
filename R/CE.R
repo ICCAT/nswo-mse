@@ -1,4 +1,4 @@
-#' Constant Exploitation
+#' Constant Exploitation with Control Rule
 #'
 #' This MP aims to keep the exploitation rate at a constant level. The current relative
 #' exploitation rate is calculated as the mean of the catches from 2016:2020 divided
@@ -16,8 +16,8 @@
 #'
 #' @return An object of class `Rec` with the `TAC` slot populated
 #'
-CE <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25,
-                yrs=c(5,3), ...) {
+CE <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA,
+               yrs=c(5,3), ...) {
   Rec <- new('Rec')
 
   # Does TAC need to be updated? (or set a fixed catch if before Initial_MP_Yr)
@@ -40,8 +40,21 @@ CE <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25,
   recent_yrs <- (current_yr-yrs[2]+1):current_yr
   curER <- mean(Data@Cat[x,recent_yrs])/mean(Data@Ind[x,recent_yrs])
 
+  # Control Rule
+
+  histInd <- mean(Data@Ind[x,hist.yrs])
+  curInd <- mean(Data@Ind[x,recent_yrs])
+
+  if (curInd>=histInd) {
+    targER <- histER
+  } else if (curInd> 0.5*histInd) {
+    targER <- histER * (-0.8+ 1.8 *  curInd/histInd)
+  } else {
+    targER <- 0.1 * histER
+  }
+
   # Exploitation Rate Ratio
-  ER_ratio <- histER/curER
+  ER_ratio <- targER/curER
 
   TAC <- ER_ratio * tunepar * Data@MPrec[x]
 
@@ -50,32 +63,11 @@ CE <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25,
   Rec
 }
 
-# ---- Tuned CMPs ----
-#' @describeIn CE Tuned to PGK_6_10 = 0.6 across Reference OMs.
-#' @export
-CE_a <- CE
-formals(CE_a)$tunepar <- 1.00732609275053
-class(CE_a) <- "MP"
+CE15 <-  CE
+formals(CE15)$mc <- 15
 
+CE25 <-  CE
+formals(CE25)$mc <- 25
 
-#' @describeIn CE Tuned to PGK_med = 0.6 across Reference OMs.
-#' @export
-CE_b <- CE
-formals(CE_b)$tunepar <- 1.07142857142857
-class(CE_b) <- "MP"
-
-
-#' @describeIn CE Tuned to PGK_6_10 = 0.51 across Reference OMs.
-#' @export
-CE_e <- CE
-formals(CE_e)$tunepar <- 1.05251409774436
-class(CE_e) <- "MP"
-
-
-#' @describeIn CE Tuned to LRP = 0.05 across Reference OMs.
-#' @export
-CE_h <- CE
-formals(CE_h)$tunepar <- 1.05535714285714
-class(CE_h) <- "MP"
 
 

@@ -1,6 +1,6 @@
 
-#' @describeIn SP1 Same as SP1, but uses the Fox production model
-SP2un <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
+#' @describeIn SP Same as SP, but uses the Fox production model
+SP_Fox <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
 
   Rec <- new('Rec')
 
@@ -41,3 +41,11 @@ SP2un <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
   Rec@TAC <- MaxChange(TAC, Data@MPrec[x], mc)
   Rec
 }
+
+
+SP15_Fox <-  SP_Fox
+formals(SP15_Fox)$mc <- 15
+
+SP25_Fox <-  SP_Fox
+formals(SP25_Fox)$mc <- 25
+

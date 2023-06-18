@@ -63,32 +63,8 @@ CEcr <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25,
   Rec
 }
 
-# ---- Tuned CMPs ----
-#' @describeIn CEcr Tuned to PGK_6_10 = 0.6 across Reference OMs.
-#' @export
-CEcr_a <- CEcr
-formals(CEcr_a)$tunepar <- 1.00880624849603
-class(CEcr_a) <- "MP"
+CE15cr <-  CEcr
+formals(CE15cr)$mc <- 15
 
-
-#' @describeIn CEcr Tuned to PGK_6_10 = 0.51 across Reference OMs.
-#' @export
-CEcr_e <- CEcr
-formals(CEcr_e)$tunepar <- 1.05318115161865
-class(CEcr_e) <- "MP"
-
-
-#' @describeIn CEcr Tuned to PGK_6_10 = 0.7 across Reference OMs.
-#' @export
-CEcr_f <- CEcr
-formals(CEcr_f)$tunepar <- 0.957046875718424
-class(CEcr_f) <- "MP"
-
-
-#' @describeIn CEcr Tuned to LRP = 0.05 across Reference OMs.
-#' @export
-CEcr_h <- CEcr
-formals(CEcr_h)$tunepar <- 1.05698676323676
-class(CEcr_h) <- "MP"
-
-
+CE25cr <-  CEcr
+formals(CE25cr)$mc <- 25

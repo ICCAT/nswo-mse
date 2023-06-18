@@ -744,7 +744,8 @@ PM_table <- function(MMSE, PMs=NULL, msg=TRUE) {
 #' @return A `ggplot` object
 #' @export
 TradeOff <- function(MMSE, PMs, xlim=NULL, ylim=NULL, vline=NULL,
-                     hline=NULL, quants=c(0.1, 0.9), inc.leg=TRUE) {
+                     hline=NULL, quants=c(0.1, 0.9), inc.leg=TRUE,
+                     subset=FALSE) {
 
   # Calculate PMs
   if (length(PMs)!=2)
@@ -831,6 +832,14 @@ TradeOff <- function(MMSE, PMs, xlim=NULL, ylim=NULL, vline=NULL,
   # add quantiles
   if (!is.null(quants))
     p <- p + geom_errorbar(aes(x=x, ymin=ymin, ymax=ymax, color=MP), alpha=0.5)
+
+
+  if (subset) {
+    if (!is.null(xlim))
+      p <- p + xlim(c(xlim, 1))
+    if (!is.null(ylim))
+      p <- p + ylim(c(ylim, 1))
+  }
   p
 }
 

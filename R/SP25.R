@@ -14,7 +14,7 @@
 #' @param ... Additional arguments (unused)
 #'
 #' @return An object of class `Rec` with the `TAC` slot populated
-SP1 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25, ...) {
+SP <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
 
   Rec <- new('Rec')
 
@@ -56,46 +56,8 @@ SP1 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25, ...) {
   Rec
 }
 
-# ---- Tuned CMPs ----
-#' @describeIn SP1 Tuned to PGK_6_10 = 0.6 across Reference OMs.
-#' @export
-SP1_a <- SP1
-formals(SP1_a)$tunepar <- 3.11318681318681
-class(SP1_a) <- "MP"
+SP15 <-  SP
+formals(SP15)$mc <- 15
 
-
-#' @describeIn SP1 Tuned to PGK_med = 0.6 across Reference OMs.
-#' @export
-SP1_b <- SP1
-formals(SP1_b)$tunepar <- 3.38664343786295
-class(SP1_b) <- "MP"
-
-
-#' @describeIn SP1 Tuned to PGK_long = 0.6 across Reference OMs.
-#' @export
-SP1_c <- SP1
-formals(SP1_c)$tunepar <- 3.61603053435114
-class(SP1_c) <- "MP"
-
-
-#' @describeIn SP1 Tuned to PGK_6_10 = 0.51 across Reference OMs.
-#' @export
-SP1_e <- SP1
-formals(SP1_e)$tunepar <- 3.33004926108374
-class(SP1_e) <- "MP"
-
-
-#' @describeIn SP1 Tuned to LRP = 0.1 across Reference OMs.
-#' @export
-SP1_g <- SP1
-formals(SP1_g)$tunepar <- 3.87857142857143
-class(SP1_g) <- "MP"
-
-
-#' @describeIn SP1 Tuned to LRP = 0.05 across Reference OMs.
-#' @export
-SP1_h <- SP1
-formals(SP1_h)$tunepar <- 3.32857142857143
-class(SP1_h) <- "MP"
-
-
+SP25 <-  SP
+formals(SP25)$mc <- 25
