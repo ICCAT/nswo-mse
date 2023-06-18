@@ -34,14 +34,6 @@ An object of class \code{MOM} of length 1.
 An object of class \code{MOM} of length 1.
 
 An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
 }
 \usage{
 MOM_000
@@ -63,14 +55,6 @@ MOM_007
 MOM_008
 
 MOM_009
-
-MOM_001
-
-MOM_002
-
-MOM_003
-
-MOM_002
 }
 \description{
 North Atlantic Swordfish Operating Models

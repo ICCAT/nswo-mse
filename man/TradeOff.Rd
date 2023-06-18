@@ -12,7 +12,8 @@ TradeOff(
   vline = NULL,
   hline = NULL,
   quants = c(0.1, 0.9),
-  inc.leg = TRUE
+  inc.leg = TRUE,
+  subset = FALSE
 )
 }
 \arguments{

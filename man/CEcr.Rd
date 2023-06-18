@@ -2,10 +2,6 @@
 % Please edit documentation in R/CEcr.R
 \name{CEcr}
 \alias{CEcr}
-\alias{CEcr_a}
-\alias{CEcr_e}
-\alias{CEcr_f}
-\alias{CEcr_h}
 \title{Constant Exploitation with Control Rule}
 \usage{
 CEcr(
@@ -14,50 +10,6 @@ CEcr(
   Data_Lag = 1,
   Interval = 3,
   tunepar = 1,
-  mc = 0.25,
-  yrs = c(5, 3),
-  ...
-)
-
-CEcr_a(
-  x,
-  Data,
-  Data_Lag = 1,
-  Interval = 3,
-  tunepar = 1.00880624849603,
-  mc = 0.25,
-  yrs = c(5, 3),
-  ...
-)
-
-CEcr_e(
-  x,
-  Data,
-  Data_Lag = 1,
-  Interval = 3,
-  tunepar = 1.05318115161865,
-  mc = 0.25,
-  yrs = c(5, 3),
-  ...
-)
-
-CEcr_f(
-  x,
-  Data,
-  Data_Lag = 1,
-  Interval = 3,
-  tunepar = 0.957046875718424,
-  mc = 0.25,
-  yrs = c(5, 3),
-  ...
-)
-
-CEcr_h(
-  x,
-  Data,
-  Data_Lag = 1,
-  Interval = 3,
-  tunepar = 1.05698676323676,
   mc = 0.25,
   yrs = c(5, 3),
   ...
@@ -89,14 +41,3 @@ This MP aims to keep the exploitation rate at a constant level. The current rela
 exploitation rate is calculated as the mean of the catches from 2016:2020 divided
 by the mean Combined Index over this same period.
 }
-\section{Functions}{
-\itemize{
-\item \code{CEcr_a()}: Tuned to PGK_6_10 = 0.6 across Reference OMs.
-
-\item \code{CEcr_e()}: Tuned to PGK_6_10 = 0.51 across Reference OMs.
-
-\item \code{CEcr_f()}: Tuned to PGK_6_10 = 0.7 across Reference OMs.
-
-\item \code{CEcr_h()}: Tuned to LRP = 0.05 across Reference OMs.
-
-}}

@@ -2,11 +2,7 @@
 % Please edit documentation in R/CE.R
 \name{CE}
 \alias{CE}
-\alias{CE_a}
-\alias{CE_b}
-\alias{CE_e}
-\alias{CE_h}
-\title{Constant Exploitation}
+\title{Constant Exploitation with Control Rule}
 \usage{
 CE(
   x,
@@ -14,51 +10,7 @@ CE(
   Data_Lag = 1,
   Interval = 3,
   tunepar = 1,
-  mc = 0.25,
-  yrs = c(5, 3),
-  ...
-)
-
-CE_a(
-  x,
-  Data,
-  Data_Lag = 1,
-  Interval = 3,
-  tunepar = 1.00732609275053,
-  mc = 0.25,
-  yrs = c(5, 3),
-  ...
-)
-
-CE_b(
-  x,
-  Data,
-  Data_Lag = 1,
-  Interval = 3,
-  tunepar = 1.07142857142857,
-  mc = 0.25,
-  yrs = c(5, 3),
-  ...
-)
-
-CE_e(
-  x,
-  Data,
-  Data_Lag = 1,
-  Interval = 3,
-  tunepar = 1.05251409774436,
-  mc = 0.25,
-  yrs = c(5, 3),
-  ...
-)
-
-CE_h(
-  x,
-  Data,
-  Data_Lag = 1,
-  Interval = 3,
-  tunepar = 1.05535714285714,
-  mc = 0.25,
+  mc = NA,
   yrs = c(5, 3),
   ...
 )
@@ -89,14 +41,3 @@ This MP aims to keep the exploitation rate at a constant level. The current rela
 exploitation rate is calculated as the mean of the catches from 2016:2020 divided
 by the mean Combined Index over this same period.
 }
-\section{Functions}{
-\itemize{
-\item \code{CE_a()}: Tuned to PGK_6_10 = 0.6 across Reference OMs.
-
-\item \code{CE_b()}: Tuned to PGK_med = 0.6 across Reference OMs.
-
-\item \code{CE_e()}: Tuned to PGK_6_10 = 0.51 across Reference OMs.
-
-\item \code{CE_h()}: Tuned to LRP = 0.05 across Reference OMs.
-
-}}
