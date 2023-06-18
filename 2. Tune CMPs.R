@@ -21,7 +21,7 @@ TuneTargets
 # 1. Source the MP functions
 # 2. Loop over MPs and conduct scoping
 
-Scope_MPs <- c('CEcr', 'CEcr2', 'CEcr3', 'CEcr4', 'CEcr5')
+Scope_MPs <- c('CE', 'CE15', 'CE25', 'CEcr', 'CE15cr', 'CE25cr', 'SP25', 'SP25_Fox')
 
 for (i in seq_along(Scope_MPs)) {
   MP_name <- Scope_MPs[i]
@@ -32,7 +32,7 @@ for (i in seq_along(Scope_MPs)) {
 
 # ---- Tune an MP to a specific PM Target ----
 
-Tune_MPs <-c('CEcr', 'CEcr2', 'CEcr3', 'CEcr4', 'CEcr5')
+Tune_MPs <- Scope_MPs
 
 TuneTarget <- TuneTargets %>% filter(Code=='a')
 
