@@ -41,7 +41,7 @@ This report summarizes the diagnostic checks, the calculated biological referenc
 `r tab.cap()` Summary table of the operating model uncertainty grid. `OM.num` can be used to reference the operating models in the tables and figures below. 
 
 ```{r}
-DF <- OM_DF
+DF <- OM_DF 
 DF <- DF %>% select(OM.num, M, sigmaR, steepness, `Include CAL`, llq, Class)
 DF <- DF %>% mutate(across(1:6, as.factor))
 DF$Class <- factor(DF$Class, levels=unique(DF$Class), ordered=TRUE)
@@ -95,67 +95,67 @@ DT::datatable(Check_Bounds_DF,
 
 ```
 
-## Check for Convergence: Invertible Hessian and Final Gradient
+<!-- ## Check for Convergence: Invertible Hessian and Final Gradient -->
 
-`r tab.cap()` Table of log determinant of the Hessian matrix, (finite values indicate invertible Hessian), the maximum final gradient, high_grad (true if the final gradient for one or more parameters are > 0.0001), and the final gradient values for the estimated parameter(s).
+<!-- `r tab.cap()` Table of log determinant of the Hessian matrix, (finite values indicate invertible Hessian), the maximum final gradient, high_grad (true if the final gradient for one or more parameters are > 0.0001), and the final gradient values for the estimated parameter(s). -->
 
-```{r}
-Check_Convergence_DF <- readRDS('Check_Convergence_DF.rda')
+<!-- ```{r} -->
+<!-- Check_Convergence_DF <- readRDS('Check_Convergence_DF.rda') -->
 
-Check_Convergence_DF <- Check_Convergence_DF %>% select(OM.num, Class,  log_det_hessian, invertible,
-                                              max_final_gradient, 
-                                              Gradient, Parameter) %>%
-  relocate(OM.num, Class, Parameter)
+<!-- Check_Convergence_DF <- Check_Convergence_DF %>% select(OM.num, Class,  log_det_hessian, invertible, -->
+<!--                                               max_final_gradient,  -->
+<!--                                               Gradient, Parameter) %>% -->
+<!--   relocate(OM.num, Class, Parameter) -->
 
-Check_Convergence_DF$Class <- factor(Check_Convergence_DF$Class, levels=unique(Check_Convergence_DF$Class),
-                                     ordered = TRUE)
-DT::datatable(Check_Convergence_DF,
-              rownames= FALSE,
-              filter = 'top',
-              extensions = 'Buttons',
-              options = list(
-                pageLength = 10, 
-                autoWidth = TRUE,
-                sDom  = '<"top">Bflrt<"bottom">ip',
-                buttons='csv')
-)
-
-
-```
-
-## Check for Highly Correlated Parameters
-
-`r tab.cap()` Table of operating model parameters that have correlation factor > 0.95.
-
-```{r}
-
-Check_Correlation_DF <- readRDS('Check_Correlation_DF.rda')
-
-DF <- Check_Correlation_DF
-DF$OM.num <- factor(DF$OM.num, levels=unique(DF$OM.num),
-                                     ordered = TRUE)
-DF$Class <- factor(DF$Class, levels=unique(DF$Class),
-                                     ordered = TRUE)
-DT::datatable(DF,
-              rownames= FALSE,
-              filter = 'top',
-              extensions = 'Buttons',
-              options = list(
-                pageLength = 10, 
-                autoWidth = TRUE,
-                sDom  = '<"top">Bflrt<"bottom">ip',
-                buttons='csv')
-)
+<!-- Check_Convergence_DF$Class <- factor(Check_Convergence_DF$Class, levels=unique(Check_Convergence_DF$Class), -->
+<!--                                      ordered = TRUE) -->
+<!-- DT::datatable(Check_Convergence_DF, -->
+<!--               rownames= FALSE, -->
+<!--               filter = 'top', -->
+<!--               extensions = 'Buttons', -->
+<!--               options = list( -->
+<!--                 pageLength = 10,  -->
+<!--                 autoWidth = TRUE, -->
+<!--                 sDom  = '<"top">Bflrt<"bottom">ip', -->
+<!--                 buttons='csv') -->
+<!-- ) -->
 
 
-```
+<!-- ``` -->
+
+<!-- ## Check for Highly Correlated Parameters -->
+
+<!-- `r tab.cap()` Table of operating model parameters that have correlation factor > 0.95. -->
+
+<!-- ```{r} -->
+
+<!-- Check_Correlation_DF <- readRDS('Check_Correlation_DF.rda') -->
+
+<!-- DF <- Check_Correlation_DF -->
+<!-- DF$OM.num <- factor(DF$OM.num, levels=unique(DF$OM.num), -->
+<!--                                      ordered = TRUE) -->
+<!-- DF$Class <- factor(DF$Class, levels=unique(DF$Class), -->
+<!--                                      ordered = TRUE) -->
+<!-- DT::datatable(DF, -->
+<!--               rownames= FALSE, -->
+<!--               filter = 'top', -->
+<!--               extensions = 'Buttons', -->
+<!--               options = list( -->
+<!--                 pageLength = 10,  -->
+<!--                 autoWidth = TRUE, -->
+<!--                 sDom  = '<"top">Bflrt<"bottom">ip', -->
+<!--                 buttons='csv') -->
+<!-- ) -->
+
+
+<!-- ``` -->
 
 
 # Summary Tables
 
 `r tab.cap()` Summary table of the calculated biological reference points and estimated stock status in the terminal year for the OMs in the uncertainty grid. 
 
-```{r}
+```{r, warning=FALSE}
 ReferencePoint_DF <- readRDS('ReferencePoint_DF.rda')
 
 RefPointDF <- ReferencePoint_DF %>% select(OM.num, Class, SB0, SBMSY, FMSY, MSY_d, MSY_r, SB, SB_SB0, SB_SBMSY, F_FMSY)

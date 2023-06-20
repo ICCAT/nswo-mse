@@ -64,13 +64,16 @@ Check_Convergence <- function(i) {
   dir <- basename(OM_DF$dir[i])
   replist <- readRDS(file.path(Replist.dir, dir, 'replist.rda'))
 
-  log_det_hessian <- replist$log_det_hessian
+  # log_det_hessian <- replist$log_det_hessian
   high_grad <- 0.0001
   max_final_gradient <- replist$maximum_gradient_component
-  df <- data.frame(log_det_hessian=log_det_hessian,
-             invertible=is.finite(log_det_hessian),
-             max_final_gradient=max_final_gradient,
-             high_grad=max_final_gradient>high_grad)
+  # df <- data.frame(log_det_hessian=log_det_hessian,
+  #            invertible=is.finite(log_det_hessian),
+  #            max_final_gradient=max_final_gradient,
+  #            high_grad=max_final_gradient>high_grad)
+  df <- data.frame(max_final_gradient=max_final_gradient,
+                   high_grad=max_final_gradient>high_grad)
+
   df <- df%>% filter(high_grad==TRUE)
   if (nrow(df)>0) {
     df2 <- replist$parameters_with_highest_gradients
@@ -90,7 +93,7 @@ Check_Convergence_DF <- Check_Convergence_DF %>%
 saveRDS(Check_Convergence_DF, file.path(obj_dir, 'Check_Convergence_DF.rda'))
 
 
-Check_Convergence_DF %>% filter(invertible==FALSE)
+# Check_Convergence_DF %>% filter(invertible==FALSE)
 # all invertible
 
 high_grads <- Check_Convergence_DF %>% filter(high_grad==TRUE)
@@ -115,40 +118,40 @@ hist(tt$Gradient)
 
 high_grads %>% group_by(M) %>% summarize(n=length(unique(OM.num)))
 
+#
+# ### Check Correlations ----
+# Check_Correlations <- function(i) {
+#   dir <- basename(OM_DF$dir[i])
+#   replist <- readRDS(file.path(Replist.dir, dir, 'replist.rda'))
+#   cor_df <- replist$corstats$cormessage3
+#   if (!is.null(cor_df)) {
+#     cor_df$OM.num <- OM_DF$OM.num[i]
+#     cor_df <- cor_df %>% relocate(OM.num) %>%
+#       mutate(across(1:3, as.factor))
+#     colnames(cor_df)[2] <- 'Parameter i'
+#     colnames(cor_df)[3] <- 'Parameter j'
+#     colnames(cor_df)[4] <- 'Correlation'
+#     return(cor_df)
+#   }
+# }
+#
+# Check_Correlation_List <- lapply(1:nrow(OM_DF), Check_Correlations)
+# Check_Correlation_DF <- do.call('rbind', Check_Correlation_List)
+# Check_Correlation_DF <- left_join(OM_DF %>% select(OM.num, Class),
+#                                   Check_Correlation_DF)
+# rownames(Check_Correlation_DF) <- NULL
+# Check_Correlation_DF <- Check_Correlation_DF %>% filter(is.na(Check_Correlation_DF$`Parameter i`)==FALSE)
+#
+#
+# saveRDS(Check_Correlation_DF, file.path(obj_dir, 'Check_Correlation_DF.rda'))
 
-### Check Correlations ----
-Check_Correlations <- function(i) {
-  dir <- basename(OM_DF$dir[i])
-  replist <- readRDS(file.path(Replist.dir, dir, 'replist.rda'))
-  cor_df <- replist$corstats$cormessage3
-  if (!is.null(cor_df)) {
-    cor_df$OM.num <- OM_DF$OM.num[i]
-    cor_df <- cor_df %>% relocate(OM.num) %>%
-      mutate(across(1:3, as.factor))
-    colnames(cor_df)[2] <- 'Parameter i'
-    colnames(cor_df)[3] <- 'Parameter j'
-    colnames(cor_df)[4] <- 'Correlation'
-    return(cor_df)
-  }
-}
 
-Check_Correlation_List <- lapply(1:nrow(OM_DF), Check_Correlations)
-Check_Correlation_DF <- do.call('rbind', Check_Correlation_List)
-Check_Correlation_DF <- left_join(OM_DF %>% select(OM.num, Class),
-                                  Check_Correlation_DF)
-rownames(Check_Correlation_DF) <- NULL
-Check_Correlation_DF <- Check_Correlation_DF %>% filter(is.na(Check_Correlation_DF$`Parameter i`)==FALSE)
-
-
-saveRDS(Check_Correlation_DF, file.path(obj_dir, 'Check_Correlation_DF.rda'))
-
-
-Check_Correlation_DF %>% summarise(OM.n=length(unique(OM.num)))
-
-Check_Correlation_DF$`Parameter i` %>% unique()
-Check_Correlation_DF$`Parameter j` %>% unique()
-
-Check_Correlation_DF %>% filter(`Parameter i`=='LnQ_base_Age-3(16)')
+# Check_Correlation_DF %>% summarise(OM.n=length(unique(OM.num)))
+#
+# Check_Correlation_DF$`Parameter i` %>% unique()
+# Check_Correlation_DF$`Parameter j` %>% unique()
+#
+# Check_Correlation_DF %>% filter(`Parameter i`=='LnQ_base_Age-3(16)')
 
 
 ## Biological Reference Points ----
