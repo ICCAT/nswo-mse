@@ -1,9 +1,4 @@
 Code,Metric,Target
-a,PGK_6_10,0.6
-b,PGK_med,0.6
-c,PGK_long,0.6
-d,LRP,0.15
-e,PGK_6_10,0.51
-f,PGK_6_10,0.7
-g,LRP,0.1
-h,LRP,0.05
+a,PGK_short,0.51
+b,PGK_short,0.6
+c,PGK_short,0.7
