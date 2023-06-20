@@ -465,6 +465,8 @@ More details on the individual performance metrics are in the sections below.
 
 caption <- 'Summary of the North Atlantic Swordfish Performance Metrics.'
 
+PM_desc <- PM_desc %>% filter(Name!='PGK_6_10')
+
 PM_desc %>% knitr::kable(escape = T,
                          caption=caption,
                          booktabs=TRUE) %>%
@@ -691,17 +693,17 @@ Figure \@ref(fig:VarC) shows an example of two CMPs (`r PMlist$MPs`) for an oper
 ## Tuning of Candidate Management Procedures {#tuning}
 
 ```{r, echo=FALSE}
-PM_tuning <- read.csv('../../dev/MP_tuning/Tuning_Target_Codes.csv')
+PM_tuning <- read.csv('../../build_package/Tuning_Target_Codes.csv')
 
 ```
 
 During development, the Candidate Management Procedures are tuned to achieve specific performance outcomes. These performance outcomes are calculated across all the Reference OMs; i.e, the MSE results from each Reference OM are aggregated together. `r nrow(PM_tuning)` different tuning targets have been specified (Table \@ref(tab:PM-tuning)). 
 
-There will be `r nrow(PM_tuning)` versions of each CMP corresponding to metrics and targets described in Table \@ref(tab:PM-tuning). The names of the CMPs include the tuning code (e.g., 'a', 'b', etc).
+There will be `r nrow(PM_tuning)` versions of each CMP corresponding to metrics and targets described in Table \@ref(tab:PM-tuning). The names of the CMPs include the tuning code (i.e., 'a', 'b').
 
 ```{r PM-tuning}
 
-caption <- 'The codes, metrics, targets, and maximum allowed change in TAC, used for the tuning of the CMPs.'
+caption <- 'The codes, metrics, and targets used for the tuning of the CMPs.'
 
 PM_tuning %>% knitr::kable(escape = F,
                     caption=caption,
@@ -710,102 +712,102 @@ PM_tuning %>% knitr::kable(escape = F,
 
 ```
 
-## Overview of Candidate Management Procedures
+<!-- ## Overview of Candidate Management Procedures -->
 
 ```{r MPoverview, results="asis"}
 
-caption <- 'Summary of the Candidate Management Procedures.'
-
-CMP_DF <- readRDS('../../dev/MP_description.rda')
-CMP_DF$Author <- NULL
-
-
-CMP_DF %>% knitr::kable(escape = F,
-                    caption=caption,
-                    booktabs=TRUE) %>%
-  kableExtra::kable_styling("striped", full_width = T)
+# caption <- 'Summary of the Candidate Management Procedures.'
+# 
+# CMP_DF <- readRDS('../../dev/MP_description.rda')
+# CMP_DF$Author <- NULL
+# 
+# 
+# CMP_DF %>% knitr::kable(escape = F,
+#                     caption=caption,
+#                     booktabs=TRUE) %>%
+#   kableExtra::kable_styling("striped", full_width = T)
 
 ```
 
-All MPs are subject to a constraint on the maximum absolute change in TAC between management cycles. 
+<!-- All MPs are subject to a constraint on the maximum absolute change in TAC between management cycles. -->
 
-## Surplus Production (SP)
+<!-- ## Surplus Production (SP) -->
 
-### SP1
+<!-- ### SP -->
 
-A Schaefer surplus production model (`SAMtool::SP`) is fitted to the Combined Index and the catch data. The TAC is set according to a harvest control rule (HCR) based on the HCR developed for the [North Atlantic Albacore](https://www.iccat.int/Documents/Recs/compendiopdf-e/2021-04-e.pdf). 
+<!-- A Schaefer surplus production model (`SAMtool::SP`) is fitted to the Combined Index and the catch data. The TAC is set according to a harvest control rule (HCR) based on the HCR developed for the [North Atlantic Albacore](https://www.iccat.int/Documents/Recs/compendiopdf-e/2021-04-e.pdf). -->
 
-$$
-F_\text{set} = 
-\begin{cases}
-    F_\text{targ} & \text{if } B_\text{curr} \geq B_\text{thresh} \\
-    F_\text{targ} (-0.367 + 1.167 \frac{B_\text{curr}}{ B_\text{thresh}}) & \text{if }  B_\text{lim} < B_\text{curr} < B_\text{thresh} \\
-    F_\text{min}  & \text{otherwise}
-\end{cases}
-  (\#eq:SP1)
-$$
+<!-- $$ -->
+<!-- F_\text{set} =  -->
+<!-- \begin{cases} -->
+<!--     F_\text{targ} & \text{if } B_\text{curr} \geq B_\text{thresh} \\ -->
+<!--     F_\text{targ} (-0.367 + 1.167 \frac{B_\text{curr}}{ B_\text{thresh}}) & \text{if }  B_\text{lim} < B_\text{curr} < B_\text{thresh} \\ -->
+<!--     F_\text{min}  & \text{otherwise} -->
+<!-- \end{cases} -->
+<!--   (\#eq:SP1) -->
+<!-- $$ -->
 
-where $B_\text{curr}$ and $B_\text{thresh}$ are current biomass and $B_\text{MSY}$ estimated by the assessment model, $B_\text{lim}$ is $0.4B_\text{thresh}$, and  $F_\text{targ}$ and $F_\text{min}$ are $\delta 0.8 F_\text{MSY}$ and $\delta 0.1 F_\text{MSY}$ respectively, where $F_\text{MSY}$ is estimated by the assessment model, and $\delta$ is a tuning parameter (see Table \@ref(tab:PM-tuning)). 
+<!-- where $B_\text{curr}$ and $B_\text{thresh}$ are current biomass and $B_\text{MSY}$ estimated by the assessment model, $B_\text{lim}$ is $0.4B_\text{thresh}$, and  $F_\text{targ}$ and $F_\text{min}$ are $\delta 0.8 F_\text{MSY}$ and $\delta 0.1 F_\text{MSY}$ respectively, where $F_\text{MSY}$ is estimated by the assessment model, and $\delta$ is a tuning parameter (see Table \@ref(tab:PM-tuning)).  -->
 
-The TAC is then calculated as:
-$$
-\text{TAC} = \frac{F_\text{set}}{Z}(1-e^{-Z}) B_\text{curr}
-$$
-where $Z = 0.2 +F_\text{set}$. 
+<!-- The TAC is then calculated as: -->
+<!-- $$ -->
+<!-- \text{TAC} = \frac{F_\text{set}}{Z}(1-e^{-Z}) B_\text{curr} -->
+<!-- $$ -->
+<!-- where $Z = 0.2 +F_\text{set}$.  -->
 
-### SP2 
+<!-- ### SPFox  -->
 
-A Fox production model (`SAMtool::SP_Fox`) is used together with the HCR described for `SP1`.
-
-
-## Index Ratio  (IR)
-
-### IR1
-
-Iteratively adjusts the TAC in each management cycle $(m)$ based on the ratio of the mean Combined Index $(I)$ over the last 3 years to the mean Combined Index over the 3 previous years: 
-
-\begin{equation} 
-  \text{TAC}_{m} = \text{TAC}_{m-1} \delta I_{\text{rat}} 
-  (\#eq:IR1)
-\end{equation} 
-
-where $\delta$ is a tuning parameter (see Table \@ref(tab:PM-tuning)) and $I_{\text{rat}} = \frac{\bar{I}_{[y-2:y]}}{\bar{I}_{[y-5:y-3]}}$. 
+<!-- A Fox production model (`SAMtool::SP_Fox`) is used together with the HCR described for `SP1`. -->
 
 
+<!-- ## Index Ratio  (IR) -->
 
-### IR2
+<!-- ### IR1 -->
 
-Same as `IR1` except that the index ratio is calculated over the last 2 and the previous 2 years before that:
+<!-- Iteratively adjusts the TAC in each management cycle $(m)$ based on the ratio of the mean Combined Index $(I)$ over the last 3 years to the mean Combined Index over the 3 previous years:  -->
 
-\begin{equation} 
- I_{\text{rat}} = \frac{\bar{I}_{[y-1:y]}}{\bar{I}_{[y-3:y-2]}} 
-  (\#eq:IR2)
-\end{equation} 
+<!-- \begin{equation}  -->
+<!--   \text{TAC}_{m} = \text{TAC}_{m-1} \delta I_{\text{rat}}  -->
+<!--   (\#eq:IR1) -->
+<!-- \end{equation}  -->
+
+<!-- where $\delta$ is a tuning parameter (see Table \@ref(tab:PM-tuning)) and $I_{\text{rat}} = \frac{\bar{I}_{[y-2:y]}}{\bar{I}_{[y-5:y-3]}}$.  -->
 
 
-## Constant Exploitation (CE)
 
-### CE 
+<!-- ### IR2 -->
 
-This MP aims to keep the exploitation rate at a constant level. The current relative exploitation rate is calculated as the mean of the catches from 2016 -- 2020 divided by the mean Combined Index over this same period.
+<!-- Same as `IR1` except that the index ratio is calculated over the last 2 and the previous 2 years before that: -->
 
-$$ 
-  \text{TAC}_{m} = \delta \text{TAC}_{m-1}  E_{\text{rat}} 
-  (\#eq:CE)
-$$
+<!-- \begin{equation}  -->
+<!--  I_{\text{rat}} = \frac{\bar{I}_{[y-1:y]}}{\bar{I}_{[y-3:y-2]}}  -->
+<!--   (\#eq:IR2) -->
+<!-- \end{equation}  -->
 
-$$
-E_{\text{rat}} = \frac{\text{ER}_\text{hist}}{\text{ER}_\text{curr}}
-(\#eq:Erat)
-$$
-$$
-\text{ER}_\text{hist} = \frac{\bar{C}_{2016-2020}}{\bar{I}_{2016-2020}}
-(\#eq:Ehist)
-$$
-$$
-\text{ER}_\text{curr} = \frac{\bar{C}_{y-2:y}}{\bar{I}_{y-2:y}}
-(\#eq:Ecurr)
-$$
+
+<!-- ## Constant Exploitation (CE) -->
+
+<!-- ### CE  -->
+
+<!-- This MP aims to keep the exploitation rate at a constant level. The current relative exploitation rate is calculated as the mean of the catches from 2016 -- 2020 divided by the mean Combined Index over this same period. -->
+
+<!-- $$  -->
+<!--   \text{TAC}_{m} = \delta \text{TAC}_{m-1}  E_{\text{rat}}  -->
+<!--   (\#eq:CE) -->
+<!-- $$ -->
+
+<!-- $$ -->
+<!-- E_{\text{rat}} = \frac{\text{ER}_\text{hist}}{\text{ER}_\text{curr}} -->
+<!-- (\#eq:Erat) -->
+<!-- $$ -->
+<!-- $$ -->
+<!-- \text{ER}_\text{hist} = \frac{\bar{C}_{2016-2020}}{\bar{I}_{2016-2020}} -->
+<!-- (\#eq:Ehist) -->
+<!-- $$ -->
+<!-- $$ -->
+<!-- \text{ER}_\text{curr} = \frac{\bar{C}_{y-2:y}}{\bar{I}_{y-2:y}} -->
+<!-- (\#eq:Ecurr) -->
+<!-- $$ -->
 
 
 
