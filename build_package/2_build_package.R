@@ -606,7 +606,7 @@ usethis::use_data(Initial_MP_Yr, overwrite = TRUE)
 
 # ----- PM Table -----
 
-PM_desc <- read.csv(file.path('dev', 'PM_Description.csv'))
+PM_desc <- read.csv(file.path('build_package', 'PM_Description.csv'))
 
 colnames(PM_desc)[4] <- trimws(gsub('\\.', ' ', colnames(PM_desc)[4]))
 
