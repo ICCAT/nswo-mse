@@ -4,10 +4,13 @@
 \alias{Document_MP}
 \title{Document an MP}
 \usage{
-Document_MP(MP_name, Tune_dir = "Tuning_Objects", plot = TRUE)
+Document_MP(MP_name, MP_file = NULL, Tune_dir = "Tuning_Objects", plot = TRUE)
 }
 \arguments{
 \item{MP_name}{Name of an `MP` function}
+
+\item{MP_file}{Name of the R script containing the MP code (including path). If NULL, searches for
+`R/MP_name.r`}
 
 \item{Tune_dir}{Directory where scoping results are saved}
 
