@@ -586,7 +586,7 @@ Var_TS <- function(MMSE, mp=NA, ncol=3) {
   p <- ggplot(DF) +
     facet_wrap(~MP, ncol=ncol) +
     expand_limits(y=c(0)) +
-    geom_violin(aes(x=Year, y=Change, group=Year)) +
+    geom_violin(aes(x=Year, y=Change, group=Year, fill=MP), scale='width') +
     theme_bw() +
     geom_hline(yintercept = 0, linetype=2) +
     theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
@@ -674,7 +674,7 @@ F_FMSY_Box <- function(MMSE, year_range=NULL, mp=NA, ref=1,ncol=3) {
 #'
 #' @return A `ggplot` object
 #' @export
-TS_plot <- function(MMSE, relY=TRUE) {
+TS_plot <- function(MMSE, relY=FALSE, incFMSY=FALSE) {
 
   MPs <- MMSE@MPs[[1]]
   nMPs <- MMSE@nMPs
@@ -686,6 +686,7 @@ TS_plot <- function(MMSE, relY=TRUE) {
 
 
   SB_SBMSY_list <- list()
+  F_FMSY_list <- list()
   TAC_list <- list()
   for (mm in 1:nMPs) {
     SB_SBMSY_list[[mm]] <- data.frame(median=apply(MMSE@SB_SBMSY[,1,mm,], 2, median),
@@ -693,6 +694,14 @@ TS_plot <- function(MMSE, relY=TRUE) {
                                       t(apply(MMSE@SB_SBMSY[,1,mm,], 2, quantile, c(0.1, 0.9))),
                                       Year=proj.yrs,
                                       MP=MPs[mm])
+
+    # FMSY
+    F_FMSY_list[[mm]] <- data.frame(median=apply(MMSE@F_FMSY[,1,1,mm,], 2, median),
+                                      t(apply(MMSE@F_FMSY[,1,1,mm,], 2, quantile, c(0.25, 0.75))),
+                                      t(apply(MMSE@F_FMSY[,1,1,mm,], 2, quantile, c(0.1, 0.9))),
+                                      Year=proj.yrs,
+                                      MP=MPs[mm])
+
 
     # yield
     TAC <- apply(MMSE@TAC, c(1,2, 4,5), sum)
@@ -716,13 +725,23 @@ TS_plot <- function(MMSE, relY=TRUE) {
   SB_SBMSY_df$yline1 <- 1
   SB_SBMSY_df$yline2 <- 0.4
 
+  F_FMSY_df <- do.call('rbind', F_FMSY_list)
+  F_FMSY_df$Var <- 'F/FMSY'
+  F_FMSY_df$yline1 <- 1
+  F_FMSY_df$yline2 <- NA
+
   TAC_df <- do.call('rbind', TAC_list)
   TAC_df$Var <- 'TAC'
   TAC_df$yline1 <- 1
   TAC_df$yline2 <- NA
 
+  if(incFMSY) {
+    df <- bind_rows(SB_SBMSY_df, F_FMSY_df, TAC_df)
+  } else {
+    df <- bind_rows(SB_SBMSY_df, TAC_df)
+  }
 
-  df <- bind_rows(SB_SBMSY_df, TAC_df)
+
   df <- df %>% filter(Year>=2024)
   df$MP <- factor(df$MP, levels=MMSE@MPs[[1]], ordered = TRUE)
 
@@ -814,18 +833,50 @@ Kobe_Time_MP <- function(mm, MMSE) {
 #'
 #' @return A `ggplot` object
 #' @export
-VarC_Violin <- function(MMSE) {
+VarC_Violin <- function(MMSE, np=1) {
   tt <- VarC(MMSE)
 
   df <- data.frame(Sim=1:MMSE@nsim, MP=rep(MMSE@MPs[[1]], each=MMSE@nsim), Var=as.vector(tt@Stat))
-  df$MP <- factor(df$MP, levels=MMSE@MPs[[1]], ordered = TRUE)
+  mp_names <- MMSE@MPs[[1]]
+  mp_names <- sort(mp_names)
+
+  df_2 <- df %>% group_by(MP) %>% summarize(val=median(Var)) %>% arrange(val)
+  mp_names_2 <- df_2$MP
+
   df$Var <- df$Var * 100
-  ggplot(df, aes(x=MP, y=Var, fill=MP)) +
+  df2 <- df
+  df$MP <- factor(df$MP, levels=mp_names, ordered = TRUE)
+  df2$MP <- factor(df2$MP, levels=mp_names_2, ordered = TRUE)
+
+  p1 <-ggplot(df, aes(x=MP, y=Var, fill=MP)) +
     geom_violin(scale='width') +
     theme_bw() +
     guides(fill='none') +
     labs(x='Candiate Management Procedure',
-         y='Median absolute change in TAC (%)')
+         y='Median absolute change in TAC (%)') +
+    theme(axis.text.x = element_text(angle=90))
+
+  p2 <- ggplot(df2, aes(x=MP, y=Var, fill=MP)) +
+    geom_violin(scale='width') +
+    theme_bw() +
+    guides(fill='none') +
+    labs(x='Candiate Management Procedure',
+         y='Median absolute change in TAC (%)') +
+    theme(axis.text.x = element_text(angle=90))
+
+  if (length(np)==1) {
+    if (np==1) {
+      out <- p1
+    }
+    if (np==2) {
+      out <- p2
+    }
+  }
+
+  if (length(np)==2) {
+    out <- cowplot::plot_grid(p1,p2,nrow=2, align='v')
+  }
+  out
 }
 
 

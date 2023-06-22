@@ -26,7 +26,7 @@ calcMax <- function (Prob) {
 
 firstChange <- function(vec) {
   ll <- length(vec)-1
-  if (all(diff(vec)<1E-1))
+  if (all(abs(diff(vec))<1E-1))
     return(NA)
   for (i in 1:ll) {
     if (abs(vec[i]-vec[i+1]) > 0.1)
@@ -71,30 +71,30 @@ PGK_short <- function (MMSEobj = NULL, Ref = 1, Yrs = c(4,13))  {
 class(PGK_short) <- 'PM'
 
 
-#' @describeIn PMs Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 6-10 (2029-2033)
-#' @family Status
-#' @export
-PGK_6_10 <- function (MMSEobj = NULL, Ref = 1, Yrs = c(9,13))  {
-  if(!inherits(MMSEobj,'MMSE'))
-    stop('This PM method is designed for objects of class `MMSE`')
-  Yrs <- ChkYrs(Yrs, MMSEobj)
-  PMobj <- new("PMobj")
-  PMobj@Name <- "PKG_6_10: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 6-10 (2029-2033)"
-  PMobj@Caption <- "Prob. Green Zone of Kobe Space (2029-2033)"
-
-  PMobj@Ref <- Ref
-  tt <- MMSEobj@SB_SBMSY[, 1,, Yrs[1]:Yrs[2]] > 1 & MMSEobj@F_FMSY[, 1,1, , Yrs[1]:Yrs[2]] < 1
-  if (is.null(dim(tt)))
-    tt <- matrix(tt, nrow=MMSEobj@nsim, ncol=1)
-  PMobj@Stat <- tt
-  PMobj@Prob <- calcProb(PMobj@Stat, MMSEobj)
-  PMobj@Mean <- calcMean(PMobj@Prob)
-  PMobj@MPs <- MMSEobj@MPs[[1]]
-  PMobj
-
-}
-class(PGK_6_10) <- 'PM'
-
+# #' @describeIn PMs Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 6-10 (2029-2033)
+# #' @family Status
+# #' @export
+# PGK_6_10 <- function (MMSEobj = NULL, Ref = 1, Yrs = c(9,13))  {
+#   if(!inherits(MMSEobj,'MMSE'))
+#     stop('This PM method is designed for objects of class `MMSE`')
+#   Yrs <- ChkYrs(Yrs, MMSEobj)
+#   PMobj <- new("PMobj")
+#   PMobj@Name <- "PKG_6_10: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 6-10 (2029-2033)"
+#   PMobj@Caption <- "Prob. Green Zone of Kobe Space (2029-2033)"
+#
+#   PMobj@Ref <- Ref
+#   tt <- MMSEobj@SB_SBMSY[, 1,, Yrs[1]:Yrs[2]] > 1 & MMSEobj@F_FMSY[, 1,1, , Yrs[1]:Yrs[2]] < 1
+#   if (is.null(dim(tt)))
+#     tt <- matrix(tt, nrow=MMSEobj@nsim, ncol=1)
+#   PMobj@Stat <- tt
+#   PMobj@Prob <- calcProb(PMobj@Stat, MMSEobj)
+#   PMobj@Mean <- calcMean(PMobj@Prob)
+#   PMobj@MPs <- MMSEobj@MPs[[1]]
+#   PMobj
+#
+# }
+# class(PGK_6_10) <- 'PM'
+#
 
 #' @describeIn PMs Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 11-20 (2034-2043)
 #' @family Status
@@ -308,7 +308,7 @@ nLRP_med <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(14,23))  {
 
   PMobj <- new("PMobj")
   PMobj@Name <- "nLRP_med: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any of years 11-20 (2034-2043)"
-  PMobj@Caption <- "Prob. SB > 0.4SBMSY (2034-2043)"
+  PMobj@Caption <- "Prob. of not breaching LRP (2034-2043)"
 
   PMobj@Ref <- Ref
   PMobj@Stat <- MMSEobj@SB_SBMSY[, 1,, Yrs[1]:Yrs[2]]
@@ -357,7 +357,7 @@ nLRP_long <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(24,33))  {
 
   PMobj <- new("PMobj")
   PMobj@Name <- "nLRP_long: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) n any of years 21-30 (2044-2053))"
-  PMobj@Caption <- "Prob. SB > 0.4SBMSY (2044-2053)"
+  PMobj@Caption <- "Prob. of not breaching LRP (2044-2053)"
 
   PMobj@Ref <- Ref
   PMobj@Stat <- MMSEobj@SB_SBMSY[, 1,, Yrs[1]:Yrs[2]]
@@ -405,7 +405,7 @@ nLRP <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(4,33))  {
 
   PMobj <- new("PMobj")
   PMobj@Name <- "LRP: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) over all years (2024-2053)"
-  PMobj@Caption <- "Prob. SB > 0.4SBMSY (2024-2053)"
+  PMobj@Caption <- "Prob. of not breaching LRP (2024-2053)"
 
   PMobj@Ref <- Ref
   PMobj@Stat <- MMSEobj@SB_SBMSY[, 1,, Yrs[1]:Yrs[2]]
@@ -507,7 +507,7 @@ AvTAC_med <- function(MMSEobj=NULL, Ref=1, Yrs=c(14,23)) {
 
   PMobj <- new("PMobj")
   PMobj@Name <- 'AvC10: Median TAC (t) over years 11-20'
-  PMobj@Caption <- 'Median TAC (t) 2034 - 2043'
+  PMobj@Caption <- 'Median TAC (t) (2034 - 2043)'
 
   Stat_y <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum)
   PMobj@Stat <- apply(Stat_y, c(1,2), median)
@@ -558,7 +558,7 @@ AvTAC_long <- function(MMSEobj=NULL, Ref=1, Yrs=c(24,33)) {
 
   PMobj <- new("PMobj")
   PMobj@Name <- 'AvC10: Median TAC (t) over years 21-30'
-  PMobj@Caption <- 'Median TAC (t) 2044 - 2053'
+  PMobj@Caption <- 'Median TAC (t) (2044 - 2053)'
 
   Stat_y <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum)
   PMobj@Stat <- apply(Stat_y, c(1,2), median)
@@ -611,24 +611,32 @@ VarC <- function (MMSEobj = NULL, Ref=1, Yrs=c(4,33))  {
 
   PMobj <- new("PMobj")
   PMobj@Name <- 'VarC: Median Variation in TAC (%) between management cycles'
-  PMobj@Caption <- 'Median Variation in TAC (%) between management cycles'
+  PMobj@Caption <- 'Median Variation in TAC (%)'
 
   TAC <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum, na.rm=TRUE)
 
   # get management cycle
-  interval <- min(apply(TAC[,1,], 1, firstChange), na.rm=TRUE)
+  nMPs <- MMSEobj@nMPs
+  interval <- rep(NA, nMPs)
+  for (mm in 1:nMPs) {
+    interval[mm] <- suppressWarnings(min(apply(TAC[,mm,], 1, firstChange), na.rm=TRUE))
+  }
+
+  AAVY <- array(0, dim=c(MMSEobj@nsim, nMPs))
 
   yrs <- seq_along(Yrs[1]:Yrs[2])
-  change_yrs <- seq(1, by=interval, to=max(yrs))
+  for (mm in 1:nMPs) {
+    change_yrs <- seq(1, by=interval[mm], to=max(yrs))
 
-  y1 <- change_yrs[1:(length(change_yrs)-1)]
-  y2 <- change_yrs[2:length(change_yrs)]
-
-  if (MMSEobj@nMPs > 1) {
-    AAVY <- apply(((((TAC[, , y2] - TAC[, , y1])/TAC[, , y1])^2)^0.5), c(1, 2), median, na.rm=TRUE)
-  } else {
-    AAVY <- array(apply(((((TAC[, 1, y2] - TAC[, 1, y1])/TAC[, 1, y1])^2)^0.5), 1, median, na.rm=TRUE))
+    y1 <- change_yrs[1:(length(change_yrs)-1)]
+    y2 <- change_yrs[2:length(change_yrs)]
+    if (interval[mm]==Inf) {
+      AAVY[,mm] <- 0
+    } else {
+      AAVY[,mm] <- apply(((((TAC[, mm, y2] - TAC[, mm, y1])/TAC[,mm , y1])^2)^0.5), 1, median, na.rm=TRUE)
+    }
   }
+
 
   PMobj@Stat <- AAVY
   PMobj@Ref <- Ref
@@ -655,18 +663,26 @@ MaxVarC <- function (MMSEobj = NULL, Ref=1, Yrs=c(4,33))  {
   TAC <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum, na.rm=TRUE)
 
   # get management cycle
-  interval <- min(apply(TAC[,1,], 1, firstChange), na.rm=TRUE)
+  nMPs <- MMSEobj@nMPs
+  interval <- rep(NA, nMPs)
+  for (mm in 1:nMPs) {
+    interval[mm] <- suppressWarnings(min(apply(TAC[,mm,], 1, firstChange), na.rm=TRUE))
+  }
+
+  AAVY <- array(0, dim=c(MMSEobj@nsim, nMPs))
 
   yrs <- seq_along(Yrs[1]:Yrs[2])
-  change_yrs <- seq(1, by=interval, to=max(yrs))
+  for (mm in 1:nMPs) {
+    change_yrs <- seq(1, by=interval[mm], to=max(yrs))
 
-  y1 <- change_yrs[1:(length(change_yrs)-1)]
-  y2 <- change_yrs[2:length(change_yrs)]
+    y1 <- change_yrs[1:(length(change_yrs)-1)]
+    y2 <- change_yrs[2:length(change_yrs)]
+    if (interval[mm]==Inf) {
+      AAVY[,mm] <- 0
+    } else {
+      AAVY[,mm] <- apply(((((TAC[, mm, y2] - TAC[, mm, y1])/TAC[,mm , y1])^2)^0.5), 1, max, na.rm=TRUE)
+    }
 
-  if (MMSEobj@nMPs > 1) {
-    AAVY <- apply(((((TAC[, , y2] - TAC[, , y1])/TAC[, , y1])^2)^0.5), c(1, 2), max)
-  } else {
-    AAVY <- array(apply(((((TAC[, 1, y2] - TAC[, 1, y1])/TAC[, 1, y1])^2)^0.5), 1, max))
   }
 
   PMobj@Stat <- AAVY
@@ -745,7 +761,8 @@ PM_table <- function(MMSE, PMs=NULL, msg=TRUE) {
 #' @export
 TradeOff <- function(MMSE, PMs, xlim=NULL, ylim=NULL, vline=NULL,
                      hline=NULL, quants=c(0.1, 0.9), inc.leg=TRUE,
-                     subset=FALSE) {
+                     inc.labels=TRUE, pt.size=3, inc.line=FALSE,
+                     subset=FALSE, ymax=1) {
 
   # Calculate PMs
   if (length(PMs)!=2)
@@ -761,7 +778,7 @@ TradeOff <- function(MMSE, PMs, xlim=NULL, ylim=NULL, vline=NULL,
   Captions <- list()
   PM_val <- list()
   for (i in seq_along(PMs)) {
-    Captions[[i]] <- paste0(PMs[i], ": ", PMlist[[i]]@Caption)
+    Captions[[i]] <- PMlist[[i]]@Caption
     PM_val[[i]] <- PMlist[[i]]@Mean
   }
 
@@ -794,10 +811,24 @@ TradeOff <- function(MMSE, PMs, xlim=NULL, ylim=NULL, vline=NULL,
 
 
   # rename MPs
-  mat <- matrix(unlist(pdf$MP %>% strsplit(., '_')), nrow=MMSE@nMPs, byrow=T)
+  get_Code <- function(MP) {
+    if(!grepl("_", MP)) {
+      MP <- MP
+      Code <- NA
+    } else {
+      txt <- strsplit(MP, "_")[[1]]
+      MP <- txt[1]
+      Code <- txt[2]
+    }
+    data.frame(MP=MP, Code=Code)
+  }
+
+  mat <- lapply(1:nrow(pdf), function(x) get_Code(pdf$MP[x])) %>% do.call('rbind', .)
   pdf$MP <- mat[,1]
   pdf$Code <- mat[,2]
+  pdf$Code[is.na(pdf$Code)] <- 'None'
   pdf <- left_join(pdf, TuneTargets, by='Code')
+  pdf$Target[is.na(pdf$Target)] <- 'None'
   pdf$Target <- factor(pdf$Target)
 
   p <- ggplot(pdf)
@@ -810,21 +841,32 @@ TradeOff <- function(MMSE, PMs, xlim=NULL, ylim=NULL, vline=NULL,
   # limits
   if (!is.null(xlim)) {
     xlimdata <- data.frame(x=c(-Inf, -Inf, xlim, xlim), y=c(-Inf, Inf, Inf, -Inf))
-    p <- p +geom_polygon(data=xlimdata, aes(x=x, y=y), fill='red', alpha=0.1)
+    p <- p +geom_polygon(data=xlimdata, aes(x=x, y=y), fill='red', alpha=0.05)
   }
   if (!is.null(ylim)) {
     ylimdata <- data.frame(x=c(-Inf, -Inf, Inf, Inf), y=c(-Inf, ylim, ylim, -Inf))
-    p <- p +geom_polygon(data=ylimdata, aes(x=x, y=y), fill='red', alpha=0.1)
+    p <- p +geom_polygon(data=ylimdata, aes(x=x, y=y), fill='red', alpha=0.05)
   }
+
   p <- p +
-    geom_point(aes(x=x, y=y, color=MP, shape=Target), size=2) +
-    expand_limits(x=c(0,1),
-                  y=c(0,1)) +
-    ggrepel::geom_text_repel(aes(x=x, y=y, label=MP), show.legend = FALSE) +
-    theme_bw() +
+    geom_point(aes(x=x, y=y, color=MP, shape=Target), size=pt.size)  +
+    expand_limits(x=c(0,1), y=c(0, ymax)) +
+    scale_shape_manual(values=15:19)
+
+
+
+
+
+  if (inc.labels) {
+    p <- p +
+      ggrepel::geom_text_repel(aes(x=x, y=y, label=MP), show.legend = FALSE)
+  }
+
+
+  p <-  p + theme_bw() +
     labs(x=Captions[[1]], y=Captions[[2]],
-         shape=unique(pdf$Metric))
-  p <-  p + guides(color='none')
+         shape=unique(pdf$Metric[!is.na(pdf$Metric)])) +
+    guides(color='none')
 
   if (!inc.leg | length(unique(pdf$Code))<2)
     p <-  p + guides(shape='none')
@@ -836,10 +878,14 @@ TradeOff <- function(MMSE, PMs, xlim=NULL, ylim=NULL, vline=NULL,
 
   if (subset) {
     if (!is.null(xlim))
-      p <- p + xlim(c(xlim, 1))
+      p <- p + xlim(c(xlim*0.95, 1))
     if (!is.null(ylim))
-      p <- p + ylim(c(ylim, 1))
+      p <- p + ylim(c(ylim*0.95, 1))
   }
-  p
+
+  if (inc.line) {
+   p <- p + geom_line(aes(x=x, y=y, group=MP, color=MP))
+  }
+  p + theme(axis.title=element_text(size=15))
 }
 
