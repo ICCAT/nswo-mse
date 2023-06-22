@@ -13,7 +13,11 @@ TradeOff(
   hline = NULL,
   quants = c(0.1, 0.9),
   inc.leg = TRUE,
-  subset = FALSE
+  inc.labels = TRUE,
+  pt.size = 3,
+  inc.line = FALSE,
+  subset = FALSE,
+  ymax = 1
 )
 }
 \arguments{

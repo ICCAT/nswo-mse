@@ -4,7 +4,7 @@
 \alias{TS_plot}
 \title{Time-series plot of SB/SBMSY and TAC}
 \usage{
-TS_plot(MMSE, relY = TRUE)
+TS_plot(MMSE, relY = FALSE, incFMSY = FALSE)
 }
 \arguments{
 \item{MMSE}{An object of class `MMSE`}

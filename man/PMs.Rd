@@ -3,7 +3,6 @@
 \name{PMs}
 \alias{PMs}
 \alias{PGK_short}
-\alias{PGK_6_10}
 \alias{PGK_med}
 \alias{PGK_long}
 \alias{PGK}
@@ -30,8 +29,6 @@
 \title{Swordfish Performance Metrics functions}
 \usage{
 PGK_short(MMSEobj = NULL, Ref = 1, Yrs = c(4, 13))
-
-PGK_6_10(MMSEobj = NULL, Ref = 1, Yrs = c(9, 13))
 
 PGK_med(MMSEobj = NULL, Ref = 1, Yrs = c(14, 23))
 
@@ -95,8 +92,6 @@ Swordfish Performance Metrics functions
 \section{Functions}{
 \itemize{
 \item \code{PGK_short()}: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 1-10 (2024-2033)
-
-\item \code{PGK_6_10()}: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 6-10 (2029-2033)
 
 \item \code{PGK_med()}: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 11-20 (2034-2043)
 

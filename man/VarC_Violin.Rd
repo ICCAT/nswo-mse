@@ -4,7 +4,7 @@
 \alias{VarC_Violin}
 \title{Violin Plot for Median Absolute Change in TAC}
 \usage{
-VarC_Violin(MMSE)
+VarC_Violin(MMSE, np = 1)
 }
 \arguments{
 \item{MMSE}{An object of class `MMSE`}
