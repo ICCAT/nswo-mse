@@ -507,22 +507,21 @@ get_tune_val <- function(df, PM='PGK_6_10', Target=0.6) {
 #' Plot the results of tuning for an MP
 #'
 #' @param MP_name Name of the MP
+
 #' @param Tune_dir Directory where scoping results are saved
 #' @param plot Logical. Show the plot?
 #'
 #' @return list ggplot object and data.frame
 #' @export
 Plot_Tune <- function(MP_name, Tune_dir='Tuning_Objects', plot=TRUE) {
-  fls <- list.files(Tune_dir, pattern='.tune')
+
   nm <- paste0(MP_name, '.tune')
+  fls <- list.files(Tune_dir, pattern='.tune')
+
   if (!nm %in% fls)
     stop(nm, ' not found in ', Tune_dir)
   df <- readRDS(file.path(Tune_dir, nm))
   MP_family <- (MP_name %>% strsplit(., '_'))[[1]][1]
-
-  MP.file <- paste0('R/', MP_name, '.R')
-  if(!file.exists(MP.file))
-    stop(MP.file, ' does not exist')
 
   # loop over TuneTargets
   df_out <- list()
@@ -568,42 +567,57 @@ Plot_Tune <- function(MP_name, Tune_dir='Tuning_Objects', plot=TRUE) {
 #' Document an MP
 #'
 #' @param MP_name Name of an `MP` function
+#' @param MP_file Name of the R script containing the MP code (including path). If NULL, searches for
+#' `R/MP_name.r`
 #' @param Tune_dir Directory where scoping results are saved
 #' @param plot logical. Show the plot?
 #' @return Nothing
 #' @export
-Document_MP <- function(MP_name, Tune_dir='Tuning_Objects', plot=TRUE) {
+Document_MP <- function(MP_name, MP_file=NULL,
+                        Tune_dir='Tuning_Objects', plot=TRUE) {
   tdf <- Plot_Tune(MP_name, plot=plot)
   df_mp <- tdf$df
   n <- nrow(df_mp)
   MSEtool:::message(n, 'tuned CMPs found for', MP_name)
-  MP.file <- paste0('R/', MP_name, '.R')
-  MSEtool:::message_info('Writing tuned CMPs to', MP.file)
 
-  txt <- readLines(MP.file)
+
+  if (is.null(MP_file) | is.na(MP_file)) {
+    MP_file <- paste0('CMPs/', MP_name, '.R')
+  }
+
+  MSEtool:::message_info('Writing tuned CMPs to', MP_file)
+
+  txt <- readLines(MP_file)
   begin.tune <- which(grepl('# ---- Tuned CMPs ----', txt))
 
   if (length(begin.tune)<1) {
     # no tuned MPs exist
     tune_txt <- '\n# ---- Tuned CMPs ----'
-    cat(tune_txt,file=MP.file, sep="\n", append = TRUE)
+    cat(tune_txt,file=MP_file, sep="\n", append = TRUE)
   } else {
-    # delete all tuned MPs
-    txt[begin.tune:length(txt)] <- ''
-    last.line <- max(which(nchar(txt)!=0))
-    txt <- txt[1:last.line]
-    cat(txt,file=MP.file, sep="\n", append = FALSE)
-    tune_txt <- '\n# ---- Tuned CMPs ----'
-    cat(tune_txt,file=MP.file, sep="\n", append = TRUE)
+    # delete already tuned MPs
+    ind <- which(grepl(paste0('@describeIn ',MP_name), txt))
+    if (any(ind>0)) {
+      ind2 <- max(ind)+5
+      last.line <- max(which(nchar(txt)!=0))
+
+      if (ind2>=last.line) {
+        txt <- txt[1:(ind[1]-1)]
+      } else {
+        txt2a <- txt[1:(ind[1]-1)]
+        txt2b <- txt[(ind2+1):last.line]
+        txt <- c(txt2a, txt2b)
+      }
+      cat(txt,file=MP_file, sep="\n", append = FALSE)
+    }
   }
 
-  txt <- readLines(MP.file)
-  begin.tune <- which(grepl('# ---- Tuned CMPs ----', txt))
+  txt <- readLines(MP_file)
 
   txt.list <- lapply(1:nrow(df_mp), write_rmd, df=df_mp)
 
   for (i in seq_along(txt.list)) {
-    cat(txt.list[[i]],file=MP.file, sep="\n", append = TRUE)
+    cat(txt.list[[i]],file=MP_file, sep="\n", append = TRUE)
   }
 
 }
