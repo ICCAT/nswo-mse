@@ -541,13 +541,14 @@ Figure \@ref(fig:PGKshort) shows an example of two CMPs (`r PMlist$MPs`) for an 
 
 ![(#fig:PGKshort) An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in 2033 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/PGK_short.png){width=75%}
 
-### PGK_6_10
 
-`PGK_6_10` calculates the probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) over years 6--10 (2029--2033). This is calculated as the proportion of the total points (number of simulations x number of years) that are in the Green Zone of Kobe Space.
+<!-- ### PGK_6_10 -->
 
-Figure \@ref(fig:PGK610) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `PGK_6_10` in this example are: `r PMlist$PGK_6_10`.
+<!-- `PGK_6_10` calculates the probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) over years 6--10 (2029--2033). This is calculated as the proportion of the total points (number of simulations x number of years) that are in the Green Zone of Kobe Space. -->
 
-![(#fig:PGK610) An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in years 2029--2033 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/PGK_6_10.png){width=75%}
+<!-- Figure \@ref(fig:PGK610) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `PGK_6_10` in this example are: `r PMlist$PGK_6_10`. -->
+
+<!-- ![(#fig:PGK610) An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in years 2029--2033 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/PGK_6_10.png){width=75%} -->
 
 
 ### PGK_med
@@ -618,6 +619,8 @@ Figure \@ref(fig:LRPmed) shows an example of two CMPs (`r PMlist$MPs`) for an op
 
 
 ![(#fig:LRPmed) An example of a time-series plot of SB/SBMSY for a two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.](../../img/PMs/LRP_med.png){width=75%}
+
+
 ### LRP_long 
 
 `LRP_long` calculates the probability of breaching the limit reference point (LRP; SB<0.4SBMSY) in any of years 21-30 (2044-2053).
