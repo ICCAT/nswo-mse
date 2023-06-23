@@ -54,7 +54,7 @@ Sub_MMSE <- function(MMSE, MPs=NA) {
   MMSE_out <- MMSE
   mp_ind <- match(MPs, MMSE@MPs[[1]])
 
-  slots <- c('SB_SBMSY', 'F_FMSY', 'N', 'B', 'SSB', 'VB', 'Catch', 'Removals', 'TAC')
+  slots <- c('SB_SBMSY', 'F_FMSY', 'N', 'B', 'SSB', 'VB', 'Catch', 'Removals', 'TAC', 'FM')
   for (sl in slots) {
     vals <- slot(MMSE, sl)
     if (length(dim(vals))==5) {
@@ -67,6 +67,30 @@ Sub_MMSE <- function(MMSE, MPs=NA) {
   }
 
   MMSE_out@RefPoint$ByYear$MSY <- MMSE_out@RefPoint$ByYear$MSY[,,mp_ind,]
+  MMSE_out@RefPoint$ByYear$FMSY <- MMSE_out@RefPoint$ByYear$FMSY[,,mp_ind,]
+  MMSE_out@RefPoint$ByYear$SSBMSY <- MMSE_out@RefPoint$ByYear$SSBMSY[,,mp_ind,]
+  MMSE_out@RefPoint$ByYear$BMSY <- MMSE_out@RefPoint$ByYear$BMSY[,,mp_ind,]
+
+
+  ## PPD
+  ns <- MMSE_out@nstocks
+  nf <- MMSE_out@nfleets
+
+  for (st in 1:ns) {
+    MMSE_out@PPD[[st]][[fl]] <- list()
+    for (fl in 1:nf) {
+      cnt <- 0
+      for (mm in 1:MMSE_out@nMPs) {
+        if (mm %in% mp_ind) {
+          cnt <- cnt+1
+          MMSE_out@PPD[[st]][[fl]][[cnt]] <- MMSE@PPD[[st]][[fl]][[mm]]
+        }
+
+      }
+
+    }
+  }
+
   MMSE_out@MPs[[1]] <- MMSE@MPs[[1]][mp_ind]
   MMSE_out@nMPs <- length(MMSE_out@MPs[[1]])
   MMSE_out
