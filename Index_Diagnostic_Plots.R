@@ -11,7 +11,10 @@ library(SWOMSE)
 
 MMSE <- readRDS('MSE_Objects/Index_Testing/MMSE.mse')
 
-Index_Diagnostic(MMSE, 'CI')
+pp <- Index_Diagnostic(MMSE, 'CI')
+
+ggsave('img/Index_Diagnostics/MOM_000_1.png', pp[[1]], width=12, height=6)
+ggsave('img/Index_Diagnostics/MOM_000_2.png', pp[[2]], width=12, height=8)
 
 
 

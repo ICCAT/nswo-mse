@@ -385,7 +385,7 @@ A Robustness Test (R6. Implementation Error) has been designed to evaluate the c
 
 The operating models also assume that the TACs recommended by the CMPs apply to the landed catch and do not include discards; that is, the actual removals will be higher than the TACs if there is discard mortality on the sub-legal fish.
 
-The CMPs are first implemented in 2024, and every 3rd year after that, with the TAC held constant in the interim years. Since the MSE projection period begins in 2021 (the year after the conditioning), the landed catches for the first few projection years until the CMPS are implemented (2021, 2022, and 2023) are fixed at assumed values (Table \@ref(tab:future-catches)).
+The CMPs are first implemented in 2024, and every 3rd year after that, with the TAC held constant in the interim years. Since the MSE projection period begins in 2021 (the year after the conditioning), the landed catches for the first few projection years until the CMPS are implemented (2021, 2022, and 2023) are fixed and not set by the CMPs. The catch for 2021 is set at the reported level, and the catches for 2022 and 2023 are set to the mean from previous 10 years (2012 -- 2021) (Table \@ref(tab:future-catches)).
 
 ```{r future-catches}
 
@@ -397,7 +397,6 @@ Catchdf %>% knitr::kable(escape = F,
   kableExtra::kable_styling("striped", full_width = T)
 
 ```
-
 
 ## Generation of Future Data
 

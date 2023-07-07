@@ -571,11 +571,15 @@ usethis::use_data(OM_desc, overwrite = TRUE)
 
 # ---- Catches for Initial Projection Years ----
 
+catchdf <- data.frame(Year=SWOData@Year, Catch=SWOData@Cat[1,])
+catchdf <- bind_rows(catchdf, data.frame(Year=2021, Catch=9729))
+mean_catch <- catchdf %>% tail(10) %>% summarise(mean=round(mean(Catch),0))
+
 Catchdf <- data.frame(Year=c(2021, 2022, 2023),
-                 Catch=c(9729, 13200, 13200),
+                 Catch=c(9729, mean_catch$mean, mean_catch$mean),
                  Details=c('Reported Catch',
-                           'Assumed Catch (equal to TAC)',
-                           'Assumed Catch (equal to TAC)'))
+                           'Assumed Catch',
+                           'Assumed Catch'))
 
 usethis::use_data(Catchdf, overwrite = TRUE)
 
