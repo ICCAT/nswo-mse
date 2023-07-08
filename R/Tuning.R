@@ -75,7 +75,6 @@ Scope <- function(MP_name, Tuning_OMs, TuneTargets,
 
   runTuning_8 <- function(om, Tuning_OMs) {
     MOM <- get(Tuning_OMs[om])
-    MOM@nsim <- 20
     multiHist <- SimulateMOM(MOM, silent=T, parallel=FALSE)
     ProjectMOM(multiHist, MPs=c("MP1","MP2","MP3", 'MP4', 'MP5', 'MP6', 'MP7', 'MP8'),
                silent=TRUE,parallel = FALSE, checkMPs=FALSE)
