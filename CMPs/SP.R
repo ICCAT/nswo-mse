@@ -58,46 +58,5 @@ SPS <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
 SPS25 <-  SPS
 formals(SPS25)$mc <- 0.25
 
-# ---- Tuned CMPs ----
-#' @describeIn SPS Tuned to PGK_short = 0.51 across Reference OMs.
-#' @export
-SPS_a <- SPS
-formals(SPS_a)$tunepar <- 1.75003041977865
-class(SPS_a) <- "MP"
-
-
-#' @describeIn SPS Tuned to PGK_short = 0.6 across Reference OMs.
-#' @export
-SPS_b <- SPS
-formals(SPS_b)$tunepar <- 1.65003194469901
-class(SPS_b) <- "MP"
-
-
-#' @describeIn SPS Tuned to PGK_short = 0.7 across Reference OMs.
-#' @export
-SPS_c <- SPS
-formals(SPS_c)$tunepar <- 1.53210288406443
-class(SPS_c) <- "MP"
-
-
-#' @describeIn SPS25 Tuned to PGK_short = 0.51 across Reference OMs.
-#' @export
-SPS25_a <- SPS25
-formals(SPS25_a)$tunepar <- 1.74398376918711
-class(SPS25_a) <- "MP"
-
-
-#' @describeIn SPS25 Tuned to PGK_short = 0.6 across Reference OMs.
-#' @export
-SPS25_b <- SPS25
-formals(SPS25_b)$tunepar <- 1.64571095571096
-class(SPS25_b) <- "MP"
-
-
-#' @describeIn SPS25 Tuned to PGK_short = 0.7 across Reference OMs.
-#' @export
-SPS25_c <- SPS25
-formals(SPS25_c)$tunepar <- 1.53080604903839
-class(SPS25_c) <- "MP"
 
 

@@ -47,7 +47,6 @@ CE <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA,
 
   ind_ratio <- curInd/histInd
 
-
   if (ind_ratio>=0.8) {
     targER <- histER
   } else if (ind_ratio> 0.5) {
@@ -58,7 +57,6 @@ CE <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA,
 
   # Exploitation Rate Ratio
   ER_ratio <- targER/curER
-
   TAC <- ER_ratio * tunepar * Data@MPrec[x]
 
   # Maximum allowed change in TAC
@@ -68,49 +66,5 @@ CE <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA,
 
 CE25 <-  CE
 formals(CE25)$mc <- 0.25
-
-
-
-# ---- Tuned CMPs ----
-#' @describeIn CE Tuned to PGK_short = 0.51 across Reference OMs.
-#' @export
-CE_a <- CE
-formals(CE_a)$tunepar <- 0.992958702694315
-class(CE_a) <- "MP"
-
-
-#' @describeIn CE Tuned to PGK_short = 0.6 across Reference OMs.
-#' @export
-CE_b <- CE
-formals(CE_b)$tunepar <- 0.947412008281573
-class(CE_b) <- "MP"
-
-
-#' @describeIn CE Tuned to PGK_short = 0.7 across Reference OMs.
-#' @export
-CE_c <- CE
-formals(CE_c)$tunepar <- 0.892151389773921
-class(CE_c) <- "MP"
-
-
-#' @describeIn CE25 Tuned to PGK_short = 0.51 across Reference OMs.
-#' @export
-CE25_a <- CE25
-formals(CE25_a)$tunepar <- 0.992414163015388
-class(CE25_a) <- "MP"
-
-
-#' @describeIn CE25 Tuned to PGK_short = 0.6 across Reference OMs.
-#' @export
-CE25_b <- CE25
-formals(CE25_b)$tunepar <- 0.945298833819242
-class(CE25_b) <- "MP"
-
-
-#' @describeIn CE25 Tuned to PGK_short = 0.7 across Reference OMs.
-#' @export
-CE25_c <- CE25
-formals(CE25_c)$tunepar <- 0.890410783564127
-class(CE25_c) <- "MP"
 
 
