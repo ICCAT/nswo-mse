@@ -39,6 +39,8 @@ combine_MMSE <- function(MMSElist, name) {
 
   MMSE_out@RefPoint$ByYear$MSY <- do.call(abind:::abind, c(MSYlist, along = 1))
 
+  # PPD
+
   MMSE_out@Name <- name
   MMSE_out
 }
@@ -77,18 +79,17 @@ Sub_MMSE <- function(MMSE, MPs=NA) {
   nf <- MMSE_out@nfleets
 
   for (st in 1:ns) {
-    MMSE_out@PPD[[st]][[fl]] <- list()
     for (fl in 1:nf) {
-      cnt <- 0
-      for (mm in 1:MMSE_out@nMPs) {
-        if (mm %in% mp_ind) {
-          cnt <- cnt+1
-          MMSE_out@PPD[[st]][[fl]][[cnt]] <- MMSE@PPD[[st]][[fl]][[mm]]
-        }
+      MMSE_out@PPD[[st]][[fl]] <- list()
+
+      for (mm in seq_along(mp_ind)) {
+        MMSE_out@PPD[[st]][[fl]][[mm]] <- MMSE@PPD[[st]][[fl]][[mp_ind[mm]]]
 
       }
 
     }
+
+
   }
 
   MMSE_out@MPs[[1]] <- MMSE@MPs[[1]][mp_ind]
