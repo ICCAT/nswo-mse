@@ -84,6 +84,8 @@ SP1 <- function(x, Data, Index_ID=1, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
 
   Rec@TAC <- Data@MPrec[x] * deltaI
   # 5. Return the `Rec` object
+  Rec@Misc[[x]] <- data.frame(Index_raw=Index_raw, Index_fitted=Index_fitted, Ind_Target=Ind_Target,
+                              deltaI=deltaI)
   Rec
 }
 class(SP1) <- 'MP'
@@ -320,5 +322,109 @@ AT1 <- function(x, Data, Index_ID=c(1,2,3,4,5,6,7),
 }
 # 6. Assign function to class `MP`
 class(AT1) <- 'MP'
+
+
+
+# ---- Tuned CMPs ----
+
+
+#' @export
+CI1_a <- CI1
+formals(CI1_a)$tunepar <- 1.76489361702128
+class(CI1_a) <- "MP"
+
+
+#' @export
+CI1_a <- CI1
+formals(CI1_a)$tunepar <- 1.76489361702128
+class(CI1_a) <- "MP"
+
+
+#' @export
+EA1_a <- EA1
+formals(EA1_a)$tunepar <- 0.581727574750831
+class(EA1_a) <- "MP"
+
+
+#' @export
+WA1_a <- WA1
+formals(WA1_a)$tunepar <- 0.540573805279688
+class(WA1_a) <- "MP"
+
+
+#' @export
+CI1_a <- CI1
+formals(CI1_a)$tunepar <- 1.76489361702128
+class(CI1_a) <- "MP"
+
+
+#' @export
+EA1_a <- EA1
+formals(EA1_a)$tunepar <- 0.581727574750831
+class(EA1_a) <- "MP"
+
+
+#' @export
+WA1_a <- WA1
+formals(WA1_a)$tunepar <- 0.540573805279688
+class(WA1_a) <- "MP"
+
+
+#' @export
+CI1_a <- CI1
+formals(CI1_a)$tunepar <- 1.76489361702128
+class(CI1_a) <- "MP"
+
+
+#' @describeIn CI1 Tuned to PGK_short = 0.6 across Reference OMs.
+#' @export
+CI1_b <- CI1
+formals(CI1_b)$tunepar <- 1.42857142857143
+class(CI1_b) <- "MP"
+
+
+#' @describeIn CI1 Tuned to PGK_short = 0.7 across Reference OMs.
+#' @export
+CI1_c <- CI1
+formals(CI1_c)$tunepar <- 1.12672811059908
+class(CI1_c) <- "MP"
+#' @describeIn EA1 Tuned to PGK_short = 0.51 across Reference OMs.
+#' @export
+EA1_a <- EA1
+formals(EA1_a)$tunepar <- 0.581727574750831
+class(EA1_a) <- "MP"
+
+
+#' @describeIn EA1 Tuned to PGK_short = 0.6 across Reference OMs.
+#' @export
+EA1_b <- EA1
+formals(EA1_b)$tunepar <- 0.723719676549865
+class(EA1_b) <- "MP"
+
+
+#' @describeIn EA1 Tuned to PGK_short = 0.7 across Reference OMs.
+#' @export
+EA1_c <- EA1
+formals(EA1_c)$tunepar <- 0.914585414585415
+class(EA1_c) <- "MP"
+#' @describeIn WA1 Tuned to PGK_short = 0.51 across Reference OMs.
+#' @export
+WA1_a <- WA1
+formals(WA1_a)$tunepar <- 0.540573805279688
+class(WA1_a) <- "MP"
+
+
+#' @describeIn WA1 Tuned to PGK_short = 0.6 across Reference OMs.
+#' @export
+WA1_b <- WA1
+formals(WA1_b)$tunepar <- 0.666233766233766
+class(WA1_b) <- "MP"
+
+
+#' @describeIn WA1 Tuned to PGK_short = 0.7 across Reference OMs.
+#' @export
+WA1_c <- WA1
+formals(WA1_c)$tunepar <- 0.848443223443223
+class(WA1_c) <- "MP"
 
 
