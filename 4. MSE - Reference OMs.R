@@ -21,13 +21,6 @@ MPs_all <- c(MPs_a, MPs_b, MPs_c)
 CC15000 <- function(x, Data, Interval=3, TAC=15000, ...) {
 
   Rec <- new('Rec')
-  # Does TAC need to be updated? (or set a fixed catch if before Initial_MP_Yr)
-  if (SameTAC(Initial_MP_Yr, Interval, Data)) {
-    Rec@TAC <- Data@MPrec[x]
-    Rec <- FixedTAC(Rec, Data) # use actual catches if they are available
-    return(Rec)
-  }
-
   Rec@TAC <- TAC
   Rec
 }
