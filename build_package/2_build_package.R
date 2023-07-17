@@ -375,12 +375,7 @@ cat("\n#' @name OM_DF",
     sep="", append=TRUE,
     file=file.path('R/', RoxygenFile))
 
-# ---- Update SWO_Data with AddInd -----
-load('data/MOM_000.rda')
 
-SWOData <- MOM_000@cpars[[1]][[1]]$Data
-
-usethis::use_data(SWOData, overwrite = TRUE)
 
 # ---- Make OM Table -----
 
@@ -582,6 +577,14 @@ Catchdf <- data.frame(Year=c(2021, 2022, 2023),
                            'Assumed Catch'))
 
 usethis::use_data(Catchdf, overwrite = TRUE)
+
+# ---- Update SWO_Data with AddInd -----
+load('data/MOM_000.rda')
+
+SWOData <- MOM_000@cpars[[1]][[1]]$Data
+SWOData@MPrec <- Catchdf$Catch[3]
+
+usethis::use_data(SWOData, overwrite = TRUE)
 
 # ----- Index Dataframe ----
 
