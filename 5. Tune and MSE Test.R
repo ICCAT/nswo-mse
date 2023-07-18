@@ -4,7 +4,7 @@ library(SWOMSE)
 CMP_files <- list.files('CMPs')
 for (fl in CMP_files) source(file.path('CMPs', fl))
 
-Tune_MPs <- c('SPFox3', 'SPS2', 'MCC', 'GSC')
+Tune_MPs <- c('SPFox3')
 
 # Scope
 Tuning_OMs <- OM_DF %>% filter(Class=='Reference')
@@ -13,7 +13,8 @@ Tuning_OMs <- Tuning_OMs$OM.object
 # Scope & Tune
 for (i in seq_along(Tune_MPs)) {
   MP_name <- Tune_MPs[i]
-  tt <- try(Scope(MP_name, Tuning_OMs, TuneTargets))
+  tt <- try(Scope(MP_name, Tuning_OMs, TuneTargets,
+                  test_vals = c(1,1.1, 1.2,1.3,1.4,1.5,1.6,1.7)))
   #  Plot_Scope(MP_name)
 }
 

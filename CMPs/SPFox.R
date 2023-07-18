@@ -109,20 +109,7 @@ SPFox3 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
   Data <- Lag_Data(Data, Data_Lag)
 
   # apply SP assessment model
-  # assumed LH parameters for calculating r prior
-  Data@vbLinf[x] <- 312
-  Data@vbK[x] <- 0.0926
-  Data@vbt0[x] <- -3.76
-  Data@L50[x] <- 173.5
-  Data@L95[x] <- 200
-  Data@wla <- 4.45E-06
-  Data@wlb <- 3.2
-  Data@Mort[x] <- 0.2
-  Data@steep[x] <- 0.88
-  Data@CV_Mort <- 0.01
-  Data@CV_steep <- 0.01
-
-  Mod <- SAMtool::SP_Fox(x, Data, Euler_Lotka =100)
+  Mod <- SAMtool::SP_Fox(x, Data, prior=list(r=c(0.39, 0.03)))
 
   # harvest control rule
   # based on: https://www.iccat.int/Documents/Recs/compendiopdf-e/2017-04-e.pdf
