@@ -17,6 +17,7 @@ for (i in seq_along(Tune_MPs)) {
   #  Plot_Scope(MP_name)
 }
 
+Tune_MPs <- c('MCC', 'GSC')
 TuneTarget <- TuneTargets %>% filter(Code=='a')
 
 for (i in seq_along(Tune_MPs)) {
@@ -401,7 +402,7 @@ ggsave('img/July_2023/TS_TAC.png', width=13, height=3)
 TimeSeries_plot(DF, 'TAC', meanC, byOM=TRUE)
 
 
-
+DF %>% filter(MP=='MCC_b', name=='TAC', Year %in% 2024:2030, Sim==3)
 
 
 
