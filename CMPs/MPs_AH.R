@@ -83,7 +83,7 @@ SP1 <- function(x, Data, Index_ID=1, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
   # if (deltaI < 1 ) LdeltaI <- -1*log(1 + deltaI)
   # if (deltaI >= 1) LdeltaI <- log(deltaI)
   if(is.na(deltaI)) deltaI = 1
-
+  if (deltaI<0) deltaI <- 0.001
   deltaI = exp(log(deltaI)*.1) #+scale; exp(LdeltaI*.1)
 
   # max/min change in TAC
@@ -173,6 +173,7 @@ EA1 <- function(x, Data, Index_ID=c(1,5,7),
   # ratio of mean recent index to Ind_Target
   deltaI <- Index_cur/Ind_Target
   if(is.na(deltaI)) deltaI = 1
+  if (deltaI<0) deltaI <- 0.001
   deltaI = exp(log(deltaI)*.1)
 
   # max/min change in TAC
@@ -242,6 +243,7 @@ WA1 <- function(x, Data, Index_ID=c(2,3,4,6),
   # ratio of mean recent index to Ind_Target
   deltaI <- Index_cur/Ind_Target
   if(is.na(deltaI)) deltaI = 1
+  if (deltaI<0) deltaI <- 0.001
   deltaI = exp(log(deltaI)*.1)
 
   # max/min change in TAC
@@ -312,11 +314,13 @@ AT1 <- function(x, Data, Index_ID=c(1,2,3,4,5,6,7),
   # ratio of mean recent index to Ind_Target
   deltaI <- Index_cur/Ind_Target
   if(is.na(deltaI)) deltaI = 1
+  if (deltaI<0) deltaI <- 0.001
   deltaI = exp(log(deltaI)*.1)
 
   # max/min change in TAC
   if (deltaI <= (1 - mc)) deltaI <- 1 - mc
   if (deltaI > (1 + mc)) deltaI <- 1 + mc
+
 
   #z = .01*exp(.125*(max(Index_year)-2019))+.1#.1
 
