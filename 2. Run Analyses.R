@@ -18,30 +18,35 @@ get_MP_names <- function() {
   df$MP
 }
 
-
-All_MPs <- get_MP_names() %>% sort()
-
-Test_MPs <- c('CE', 'GSC2', 'MCC3', 'SPSS', 'SPSSFox')
-
 # Define Reference OMs
 Refs_OMs <- OM_DF %>% filter(Class=='Reference')
 Refs_OMs <- Refs_OMs$OM.object
 
 
-for (MP_name in Test_MPs) {
+All_MPs <- get_MP_names() %>% sort()
 
-  # Scoping and Tuning
+
+Test_MPs <- c('MCC2', 'MCC3', 'MCC4', 'SPSS',  'SPSSFox',
+              'AT1', 'EA1', 'WA1', 'CI1')
+
+
+
+# ---- Scoping and Tuning ----
+for (MP_name in Test_MPs) {
   Tune_MP(MP_name, Refs_OMs)
 
   # Create tuned CMPs
   Document_MP(MP_name=MP_name, MP_file=get_MP_locations(MP_name), plot=TRUE)
 
-  # Source new tuned CMPs
-  source_CMPs()
+}
 
-  # ---- Run MSE for Reference OMs -----
+
+# ---- Run MSE for Reference OMs -----
+# Source new tuned CMPs
+source_CMPs()
+
+for (MP_name in Test_MPs) {
   MPs <- get_tune_MPs(MP_name)
-
   for (i in seq_along(Refs_OMs)) {
 
     # load hist
@@ -56,17 +61,24 @@ for (MP_name in Test_MPs) {
     saveRDS(mmse, file=file.path('MSE_Objects', nm))
   }
 
-  # ---- Run MSE for Robustness Tests ----
-
-  ## R1. Increasing Catchability
-  hist <- readRDS(file.path('Hist_Objects/R1_Increasing_q', 'MOM_010.hist'))
-
-  mmse <- ProjectMOM(hist, MPs)
-
-  # save MSE
-  nm <- paste0('MOM_010', '-', MP_name, '-R1_Increasing_q', '.mse')
-  saveRDS(mmse, file=file.path('MSE_Objects', nm))
 }
+
+
+
+# ---- Run MSE for Robustness Tests ----
+
+# ---- Run MSE for Robustness Tests ----
+
+## R1. Increasing Catchability
+hist <- readRDS(file.path('Hist_Objects/R1_Increasing_q', 'MOM_010.hist'))
+
+mmse <- ProjectMOM(hist, MPs)
+
+# save MSE
+nm <- paste0('MOM_010', '-', MP_name, '-R1_Increasing_q', '.mse')
+saveRDS(mmse, file=file.path('MSE_Objects', nm))
+
+
 
 
 
