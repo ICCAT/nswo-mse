@@ -1,4 +1,86 @@
 
+is.dominated <- function(x, y, greater=TRUE, rnd=2) {
+  x$Value <- round(x$Value,rnd)
+  y$Value <- round(y$Value,rnd)
+  if (greater)
+    sdf <- x %>% filter(Value>=y$Value)
+  if (!greater)
+    sdf <- x %>% filter(Value<=y$Value)
+  sdf$MP
+}
+
+#' Title
+#'
+#' @param pms
+#' @param PM_results
+#'
+#' @return
+#' @export
+Calc_Dominated <- function(pms, PM_results) {
+  PM1 <- pms$PM1
+  PM2 <- pms$PM2
+  greater <- rep(TRUE, 2)
+  t1 <- DomPMs %>% filter(PM==PM1)
+  greater[1] <- t1$Greater
+  t2 <- DomPMs %>% filter(PM==PM2)
+  greater[2] <- t2$Greater
+
+  PMs <- c(PM1, PM2)
+  df <- PM_results %>% filter(PM %in% PMs)
+  MPs <- unique(df$MP)
+  dom_MP_list <- list()
+  for (mm in seq_along(MPs)) {
+    tdf <- df %>% filter(MP==MPs[mm])
+    dom_MP_list[[MPs[mm]]] <- list()
+    for (pm in 1:2) {
+      x <- df %>% filter(PM==PMs[pm])
+      y <- tdf %>% filter(PM==PMs[pm])
+      dom_MP <- is.dominated(x,y, greater=greater[pm])
+
+      dom_MP_list[[MPs[mm]]][[PMs[[pm]]]] <- dom_MP[!dom_MP==MPs[mm]]
+    }
+    dom_MP_list[[MPs[mm]]] <- intersect(dom_MP_list[[MPs[mm]]][[1]], dom_MP_list[[MPs[mm]]][[2]] )
+  }
+  list(Non=names(which(lapply(dom_MP_list, length)==0)), Dom=names(which(lapply(dom_MP_list, length)!=0)))
+
+}
+
+
+#' Get Performance Metrics from Tuning Objects
+#'
+#' @param tune_dir
+#' @param tune_PM
+#'
+#' @return
+#' @export
+get_tune_PM <- function(tune_dir='Tuning_Objects', tune_PM='PGK_short') {
+  fls <- list.files(tune_dir, pattern='.tune')
+
+  MPs <- unlist(strsplit(fls, '.tune'))
+  MP_df <- data.frame(Name=MPs, MP=c(paste0(MPs, '_a'), paste0(MPs, '_b'), paste0(MPs, '_c')),
+                      Target=rep(c(0.51,0.60, 0.70), each=length(MPs)))
+
+  df_list <- list()
+  for (i in 1:nrow(MP_df)) {
+    fl <- paste0(MP_df$Name[i], '.tune')
+    obj <- readRDS(file.path('Tuning_Objects', fl))
+    targ <- MP_df$Target[i]
+    tune_val <- obj %>% filter(Name==tune_PM, Target==targ) %>% mutate(t=abs(Value-targ)) %>%
+      filter(t==min(t)) %>% distinct(test_vals)
+
+    df <- obj %>% filter(test_vals==tune_val$test_vals, Target==targ) %>% distinct(PM=Name, Value, Target, caption)
+    df <- df %>% mutate(Value=ifelse(PM=='PGK_short', Target, Value))
+    df$MP <- MP_df$MP[i]
+    df$Name <- MP_df$Name[i]
+    df_list[[i]] <- df %>% filter(PM!='PMfun')
+
+  }
+  DF <- do.call('rbind', df_list)
+  DF$Target <- factor(DF$Target)
+  DF
+}
+
+
 #' Swordfish Performance Metrics functions
 #'
 #' @param MMSEobj An object of class `MMSE`
@@ -453,7 +535,7 @@ AvTAC_short <- function(MMSEobj=NULL, Ref=NULL, Yrs=c(4,13)) {
   Yrs <- ChkYrs(Yrs, MMSEobj)
 
   PMobj <- new("PMobj")
-  PMobj@Name <- 'AvC10: Median TAC (t) over years 1-10'
+  PMobj@Name <- 'Median TAC (t) over years 1-10'
   PMobj@Caption <- 'Median TAC (t) 2024 - 2033'
 
   Stat_y <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum)
@@ -477,7 +559,7 @@ rAvTAC_short <- function(MMSEobj=NULL, Ref=NULL, Yrs=c(4,13)) {
   Yrs <- ChkYrs(Yrs, MMSEobj)
 
   PMobj <- new("PMobj")
-  PMobj@Name <- 'AvC10: Median relative TAC over years 1-10'
+  PMobj@Name <- 'Median relative TAC over years 1-10'
   PMobj@Caption <- 'Median relative TAC 2024 - 2033'
 
   Stat_y <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum)
@@ -506,7 +588,7 @@ AvTAC_med <- function(MMSEobj=NULL, Ref=1, Yrs=c(14,23)) {
   Yrs <- ChkYrs(Yrs, MMSEobj)
 
   PMobj <- new("PMobj")
-  PMobj@Name <- 'AvC10: Median TAC (t) over years 11-20'
+  PMobj@Name <- 'Median TAC (t) over years 11-20'
   PMobj@Caption <- 'Median TAC (t) (2034 - 2043)'
 
   Stat_y <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum)
@@ -529,7 +611,7 @@ rAvTAC_med <- function(MMSEobj=NULL, Ref=1, Yrs=c(14,23)) {
   Yrs <- ChkYrs(Yrs, MMSEobj)
 
   PMobj <- new("PMobj")
-  PMobj@Name <- 'AvC10: Median relative TAC over years 11-20'
+  PMobj@Name <- 'Median relative TAC over years 11-20'
   PMobj@Caption <- 'Median relative TAC 2034 - 2043'
 
   Stat_y <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum)
@@ -557,7 +639,7 @@ AvTAC_long <- function(MMSEobj=NULL, Ref=1, Yrs=c(24,33)) {
   Yrs <- ChkYrs(Yrs, MMSEobj)
 
   PMobj <- new("PMobj")
-  PMobj@Name <- 'AvC10: Median TAC (t) over years 21-30'
+  PMobj@Name <- 'Median TAC (t) over years 21-30'
   PMobj@Caption <- 'Median TAC (t) (2044 - 2053)'
 
   Stat_y <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum)
@@ -580,7 +662,7 @@ rAvTAC_long <- function(MMSEobj=NULL, Ref=1, Yrs=c(24,33)) {
   Yrs <- ChkYrs(Yrs, MMSEobj)
 
   PMobj <- new("PMobj")
-  PMobj@Name <- 'AvC10: Median relative TAC over years 21-30'
+  PMobj@Name <- 'Median relative TAC over years 21-30'
   PMobj@Caption <- 'Median relative TAC 2044 - 2053'
 
   Stat_y <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum)
@@ -718,7 +800,6 @@ PM_table <- function(MMSE, PMs=NULL, msg=TRUE) {
     PMlist[[i]] <- fun
   }
 
-
   PM_Values <- list()
   for (i in seq_along(PMs)) {
     nm <- PMs[i]
@@ -733,16 +814,84 @@ PM_table <- function(MMSE, PMs=NULL, msg=TRUE) {
                                  caption=caption)
   }
 
-  df <- do.call(rbind.data.frame, PM_Values) %>%
-    rename(Name=PM)
+  df <- do.call(rbind.data.frame, PM_Values)
 
-  df %>% filter(Name=='PGK_6_10')
+  df$MP_name <- unlist(lapply(df$MP %>% strsplit(., '_'), '[[', 1))
 
-  ######################
+  if(all(grepl('_', df$MP))) {
+    code <- unlist(lapply(df$MP %>% strsplit(., '_'), '[[', 2))
+  } else {
+    code <- NA
+  }
 
+  df$Target <- TuneTargets$Target[match(code, TuneTargets$Code)]
+  df$Target <- as.factor(df$Target)
+  df$Name <- df$PM
   df
 
 }
+
+#' Create a Trade-Off Plot
+#'
+#' @param DF A data.frame from `get_tune_OM`
+#' @param PMs Character length 2. Names of `PM` functions to plot
+#' @param inc.leg logical. Include the legend?
+#'
+#' @return A `ggplot` object
+#' @export
+Trade_Off <- function(DF, PM1, PM2, xline=NULL,
+                      yline=NULL, inc.leg=TRUE,
+                      pt.size=2, xmax=NULL, xmin=NULL, ymax=NULL, ymin=NULL,
+                      lab.MPs=NULL) {
+
+
+  DF2 <- DF %>% filter(PM %in% c(PM1, PM2)) %>%
+    dplyr::select(-caption, -name) %>%
+    tidyr::pivot_wider(., names_from = PM, values_from = Value)
+
+  DF2 <- DF2 %>% rename(., PM1=all_of(PM1), PM2=all_of(PM2))
+
+  if (is.null(xmin)) xmin <- 0
+  if (is.null(xmax)) xmax <- max(DF2$PM1)
+  if (is.null(ymin)) ymin <- 0
+  if (is.null(ymax)) ymax <- max(DF2$PM2)
+
+
+  captions <- DF %>% filter(PM %in% c(PM1, PM2)) %>%
+    distinct(PM, caption) %>%
+    tidyr::pivot_wider(., names_from = PM, values_from = caption) %>%
+    rename(., x=all_of(PM1), y=all_of(PM2))
+
+  p <- ggplot(DF2, aes(x=PM1, y=PM2)) +
+    geom_point(size=pt.size, aes(shape=Target, color=MP_name)) +
+    expand_limits(x=c(xmin,1), y=c(ymin,1)) +
+    labs(x=captions$x, y=captions$y, shape='PGK_short', color='PGK_short') +
+    theme_bw()
+
+  if (!is.null(xline))
+    p <- p + geom_vline(xintercept = xline, linetype=2, color='darkgray')
+  if (!is.null(yline))
+    p <- p + geom_hline(yintercept = yline, linetype=2, color='darkgray')
+
+  if (!inc.leg)
+    p <- p + guides(shape='none')
+  p <- p + guides(color='none')
+  if (!is.null(ymax))
+    p <- p + ylim(c(ymin, ymax))
+  if (!is.null(xmax))
+    p <- p + xlim(c(xmin, xmax))
+
+  if (!is.null(lab.MPs)) {
+    DF3 <- DF2 %>% filter(MP %in% lab.MPs)
+    p <- p + ggrepel::geom_text_repel(data=DF3, aes(label=MP, color=MP_name), show.legend = FALSE,
+                                      max.overlaps=20)
+  }
+
+
+  p
+}
+
+
 
 
 #' Create a Trade-Off Plot
@@ -889,3 +1038,210 @@ TradeOff <- function(MMSE, PMs, xlim=NULL, ylim=NULL, vline=NULL,
   p + theme(axis.title=element_text(size=15))
 }
 
+
+#' Process Results and Save to Disk
+#'
+#' @param dir
+#'
+#' @return
+#' @export
+process_results <- function(dir) {
+  MSElist <- list()
+  fls <- list.files(file.path('MSE_Objects', dir))
+
+  for (i in seq_along(fls)) {
+    om <- strsplit(fls[i], '.mse')[[1]][1]
+    MSElist[[i]] <- readRDS(file.path('MSE_Objects', dir, fls[i]))
+    if (class(MSElist[[i]]@multiHist[[1]]) =='character') {
+      MSElist[[i]]@multiHist <- readRDS(file.path('Hist_Objects', dir, paste0(om, '.hist')))
+    }
+  }
+
+  if (!dir.exists(file.path('Results', dir)))
+    dir.create(file.path('Results', dir))
+
+  MMSE <- combine_MMSE(MSElist, dir)
+
+  # save PM results
+  PerfDF <- calc_Performance(MMSE, dir)
+  saveRDS(PerfDF, file.path('Results', dir, 'PM_values.rda'))
+
+  # create and save time-series information
+  TS_list <- list()
+  for (i in seq_along(fls)) {
+    OM <- strsplit(fls[i], '.mse')[[1]][1]
+    MMSE <- MSElist[[i]]
+    TS_DF <- get_TS_info(MMSE, OM)
+    TS_DF$Class <- dir
+    TS_list[[i]] <- TS_DF
+  }
+  TS_DF <- do.call('rbind', TS_list)
+  saveRDS(TS_DF, file.path('Results', dir, 'TS_values.rda'))
+
+}
+
+#' Get Time-Series information
+#'
+#' @param MMSE
+#'
+#' @return
+#' @export
+get_TS_info <- function(MMSE, OM) {
+
+  All_Years <- get_Years(MMSE)
+  nsim <- MMSE@nsim
+  MPs <- MMSE@MPs[[1]]
+  nMPs <- MMSE@nMPs
+  Hist_Years <- All_Years %>% filter(Period=='Historical')
+  Projection_Years <- All_Years %>% filter(Period!='Historical')
+  nyears <- length(Hist_Years$Year)
+  pyears <- length(Projection_Years$Year)
+
+  SB_SBMSY <- get_SSB(MMSE, OM) %>% filter(Stock=='Female') %>% filter(Period=='Projection')
+  SB_SBMSY$SB_SBMSY <- SB_SBMSY$Value/MMSE@RefPoint$ByYear$SSBMSY[1,1,1,(nyears+1)]
+
+  F_FMSY <- get_F(MMSE, OM) %>% filter(Stock=='Female') %>% filter(Period=='Projection')
+  F_FMSY$F_FMSY <- F_FMSY$Value/MMSE@RefPoint$ByYear$FMSY[1,1,1,(nyears+1)]
+
+  TAC <- apply(MMSE@TAC, c(1,4,5), sum)
+
+  F_FMSY$TAC <- as.vector(TAC)
+
+  SB_SBMSY <- SB_SBMSY %>% distinct(Year, Sim, Model, MP, SB_SBMSY)
+  F_FMSY <- F_FMSY %>% distinct(Year, Sim, Model, MP, F_FMSY, TAC)
+
+  left_join(SB_SBMSY,
+            F_FMSY,
+            by = join_by(Year, Sim, Model, MP))
+}
+
+#' Get Performance Metrics from MMSE Object
+#'
+#' @param MMSE
+#'
+#' @return
+#' @export
+calc_Performance <- function(MMSE, Class=NULL, PMs=NULL, msg=TRUE) {
+  if (is.null(PMs))
+    PMs <- avail('PM', 'SWOMSE')
+
+  PMlist <- list()
+  for (i in seq_along(PMs)) {
+    fun <- try(get(PMs[i]), silent = TRUE)
+    if (inherits(fun, 'try-error'))
+      stop(PMs[i], ' not a valid function of class `PM`')
+    if (class(fun)!='PM')
+      stop(PMs[i], ' not a valid function of class `PM`')
+
+    PMlist[[i]] <- fun
+  }
+
+
+  PM_Values <- list()
+  for (i in seq_along(PMs)) {
+    nm <- PMs[i]
+    if (msg) message('Calculating: ', nm)
+    MPs <- MMSE@MPs[[1]]
+    pm <- PMlist[[i]](MMSE)
+    val <- pm@Mean
+    name <- pm@Name
+    caption <- pm@Caption
+
+    PM_Values[[i]] <- data.frame(PM=nm, MP=MPs, Value=val, name=name,
+                                 caption=caption)
+  }
+
+  df <- do.call(rbind.data.frame, PM_Values)
+  df$Class <- Class
+  MP_names <- df$MP %>% strsplit(., '_')
+  df$MP_names <- lapply(MP_names, '[[', 1) %>% unlist()
+  df
+}
+
+addOMnumber <- function(df) {
+  df$OM <- 1
+  df$OM[df$Sim %in% 51:100] <- 2
+  df$OM[df$Sim %in% 101:150] <- 3
+  df$OM[df$Sim %in% 151:200] <- 4
+  df$OM[df$Sim %in% 201:250] <- 5
+  df$OM[df$Sim %in% 251:300] <- 6
+  df$OM[df$Sim %in% 301:350] <- 7
+  df$OM[df$Sim %in% 351:400] <- 8
+  df$OM[df$Sim %in% 401:450] <- 9
+  df
+}
+
+
+#' Process and Save Results
+#'
+#' @param MSE_DF A data.frame created b `m`
+#' @return
+#' @export
+Process_MSE_Results <- function(PMs=NULL,
+                                MSE.dir='MSE_Objects',
+                                Results.dir='Results', class=NULL) {
+
+  MSE.files <- list.files(MSE.dir, pattern='.mse')
+
+  make_DF <- function(MSE.files) {
+    tt <- lapply(1:length(MSE.files), function(i) {
+      txt <- strsplit(MSE.files[i], '-')[[1]]
+      data.frame(OM=txt[1], MP_name=txt[2], Class=strsplit(txt[3], '.mse')[[1]][1], file=MSE.files[i])
+    })
+    do.call('rbind', tt)
+  }
+
+  MSE_DF <- make_DF(MSE.files)
+  classes <- unique(MSE_DF$Class)
+  if (!is.null(class)) classes <- class
+
+  for (class in classes) {
+    message("Processing Results for", class)
+
+    MSE_DF2 <- MSE_DF %>% filter(Class==class)
+
+    MPs <- MSE_DF2$MP %>% unique()
+    PM_results_list <- list()
+    TS_results_list <- list()
+
+    for (i in seq_along(MPs)) {
+      df <- MSE_DF2 %>% filter(MP_name==MPs[i])
+      MSElist <- list()
+      for (j in 1:nrow(df)) {
+        MSElist[[j]] <- readRDS(file.path(MSE.dir, df$file[j]))
+      }
+
+      MSE <- combine_MMSE(MSElist, class)
+
+      PM_results_list[[i]] <- PM_table(MSE, PMs=PMs, msg=FALSE)
+
+      nsim <- MSE@nsim
+      nyears <- MSE@proyears
+      ts_mp <- list()
+      for (mm in 1:MSE@nMPs) {
+        mp <- MSE@MPs[[1]][mm]
+        ts_mp[[mm]] <- data.frame(Sim=1:nsim,
+                                  Year=rep(2021:2053, each=nsim),
+                                  SB_SBMSY=as.vector(MSE@SB_SBMSY[,1,mm,]),
+                                  F_FMSY=as.vector(MSE@F_FMSY[,1,1,mm,]),
+                                  TAC=as.vector(apply(MSE@TAC[,,1,mm,], c(1,3), sum)),
+                                  Landings=as.vector(apply(MSE@Catch[,,1,mm,], c(1,3), sum)),
+                                  MP=mp)
+        # Add OM number
+        ts_mp[[mm]] <- addOMnumber(ts_mp[[mm]])
+        ts_mp[[mm]]$MP_name <- unlist(lapply(ts_mp[[mm]]$MP %>% strsplit(., '_'), '[[', 1))
+      }
+      TS_results_list[[i]] <- do.call('rbind', ts_mp)
+    }
+
+    PM_results <- do.call('rbind', PM_results_list)
+    TS_results <- do.call('rbind', TS_results_list)
+
+    message("Saving results to:", file.path(Results.dir, class))
+    saveRDS(PM_results, file.path(Results.dir, class, 'PM_values.rda'))
+    saveRDS(TS_results, file.path(Results.dir, class, 'TS_values.rda'))
+
+  }
+
+
+}

@@ -51,6 +51,8 @@ NULL
 'MOM_008'
 #' @rdname SWO-OMs 
 'MOM_009'
+#' @rdname SWO-OMs 
+'MOM_010'
 
 #' @name OM_DF
 #' @docType data

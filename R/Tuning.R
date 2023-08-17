@@ -1,4 +1,34 @@
 
+#' Delete tuning and scoping objects for an MP
+#'
+#' @param MP_name Name of an `MP` function
+#' @param Tune_dir Directory where scoping results are saved
+#'
+#' @return nothing
+#' @export
+delete_tuning <- function(MP_name, Tune_dir='Tuning_Objects') {
+  scope_files <- list.files(Tune_dir, pattern=paste0(MP_name,'.scope'))
+  if (length(scope_files)>0)
+    file.remove(file.path(Tune_dir, paste0(MP_name,'.scope')))
+
+  tune_files <- list.files(Tune_dir, pattern=paste0(MP_name,'.tune'))
+  if (length(tune_files)>0)
+    file.remove(file.path(Tune_dir, paste0(MP_name,'.tune')))
+
+  MMSE_scope <- list.files(file.path(Tune_dir, 'scope_MMSE'), pattern=paste0(MP_name,'.mmse'))
+  if (length(MMSE_scope)>0)
+    file.remove(file.path(Tune_dir, 'scope_MMSE', paste0(MP_name,'.mmse')))
+
+  MMSE_tune <- list.files(file.path(Tune_dir, 'MMSE_tune'))
+  mp_names <- unlist(lapply(strsplit(MMSE_tune, '_'), '[[', 1))
+  ind <- which(grepl(MP_name, mp_names))
+  if (length(ind)>0) {
+    mmse_files <- file.path(Tune_dir, 'MMSE_tune', MMSE_tune[ind])
+    file.remove(mmse_files)
+  }
+}
+
+
 #' Scope the Performance of a CMP across different tuning values
 #'
 #' Calculates performance metrics for a range of tuning values. Uses the Reference
@@ -6,7 +36,6 @@
 #'
 #' @param MP_name Name of an `MP` function
 #' @param Tuning_OMs Names of the `MOM` objects to tune over
-#' @param TuneTargets A data.frame of tuning metrics and targets
 #' @param Hist_dir Directory where `.hist` objects are saved
 #' @param Tune_dir Directory where scoping results will be saved
 #' @param test_vals Optional test values to use
@@ -14,8 +43,8 @@
 #'
 #' @return An invisible data.frame
 #' @export
-Scope <- function(MP_name, Tuning_OMs, TuneTargets,
-                  Hist_dir='Hist_Objects',
+Scope <- function(MP_name, Tuning_OMs,
+                  Hist_dir='Hist_Objects/Reference',
                   Tune_dir='Tuning_Objects',
                   test_vals=NULL,
                   parallel=TRUE) {
@@ -102,6 +131,10 @@ Scope <- function(MP_name, Tuning_OMs, TuneTargets,
     snowfall::sfExport(list=c('par1', 'par2', 'par3', 'par4', 'par5', 'par6',
                               'par7', 'par8'))
   }
+
+  # ---- delete existing Tune and Scope files ----
+
+  delete_tuning(MP_name, Tune_dir)
 
   # --- Run closed-loop ---
   MSEtool:::message('\nScoping', MP_name, 'across', n.OM, 'OM(s):', paste0(Tuning_OMs, collapse=', '))
@@ -196,7 +229,7 @@ Plot_Scope <- function(MP, Tune_dir='Tuning_Objects') {
 #' @return saves results to `Tune_dir` and insivibly returns data.frame
 #' @export
 Tune <- function(MP_name, Tuning_OMs, TuneTarget,
-                 Hist_dir='Hist_Objects',
+                 Hist_dir='Hist_Objects/Reference',
                  Tune_dir='Tuning_Objects',
                  test_vals=NULL,
                  parallel=TRUE,
@@ -280,6 +313,7 @@ Tune <- function(MP_name, Tuning_OMs, TuneTarget,
 
   if (is.null(test_vals)) {
     scope <- readRDS(file.path(Tune_dir, paste0(MP_name, '.scope')))
+
     scope <- scope %>% filter(PM==PMmetric)
 
     test_vals <- scope$tune_val
@@ -287,7 +321,8 @@ Tune <- function(MP_name, Tuning_OMs, TuneTarget,
     # check for existing tune object
     if(file.exists(file.path(Tune_dir, paste0(MP_name, '.tune')))) {
       tune_obj <- readRDS(file.path(Tune_dir, paste0(MP_name, '.tune')))
-      tune_obj <- tune_obj %>% filter(Name==PMmetric)
+      tune_obj$Name <- tune_obj$PM
+      tune_obj <- tune_obj %>% filter(PM==PMmetric)
 
       scopedf <- data.frame(test_vals=test_vals, test_vals2=round(test_vals,2), PM_vals=PM_vals, type='Scope')
       tunedf <- data.frame(test_vals=tune_obj$test_vals, test_vals2=round(tune_obj$test_vals,2), PM_vals=tune_obj$Value, type='Tune')
@@ -354,7 +389,11 @@ Tune <- function(MP_name, Tuning_OMs, TuneTarget,
     }
     saveRDS(MMSEList, file.path(Tune_dir, 'tune_MMSE', nm))
 
+    # for debugging
+    #  MMSEList <- readRDS(file.path(Tune_dir, 'tune_MMSE', nm))
+
     MMSE <- combine_MMSE(MMSEList, 'name')
+
 
     # Calculate PMs
     PM_results <- PM_table(MMSE,msg=FALSE)
@@ -376,7 +415,7 @@ Tune <- function(MP_name, Tuning_OMs, TuneTarget,
     saveRDS(results_df, file.path(Tune_dir, paste0(MP_name, '.tune')))
 
     # Tuning PM
-    df <- PM_results %>% filter(Name == PMmetric)
+    df <- PM_results %>% filter(PM == PMmetric)
     df$target <- Target
 
     tune_vals <- df$Value
@@ -458,8 +497,8 @@ Tune <- function(MP_name, Tuning_OMs, TuneTarget,
 }
 
 
-get_tune_val <- function(df, PM='PGK_6_10', Target=0.6) {
-  df <- df %>% filter(Name==PM) %>% arrange(test_vals) %>%
+get_tune_val <- function(df, pm='PGK_6_10', Target=0.6) {
+  df <- df %>% filter(Name==pm) %>% arrange(test_vals) %>%
     distinct(Value, test_vals, MP)
 
   MP <- unique(df$MP)
@@ -497,7 +536,7 @@ get_tune_val <- function(df, PM='PGK_6_10', Target=0.6) {
     pdf <- df
   }
 
-  pdf$PM <- PM
+  pdf$PM <- pm
   pdf$Target <- Target
   pdf$MP <- MP
   pdf
@@ -526,7 +565,8 @@ Plot_Tune <- function(MP_name, Tune_dir='Tuning_Objects', plot=TRUE) {
   df_out <- list()
   df_out2 <- list()
   for (j in 1:nrow(TuneTargets)) {
-    df_out[[j]] <- get_tune_val(df, PM=TuneTargets$Metric[j], Target=TuneTargets$Target[j])
+    df$Name <- df$PM
+    df_out[[j]] <- get_tune_val(df, pm=TuneTargets$Metric[j], Target=TuneTargets$Target[j])
     tuned <- df_out[[j]] %>% filter(round(Value,2)==Target)
     if (nrow(tuned)>0) {
       ind <- which.min(abs(tuned$Value-tuned$Target))
