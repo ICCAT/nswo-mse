@@ -64,11 +64,7 @@ Tune_MP <- function(MP_name, Tuning_OMs,
                     parallel = TRUE) {
 
   # Scope
-  if (MP_name %in% c('EA1')) {
-    tt <- try(Scope(MP_name, Tuning_OMs, test_vals=seq(0.1,1, length.out=8)))
-  } else {
-    tt <- try(Scope(MP_name, Tuning_OMs))
-  }
+  tt <- try(Scope(MP_name, Tuning_OMs, test_vals=test_vals))
 
   try(Plot_Scope(MP_name))
 
