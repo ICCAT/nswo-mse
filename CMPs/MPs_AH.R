@@ -340,26 +340,4 @@ class(AT1) <- 'MP'
 # 7:  1  7 0.3068435
 
 
-x <- 1
-Data <- SWOData
-index <- Data@AddInd[x,4,]
-
-plot(1950:2020, index, type='l')
-smooth1 <- ets(y=na.interp(ts(index,start=1950,
-                   end=2020, frequency = 1)),
-    damped=T, alpha=.2)$fitted
-
-lines(smooth1, col='blue')
-
-index_na_removed <- index
-index_na_removed <- index_na_removed[!is.na(index_na_removed)]
-
-yr_range <-as.numeric(range(names(index_na_removed)) )
-smooth2 <- ets(y=na.interp(ts(index_na_removed,start=yr_range[1],
-                              end=yr_range[2], frequency = 1)),
-               damped=T, alpha=.2)$fitted
-
-lines(smooth2, col='red')
-
-
 
