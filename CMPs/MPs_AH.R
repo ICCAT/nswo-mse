@@ -1,4 +1,3 @@
-
 #' Index Ratio 1
 #'
 #' This MP adjusts the TAC based on ratio of the mean index over the last 3 years (y-2):y
@@ -16,10 +15,10 @@
 #'
 #' @return An object of class `Rec` with the `TAC` slot populated
 #'
+#Data =  RefMSEList[[6]]$Data  SWOData
 SP1 <- function(x, Data, Index_ID=1, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
                 useCombined = FALSE,
                 yrsmth = 3, ...) {
-
   Rec <- new('Rec')
 
   # Load R package forecast
@@ -33,13 +32,21 @@ SP1 <- function(x, Data, Index_ID=1, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
     return(Rec)
   }
 
+  # Range Normalization
+  RangeNorm = function(x,maxN=1,minN=0){
+    maxD = max(x, na.rm=T)
+    minD = min(x, na.rm=T)
+    (( (x-minD)*(maxN-minN))/(maxD-minD)) + minN
+  }
+
   # Lag Data
   Data <- Lag_Data(Data, Data_Lag)
 
   # Calculate Index Ratio
   # number of years of index data
-  # Historical data starts in 1950 and ends in 2002 (71 years)
+  # Historical data starts in 1950 and ends in 2020 (71 years)
   n_years <- length(Data@AddInd[x,Index_ID,])
+  #scale = RangeNorm(seq(1,33,1))[n_years-71] / 10
 
   # the year index for `yrsmth` most recent years
   yr_ind <- 2020+((max(1, n_years-yrsmth+1):n_years)-71)
@@ -47,15 +54,13 @@ SP1 <- function(x, Data, Index_ID=1, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
   # the year index for target years (2016 to 2020)
   yr_ind_tar <- 2015:2020 #67:71
 
-
   if(useCombined==FALSE){
     # get the index and fit and exponential smoothing state space model
     Index_raw = ts(Data@AddInd[x,Index_ID,],start=1950,
                    end=2020+(n_years-71), frequency = 1)
-    Index_raw = tsclean(Index_raw)
-    Index_fitted = ets(y=Index_raw, damped=F, alpha=.2)$fitted
-    Index_fitted[Index_fitted<0] <- 1E-2
-    Index_year = time(ets(y=Index_raw, damped=F, alpha=.2)$fitted)
+    Index_raw = na.interp(Index_raw)
+    Index_fitted = ets(y=Index_raw, damped=T, alpha=.2)$fitted
+    Index_year = time(ets(y=Index_raw, damped=T, alpha=.2)$fitted)
 
     # index target
     Ind_Target <- mean(Index_fitted[Index_year%in%yr_ind_tar], na.rm=TRUE)
@@ -64,10 +69,9 @@ SP1 <- function(x, Data, Index_ID=1, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
   }else{# get the index and fit and exponential smoothing state space model
     Index_raw = ts(Data@Ind[x,],start=1950,
                    end=2020+(n_years-71), frequency = 1)
-    Index_raw = tsclean(Index_raw)
-    Index_fitted = ets(y=Index_raw, damped=F, alpha=.2)$fitted
-    Index_fitted[Index_fitted<0] <- 1E-2
-    Index_year = time(ets(y=Index_raw, damped=F, alpha=.2)$fitted)
+    Index_raw = na.interp(Index_raw)
+    Index_fitted = ets(y=Index_raw, damped=T, alpha=.2)$fitted
+    Index_year = time(ets(y=Index_raw, damped=T, alpha=.2)$fitted)
 
     # index target
     Ind_Target <- mean(Index_fitted[Index_year%in%yr_ind_tar], na.rm=TRUE)
@@ -75,17 +79,21 @@ SP1 <- function(x, Data, Index_ID=1, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
     deltaI <- (mean(Index_fitted[Index_year%in%yr_ind], na.rm=TRUE)/Ind_Target)* tunepar
 
   }
-  deltaI = exp(log(deltaI)*.1)
-  if (!is.finite(deltaI))  deltaI <- 1
+  # # enforce symetrical change
+  # if (deltaI < 1 ) LdeltaI <- -1*log(1 + deltaI)
+  # if (deltaI >= 1) LdeltaI <- log(deltaI)
+  if(is.na(deltaI)) deltaI = 1
+
+  deltaI = exp(log(deltaI)*.1) #+scale; exp(LdeltaI*.1)
 
   # max/min change in TAC
-  if (deltaI < (1 - mc)) deltaI <- 1 - mc
+  if (deltaI <= (1 - mc)) deltaI <- 1 - mc
   if (deltaI > (1 + mc)) deltaI <- 1 + mc
 
   Rec@TAC <- Data@MPrec[x] * deltaI
+  #Rec@TAC <- Data@Cat[x,n_years] * deltaI
+
   # 5. Return the `Rec` object
-  # Rec@Misc[[x]] <- data.frame(Index_raw=Index_raw, Index_fitted=Index_fitted, Ind_Target=Ind_Target,
-                   #           deltaI=deltaI)
   Rec
 }
 class(SP1) <- 'MP'
@@ -108,7 +116,7 @@ formals(CI1)$useCombined = TRUE; class(CI1) <- 'MP'
 ######################################################################
 # MPs based on similar performing indices
 ######################################################################
-
+Data= SWOData
 EA1 <- function(x, Data, Index_ID=c(1,5,7),
                 Index_CV=c(.275,.219,.307),
                 Data_Lag=2, Interval=3,
@@ -142,47 +150,14 @@ EA1 <- function(x, Data, Index_ID=c(1,5,7),
   yr_ind_tar <- 2015:2020 #67:71
 
   # get the indices and fit and exponential smoothing state space model
-  # only fit to non NA values
-  Indices <- Data@AddInd[x,Index_ID,]
-
-  for (i in 1:nrow(Indices)) {
-
-  }
-  ii <- Indices[2,]
-  i2 <- ii[!is.na(ii)]
-
-  t1 <- ets(y=tsclean(ts(ii,start=1950,
-                   end=2020+(n_years-71), frequency = 1)),
-      damped=F, alpha=.2)$fitted
-
-
-  t2 <- ets(y=tsclean(ts(i2,start=2005,
-                         end=2020+(n_years-71), frequency = 1)),
-            damped=F, alpha=.2)$fitted
-
-
-  plot(1950:2020,ii, type='l', ylim=c(0,2))
-  lines(t1, col='red')
-  lines(2005:2020,t2, col='blue')
-
-
   Index_fitted = apply(Data@AddInd[x,Index_ID,],1,
-                       function(x) ets(y=tsclean(ts(x,start=1950,
-                                                    end=2020+(n_years-71), frequency = 1)),
-                                       damped=F, alpha=.2)$fitted)
-
-  par(mfrow=c(1,3))
-  for (i in 1:3) {
-    plot(Data@AddInd[x,Index_ID[i],], type='l')
-    lines(Index_fitted[,i], col='blue')
-  }
-
-
-  Index_fitted[Index_fitted<0] <- 1E-2
+                       function(x) ets(y=na.interp(ts(x,start=1950,
+                                                      end=2020+(n_years-71), frequency = 1)),
+                                       damped=T, alpha=.2)$fitted)
   Index_year = apply(Data@AddInd[x,Index_ID,],1,
-                     function(x) time(ets(y=tsclean(ts(x,start=1950,
-                                                       end=2020+(n_years-71), frequency = 1)),
-                                          damped=F, alpha=.2)$fitted))
+                     function(x) time(ets(y=na.interp(ts(x,start=1950,
+                                                         end=2020+(n_years-71), frequency = 1)),
+                                          damped=T, alpha=.2)$fitted))
 
   # index target
   Ind_Target = Index_fitted[Index_year[,1]%in%yr_ind_tar,]
@@ -195,26 +170,13 @@ EA1 <- function(x, Data, Index_ID=c(1,5,7),
   Index_cur = mean(apply(t(t(Ind_cur)/(Index_CV)),2,
                          function(x) mean(x, na.rm=T)), na.rm=T)
 
-  Index_CV <- c(0.275, 0.219, 0.307)
-
-  Index_current <- data.frame(Index1=c(0.49, 0.52, 0.57),
-                              Index2=c(0.88, 0.90, 0.95),
-                              Index3=c(0.74, 0.72, 0.75))
-
-  Index_mean = mean(apply(t(t(Index_current)/(Index_CV)),2,
-                         function(x) mean(x, na.rm=T)), na.rm=T)
-
-  Index_mean
-
-
-
   # ratio of mean recent index to Ind_Target
   deltaI <- Index_cur/Ind_Target
+  if(is.na(deltaI)) deltaI = 1
   deltaI = exp(log(deltaI)*.1)
-  if (!is.finite(deltaI))  deltaI <- 1
 
   # max/min change in TAC
-  if (deltaI < (1 - mc)) deltaI <- 1 - mc
+  if (deltaI <= (1 - mc)) deltaI <- 1 - mc
   if (deltaI > (1 + mc)) deltaI <- 1 + mc
 
   Rec@TAC <- Data@MPrec[x] * deltaI
@@ -248,7 +210,7 @@ WA1 <- function(x, Data, Index_ID=c(2,3,4,6),
   # Calculate Index Ratio
   # number of years of index data
   # Historical data starts in 1950 and ends in 2002 (71 years)
-  n_years <- length(Data@AddInd[x,Index_ID,])
+  n_years <- dim(Data@AddInd[x,Index_ID,])[2]
 
   # the year index for `yrsmth` most recent years
   yr_ind <- 2020+((max(1, n_years-yrsmth+1):n_years)-71)
@@ -258,14 +220,13 @@ WA1 <- function(x, Data, Index_ID=c(2,3,4,6),
 
   # get the indices and fit and exponential smoothing state space model
   Index_fitted = apply(Data@AddInd[x,Index_ID,],1,
-                       function(x) ets(y=tsclean(ts(x,start=1950,
-                                                    end=2020+(n_years-71), frequency = 1)),
-                                       damped=F, alpha=.2)$fitted)
-  Index_fitted[Index_fitted<0] <- 1E-2
+                       function(x) ets(y=na.interp(ts(x,start=1950,
+                                                      end=2020+(n_years-71), frequency = 1)),
+                                       damped=T, alpha=.2)$fitted)
   Index_year = apply(Data@AddInd[x,Index_ID,],1,
-                     function(x) time(ets(y=tsclean(ts(x,start=1950,
-                                                       end=2020+(n_years-71), frequency = 1)),
-                                          damped=F, alpha=.2)$fitted))
+                     function(x) time(ets(y=na.interp(ts(x,start=1950,
+                                                         end=2020+(n_years-71), frequency = 1)),
+                                          damped=T, alpha=.2)$fitted))
 
   # index target
   Ind_Target = Index_fitted[Index_year[,1]%in%yr_ind_tar,]
@@ -280,11 +241,11 @@ WA1 <- function(x, Data, Index_ID=c(2,3,4,6),
 
   # ratio of mean recent index to Ind_Target
   deltaI <- Index_cur/Ind_Target
+  if(is.na(deltaI)) deltaI = 1
   deltaI = exp(log(deltaI)*.1)
-  if (!is.finite(deltaI))  deltaI <- 1
 
   # max/min change in TAC
-  if (deltaI < (1 - mc)) deltaI <- 1 - mc
+  if (deltaI <= (1 - mc)) deltaI <- 1 - mc
   if (deltaI > (1 + mc)) deltaI <- 1 + mc
 
   Rec@TAC <- Data@MPrec[x] * deltaI
@@ -319,7 +280,7 @@ AT1 <- function(x, Data, Index_ID=c(1,2,3,4,5,6,7),
   # Calculate Index Ratio
   # number of years of index data
   # Historical data starts in 1950 and ends in 2002 (71 years)
-  n_years <- length(Data@AddInd[x,Index_ID,])
+  n_years <- dim(Data@AddInd[x,Index_ID,])[2]
 
   # the year index for `yrsmth` most recent years
   yr_ind <- 2020+((max(1, n_years-yrsmth+1):n_years)-71)
@@ -329,14 +290,13 @@ AT1 <- function(x, Data, Index_ID=c(1,2,3,4,5,6,7),
 
   # get the indices and fit and exponential smoothing state space model
   Index_fitted = apply(Data@AddInd[x,Index_ID,],1,
-                       function(x) ets(y=tsclean(ts(x,start=1950,
-                                                    end=2020+(n_years-71), frequency = 1)),
-                                       damped=F, alpha=.2)$fitted)
-  Index_fitted[Index_fitted<0] <- 1E-2
+                       function(x) ets(y=na.interp(ts(x,start=1950,
+                                                      end=2020+(n_years-71), frequency = 1)),
+                                       damped=T, alpha=.2)$fitted)
   Index_year = apply(Data@AddInd[x,Index_ID,],1,
-                     function(x) time(ets(y=tsclean(ts(x,start=1950,
-                                                       end=2020+(n_years-71), frequency = 1)),
-                                          damped=F, alpha=.2)$fitted))
+                     function(x) time(ets(y=na.interp(ts(x,start=1950,
+                                                         end=2020+(n_years-71), frequency = 1)),
+                                          damped=T, alpha=.2)$fitted))
 
   # index target
   Ind_Target = Index_fitted[Index_year[,1]%in%yr_ind_tar,]
@@ -351,11 +311,11 @@ AT1 <- function(x, Data, Index_ID=c(1,2,3,4,5,6,7),
 
   # ratio of mean recent index to Ind_Target
   deltaI <- Index_cur/Ind_Target
+  if(is.na(deltaI)) deltaI = 1
   deltaI = exp(log(deltaI)*.1)
-  if (!is.finite(deltaI))  deltaI <- 1
 
   # max/min change in TAC
-  if (deltaI < (1 - mc)) deltaI <- 1 - mc
+  if (deltaI <= (1 - mc)) deltaI <- 1 - mc
   if (deltaI > (1 + mc)) deltaI <- 1 + mc
 
   #z = .01*exp(.125*(max(Index_year)-2019))+.1#.1
@@ -368,27 +328,38 @@ AT1 <- function(x, Data, Index_ID=c(1,2,3,4,5,6,7),
 # 6. Assign function to class `MP`
 class(AT1) <- 'MP'
 
+# The CV's from SWOData used in inverse weighting
+# mean Index CV since 1950
+#   V1 V2        V1
+# 1:  1  1 0.2748049
+# 2:  1  2 0.3215142
+# 3:  1  3 0.3415618
+# 4:  1  4 0.2581679
+# 5:  1  5 0.2194773
+# 6:  1  6 0.2049699
+# 7:  1  7 0.3068435
 
 
-# ---- Tuned CMPs ----
-#' @describeIn EA1 Tuned to PGK_short = 0.51 across Reference OMs.
-#' @export
-EA1_a <- EA1
-formals(EA1_a)$tunepar <- 0.330197516003721
-class(EA1_a) <- "MP"
+x <- 1
+Data <- SWOData
+index <- Data@AddInd[x,4,]
 
+plot(1950:2020, index, type='l')
+smooth1 <- ets(y=na.interp(ts(index,start=1950,
+                   end=2020, frequency = 1)),
+    damped=T, alpha=.2)$fitted
 
-#' @describeIn EA1 Tuned to PGK_short = 0.6 across Reference OMs.
-#' @export
-EA1_b <- EA1
-formals(EA1_b)$tunepar <- 0.396373626373626
-class(EA1_b) <- "MP"
+lines(smooth1, col='blue')
 
+index_na_removed <- index
+index_na_removed <- index_na_removed[!is.na(index_na_removed)]
 
-#' @describeIn EA1 Tuned to PGK_short = 0.7 across Reference OMs.
-#' @export
-EA1_c <- EA1
-formals(EA1_c)$tunepar <- 0.474460583534113
-class(EA1_c) <- "MP"
+yr_range <-as.numeric(range(names(index_na_removed)) )
+smooth2 <- ets(y=na.interp(ts(index_na_removed,start=yr_range[1],
+                              end=yr_range[2], frequency = 1)),
+               damped=T, alpha=.2)$fitted
+
+lines(smooth2, col='red')
+
 
 
