@@ -7,8 +7,7 @@
 Scope(
   MP_name,
   Tuning_OMs,
-  TuneTargets,
-  Hist_dir = "Hist_Objects",
+  Hist_dir = "Hist_Objects/Reference",
   Tune_dir = "Tuning_Objects",
   test_vals = NULL,
   parallel = TRUE
@@ -18,8 +17,6 @@ Scope(
 \item{MP_name}{Name of an `MP` function}
 
 \item{Tuning_OMs}{Names of the `MOM` objects to tune over}
-
-\item{TuneTargets}{A data.frame of tuning metrics and targets}
 
 \item{Hist_dir}{Directory where `.hist` objects are saved}
 

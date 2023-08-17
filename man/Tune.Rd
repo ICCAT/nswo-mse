@@ -8,7 +8,7 @@ Tune(
   MP_name,
   Tuning_OMs,
   TuneTarget,
-  Hist_dir = "Hist_Objects",
+  Hist_dir = "Hist_Objects/Reference",
   Tune_dir = "Tuning_Objects",
   test_vals = NULL,
   parallel = TRUE,
