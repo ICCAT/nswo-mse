@@ -336,6 +336,16 @@ importOM <- function(i, nsim, proyears, OM_DF, SWOData) {
   ind_yrs <- 1999:2020
   MOM_com@cpars[[1]][[1]]$Ind_Yrs <-match(ind_yrs, years)
 
+  # update selectivty & retention parameters
+  MOM_com@cpars[[1]][[1]]$Rmaxlen_y <- matrix(1, nrow=MOM_com@nsim, ncol=MOM_com@Fleets[[1]][[1]]@nyears+MOM_com@proyears)
+  MOM_com@cpars[[2]][[1]]$Rmaxlen_y <- matrix(1, nrow=MOM_com@nsim, ncol=MOM_com@Fleets[[1]][[1]]@nyears+MOM_com@proyears)
+  MOM_com@cpars[[1]][[1]]$V <- MOM_com@cpars[[1]][[1]]$V_real
+  MOM_com@cpars[[2]][[1]]$V <- MOM_com@cpars[[2]][[1]]$V_real
+
+  MOM_com@cpars[[1]][[1]]$SLarray <- MOM_com@cpars[[1]][[1]]$SLarray_real
+  MOM_com@cpars[[2]][[1]]$SLarray <- MOM_com@cpars[[2]][[1]]$SLarray_real
+
+
   name <- OM_DF$OM.object[i]
 
   assign(name, MOM_com)
@@ -343,7 +353,6 @@ importOM <- function(i, nsim, proyears, OM_DF, SWOData) {
   do.call("use_data", list(as.name(name), overwrite = TRUE))
   docOM(name)
 }
-
 
 cat("#' @name SWO-OMs",
     "\n#' @docType data",
@@ -376,6 +385,13 @@ cat("\n#' @name OM_DF",
     file=file.path('R/', RoxygenFile))
 
 
+# ---- Add observed indices back to MOM_010 ----
+load('data/MOM_005.rda')
+load('data/MOM_010.rda')
+
+MOM_010@cpars$Female[[1]]$Data@AddInd[] <- MOM_005@cpars$Female[[1]]$Data@AddInd[]
+usethis::use_data(MOM_010, overwrite = TRUE)
+
 
 # ---- Make OM Table -----
 
@@ -393,143 +409,6 @@ OM_desc$Class <- factor(OM_desc$Class, levels=unique(OM_desc$Class), ordered = T
 
 
 
-# ---- Add Additional OMs (modifications of those in OM_DF) ----
-#
-# ## R5. Increasing q
-#
-# df <- OM_DF %>% filter(Class == 'R4. Increase q')
-#
-# df$OM.object <- paste(df$OM.object, '(inc q in projections)')
-# df$dir <- ''
-# df$Class <- 'R5. Increasing q'
-# df$OM.num <- ''
-#
-# OM_DF <- bind_rows(OM_DF, df)
-#
-#
-# ## R6. Implementation Error
-# df <- OM_DF %>% filter(Class == 'Reference')
-#
-# add_overages <- function(MOM, overage=1.1, OM_DF) {
-#   #load(paste0('data/', MOM, '.rda'))
-#   #obj <- get(MOM)
-#   #obj@Imps$Female[[1]]@TACFrac <- c(1.10, 1.10)
-#   #obj@Imps$Male[[1]]@TACFrac <- c(1.10, 1.10)
-#   nm <- paste0(MOM, '_overage')
-#  # assign(nm, obj)
-#
-#   df <- OM_DF %>% filter(OM.object==MOM)
-#   df$OM.object <- nm
-#   df$dir <- ''
-#   df$Class <- 'R6. Implementation Error'
-#   df$OM.num <- ''
-#   OM_DF <- bind_rows(OM_DF, df)
-#
-#   #do.call("use_data", list(as.name(nm), overwrite = TRUE))
-#   OM_DF
-# }
-
-# for (i in 1:nrow(df)) {
-#   MOM <- df$OM.object[i]
-#   OM_DF <- add_overages(MOM, overage=1.1, OM_DF)
-# }
-
-## R7. Climate Change - Recruitment
-
-### Scenarios
-
-# base_case <- rep(1, proyears)
-# decreasing <- seq(from=1, to=0.8, length.out=proyears)
-# increasing <- seq(from=1, to=1.2, length.out=proyears)
-# more_variable <- cbind(decreasing, increasing)
-#
-# pro_Years <- 2021:(2021+proyears-1)
-#
-# df1 <- data.frame(Scenario='Base Case', Values=base_case, Year=pro_Years)
-# df2 <- data.frame(Scenario='Decreasing Trend', Values=decreasing, Year=pro_Years)
-# df3 <- data.frame(Scenario='Increasing Trend', Values=increasing, Year=pro_Years)
-# df4 <- data.frame(Scenario='Increased Variability', Values=c(decreasing, increasing), Year=pro_Years)
-#
-# rec_df <- bind_rows(df1, df2, df3, df4)
-# rec_df$Scenario <- factor(rec_df$Scenario, levels=unique(rec_df$Scenario), ordered = TRUE)
-#
-# p1 <- ggplot(rec_df, aes(x=Year, y=Values)) +
-#   facet_wrap(~Scenario, nrow=2) +
-#   geom_line() +
-#   geom_hline(yintercept = 1, linetype=2, color='darkgray') +
-#   theme_bw() +
-#   labs(x='Projection Years', y='Mean Trend Recruitment Deviations')
-#
-# ggsave('img/R7_Recruitment_Scenarios.png', p1, width=6, height=6)
-
-modify_recruit_devs <- function(MOM, rec_df, scenario='Decreasing Trend', trend=decreasing, OM_DF) {
-  load(paste0('data/', MOM, '.rda'))
-  obj <- get(MOM)
-
-  nyears <- obj@Fleets$Female[[1]]@nyears
-  p.ind <- nyears + obj@Stocks$Female@maxage + 1
-  p.ind <- p.ind:(p.ind+proyears-1)
-
-  if (!is.null(ncol(trend))) {
-    trend2 <- matrix(1, nrow=nsim, ncol=proyears)
-    for (i in 1:nsim) {
-
-
-      trend2[i,] <- runif(proyears, trend[,1], trend[,2])
-    }
-  } else {
-    trend2 <- t(replicate(nsim, trend))
-  }
-
-
-  obj@cpars$Female[[1]]$Perr_y[,p.ind] * trend2
-  obj@cpars$Male[[1]]$Perr_y[,p.ind] * trend2
-
-  nm <- paste(MOM, scenario, sep='_')
-  assign(nm, obj)
-
-  df <- OM_DF %>% filter(OM.object==MOM)
-  df$OM.object <- nm
-  df$dir <- ''
-  df$Class <- 'R7. Climate Change - Recruitment'
-  df$OM.num <- ''
-  OM_DF <- bind_rows(OM_DF, df)
-
-  do.call("use_data", list(as.name(nm), overwrite = TRUE))
-  OM_DF
-}
-#
-# df <- OM_DF %>% filter(Class == 'Reference')
-#
-# for (i in 1:nrow(df)) {
-#   MOM <- df$OM.object[i]
-#   OM_DF <- modify_recruit_devs(MOM, rec_df, scenario='Decreasing Trend', trend=decreasing, OM_DF)
-#   OM_DF <- modify_recruit_devs(MOM, rec_df, scenario='Increasing Trend', trend=increasing, OM_DF)
-#   OM_DF <- modify_recruit_devs(MOM, rec_df, scenario='Increased Variability', trend=more_variable, OM_DF)
-#
-# }
-
-## R8. Size Limit
-# df <- OM_DF %>% filter(Class == 'Reference')
-#
-# df$OM.object <- paste(df$OM.object, '(modified size limit in CMP)')
-# df$dir <- ''
-# df$Class <- 'R8. Size Limit'
-# df$OM.num <- ''
-#
-# OM_DF <- bind_rows(OM_DF, df)
-
-
-## R9. Alternative Management Cycles
-# df <- OM_DF %>% filter(Class == 'Reference')
-#
-# df$OM.object <- paste(df$OM.object, '(modified in projections)')
-# df$dir <- ''
-# df$Class <- 'R9. Alternative Management Cycles'
-# df$OM.num <- ''
-#
-# OM_DF <- bind_rows(OM_DF, df)
-#
 
 # ---- Update OM_DF to include Additional OMs ----
 
