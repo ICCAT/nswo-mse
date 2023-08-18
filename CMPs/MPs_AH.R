@@ -345,3 +345,89 @@ class(AT1) <- 'MP'
 
 
 
+
+# ---- Tuned CMPs ----
+#' @describeIn AT1 Tuned to PGK_short = 0.51 across Reference OMs.
+#' @export
+AT1_a <- AT1
+formals(AT1_a)$tunepar <- 0.325665443513835
+class(AT1_a) <- "MP"
+
+
+#' @describeIn AT1 Tuned to PGK_short = 0.6 across Reference OMs.
+#' @export
+AT1_b <- AT1
+formals(AT1_b)$tunepar <- 0.393627211219212
+class(AT1_b) <- "MP"
+
+
+#' @describeIn AT1 Tuned to PGK_short = 0.7 across Reference OMs.
+#' @export
+AT1_c <- AT1
+formals(AT1_c)$tunepar <- 0.46792810669082
+class(AT1_c) <- "MP"
+
+
+#' @describeIn EA1 Tuned to PGK_short = 0.51 across Reference OMs.
+#' @export
+EA1_a <- EA1
+formals(EA1_a)$tunepar <- 0.342239077961614
+class(EA1_a) <- "MP"
+
+
+#' @describeIn EA1 Tuned to PGK_short = 0.6 across Reference OMs.
+#' @export
+EA1_b <- EA1
+formals(EA1_b)$tunepar <- 0.413085097194236
+class(EA1_b) <- "MP"
+
+
+#' @describeIn EA1 Tuned to PGK_short = 0.7 across Reference OMs.
+#' @export
+EA1_c <- EA1
+formals(EA1_c)$tunepar <- 0.492262349536896
+class(EA1_c) <- "MP"
+
+
+#' @describeIn WA1 Tuned to PGK_short = 0.51 across Reference OMs.
+#' @export
+WA1_a <- WA1
+formals(WA1_a)$tunepar <- 0.308941002787053
+class(WA1_a) <- "MP"
+
+
+#' @describeIn WA1 Tuned to PGK_short = 0.6 across Reference OMs.
+#' @export
+WA1_b <- WA1
+formals(WA1_b)$tunepar <- 0.373431388313885
+class(WA1_b) <- "MP"
+
+
+#' @describeIn WA1 Tuned to PGK_short = 0.7 across Reference OMs.
+#' @export
+WA1_c <- WA1
+formals(WA1_c)$tunepar <- 0.445939436206951
+class(WA1_c) <- "MP"
+
+
+#' @describeIn CI1 Tuned to PGK_short = 0.51 across Reference OMs.
+#' @export
+CI1_a <- CI1
+formals(CI1_a)$tunepar <- 3.06785714285714
+class(CI1_a) <- "MP"
+
+
+#' @describeIn CI1 Tuned to PGK_short = 0.6 across Reference OMs.
+#' @export
+CI1_b <- CI1
+formals(CI1_b)$tunepar <- 2.53188775510204
+class(CI1_b) <- "MP"
+
+
+#' @describeIn CI1 Tuned to PGK_short = 0.7 across Reference OMs.
+#' @export
+CI1_c <- CI1
+formals(CI1_c)$tunepar <- 2.09642857142857
+class(CI1_c) <- "MP"
+
+
