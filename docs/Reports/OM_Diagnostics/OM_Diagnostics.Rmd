@@ -20,7 +20,7 @@ library(SWOMSE)
 library(ggplot2)
 
 OM.root <- 'G:/My Drive/1_Projects/North_Atlantic_Swordfish/OMs'
-source('OM_Diagnostics.R')
+source('OM_diagnostics.R')
 
 knitr::opts_chunk$set(echo = FALSE)
 options(table_counter = TRUE)
