@@ -396,13 +396,13 @@ usethis::use_data(MOM_010, overwrite = TRUE)
 # ---- Make OM Table -----
 
 OM_desc <- read.csv(file.path(OMgrid.dir, 'OM_Description.csv'))
-OM_desc$OM.objects <- NA
+# OM_desc$OM.objects <- NA
 
 # add MOM objects
 for (i in 1:nrow(OM_desc)) {
   cl <- OM_desc$Class[i]
   df <- OM_DF %>% dplyr::filter(Class==cl)
-  OM_desc$OM.objects[i] <- paste(df$OM.object, collapse=', ')
+  # OM_desc$OM.objects[i] <- paste(df$OM.object, collapse=', ')
 }
 
 OM_desc$Class <- factor(OM_desc$Class, levels=unique(OM_desc$Class), ordered = TRUE)
@@ -426,18 +426,18 @@ cat("\n#' @name OM_DF",
 
 
 # ---- Update OM table ----
-
-OM_desc <- read.csv(file.path(OMgrid.dir, 'OM_Description.csv'))
-OM_desc$OM.objects <- NA
-
-# add MOM objects
-for (i in 1:nrow(OM_desc)) {
-  cl <- OM_desc$Class[i]
-  df <- OM_DF %>% dplyr::filter(Class==cl)
-  OM_desc$OM.objects[i] <- paste(df$OM.object, collapse=', ')
-}
-
-OM_desc$Class <- factor(OM_desc$Class, levels=unique(OM_desc$Class), ordered = TRUE)
+#
+# OM_desc <- read.csv(file.path(OMgrid.dir, 'OM_Description.csv'))
+# OM_desc$OM.objects <- NA
+#
+# # add MOM objects
+# for (i in 1:nrow(OM_desc)) {
+#   cl <- OM_desc$Class[i]
+#   df <- OM_DF %>% dplyr::filter(Class==cl)
+#   OM_desc$OM.objects[i] <- paste(df$OM.object, collapse=', ')
+# }
+#
+# OM_desc$Class <- factor(OM_desc$Class, levels=unique(OM_desc$Class), ordered = TRUE)
 
 
 usethis::use_data(OM_desc, overwrite = TRUE)
