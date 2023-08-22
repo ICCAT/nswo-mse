@@ -65,7 +65,7 @@ SP1 <- function(x, Data, Index_ID=1, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
     # index target
     Ind_Target <- mean(Index_fitted[Index_year%in%yr_ind_tar], na.rm=TRUE)
     # ratio of mean recent index to Ind_Target
-    deltaI <- (mean(Index_fitted[Index_year%in%yr_ind], na.rm=TRUE)/Ind_Target)* tunepar
+    deltaI <- (mean(Index_fitted[Index_year%in%yr_ind], na.rm=TRUE)/Ind_Target)
   }else{# get the index and fit and exponential smoothing state space model
     Index_raw = ts(Data@Ind[x,],start=1950,
                    end=2020+(n_years-71), frequency = 1)
@@ -76,7 +76,7 @@ SP1 <- function(x, Data, Index_ID=1, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
     # index target
     Ind_Target <- mean(Index_fitted[Index_year%in%yr_ind_tar], na.rm=TRUE)
     # ratio of mean recent index to Ind_Target
-    deltaI <- (mean(Index_fitted[Index_year%in%yr_ind], na.rm=TRUE)/Ind_Target)* tunepar
+    deltaI <- (mean(Index_fitted[Index_year%in%yr_ind], na.rm=TRUE)/Ind_Target)
 
   }
   # # enforce symetrical change
@@ -90,7 +90,7 @@ SP1 <- function(x, Data, Index_ID=1, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
   if (deltaI <= (1 - mc)) deltaI <- 1 - mc
   if (deltaI > (1 + mc)) deltaI <- 1 + mc
 
-  Rec@TAC <- Data@MPrec[x] * deltaI
+  Rec@TAC <- Data@MPrec[x] * deltaI * tunepar
   #Rec@TAC <- Data@Cat[x,n_years] * deltaI
 
   # 5. Return the `Rec` object
@@ -163,7 +163,7 @@ EA1 <- function(x, Data, Index_ID=c(1,5,7),
   Ind_Target = Index_fitted[Index_year[,1]%in%yr_ind_tar,]
   Ind_Target = mean(apply(t(t(Ind_Target)/(Index_CV)),2,
                           function(x) mean(x, na.rm=T)),
-                    na.rm=T) * tunepar
+                    na.rm=T)
 
   # ratio of mean recent index to Ind_Target
   Ind_cur = Index_fitted[Index_year[,1]%in%yr_ind,]
@@ -180,7 +180,7 @@ EA1 <- function(x, Data, Index_ID=c(1,5,7),
   if (deltaI <= (1 - mc)) deltaI <- 1 - mc
   if (deltaI > (1 + mc)) deltaI <- 1 + mc
 
-  Rec@TAC <- Data@MPrec[x] * deltaI
+  Rec@TAC <- Data@MPrec[x] * deltaI * tunepar
   # 5. Return the `Rec` object
   Rec
 }
@@ -233,7 +233,7 @@ WA1 <- function(x, Data, Index_ID=c(2,3,4,6),
   Ind_Target = Index_fitted[Index_year[,1]%in%yr_ind_tar,]
   Ind_Target = mean(apply(t(t(Ind_Target)/(Index_CV)),2,
                           function(x) mean(x, na.rm=T)),
-                    na.rm=T) * tunepar
+                    na.rm=T)
 
   # ratio of mean recent index to Ind_Target
   Ind_cur = Index_fitted[Index_year[,1]%in%yr_ind,]
@@ -250,7 +250,7 @@ WA1 <- function(x, Data, Index_ID=c(2,3,4,6),
   if (deltaI <= (1 - mc)) deltaI <- 1 - mc
   if (deltaI > (1 + mc)) deltaI <- 1 + mc
 
-  Rec@TAC <- Data@MPrec[x] * deltaI
+  Rec@TAC <- Data@MPrec[x] * deltaI * tunepar
   # 5. Return the `Rec` object
   Rec
 }
@@ -304,7 +304,7 @@ AT1 <- function(x, Data, Index_ID=c(1,2,3,4,5,6,7),
   Ind_Target = Index_fitted[Index_year[,1]%in%yr_ind_tar,]
   Ind_Target = mean(apply(t(t(Ind_Target)/(Index_CV)),2,
                           function(x) mean(x, na.rm=T)),
-                    na.rm=T) * tunepar
+                    na.rm=T)
 
   # ratio of mean recent index to Ind_Target
   Ind_cur = Index_fitted[Index_year[,1]%in%yr_ind,]
@@ -325,7 +325,7 @@ AT1 <- function(x, Data, Index_ID=c(1,2,3,4,5,6,7),
   #z = .01*exp(.125*(max(Index_year)-2019))+.1#.1
 
 
-  Rec@TAC <- Data@MPrec[x] * deltaI
+  Rec@TAC <- Data@MPrec[x] * deltaI * tunepar
   # 5. Return the `Rec` object
   Rec
 }
@@ -345,89 +345,88 @@ class(AT1) <- 'MP'
 
 
 
-
 # ---- Tuned CMPs ----
 #' @describeIn AT1 Tuned to PGK_short = 0.51 across Reference OMs.
 #' @export
 AT1_a <- AT1
-formals(AT1_a)$tunepar <- 0.325665443513835
+formals(AT1_a)$tunepar <- 1.05706368393733
 class(AT1_a) <- "MP"
 
 
 #' @describeIn AT1 Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 AT1_b <- AT1
-formals(AT1_b)$tunepar <- 0.393627211219212
+formals(AT1_b)$tunepar <- 1.03473599088833
 class(AT1_b) <- "MP"
 
 
 #' @describeIn AT1 Tuned to PGK_short = 0.7 across Reference OMs.
 #' @export
 AT1_c <- AT1
-formals(AT1_c)$tunepar <- 0.46792810669082
+formals(AT1_c)$tunepar <- 1.01095400271645
 class(AT1_c) <- "MP"
 
 
 #' @describeIn EA1 Tuned to PGK_short = 0.51 across Reference OMs.
 #' @export
 EA1_a <- EA1
-formals(EA1_a)$tunepar <- 0.342239077961614
+formals(EA1_a)$tunepar <- 1.05114978625119
 class(EA1_a) <- "MP"
 
 
 #' @describeIn EA1 Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 EA1_b <- EA1
-formals(EA1_b)$tunepar <- 0.413085097194236
+formals(EA1_b)$tunepar <- 1.02934115650969
 class(EA1_b) <- "MP"
 
 
 #' @describeIn EA1 Tuned to PGK_short = 0.7 across Reference OMs.
 #' @export
 EA1_c <- EA1
-formals(EA1_c)$tunepar <- 0.492262349536896
+formals(EA1_c)$tunepar <- 1.00551785451029
 class(EA1_c) <- "MP"
 
 
 #' @describeIn WA1 Tuned to PGK_short = 0.51 across Reference OMs.
 #' @export
 WA1_a <- WA1
-formals(WA1_a)$tunepar <- 0.308941002787053
+formals(WA1_a)$tunepar <- 1.0622422991687
 class(WA1_a) <- "MP"
 
 
 #' @describeIn WA1 Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 WA1_b <- WA1
-formals(WA1_b)$tunepar <- 0.373431388313885
+formals(WA1_b)$tunepar <- 1.04054741678594
 class(WA1_b) <- "MP"
 
 
 #' @describeIn WA1 Tuned to PGK_short = 0.7 across Reference OMs.
 #' @export
 WA1_c <- WA1
-formals(WA1_c)$tunepar <- 0.445939436206951
+formals(WA1_c)$tunepar <- 1.01577694524517
 class(WA1_c) <- "MP"
 
 
 #' @describeIn CI1 Tuned to PGK_short = 0.51 across Reference OMs.
 #' @export
 CI1_a <- CI1
-formals(CI1_a)$tunepar <- 3.06785714285714
+formals(CI1_a)$tunepar <- 1.05577576660175
 class(CI1_a) <- "MP"
 
 
 #' @describeIn CI1 Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 CI1_b <- CI1
-formals(CI1_b)$tunepar <- 2.53188775510204
+formals(CI1_b)$tunepar <- 1.03388379002538
 class(CI1_b) <- "MP"
 
 
 #' @describeIn CI1 Tuned to PGK_short = 0.7 across Reference OMs.
 #' @export
 CI1_c <- CI1
-formals(CI1_c)$tunepar <- 2.09642857142857
+formals(CI1_c)$tunepar <- 1.00989814314044
 class(CI1_c) <- "MP"
 
 

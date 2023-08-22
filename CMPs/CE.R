@@ -80,21 +80,21 @@ CE <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25,
 #' @describeIn CE Tuned to PGK_short = 0.51 across Reference OMs.
 #' @export
 CE_a <- CE
-formals(CE_a)$tunepar <- 1.04052619964693
+formals(CE_a)$tunepar <- 0.925571834821299
 class(CE_a) <- "MP"
 
 
 #' @describeIn CE Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 CE_b <- CE
-formals(CE_b)$tunepar <- 0.991939047619048
+formals(CE_b)$tunepar <- 0.884296128218371
 class(CE_b) <- "MP"
 
 
 #' @describeIn CE Tuned to PGK_short = 0.7 across Reference OMs.
 #' @export
 CE_c <- CE
-formals(CE_c)$tunepar <- 0.947437449556094
+formals(CE_c)$tunepar <- 0.841284742755766
 class(CE_c) <- "MP"
 
 

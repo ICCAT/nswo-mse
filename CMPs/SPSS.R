@@ -148,3 +148,47 @@ SPSSFox <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25, ...) {
 class(SPSSFox) <- 'MP'
 
 
+
+# ---- Tuned CMPs ----
+#' @describeIn SPSS Tuned to PGK_short = 0.51 across Reference OMs.
+#' @export
+SPSS_a <- SPSS
+formals(SPSS_a)$tunepar <- 0.872384937238494
+class(SPSS_a) <- "MP"
+
+
+#' @describeIn SPSS Tuned to PGK_short = 0.6 across Reference OMs.
+#' @export
+SPSS_b <- SPSS
+formals(SPSS_b)$tunepar <- 0.728723404255319
+class(SPSS_b) <- "MP"
+
+
+#' @describeIn SPSS Tuned to PGK_short = 0.7 across Reference OMs.
+#' @export
+SPSS_c <- SPSS
+formals(SPSS_c)$tunepar <- 0.636950549450549
+class(SPSS_c) <- "MP"
+
+
+#' @describeIn SPSSFox Tuned to PGK_short = 0.51 across Reference OMs.
+#' @export
+SPSSFox_a <- SPSSFox
+formals(SPSSFox_a)$tunepar <- 1.00261096605744
+class(SPSSFox_a) <- "MP"
+
+
+#' @describeIn SPSSFox Tuned to PGK_short = 0.6 across Reference OMs.
+#' @export
+SPSSFox_b <- SPSSFox
+formals(SPSSFox_b)$tunepar <- 0.948096976016684
+class(SPSSFox_b) <- "MP"
+
+
+#' @describeIn SPSSFox Tuned to PGK_short = 0.7 across Reference OMs.
+#' @export
+SPSSFox_c <- SPSSFox
+formals(SPSSFox_c)$tunepar <- 0.891204011893667
+class(SPSSFox_c) <- "MP"
+
+
