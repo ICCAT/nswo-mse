@@ -1,0 +1,57 @@
+---
+title: "Candidate Management Procedure Development Report"
+author: "Adrian Hordyk <adrian@bluematterscience.com>"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(ggplot2)
+library(dplyr)
+```
+
+```{r}
+img_files <- list.files('../../img/MP_Reports')
+MPs <- unlist(lapply(strsplit(img_files, '_'),'[[',1)) 
+Rs <- unlist(lapply(strsplit(img_files, '_'),'[[',2)) 
+Rs <- unlist(strsplit(Rs, '.png'))
+df <- data.frame(MP=MPs, R=Rs, file=img_files)
+
+all_MPs <- unique(df$MP)
+```
+
+## Tuning Codes
+
+```{r}
+knitr::kable(SWOMSE::TuneTargets)
+```
+
+## Operating Models 
+
+
+## CMP Reports {.tabset}
+```{r, results='asis'}
+for (mp in all_MPs) {
+  
+  cat('###', mp, '{.tabset}', '\n')
+  
+  cat('####', 'Reference', '\n')
+  df2 <- df %>% filter(MP==mp, R=='Reference')
+  cat(paste0("![](", file.path('../../img/MP_Reports', df2$file[1]), ')'), "\n")
+  cat('\n')
+  df2 <- df %>% filter(MP==mp, R!='Reference')
+  
+  for (r in df2$R) {
+    cat('####', r, '\n')
+    df3 <- df %>% filter(MP==mp, R==r)
+    cat(paste0("![](", file.path('../../img/MP_Reports', df3$file[1]), ')'), "\n")
+    cat('\n')
+  }
+  
+  cat('\n')
+}
+
+
+
+```
