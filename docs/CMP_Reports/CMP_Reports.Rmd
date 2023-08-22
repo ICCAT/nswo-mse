@@ -9,6 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = FALSE)
 library(ggplot2)
 library(dplyr)
+library(SWOMSE)
 ```
 
 ```{r}
@@ -27,8 +28,31 @@ all_MPs <- unique(df$MP)
 knitr::kable(SWOMSE::TuneTargets)
 ```
 
-## Operating Models 
+## Reference and Robustness Operating Models 
 
+```{r OM-Description}
+OM.root <- 'G:/My Drive/1_Projects/North_Atlantic_Swordfish/OMs'
+OMgrid.dir <- file.path(OM.root,'grid_2022')
+OM_desc <- read.csv(file.path(OMgrid.dir, 'OM_Description.csv'))
+# OM_desc$OM.objects <- NA
+
+OM_desc$Class <- factor(OM_desc$Class, levels=unique(OM_desc$Class), ordered = TRUE)
+
+caption <- 'Summary of the Base Case, Reference, and Robustness Operating Models.'
+
+OM_desc$Description <- gsub("%", ' percent', OM_desc$Description)
+# OM_desc$Class <- gsub("-", ' ', OM_desc$Class)
+# OM_desc$Purpose <- gsub("-", ' ', OM_desc$Purpose)
+
+
+OM_desc %>% knitr::kable(escape = F,
+                    caption=caption,
+                    booktabs=TRUE) %>%
+  kableExtra::kable_styling("striped", full_width = T)
+
+```
+
+See [here](https://iccat.github.io/nswo-mse/TS/Trial_Specs.html#operating-models) for more details on the operating models 
 
 ## CMP Reports {.tabset}
 ```{r, results='asis'}
@@ -37,7 +61,9 @@ for (mp in all_MPs) {
   cat('###', mp, '{.tabset}', '\n')
   
   cat('####', 'Reference', '\n')
-  df2 <- df %>% filter(MP==mp, R=='Reference')
+ 
+  df2 <- df %>% dplyr::filter(MP==mp, R=='Reference')
+  
   cat(paste0("![](", file.path('../../img/MP_Reports', df2$file[1]), ')'), "\n")
   cat('\n')
   df2 <- df %>% filter(MP==mp, R!='Reference')
