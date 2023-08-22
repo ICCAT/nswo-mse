@@ -846,7 +846,7 @@ Trade_Off <- function(DF, PM1, PM2, xline=NULL,
 
 
   DF2 <- DF %>% filter(PM %in% c(PM1, PM2)) %>%
-    dplyr::select(-caption, -name) %>%
+    dplyr::select(MP, MP_name, PM, Value, Target) %>%
     tidyr::pivot_wider(., names_from = PM, values_from = Value)
 
   DF2 <- DF2 %>% rename(., PM1=all_of(PM1), PM2=all_of(PM2))
@@ -1238,6 +1238,8 @@ Process_MSE_Results <- function(PMs=NULL,
     TS_results <- do.call('rbind', TS_results_list)
 
     message("Saving results to:", file.path(Results.dir, class))
+    if(!dir.exists(file.path(Results.dir, class)))
+      dir.create(file.path(Results.dir, class))
     saveRDS(PM_results, file.path(Results.dir, class, 'PM_values.rda'))
     saveRDS(TS_results, file.path(Results.dir, class, 'TS_values.rda'))
 
@@ -1245,3 +1247,166 @@ Process_MSE_Results <- function(PMs=NULL,
 
 
 }
+
+
+## MP Reports ----
+make_table <- function(PM_results_mp, pms, rnd=2) {
+  pm_table <- PM_results_mp %>% filter(PM %in% pms ) %>%
+    mutate(Value=round(Value,rnd)) %>%
+    select(PM, MP, Value)
+
+  ind <- grepl('TAC', pm_table$PM)
+  pm_table$Value[ind] <- round( pm_table$Value[ind],0)
+
+
+  tbs <- lapply(split(pm_table, pm_table$MP), '[', -2)
+
+
+  tibble(x = rep(-Inf, length(tbs)),
+         y = rep(-Inf, length(tbs)),
+         MP = levels(as.factor(pm_table$MP)),
+         tbl = tbs)
+}
+
+
+#' Title
+#'
+#'
+#' @return
+#' @export
+Time_Series_Plot <- function(ll, alpha=0.7,
+                             percentiles=c(0.6, 0.7,  0.9),
+                             fills=c('#373737', '#363639', '#CDCDCD')) {
+
+
+  Year_df <- data.frame(Year=2025:2053, Period='Short')
+  Year_df$Period[Year_df$Year%in% 2034:2044] <- 'Medium'
+  Year_df$Period[Year_df$Year%in% 2044:2053] <- 'Long'
+
+
+  df <- ll[[1]]
+  PM_results_mp <- ll[[2]]
+
+  quantiles <- data.frame(Lower=1-percentiles, Upper=percentiles)
+
+  # F_FMSY
+  FMSY_list <- list()
+  for (i in 1:nrow(quantiles)) {
+    FMSY_list[[i]] <- df %>% filter(Year>=2024) %>%
+      group_by(Year, MP) %>%
+      summarise(Median=median(F_FMSY),
+                Lower=quantile(F_FMSY, quantiles$Lower[i]),
+                Upper=quantile(F_FMSY, quantiles$Upper[i]),
+                fill=fills[i],
+                .groups = 'drop')
+  }
+
+  F_FMSYdf <- do.call('rbind', FMSY_list)
+
+  p1 <- ggplot(F_FMSYdf, aes(x=Year)) +
+    facet_grid(~MP, scales='free') +
+    geom_ribbon(aes(ymin=Lower , ymax=Upper, fill=fill), alpha=alpha) +
+    # geom_line(aes(y=Median), linewidth=0.5) +
+    geom_line(aes(y=Median)) +
+    expand_limits(y=0) +
+    geom_line(data=Year_df, aes(x=Year, y=1, col=Period), linetype=2)  +
+    theme_bw() +
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+    scale_fill_manual(values=fills) +
+    guides(fill='none', color='none') +
+    labs(y='F/FMSY') +
+    geom_table(data = make_table(PM_results_mp, c('PNOF', 'PGK_short', 'PGK_med', 'PGK_long')),
+               aes(x = x, y = y,label = tbl),
+               hjust = 'inward', vjust = 'inward')
+
+
+
+  # B_BMSY
+  BMSY_list <- list()
+  for (i in 1:nrow(quantiles)) {
+    BMSY_list[[i]] <- df %>% filter(Year>=2024) %>%
+      group_by(Year, MP) %>%
+      summarise(Median=median(SB_SBMSY),
+                Lower=quantile(SB_SBMSY, quantiles$Lower[i]),
+                Upper=quantile(SB_SBMSY, quantiles$Upper[i]),
+                fill=fills[i],
+                .groups = 'drop')
+  }
+
+  B_BMSYdf <- do.call('rbind', BMSY_list)
+
+  p2 <- ggplot(B_BMSYdf, aes(x=Year)) +
+    facet_grid(~MP, scales='free') +
+    geom_ribbon(aes(ymin=Lower , ymax=Upper, fill=fill), alpha=alpha) +
+    geom_line(aes(y=Median)) +
+    expand_limits(y=0) +
+    theme_bw() +
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+    scale_fill_manual(values=fills) +
+    geom_line(data=Year_df, aes(x=Year, y=1, col=Period), linetype=2)  +
+    geom_line(data=Year_df, aes(x=Year, y=0.4), linetype=3)  +
+    guides(fill='none', color='none') +
+    labs(y='SB/SBMSY') +
+    geom_table(data = make_table(PM_results_mp, c('nLRP')),
+               aes(x = x, y = y, label = tbl),
+               hjust = 'inward', vjust = 'inward')
+
+  # TAC
+  TAC_list <- list()
+  for (i in 1:nrow(quantiles)) {
+    TAC_list[[i]] <- df %>% filter(Year>=2024) %>%
+      group_by(Year, MP) %>%
+      summarise(Median=median(TAC),
+                Lower=quantile(TAC, quantiles$Lower[i]),
+                Upper=quantile(TAC, quantiles$Upper[i]),
+                fill=fills[i],
+                .groups = 'drop')
+  }
+
+  TACdf <- do.call('rbind', TAC_list)
+
+  p3 <- ggplot(TACdf, aes(x=Year)) +
+    facet_grid(~MP, scales='free') +
+    geom_ribbon(aes(ymin=Lower , ymax=Upper, fill=fill), alpha=alpha) +
+    geom_line(aes(y=Median)) +
+    expand_limits(y=0) +
+    theme_bw() +
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+    scale_fill_manual(values=fills) +
+    geom_line(data=Year_df, aes(x=Year, y=mean(tail(SWOData@Cat[1,], 5)), col=Period), linetype=2)  +
+    guides(fill='none', color='none') +
+    labs(y='TAC') +
+    geom_table(data = make_table(PM_results_mp,
+                                 c('TAC1', 'AvTAC_short', 'AvTAC_med', 'AvTAC_long',
+                                   'VarC')),
+               aes(x = x, y = y, label = tbl),
+               hjust = 'inward', vjust = 'inward')
+
+  cowplot::plot_grid(p1,p2,p3, nrow=3, align='v')
+
+
+}
+
+MP_Report_class <- function(mp_name, cl) {
+  PM_results <- readRDS(file.path('Results', cl, 'PM_values.rda'))
+  TS_results <- readRDS(file.path('Results', cl, 'TS_values.rda'))
+
+  TS_results_mp <- TS_results %>% filter(MP_name==mp_name)
+  PM_results_mp <- PM_results %>% filter(MP_name==mp_name)
+
+  results <- list(TS_results_mp, PM_results_mp)
+  p <- Time_Series_Plot(results)
+
+  cl_name <- strsplit(cl, "_")[[1]][1]
+
+  title <- cowplot::ggdraw() + cowplot::draw_label(cl_name, fontface='bold')
+  p <- cowplot::plot_grid(title, p, ncol=1, rel_heights=c(0.1, 1))
+  nm <- paste(mp_name, cl, sep="_") %>% paste0(., '.png')
+  ggsave(file.path('img/MP_Reports',nm), p, width=12, height=12)
+}
+
+
+
