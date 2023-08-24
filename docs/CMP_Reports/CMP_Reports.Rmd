@@ -54,7 +54,7 @@ OM_desc %>% knitr::kable(escape = F,
 
 See [here](https://iccat.github.io/nswo-mse/TS/Trial_Specs.html#operating-models) for more details on the operating models 
 
-## CMP Reports {.tabset}
+## CMP Development Reports {.tabset}
 ```{r, results='asis'}
 for (mp in all_MPs) {
   
@@ -78,6 +78,138 @@ for (mp in all_MPs) {
   cat('\n')
 }
 
+```
+
+## Quilt Plots {.tabset}
+
+```{r, results='asis'}
+Quilt <- function(PM_results, PMs=NULL) {
+  library(DT)
+  PM_results$Value <- round(PM_results$Value,2)
+  tab <- PM_results %>% select(PM, MP, Value) %>% filter(PM %in% PMs)
+  
+  tab$PM <- factor(tab$PM, levels=PMs, ordered = TRUE)
+  tab <- tab %>% group_by(PM) %>% arrange()
+  tab <- tab  %>%
+    tidyr::pivot_wider(., names_from = PM, values_from = Value)
+  
+  
+  colfunc <- colorRampPalette(c("blue", "white"), alpha=TRUE)
+  
+  # Probability colors
+  probs <- seq(0, 1.01, length.out=50)
+  prob_colors <- rev(colfunc(length(probs)+1))
+  rev_prob_colors <- rev(prob_colors)
+  
+  # TAC colors
+  TAC_PMs <- PM_results$Name[grepl('TAC', PM_results$Name )] %>% unique()
+  
+  
+  # Variability colors
+  
+  
+  # Make table
+  quilt <-  DT::datatable(tab, options = list(dom = 't', pageLength =50))
+  
+  for (i in 2:ncol(tab)) {
+    pm <- colnames(tab)[i]
+    
+    if (grepl('TAC', pm)) {
+      cuts <- seq(min(tab[,i]), max(tab[,i])*1.1, length.out=10)
+      values <- rev(colfunc(length(cuts)+1))
+      
+    } else if (grepl('VarC', pm)) {
+      # variability
+      cuts <- seq(0, 1, length.out=10)
+      values <- (colfunc(length(cuts)+1))
+      
+    } else {
+      # probabilities
+      cuts <- seq(0, 1.01, length.out=50)
+      values <- rev(colfunc(length(cuts)+1))
+    }
+    quilt <- quilt %>%
+      formatStyle(
+        pm,
+        backgroundColor = styleInterval(cuts=cuts,
+                                        values=values)
+        
+      )
+    
+  }
+  quilt
+}
+
+fls <- list.files('../../Results/Final_MP_Results')
+cat('###', 'Reference ', '\n')
+df <- readRDS(file.path('../../Results/Final_MP_Results/Reference.rdata'))
+Quilt(df, PMs=c('TAC1', 'AvTAC_short', 'AvTAC_med', 'PGK_med', 'PNOF', 'VarC'))
+
+cat('###', 'R0', '\n')
+df <- readRDS(file.path('../../Results/Final_MP_Results/R0.rdata'))
+Quilt(df, PMs=c('TAC1', 'AvTAC_short', 'AvTAC_med', 'PGK_med', 'PNOF', 'VarC'))
+
+cat('###', 'R1', '\n')
+df <- readRDS(file.path('../../Results/Final_MP_Results/R1.rdata'))
+Quilt(df, PMs=c('TAC1', 'AvTAC_short', 'AvTAC_med', 'PGK_med', 'PNOF', 'VarC'))
+
+cat('###', 'R2', '\n')
+df <- readRDS(file.path('../../Results/Final_MP_Results/R2.rdata'))
+Quilt(df, PMs=c('TAC1', 'AvTAC_short', 'AvTAC_med', 'PGK_med', 'PNOF', 'VarC'))
+
+cat('###', 'R3', '\n')
+df <- readRDS(file.path('../../Results/Final_MP_Results/R3.rdata'))
+Quilt(df, PMs=c('TAC1', 'AvTAC_short', 'AvTAC_med', 'PGK_med', 'PNOF', 'VarC'))
+
+cat('###', 'R4', '\n')
+df <- readRDS(file.path('../../Results/Final_MP_Results/R4.rdata'))
+Quilt(df, PMs=c('TAC1', 'AvTAC_short', 'AvTAC_med', 'PGK_med', 'PNOF', 'VarC'))
 
 
 ```
+
+
+## Trade-Off Plots {.tabset}
+
+### Reference
+
+```{r}
+knitr::include_graphics('../../img/TradeOffs/Reference.png')
+```
+
+### R0
+
+```{r}
+knitr::include_graphics('../../img/TradeOffs/R0.png')
+```
+
+
+### R1
+
+```{r}
+knitr::include_graphics('../../img/TradeOffs/R1.png')
+```
+
+### R2
+
+```{r}
+knitr::include_graphics('../../img/TradeOffs/R2.png')
+```
+
+### R3
+
+```{r}
+knitr::include_graphics('../../img/TradeOffs/R3.png')
+```
+
+
+### R4
+
+```{r}
+knitr::include_graphics('../../img/TradeOffs/R4.png')
+```
+
+
+
+
+
