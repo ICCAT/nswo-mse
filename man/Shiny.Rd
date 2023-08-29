@@ -4,7 +4,7 @@
 \alias{Shiny}
 \title{Run the SWO MSE Shiny Application}
 \usage{
-Shiny()
+Shiny(...)
 }
 \description{
 \code{Shiny} runs the SWO MSE Shiny Application
