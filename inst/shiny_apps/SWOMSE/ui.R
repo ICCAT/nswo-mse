@@ -1,121 +1,109 @@
-library(shiny)
 
 
-shinyUI(
-    fluidPage(
-        hr(),
-        titlePanel("North Atlantic Swordfish Management Strategy Evaluation"),
-
-        fluidRow(
-            column(12,
-                   fluidRow(
-                       column(2,
-                              img(src = "ICCAT3.jpg", height = 70, width = 110),
-                              img(src = "swo_noaa.png", height = 70, width = 110)),
-                       column(8,
-                              h4("SWO MSE Results"),
-                              p("The Swordfish Management Strategy Evaluation (SWO MSE) evaluates
-                              a set of candidate management procedures (MPs) in a simulation model of
-                              the fishery system with the aim of identifying a management approach that
-                              is robust to uncertainties in data collection and the system dynamics.
-                              These uncertainties are represented by a collection of alternative operating
-                              models (OMs), each with different assumptions regarding population and fleet dynamics."),
-                              h4("Instructions"),
-                              p('This interactive app has been designed for pairwise comparison between two sets of
-                              OMs. Single OMs can be selected from the dropdown menus in each sidebar,
-                              or a collection of OMs can be selected by using the checkboxs to
-                                include different OM assumptions.'),
-                              p('NOTE: This app is in active development and the primary objective at this stage
-                                 is to develop and test a suitable framework for presenting the MSE results.
-                                 The MSE results presented here are for testing purposes only.
-                                Please contact'
-                                , a("Adrian Hordyk", href="mailto:adrian@bluematterscience.com", target="_blank"),
-                                'for technical questions or bug reports.')
-                              ),
-                       column(2),
-                       column(12, hr(), br()),
-                       )
-                   )),
-        fluidRow(
-            column(2,
-                   br(),
-                   h4('OM SET 1'),
-                   selectInput("OM1","Select a single OM",choices=OMnames,selected=OMnames[1]),
-                   h4('Assumptions:'),
-                   uiOutput('Size_cb_1'),
-                   uiOutput('M_cb_1'),
-                   uiOutput('sigmaR_cb_1'),
-                   uiOutput('steepness_cb_1'),
-                   uiOutput('lambda_cb_1'),
-                   uiOutput('llq_cb_1'),
-                   uiOutput('env_cb_1'),
-                   hr(),
-                   h5("Operating models included:",style = "font-weight:bold"),
-                   textOutput("OM1_nums")
-            ),
-            column(8,
-                   tabsetPanel(
-                       tabPanel(h5("Performance table",style = "color:black"),
-                                column(width=6,
-                                       h5('OM Set 1'),
-                                       DT::dataTableOutput('PTable1')),
-
-                                column(width=6,
-                                       h5('OM Set 2'),
-                                       DT::dataTableOutput('PTable2'))
-                       ),
-                       tabPanel(h5("Trade-off plots",style = "color:black"),
-                                column(12,
-                                       column(3,
-                                              selectInput("T_PMx", "Performance Metric (x-axis)",
-                                                          choices=PMnames, selected="Status_M")
-                                       ),
-                                       column(3,
-                                              selectInput("T_PMy", "Performance Metric (y-axis)",
-                                                          choices=PMnames, selected="Yield_M")
-                                       )
-                                ),
-                                column(9,
-                                       plotOutput('tplot1', width='600px', height='550px')
-                                       )
-
-                       ),
-                       tabPanel(h5("Zeh plots",style = "color:black"),
-                                column(6,
-                                       h5('OM Set 1'),
-                                       plotOutput('zehplot1')),
-                                column(6,
-                                       h5('OM Set 2'),
-                                       plotOutput('zehplot2'))
-                       ),
-                       tabPanel(h5("Worm plots",style = "color:black"),
-                                column(6,
-                                       h5('OM Set 1'),
-                                       plotOutput('wormplot1')),
-                                column(6,
-                                       h5('OM Set 2'),
-                                       plotOutput('wormplot2'))
-                       )
-
-                   )
-            ),
-            column(2,
-                   br(),
-                   h4('OM SET 2'),
-                   selectInput("OM2","Select a single OM",choices=OMnames,selected=OMnames[2]),
-                   h4('Assumptions:'),
-                   uiOutput('Size_cb_2'),
-                   uiOutput('M_cb_2'),
-                   uiOutput('sigmaR_cb_2'),
-                   uiOutput('steepness_cb_2'),
-                   uiOutput('lambda_cb_2'),
-                   uiOutput('llq_cb_2'),
-                   uiOutput('env_cb_2'),
-                   hr(),
-                   h5("Operating models included:",style = "font-weight:bold"),
-                   textOutput("OM2_nums")
-            )
-        )
+# -- header ----
+header <- shinydashboardPlus::dashboardHeader(
+  title='SWOMSE',
+  leftUi = tagList(
+    dropdownButton(
+      width=800,
+      label = "Performance Metrics",
+      icon = icon("info"),
+      status = "primary",
+      circle = FALSE,
+      tableOutput("PMs")
+    )),
+  controlbarIcon=shiny::icon('gears')
+)
 
 
-))
+# -- rhs controlbar ----
+controlbar <- dashboardControlbar(overlay = FALSE, width=450,skin='light', collapsed = FALSE,
+                                  FiltersUI('filters')
+
+)
+
+# -- lhs sidebar ----
+sidebar <- dashboardSidebar(
+  collapsed = FALSE,
+  sidebarMenu(id='sidebar',
+    menuItem("CMP Performance", tabName = "CMPPerf", icon = icon("stats",lib="glyphicon")),
+    menuItem("Trade-Off", tabName = "TradeOff", icon = icon("xmark")),
+    menuItem("Kobe Time", tabName = "KobeTime", icon = icon("chart-line")),
+    menuItem("Quilt Plot", tabName = "QuiltPlot", icon = icon("table"))
+  )
+)
+
+
+# -- body ----
+body <- dashboardBody(height = 800,
+  tags$head(
+    includeScript(path = "www/js/js4checkbox.js"),
+    includeScript(path = "www/js/index.js"),
+    tags$link(rel='stylesheet', type='text/css', href='styles.css'),
+    tags$link(href="fa/css/all.css", rel="stylesheet"), # font-awesome
+    tags$link(rel="shortcut icon", href="favicon.ico"),
+
+    tags$style(HTML("#SessionID{font-size:12px;}")),
+    tags$style(HTML("/* https://fonts.google.com/?preview.text=SLICK&preview.text_type=custom */
+        @import url('//fonts.googleapis.com/css?family=Cairo|Cabin:400,700');
+        /* Font of SLICK title */
+      ")),
+    tags$script(
+      'var dimension = [0, 0];
+    $(document).on("shiny:connected", function(e) {
+      dimension[0] = window.innerWidth;
+      dimension[1] = window.innerHeight;
+      Shiny.onInputChange("dimension", dimension);
+    });
+    $(window).resize(function(e) {
+      dimension[0] = window.innerWidth;
+      dimension[1] = window.innerHeight;
+      Shiny.onInputChange("dimension", dimension);
+    });
+    '),
+    tags$script("
+        var openTab = function(tabName){
+          $('a', $('.sidebar')).each(function() {
+            if(this.getAttribute('data-value') == tabName) {
+              this.click()
+            };
+          });
+        }
+      ")
+
+  ),
+  tabItems(
+    tabItem(tabName = "CMPPerf",
+            CMPPerf_UI('CMPPerf')
+    ),
+    tabItem(tabName = "TradeOff",
+            TradeOff_UI('TradeOff')
+    ),
+    tabItem(tabName = "KobeTime",
+            KobeTime_UI('KobeTime')
+    ),
+    tabItem(tabName = "QuiltPlot",
+            QuiltPlot_UI('QuiltPlot')
+    )
+    # tabItem(tabName = "Pow",
+    #        Pow_UI('Pow')
+    # )
+  )
+)
+
+
+# -- page ----
+
+dashboardPage(
+  skin = "blue-light",
+  header=header,
+  sidebar=sidebar,
+  body=body,
+  controlbar=controlbar,
+  title='SWOMSE',
+  dashboardFooter(left =  paste0("SWOMSE version:", packageVersion('SWOMSE')),
+                  right = h6("Copyright", HTML("&#169;"), tags$a(href='https://bluematterscience.com/',
+                                                                 target="_blank", paste("Blue Matter Science Ltd.", format(Sys.Date(), "%Y")))))
+)
+
+
