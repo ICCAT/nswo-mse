@@ -55,6 +55,9 @@ OM_desc %>% knitr::kable(escape = F,
 See [here](https://iccat.github.io/nswo-mse/TS/Trial_Specs.html#operating-models) for more details on the operating models 
 
 ## CMP Development Reports {.tabset}
+
+Time-series plots and performance metric values for all CMPs that have been developed, tuned, and tested.
+
 ```{r, results='asis'}
 for (mp in all_MPs) {
   
@@ -79,6 +82,64 @@ for (mp in all_MPs) {
 }
 
 ```
+
+## Limit Reference Point
+Identify the CMPs that fail to the Limit Reference Point requirement: SB does not fall below 0.4SBMSY in more than 15% of the simulations for the Reference OMs.
+
+```{r}
+PM_results <- readRDS('../../Results/Reference/PM_values.rda')
+
+failLRP <- PM_results %>% filter(PM=='LRP', Value>=0.15)
+
+
+Trade_Off(PM_results, 'PGK_short', 'nLRP', xline=c(0.51,0.6,0.7),
+          yline=c(0.85, 0.9, 0.95),
+          lab.MPs = failLRP$MP)
+
+Pass_LRP <- PM_results %>% filter(!MP %in% failLRP$MP)
+```
+
+CMPs that have nLRP values <85%:
+
+```{r}
+df <- PM_results %>% filter(MP %in% failLRP$MP)
+df$Value <- round(df$Value,2)
+df <- df %>% filter(PM%in%c('nLRP', 'PGK_med', 'TAC1', 'AvTAC_med'))
+df <- df %>% select(PM, MP, Value)
+df <- df %>% tidyr::pivot_wider(., names_from=PM, values_from=Value)
+DT::datatable(df,options = list(dom = 't', pageLength =50))
+```
+
+
+## PGK Requirement
+
+Trade-off plot identifying the CMPs that fail to achieve at least 51% probability of being in the Green Kobe space in the Medium time periods:
+
+```{r}
+
+fail_PGK <- Pass_LRP %>%
+  filter(PM %in% c('PGK_short', 'PGK_med'), Value<0.50)
+
+Trade_Off(Pass_LRP, 'PGK_short', 'PGK_med',
+          xline=c(0.50),
+          yline=c(0.50),
+          lab.MPs = fail_PGK$MP)
+
+Pass_PGK <- Pass_LRP %>% filter(!MP %in% fail_PGK$MP)
+```
+
+```{r}
+df <- Pass_LRP %>% filter(MP %in% fail_PGK$MP)
+df$Value <- round(df$Value,2)
+df <- df %>% filter(PM%in%c('PGK_med', 'TAC1', 'AvTAC_med'))
+df <- df %>% select(PM, MP, Value)
+df <- df %>% tidyr::pivot_wider(., names_from=PM, values_from=Value)
+DT::datatable(df,options = list(dom = 't', pageLength =50))
+```
+
+
+## Identify Best Performing MPs 
+
 
 ## Quilt Plots {.tabset}
 
