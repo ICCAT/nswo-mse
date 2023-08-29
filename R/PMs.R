@@ -1,11 +1,11 @@
 
-is.dominated <- function(x, y, greater=TRUE, rnd=2) {
+is.dominated <- function(x, y, greater=TRUE, rnd=4) {
   x$Value <- round(x$Value,rnd)
   y$Value <- round(y$Value,rnd)
   if (greater)
-    sdf <- x %>% filter(Value>=y$Value)
+    sdf <- x %>% filter(Value>y$Value)
   if (!greater)
-    sdf <- x %>% filter(Value<=y$Value)
+    sdf <- x %>% filter(Value<y$Value)
   sdf$MP
 }
 
@@ -41,8 +41,9 @@ Calc_Dominated <- function(pms, PM_results) {
     }
     dom_MP_list[[MPs[mm]]] <- intersect(dom_MP_list[[MPs[mm]]][[1]], dom_MP_list[[MPs[mm]]][[2]] )
   }
-  list(Non=names(which(lapply(dom_MP_list, length)==0)), Dom=names(which(lapply(dom_MP_list, length)!=0)))
-
+  tt <-list(Non=names(which(lapply(dom_MP_list, length)==0)),
+            Dom=names(which(lapply(dom_MP_list, length)!=0)))
+  tt
 }
 
 
@@ -1255,6 +1256,7 @@ make_table <- function(PM_results_mp, pms, rnd=2) {
     mutate(Value=round(Value,rnd)) %>%
     select(PM, MP, Value)
 
+
   ind <- grepl('TAC', pm_table$PM)
   pm_table$Value[ind] <- round( pm_table$Value[ind],0)
 
@@ -1277,7 +1279,6 @@ make_table <- function(PM_results_mp, pms, rnd=2) {
 Time_Series_Plot <- function(ll, alpha=0.7,
                              percentiles=c(0.6, 0.7,  0.9),
                              fills=c('#373737', '#363639', '#CDCDCD')) {
-
 
   Year_df <- data.frame(Year=2025:2053, Period='Short')
   Year_df$Period[Year_df$Year%in% 2034:2044] <- 'Medium'
@@ -1321,6 +1322,9 @@ Time_Series_Plot <- function(ll, alpha=0.7,
                hjust = 'inward', vjust = 'inward')
 
 
+  tt <- make_table(PM_results_mp, c('PNOF', 'PGK_short', 'PGK_med', 'PGK_long'))
+
+  tt[1,4][[1]]
 
   # B_BMSY
   BMSY_list <- list()
@@ -1408,5 +1412,60 @@ MP_Report_class <- function(mp_name, cl) {
   ggsave(file.path('img/MP_Reports',nm), p, width=12, height=12)
 }
 
+Quilt <- function(PM_results, PMs=NULL) {
+  library(DT)
+  PM_results$Value <- round(PM_results$Value,2)
+  tab <- PM_results %>% select(PM, MP, Value) %>% filter(PM %in% PMs)
 
+  tab$PM <- factor(tab$PM, levels=PMs, ordered = TRUE)
+  tab <- tab %>% group_by(PM) %>% arrange()
+  tab <- tab  %>%
+    tidyr::pivot_wider(., names_from = PM, values_from = Value)
+
+
+  colfunc <- colorRampPalette(c("blue", "white"), alpha=TRUE)
+
+  # Probability colors
+  probs <- seq(0, 1.01, length.out=50)
+  prob_colors <- rev(colfunc(length(probs)+1))
+  rev_prob_colors <- rev(prob_colors)
+
+  # TAC colors
+  TAC_PMs <- PM_results$Name[grepl('TAC', PM_results$Name )] %>% unique()
+
+
+  # Variability colors
+
+
+  # Make table
+  quilt <-  DT::datatable(tab, options = list(dom = 't', pageLength =20))
+
+  for (i in 2:ncol(tab)) {
+    pm <- colnames(tab)[i]
+
+    if (grepl('TAC', pm)) {
+      cuts <- seq(min(tab[,i]), max(tab[,i])*1.1, length.out=10)
+      values <- rev(colfunc(length(cuts)+1))
+
+    } else if (grepl('VarC', pm)) {
+      # variability
+      cuts <- seq(0, 1, length.out=10)
+      values <- (colfunc(length(cuts)+1))
+
+    } else {
+      # probabilities
+      cuts <- seq(0, 1.01, length.out=50)
+      values <- rev(colfunc(length(cuts)+1))
+    }
+    quilt <- quilt %>%
+      formatStyle(
+        pm,
+        backgroundColor = styleInterval(cuts=cuts,
+                                        values=values)
+
+      )
+
+  }
+  quilt
+}
 
