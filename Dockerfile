@@ -19,6 +19,9 @@ zlib1g-dev
 RUN R -e "install.packages(c('shiny', 'rmarkdown', 'remotes'), repos='https://cloud.r-project.org/')"
 
 
+RUN R -e "remotes::install_github(c('bluematter/MSEtool'), dependencies=TRUE)"
+RUN R -e "remotes::install_github(c('bluematter/openMSE'), dependencies=TRUE)"
+
 # install R package from shiny_live branch
 RUN R -e "remotes::install_github(c('ICCAT/nswo-mse'), 'shiny_live', dependencies=TRUE)"
 
