@@ -18,6 +18,18 @@ Depends:
     openMSE (>= 1.1.0)
 Imports:
     devtools,
+    DT,
+    ggplot2,
+    ggrepel,
+    readxl,
+    shinyBS,
+    shinydashboardPlus,
+    shinyWidgets,
+    shinyjs,
+    shinyalert,
+    cowplot,
+    tidyr, 
+    ggpp,
     methods,
     mvtnorm,
     r4ss,
