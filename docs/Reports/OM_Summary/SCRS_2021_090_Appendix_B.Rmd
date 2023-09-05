@@ -1,0 +1,364 @@
+---
+title: "SCRS/2021/090 Appendix B"
+author: "Adrian Hordyk <adrian@bluematterscience.com>"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    number_sections: yes
+subtitle: 'North Atlantic Swordfish MSE '
+always_allow_html: true
+params:
+  OM.n: 1
+---
+
+```{css, echo=FALSE}
+body .main-container {
+  max-width: 1280px !important;
+  width: 1280px !important;
+  }
+body {
+  max-width: 1280px !important;
+}
+
+```
+
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(htmltools)
+library(ggplot2)
+library(SWOMSE)
+knitr::opts_chunk$set(echo = FALSE)
+
+fig.num <- tab.num <- 0
+fig.cap <- function() {
+  fig.num <<- fig.num +1
+  paste0('Figure ',  fig.num, '.')
+
+} 
+tab.cap <- function() {
+  tab.num <<- tab.num +1
+  paste0('Table ',  tab.num, '.')
+}
+
+OM.root <- 'G:/My Drive/1_Projects/North_Atlantic_Swordfish/OMs/grid_2021'
+RepList <- readRDS(file.path(OM.root, '/OM_objects/RepList.rda'))
+
+```
+
+# Reference Points 
+
+```{r}
+templist <- list()
+for (i in 1:length(RepList)) {
+ replist <- RepList[[i]]
+ derived <-  replist$derived_quants %>%
+   dplyr::filter(Label %in% c('SSB_Virgin', 'SSB_MSY', 'Recr_Virgin',
+                              'SPR_MSY','annF_MSY', 'Dead_Catch_MSY',
+                              'Ret_Catch_MSY'))
+ Kobe <- replist$Kobe %>% filter(Yr==2017)
+
+ templist[[i]] <- data.frame(OM=i,
+                             SSB0=derived$Value[1],
+                             SSB_MSY=derived$Value[2],
+                             R0=derived$Value[3],
+                             F_MSY=derived$Value[5],
+                             MSY_removals=derived$Value[6],
+                             MSY_retained=derived$Value[7],
+                             Dep=replist$current_depletion,
+                             F_FMSY=Kobe$F.Fmsy,
+                             SB_SBMSY=Kobe$B.Bmsy)
+}
+
+Ref_Points <- do.call('rbind', templist)
+
+
+OM_DF$OM <- OM_DF$i
+DF <- left_join(OM_DF, Ref_Points, by="OM") %>%
+  select(OM, M, sigmaR, h, 'CPUE lambda' =lambda, 
+         'Increase in catchability'=llq, 
+         'Environmental covariate'=env, 
+         SSB0, SSB_MSY, R0, F_FMSY,
+         MSY=MSY_removals, 
+         Depletion=Dep, F_FMSY, SB_SBMSY)
+
+for (col in 2:7) {
+  DF[,col] <- as.factor(DF[,col])
+}
+for (col in 8:ncol(DF)) {
+  DF[,col] <- round(DF[,col],2)
+}
+
+```
+
+`r tab.cap()` Summary table of the biological reference points for the `r nrow(DF)` operating models from the uncertainty grid. Filters at the top of each column can be used to subset the results. The table can be downloaded as a CSV file using the 'CSV' button.
+
+```{r, results='asis'}
+link <- paste0("https://github.com/ICCAT/nswo-mse/raw/master/docs/Reports/OM_Summary/Table", tab.num, ".csv")
+if (knitr::is_latex_output()) {
+  cat('NOTE: Dynamic tables are only available in HTML version of this report. Click [here](', link, ')^[', link, '] to download the table in CSV format (After opening link, right-click and Save As .csv).')
+}
+```
+
+```{r}
+
+ref_pointDF <- DF
+par_nm <- names(ref_pointDF)[1:7]
+
+ref_nm <- names(ref_pointDF)[8:length(names(ref_pointDF))]
+
+col_groups <- htmltools::withTags(table(
+  class = 'display',
+  thead(
+    tr(
+      th(colspan = length(par_nm), style = "border-right: dashed 2px;", 'Parameter Values'),
+      th(colspan = length(ref_nm), 'Reference Points')
+    ),
+    tr(
+      lapply(par_nm[1:(length(par_nm)-1)], th),
+      th(style = "border-right: dashed 2px;", par_nm[length(par_nm)]),
+      th(shiny::HTML(paste0("SB", tags$sub("0")))),
+      th(shiny::HTML(paste0("SB", tags$sub("MSY")))),
+      th(shiny::HTML(paste0("R", tags$sub("0")))),
+      th(shiny::HTML(paste0("F/F", tags$sub("MSY")))),
+      th(shiny::HTML("MSY")),
+      th(shiny::HTML(paste0("SB/SB", tags$sub("0")))),
+      th(shiny::HTML(paste0("SB/SB", tags$sub("MSY"))))
+    )
+  )
+))
+
+
+DT::datatable(ref_pointDF, filter='top', 
+              extensions = 'Buttons',
+              options = list(
+                dom = 'Blfrtip',
+                buttons = list(list(extend = 'csv', filename= 'ReferencePoints')),
+                pageLength = 10,
+                columnDefs = list(list(width = '200px', targets = "_all"))),
+              rownames = FALSE,
+              escape=FALSE,
+              container = col_groups) 
+ 
+write.csv(ref_pointDF, file=file.path(getwd(), paste0('Table', tab.num, '.csv')))
+
+
+```
+
+
+
+```{r, include=FALSE}
+library(GGally)
+
+Vars <- c('M','sigmaR', 'h', 'lambda', 'llq', 'env')
+Var2 <- c('Natural mortality (M)',
+          'Recruitment Variability (sigmaR)',
+          'Steepness (h)',
+          'CPUE Lambda',
+          'Increased catchability (q)',
+          'Environmental covariate')
+
+lowerfun <- function(data,mapping){
+  ggplot(data = data, mapping = mapping)+
+    geom_point()+
+    xlim(0, Max) +
+    ylim(0,Max) +
+    geom_abline(intercept = 0, slope=1, linetype=2)
+}
+
+templist <- list()
+
+for (i in seq_along(RepList)) {
+  replist <- RepList[[i]]
+  year <- 1950:2018
+  kobe <- replist$Kobe %>% filter(Yr %in% year)
+  kobe$OM <- i
+  templist[[i]] <- kobe
+}
+
+
+kobe_DF <- do.call('rbind', templist)
+kobe_DF <- kobe_DF %>% filter(Yr %in% c(2018))
+
+OM_DF$OM <- OM_DF$i
+
+kobe_DF <- left_join(OM_DF, kobe_DF, by='OM')
+
+```
+
+# SB/SB~MSY~ Correlation Plots
+
+```{r, results='asis', message=FALSE}
+
+VAR <- 'B.Bmsy'
+LAB <- expression(SB/SB[MSY])
+for (i in seq_along(Vars)) {
+  
+  
+  nm <- Vars[i]
+  name <- Var2[i]
+  
+  cat(paste0('\n\n## ', name, '\n\n'))
+  List <- split(kobe_DF, kobe_DF[[nm]])
+  tt <- list()
+  store <- NA
+  for (x in seq_along(List)) {
+    tt[[x]] <- List[[x]] 
+    ind <- match(VAR, names(tt[[x]]))
+    names(tt[[x]])[ind] <- unique(List[[x]][[nm]])
+    store[x] <-   names(tt[[x]])[ind]
+  }
+  
+DF <- do.call('cbind', tt)
+cols <- match(store, names(DF))
+Max <- ceiling(max(DF[,cols], na.rm=T))
+
+p1 <- ggpairs(DF[,cols],  aes(color=as.factor(DF$lambda), alpha=0.4),
+              lower = list(continuous = wrap(lowerfun))) +
+  xlim(0, Max) +
+  theme_bw() +
+  labs(x=LAB, y=LAB)
+print(p1)
+}
+
+```
+
+
+# F/F~MSY~ Correlation Plots
+
+```{r, results='asis', message=FALSE}
+
+lowerfun <- function(data,mapping){
+  ggplot(data = data, mapping = mapping)+
+    geom_point()+
+    xlim(Min, Max) +
+    ylim(Min,Max) +
+    geom_abline(intercept = 0, slope=1, linetype=2)
+}
+
+VAR <- 'F.Fmsy'
+LAB <- expression(F/F[MSY])
+for (i in seq_along(Vars)) {
+  
+  
+  nm <- Vars[i]
+  name <- Var2[i]
+  
+  cat(paste0('\n\n## ', name, '\n\n'))
+  List <- split(kobe_DF, kobe_DF[[nm]])
+  tt <- list()
+  store <- NA
+  for (x in seq_along(List)) {
+    tt[[x]] <- List[[x]] 
+    ind <- match(VAR, names(tt[[x]]))
+    names(tt[[x]])[ind] <- unique(List[[x]][[nm]])
+    store[x] <-   names(tt[[x]])[ind]
+  }
+  
+DF <- do.call('cbind', tt)
+cols <- match(store, names(DF))
+Min <- min(DF[,cols], na.rm=T)
+Max <- max(DF[,cols], na.rm=T)
+
+p1 <- ggpairs(DF[,cols],  aes(color=as.factor(DF$lambda), alpha=0.4),
+              lower = list(continuous = wrap(lowerfun))) +
+  xlim(Min, Max) +
+  theme_bw() +
+  labs(x=LAB, y=LAB)
+print(p1)
+}
+
+```
+
+
+
+# Timeseries Plots
+For reference, the black solid line shows time-series from the 2017 stock assessment.
+
+```{r, message=FALSE, include=FALSE}
+BC_Ref <- 'G:/My Drive/1_PROJECTS/North_Atlantic_Swordfish/OMs/Grid_2020/Michael_March2020/NSWO_MSE_SS3_Base_v2/'
+
+BCreplist <- r4ss::SS_output(BC_Ref)
+Kobe <- BCreplist$Kobe %>% filter(Year %in% 1950:2018) %>% mutate(Yr=Year)
+BC_TS <- BCreplist$timeseries %>% filter(Yr %in% 1950:2018)  %>%
+  select(Yr, SpawnBio)
+BC_TS <- BC_TS %>% mutate(Dep=SpawnBio/BCreplist$SBzero)
+BC_TS <- left_join(BC_TS, Kobe, by="Yr")
+BC_TS$OM <- NA
+
+BC_TS <- BC_TS %>% tidyr::pivot_longer(cols=c(3,5,6))
+BC_TS$name[BC_TS$name=='Dep'] <- 'Depletion'
+BC_TS$name[BC_TS$name=='B.Bmsy'] <- 'SB/SBMSY'
+BC_TS$name[BC_TS$name=='F.Fmsy'] <- 'F/FMSY'
+BC_TS$name <- factor(BC_TS$name, levels=c('Depletion', 'SB/SBMSY', 'F/FMSY'),
+                     ordered=TRUE)
+
+templist <- list()
+for (i in seq_along(RepList)) {
+  replist <- RepList[[i]]
+  Kobe <- replist$Kobe %>% filter(Yr %in% 1950:2018)
+  ts <- replist$timeseries %>% filter(Yr %in% 1950:2018)  %>%
+    select(Yr, SpawnBio)
+  ts <- ts %>% mutate(Dep=SpawnBio/replist$SBzero)
+  ts <- left_join(ts, Kobe, by="Yr")
+  ts$OM <- i
+  templist[[i]] <- ts
+}
+TS_DF <- do.call('rbind', templist)
+
+TS_DF <- left_join(TS_DF, OM_DF, by="OM")
+
+TS_DF <- TS_DF %>% tidyr::pivot_longer(cols=3:5)
+
+TS_DF <- TS_DF %>% tidyr::pivot_longer(cols=c(5,6,7, ,11,12), names_to="Factor",
+                                       values_to = 'Level')
+
+TS_DF$name[TS_DF$name=='Dep'] <- 'Depletion'
+TS_DF$name[TS_DF$name=='B.Bmsy'] <- 'SB/SBMSY'
+TS_DF$name[TS_DF$name=='F.Fmsy'] <- 'F/FMSY'
+TS_DF$name <- factor(TS_DF$name, levels=c('Depletion', 'SB/SBMSY', 'F/FMSY'),
+                     ordered=TRUE)
+```
+
+```{r, results='asis', fig.width=8}
+
+Vars <- c('M','sigmaR', 'h', 'llq', 'env')
+Var2 <- c('Natural mortality (M)',
+          'Recruitment Variability (sigmaR)',
+          'Steepness (h)',
+          'Increased catchability (q)',
+          'Environmental covariate')
+
+for (i in seq_along(Vars)) {
+  
+  nm <- Vars[i]
+  name <- Var2[i]
+  
+  cat(paste0('\n\n## ', name, '\n\n'))
+  
+  fact <- unique(TS_DF$Factor)[i]
+  j <- match(fact, Vars)
+  df <- TS_DF %>% dplyr::filter(Factor==fact)
+
+  levels <-df$Level %>% unique()
+  n.level <- levels %>% length()
+  temp <- list()
+  for (k in 1:n.level) {
+    temp[[k]] <- BC_TS
+    temp[[k]]$Level <- levels[k]
+  }
+  BC_TS2 <- do.call('rbind', temp)
+
+  p1 <- ggplot(df,
+               aes(x=Yr, y=value, group=OM, color=as.factor(lambda))) +
+    geom_line() +
+    geom_line(data=BC_TS2, color='black', size=1.2) +
+    expand_limits(y=c(0,1)) +
+    facet_grid(name~Level,scales="free") +
+    theme_bw() +
+    labs(x="Year", y="Value", color='CPUE Lambda')
+  print(p1)
+}
+```

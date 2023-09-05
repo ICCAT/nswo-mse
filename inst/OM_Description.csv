@@ -1,0 +1,9 @@
+Class,Description
+Base Case,"The 2022 Stock Assessment, considered the Base Case OM"
+Reference,"Nine models spanning the key plausible uncertainties in natural mortality (M) and steepness of the Beverton-Holt stock-recruit relationship (h). Same as Base Case with 3 levels of M (0.1, 0.2, 0.3) and 3 levels of h (0.69, 0.80, 0.88)"
+R0,"Reference OM for the Robustness Tests. MOM_005; M=0.2, h=0.8"
+R1,"Evaluate impact of an assumed 1% annual increase catchability, that is not accounted for in the standardization of the indices of abundance (historical & projection)"
+R2,"Same as R2, but only for the historical period"
+R3a,Evaluate impact of cyclical pattern in recruitment deviations in projection period; a proxy for impact of climate change on stock productivity
+R3b,Evaluate impact of lower than expected recruitment deviations for first 15 years of projection period; a proxy for impact of climate change on stock productivity
+R4,"Evaluate impact of illegal, unreported, or unregulated catches"

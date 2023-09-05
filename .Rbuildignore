@@ -1,0 +1,16 @@
+.gitignore
+^Analyses$
+^archive$
+^build_package$
+^dev$
+^docs$
+^img$
+^results$
+^Slick_objects$
+^.*\.Rproj$
+^\.Rproj\.user$
+
+
+
+
+

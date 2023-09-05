@@ -1,0 +1,42 @@
+Package: SWOMSE
+Type: Package
+Title: Management strategy evaluation for North Atlantic Swordfish
+Version: 0.16.0
+Authors@R: 
+    person("Adrian", "Hordyk", email = "adrian@bluematterscience.com", role = c("aut", "cre"))
+Maintainer: A. Hordyk <adrian@bluematterscience.com>
+Description: This package contains code for running a MSE for Atlantic Swordfish.
+License: GPL-2 
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.3
+Depends: 
+    R (>= 3.5.0),
+    dplyr,
+    ggplot2,
+    MSEtool (>= 3.7.1),
+    openMSE (>= 1.1.0)
+Imports:
+    devtools,
+    DT,
+    ggplot2,
+    ggrepel,
+    readxl,
+    shinyBS,
+    shinydashboardPlus,
+    shinyWidgets,
+    shinyjs,
+    shinyalert,
+    cowplot,
+    tidyr, 
+    ggpp,
+    methods,
+    mvtnorm,
+    r4ss,
+    stringr,
+    tidyr,
+    usethis
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
