@@ -340,6 +340,139 @@ FX2 <- function(x, Data, Index_ID=c(1,2,3,4,5,6,7),
 # 6. Assign function to class `MP`
 class(FX2) <- 'MP'
 
+FX3 <- function(x, Data, Data_Lag=1, Interval=3,
+                PC = c(.75,.8,.85,.90,.95,1,1.025,1.05,1.075,1.1,1.125),
+                Pcentile = c(.1,.2,.3,.4,.45,.55,.6,.7,.8,.9),
+                R30=TRUE,
+                yrsmth = 3, mc = 0.25, tunepar=1,
+                ...){
+  Rec <- new('Rec')
+
+  # Load R package forecast
+  library(forecast)
+
+  # Does TAC need to be updated? (or set a fixed catch if before Initial_MP_Yr)
+  Initial_MP_Yr <- 2024
+  if (SameTAC(Initial_MP_Yr, Interval, Data)) {
+    Rec@TAC <- Data@MPrec[x]
+    Rec <- FixedTAC(Rec, Data) # use actual catches if they are available
+    return(Rec)
+  }
+
+  # Lag Data
+  Data <- Lag_Data(Data, Data_Lag)
+
+  # Calculate Index Ratio
+  # number of years of index data
+  # Historical data starts in 1950 and ends in 2002 (71 years)
+  n_years <- length(Data@AddInd[x,2,])
+
+  # the year index for `yrsmth` most recent years
+  yr_ind <- 2020+((max(1, n_years-yrsmth+1):n_years)-71)
+
+  # the year index for the most recent 30 years
+  yr_ind_tar <- 2020+((max(1, n_years- 30+1):n_years)-71)
+
+  # get the target quantiles of the indices and current values
+  Index_year = time(ets(y=na.interp(ts(Data@Ind[x,],start=1950,
+                                       end=2020+(n_years-71), frequency = 1)),
+                        damped=T, alpha=.2)$fitted)
+  if(R30 == TRUE) {Tyear = yr_ind_tar
+  }else{Tyear = 1950:max(Index_year)}
+  Index_TarQ = quantile(sort(Data@Ind[x,Index_year%in%Tyear]),
+                        Pcentile,na.rm=T)
+  Index_CurV = ts(Data@Ind[x,],start=1950,end=2020+(n_years-71),
+                  frequency = 1)
+  # ratio of mean recent index to Ind_Target
+  Index_CurV = Index_CurV[Index_year%in%yr_ind]
+  Index_CurV = mean(t(t(Index_CurV)/(1)), na.rm=T)
+  Score = 1+ sum(Index_TarQ<Index_CurV)
+
+  # ratio of mean recent index to Ind_Target
+  deltaI <- mean(PC[Score],na.rm=T)
+  if(is.na(deltaI)|deltaI<0) deltaI = 1
+
+
+  # max/min change in TAC
+  if (deltaI <= (1 - mc)) deltaI <- 1 - mc
+  if (deltaI > (1 + mc)) deltaI <- 1 + mc
+
+  Rec@TAC <- (12500*tunepar) * deltaI
+
+  # 5. Return the `Rec` object
+  Rec
+}
+# 6. Assign function to class `MP`
+class(FX3) <- 'MP'
+
+FX4 <- function(x, Data, Data_Lag=1, Interval=3,
+                PC = c(.75,.8,.85,.90,.95,1,1.025,1.05,1.075,1.1,1.125),
+                Pcentile = c(.1,.2,.3,.4,.45,.55,.6,.7,.8,.9),
+                R30=TRUE,
+                yrsmth = 3, mc = 0.25, tunepar=1,
+                ...){
+  Rec <- new('Rec')
+
+  # Load R package forecast
+  library(forecast)
+
+  # Does TAC need to be updated? (or set a fixed catch if before Initial_MP_Yr)
+  Initial_MP_Yr <- 2024
+  if (SameTAC(Initial_MP_Yr, Interval, Data)) {
+    Rec@TAC <- Data@MPrec[x]
+    Rec <- FixedTAC(Rec, Data) # use actual catches if they are available
+    return(Rec)
+  }
+
+  # Lag Data
+  Data <- Lag_Data(Data, Data_Lag)
+
+  # Calculate Index Ratio
+  # number of years of index data
+  # Historical data starts in 1950 and ends in 2002 (71 years)
+  n_years <- length(Data@AddInd[x,2,])
+
+  # the year index for `yrsmth` most recent years
+  yr_ind <- 2020+((max(1, n_years-yrsmth+1):n_years)-71)
+
+  # the year index for the most recent 30 years
+  yr_ind_tar <- 2020+((max(1, n_years- 30+1):n_years)-71)
+
+  # get the target quantiles of the indices and current values
+  Index_year = time(ets(y=na.interp(ts(Data@Ind[x,],start=1950,
+                                       end=2020+(n_years-71), frequency = 1)),
+                        damped=T, alpha=.2)$fitted)
+  if(R30 == TRUE) {Tyear = yr_ind_tar
+  }else{Tyear = 1950:max(Index_year)}
+  Index_TarQ = quantile(sort(stats::runmed(Data@Ind[x,Index_year%in%Tyear],3)),
+                        Pcentile,na.rm=T)
+  Index_CurV = ts(stats::runmed(Data@Ind[x,],3),start=1950,end=2020+(n_years-71),
+                  frequency = 1)
+
+  # ratio of mean recent index to Ind_Target
+  Index_CurV = Index_CurV[Index_year%in%yr_ind]
+  Index_CurV = mean(t(t(Index_CurV)/(1)), na.rm=T)
+  Score = 1+ sum(Index_TarQ<Index_CurV)
+
+  # ratio of mean recent index to Ind_Target
+  deltaI <- mean(PC[Score],na.rm=T)
+  if(is.na(deltaI)|deltaI<0) deltaI = 1
+
+
+  # max/min change in TAC
+  if (deltaI <= (1 - mc)) deltaI <- 1 - mc
+  if (deltaI > (1 + mc)) deltaI <- 1 + mc
+
+  Rec@TAC <- (12500*tunepar) * deltaI
+
+  # 5. Return the `Rec` object
+  Rec
+}
+# 6. Assign function to class `MP`
+class(FX4) <- 'MP'
+
+##TUNINGS###
+
 ##TUNINGS###
 FZ1_b <- FX1
 formals(FZ1_b)$tunepar <- 1.028
