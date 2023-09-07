@@ -67,7 +67,7 @@ FiltersServer <- function(id, results) {
                                       )
                                       ),
                      sliderInput(session$ns('PGK_pass'), 'Minimum acceptable value',
-                                 min=0.5, max=1, value=0.51, step=0.01)
+                                 min=0.1, max=1, value=0.51, step=0.01)
                    )
 
                  })
@@ -78,17 +78,31 @@ FiltersServer <- function(id, results) {
 
 
                    tagList(
-                     h4('Manually Select MPs'),
+                     h4('Manually De-select MPs'),
+                     p('All CMPs are shown here, but only those that pass the above filters will be shown in plots, even if they are selected here'),
+                     p('Results for de-selected CMPs will not be shown.'),
+                     actionButton(session$ns('short_list_MPs'), 'Select only Short-Listed CMPs'),
+                     actionButton(session$ns('select_all_MPs'), 'Select All CMPs'),
                      tags$div(align = 'left',
                               class = 'multicol',
                               checkboxGroupInput(session$ns("mp_select"), "Select MPs:",
-                                                 choices=results$passMPs,
-                                                 selected=results$passMPs, inline=T)
+                                                 choices=allMPs,
+                                                 selected=results$mp_select, inline=T)
                      )
                    )
                  })
 
-                 # CMP Filtering
+                 observeEvent(input$short_list_MPs, {
+                   short_list_mps <- c('CE', 'SPSSFox', 'MCC5', 'MCC7', 'FX2', 'FX4')
+                   short_list_mps <- paste(short_list_mps, rep(c('a', 'b', 'c'), each=length(short_list_mps)), sep='_')
+                   results$mp_select <- short_list_mps
+
+                 })
+
+                 observeEvent(input$select_all_MPs, {
+                   results$mp_select <- allMPs
+                 })
+
                  changed_filter <- reactive({
                    list(input$LRP_value,input$LRP_models, input$LRP_pass, input$LRP_models_cb,
                         input$PGK_short,
@@ -96,7 +110,23 @@ FiltersServer <- function(id, results) {
                         input$mp_select)
                  })
 
+
                  observeEvent(changed_filter(), {
+
+                   results$Filt <- TRUE
+                 })
+
+
+                 observeEvent(input$UpdateFilters, {
+                   results$Filt <- FALSE
+                   results$LRP_value <- input$LRP_value
+                   results$LRP_models <- input$LRP_models
+                   results$LRP_pass  <- input$LRP_pass
+                   results$LRP_models_cb <- input$LRP_models_cb
+                   results$PGK_short  <- input$PGK_short
+                   results$PGK_pass  <- input$PGK_pass
+                   results$PGK_models  <- input$PGK_models
+                   results$mp_select  <- input$mp_select
 
                    pPM_results <- PM_results
                    pTS_results <- TS_results
@@ -118,7 +148,6 @@ FiltersServer <- function(id, results) {
                        pPM_results <- pPM_results %>% filter(MP %in% fail_MPs$MP)
                        pTS_results <- pTS_results %>% filter(MP %in% fail_MPs$MP)
                      }
-
 
                      # PGK short
                      pPM_results$Target <- as.numeric(as.character(pPM_results$Target))
@@ -149,8 +178,12 @@ FiltersServer <- function(id, results) {
                    results$pPM_results <- pPM_results
                    results$pTS_results <- pTS_results
 
+                   results$kobe_results <- kobe_results %>% filter(MP %in% unique(pPM_results$MP))
+
 
                  })
+
+
 
 
                  # TradeOffs
@@ -255,12 +288,21 @@ FiltersServer <- function(id, results) {
                  output$filters <- renderUI({
                    tagList(
                      column(12,
+                            br(),
+                            conditionalPanel("output.Filt",
+                                             actionBttn(session$ns('UpdateFilters'), 'Update Plots'),
+                                             p('Click `Update Plots` after any filters are changed')
+                                             ),
                             uiOutput(session$ns('LRP_options')),
                             uiOutput(session$ns('PGK_options')),
                             uiOutput(session$ns('MP_filters'))
+
                      )
                    )
                  })
+
+
+
 
 
 

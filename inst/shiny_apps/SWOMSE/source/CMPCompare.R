@@ -14,7 +14,7 @@ CMPCompare_Server <- function(id, results) {
                             fluidRow(
                               column(6,
                                      selectInput(session$ns('Model_Select'),
-                                                 'Select OM',
+                                                 'Select Model',
                                                  choices=metadf$OMnames,
                                                  selected = results$Selected_Model)),
                               column(6,

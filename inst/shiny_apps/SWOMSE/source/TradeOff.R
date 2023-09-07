@@ -47,6 +47,7 @@ TradeOff_UI <- function(id, label="TradeOff") {
 
     fluidRow(
       h4('Trade-Off Plots'),
+      p('Only showing results for CMPs that pass filters and are selected in `CMP Filters`'),
       htmlOutput(ns('TradeOff'))
 
 

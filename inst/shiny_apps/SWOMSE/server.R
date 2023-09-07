@@ -15,6 +15,7 @@ server <- function(input, output, session) {
                             PGK_models='Reference + Robustness',
                             PGK_models_cb=levels(OMnames)[2:length(levels(OMnames))],
                             PGK_pass=0.51,
+                            filterbuttonColor=1,
                             TO1x=tradeoffPMs$x[1],
                             TO1y=tradeoffPMs$y[1],
                             TO2x=tradeoffPMs$x[2],
@@ -28,10 +29,15 @@ server <- function(input, output, session) {
                             Selected_Model=metadf$OMnames[1],
                             show_dominated=FALSE,
                             select_MPs=allMPs,
+                            mp_select=short_list_mps,
                             passMPs=allMPs,
-                            pPM_results=PM_results,
-                            pTS_results=TS_results)
+                            pPM_results=pPM_results,
+                            pTS_results=pTS_results,
+                            kobe_results=kobe_results,
+                            Filt=FALSE)
 
+  output$Filt <- reactive({ results$Filt })
+  outputOptions(output, "Filt", suspendWhenHidden = FALSE)
 
   output$PMs <- function(){
     PM_desc <- PM_desc %>% filter(Name!='PGK_6_10')

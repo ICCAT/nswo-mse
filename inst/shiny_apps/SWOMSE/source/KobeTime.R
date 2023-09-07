@@ -4,27 +4,19 @@ KobeTime_Server <- function(id, results) {
                  ns <- NS(id)
                  output$KobeTime <- renderUI({
 
-                   pTS_results <- results$pTS_results
-                   MPs <- unique(pTS_results$MP)
-                   MPnames <- unique(pTS_results$MP_name)
+                   kobe_results <- results$kobe_results
+                   MPs <- unique(kobe_results$MP)
+                   MPnames <- unique(kobe_results$MP_name)
                    nTabs <- length(MPnames)
+
                    if(nTabs<1) {
                      mpTabs <- NULL
                    } else {
                      mpTabs <- lapply(1:nTabs,
                                       function(x) {
-                                        kobe_results <- pTS_results %>%
-                                          filter(Year>=2024) %>%
-                                          filter(MP_name==MPnames[x], MP%in%MPs) %>%
-                                          group_by(Year, MP, Model) %>%
-                                          summarise(nsim=sum(SB_SBMSY>0),
-                                                    bl=sum(SB_SBMSY<1 & F_FMSY<1)/nsim*100,
-                                                    tl=sum(SB_SBMSY<1 & F_FMSY>1)/nsim*100,
-                                                    br=sum(SB_SBMSY>1 & F_FMSY<1)/nsim*100,
-                                                    tr=sum(SB_SBMSY>1 & F_FMSY>1)/nsim*100,
-                                                    .groups='drop')
-                                        nMPs <- length(unique(kobe_results$MP))
-                                        df <- kobe_results %>% tidyr::pivot_longer(., cols=5:8)
+                                        this_kobe_results <- kobe_results %>% filter(MP_name==MPnames[x], MP%in%MPs)
+                                        nMPs <- length(unique(this_kobe_results$MP))
+                                        df <- this_kobe_results %>% tidyr::pivot_longer(., cols=6:9)
                                         df$name <- factor(df$name, levels=c('br', 'tr', 'bl', 'tl'), ordered = TRUE)
                                         df$Model <- factor(df$Model, levels=OMnames, ordered = TRUE)
 
@@ -72,6 +64,7 @@ KobeTime_UI <- function(id, label="KobeTime") {
 
     fluidRow(
       h4('Kobe Time Plots'),
+      p('Only showing results for CMPs that pass filters and are selected in `CMP Filters`'),
       htmlOutput(ns('KobeTime'))
     )
   )
