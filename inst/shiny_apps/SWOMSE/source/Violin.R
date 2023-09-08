@@ -39,10 +39,30 @@ Violin_Server <- function(id, results) {
                    }
 
                  })
+
+
+               output$Violin_Table  <- renderUI({
+                 if (length(input$Model_Select)==0) return(NULL)
+
+                 pViolin_results <- results$pViolin_results %>% filter(Model %in% input$Model_Select)
+
+
+                 tt <- pViolin_results %>% group_by(MP) %>% summarise(Min=round(min(Value),2),
+                                                                      Max=round(max(Value),2),
+                                                                      Mean=round(mean(Value),2),
+                                                                      Median=round(median(Value),2),
+                                                                      `Prob>25%`=round(sum(Value>=0.25)/length(Value),2))
+
+                 DT::renderDT(DT::datatable(tt,options = list(dom = 't', pageLength =20)))
+
+
+
+               })
                }
   )
 
 }
+
 
 
 Violin_UI <- function(id, label="Violin") {
@@ -57,7 +77,8 @@ Violin_UI <- function(id, label="Violin") {
       ),
       fluidRow(
         column(12,
-               htmlOutput(ns('Violin'))
+               htmlOutput(ns('Violin')),
+               htmlOutput(ns('Violin_Table'))
         )
       )
     )
