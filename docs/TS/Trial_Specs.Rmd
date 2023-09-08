@@ -853,14 +853,9 @@ PM_tuning %>% knitr::kable(escape = F,
 
 # Reporting of MSE Results
 
-## Summary Tables
-
-## Summary Plots
-
 ## Interactive Application 
 
-TODO - describe Slick
-
+The current MSE results are available in an [Interactive Application](https://shiny.bluematterscience.com/app/swomse)
 
 
 # References
