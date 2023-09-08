@@ -29,11 +29,15 @@ server <- function(input, output, session) {
                             Selected_Model=metadf$OMnames[1],
                             show_dominated=FALSE,
                             select_MPs=allMPs,
-                            mp_select=short_list_mps,
+                            mp_select=short_list_mps[[1]],
+                            short_list=short_list,
+                            selected_shortlist=names(short_list_mps)[1],
                             passMPs=allMPs,
                             pPM_results=pPM_results,
                             pTS_results=pTS_results,
                             kobe_results=kobe_results,
+                            pkobe_results=pkobe_results,
+                            pViolin_results=pViolin_results,
                             Filt=FALSE)
 
   output$Filt <- reactive({ results$Filt })

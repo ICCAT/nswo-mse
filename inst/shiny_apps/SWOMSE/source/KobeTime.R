@@ -4,9 +4,10 @@ KobeTime_Server <- function(id, results) {
                  ns <- NS(id)
                  output$KobeTime <- renderUI({
 
-                   kobe_results <- results$kobe_results
+                   kobe_results <- results$pkobe_results
                    MPs <- unique(kobe_results$MP)
                    MPnames <- unique(kobe_results$MP_name)
+
                    nTabs <- length(MPnames)
 
                    if(nTabs<1) {

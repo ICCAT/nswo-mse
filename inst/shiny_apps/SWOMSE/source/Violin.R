@@ -26,9 +26,8 @@ Violin_Server <- function(id, results) {
 
                  output$Violin <- renderUI({
                    if (length(input$Model_Select)==0) return(NULL)
-                   MPs <- unique(pTS_results$MP)
 
-                   pViolin_results <- Violin_results %>% filter(Model %in% input$Model_Select, MP%in%MPs)
+                   pViolin_results <- results$pViolin_results %>% filter(Model %in% input$Model_Select)
 
 
                    if (nrow(pTS_results)<1) {

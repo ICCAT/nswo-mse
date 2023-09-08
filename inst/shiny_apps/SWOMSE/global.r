@@ -85,4 +85,11 @@ pTS_results <- pTS_results %>% filter(!MP %in% fail_MPs_PGK$MP)
 pPM_results <- pPM_results %>% filter(MP %in% short_list_mps)
 pTS_results <- pTS_results %>% filter(MP %in% short_list_mps)
 
-kobe_results <- kobe_results %>% filter(MP %in% unique(pPM_results$MP))
+pkobe_results <- kobe_results %>% filter(MP %in% unique(pPM_results$MP))
+pViolin_results <- Violin_results %>% filter(MP %in% unique(pPM_results$MP))
+
+short_list_mps <- c('CE', 'SPSSFox', 'MCC5', 'MCC7', 'FX2', 'FX4')
+short_list_mps <- paste(short_list_mps, rep(c('a', 'b', 'c'), each=length(short_list_mps)), sep='_')
+
+short_list_mps <- list(default=short_list_mps)
+short_list <- short_list_mps

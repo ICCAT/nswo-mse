@@ -76,13 +76,16 @@ FiltersServer <- function(id, results) {
 
                  output$MP_filters <- renderUI({
 
-
                    tagList(
                      h4('Manually De-select MPs'),
                      p('All CMPs are shown here, but only those that pass the above filters will be shown in plots, even if they are selected here'),
                      p('Results for de-selected CMPs will not be shown.'),
-                     actionButton(session$ns('short_list_MPs'), 'Select only Short-Listed CMPs'),
+                     selectInput(session$ns('short_list_select'), 'Select Shortlisted CMPs', choices=names(results$short_list),
+                                 selected=results$selected_shortlist),
+                     actionButton(session$ns('short_list_MPs'), 'Select Short-Listed CMPs'),
                      actionButton(session$ns('select_all_MPs'), 'Select All CMPs'),
+                     actionButton(session$ns('deselect_all_MPs'), 'De-select All CMPs'),
+                     actionButton(session$ns('add_shortlist_MPs'), 'Create new Shortlist'),
                      tags$div(align = 'left',
                               class = 'multicol',
                               checkboxGroupInput(session$ns("mp_select"), "Select MPs:",
@@ -93,15 +96,42 @@ FiltersServer <- function(id, results) {
                  })
 
                  observeEvent(input$short_list_MPs, {
-                   short_list_mps <- c('CE', 'SPSSFox', 'MCC5', 'MCC7', 'FX2', 'FX4')
-                   short_list_mps <- paste(short_list_mps, rep(c('a', 'b', 'c'), each=length(short_list_mps)), sep='_')
+                   short_list_mps <- results$short_list[[input$short_list_select]]
                    results$mp_select <- short_list_mps
-
+                   results$selected_shortlist <- input$short_list_select
                  })
 
                  observeEvent(input$select_all_MPs, {
                    results$mp_select <- allMPs
                  })
+
+                 observeEvent(input$deselect_all_MPs, {
+                   results$mp_select <- NULL
+                 })
+
+
+                 observeEvent(input$add_shortlist_MPs, {
+                   inputSweetAlert(
+                     session = session,
+                     session$ns("short_list_name"),
+                     input = "text",
+                     title = "Name of short-list",
+                     inputPlaceholder = "Top Performing CMPs",
+                     allowOutsideClick = FALSE,
+                     showCloseButton = TRUE
+                   )
+                 })
+
+                 observeEvent(input$short_list_name, {
+                   short_list_mps <- input$mp_select
+                   l <- length(results$short_list)
+                   ll <- append(results$short_list, list(short_list_mps))
+                   names(ll)[l+1] <- input$short_list_name #input$mytext
+
+                   results$short_list <- ll
+                   results$mp_select <- short_list_mps
+                 })
+
 
                  changed_filter <- reactive({
                    list(input$LRP_value,input$LRP_models, input$LRP_pass, input$LRP_models_cb,
@@ -112,7 +142,6 @@ FiltersServer <- function(id, results) {
 
 
                  observeEvent(changed_filter(), {
-
                    results$Filt <- TRUE
                  })
 
@@ -178,8 +207,8 @@ FiltersServer <- function(id, results) {
                    results$pPM_results <- pPM_results
                    results$pTS_results <- pTS_results
 
-                   results$kobe_results <- kobe_results %>% filter(MP %in% unique(pPM_results$MP))
-
+                   results$pkobe_results <- kobe_results %>% filter(MP %in% unique(pPM_results$MP))
+                   results$pViolin_results <- Violin_results %>% filter(MP %in% unique(pPM_results$MP))
 
                  })
 
