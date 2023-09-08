@@ -537,89 +537,32 @@ Catch_TS <- function(MMSE, year_range=NULL, mp=NA, hline=NULL, ncol=3) {
 #' @describeIn TSplots Time-series of percent change in TAC between management cycles
 #' @export
 Var_TS <- function(MMSE, mp=NA, ncol=3) {
-  DF <- MakePerformanceDF(MMSE)
-  breaks.vec <- seq(min(DF$Year), max(DF$Year), by = "3 years")
 
-  if (!all(is.na(mp))) {
-    DF <- DF %>% filter(MP %in% mp)
+
+  nsim <- MMSE@nsim
+  temp <- VarC(MMSE)
+  nmanyr <- dim(temp@Stat)[2]
+  if (nmanyr==0) {
+    vals <- 0
+    nmanyr <- 1
+  } else {
+    vals <- as.vector(temp@Stat)
   }
 
-  DF <- DF %>% mutate(Years=lubridate::year(Year))
-  Years <- unique(DF$Years)
-  change_yrs <- seq(min(Years), by=unique(DF$interval), to=max(Years))
-
-  DF2 <- DF %>% filter(Years %in% change_yrs)
-  nsim <- DF$Sim %>% as.character() %>% as.numeric() %>% max()
-
-  calc_Change_MP <- function(DF2, ...) {
-    sapply(1:nsim, calc_Change, DF2=DF2)
-
-  }
-  calc_Change <- function(x, DF2) {
-    tt <- DF2 %>% filter(Sim==x)
-    y1 <- 1:(nrow(tt)-1)
-    y2 <- y1+1
-    ((((tt$TAC[y2] - tt$TAC[y1])/tt$TAC[y1])^2)^0.5)
-    ((tt$TAC[y2] - tt$TAC[y1])/tt$TAC[y1])
-
-  }
-
-  tac_change_list <- DF2 %>% group_by(MP) %>% group_map(., calc_Change_MP)
-
-  make_df <- function(i, tac_change_list, change_yrs, MPs) {
-    vals <- tac_change_list[[i]]
-    dd <- dim(vals)
-    nchange <- dd[1]
-    nsim <- dd[2]
-    data.frame(Sim=1:nsim,
-               Year=rep(change_yrs[2:(length(change_yrs))], each=nsim),
-               Change=as.vector(t(vals)),
-               MP=MPs[i])
-  }
-
-  MPs <- DF$MP %>% unique()
-  nMPs <- length(MPs)
-  DFlist <- lapply(1:nMPs, make_df, tac_change_list=tac_change_list,
-                   change_yrs=change_yrs,
-                   MPs=MPs)
-  DF <- do.call('rbind', DFlist)
-
-  DF$Year <- paste(DF$Year, '01', '01', sep='-')
-  DF <- DF %>% mutate(Year=lubridate::as_date(Year))
-  DF$Sim <- factor(DF$Sim, levels=unique(DF$Sim))
-
-  DF <- DF %>% mutate(Abs_Change=abs(Change))
-
-  med <- DF %>% group_by(Sim, MP) %>% mutate(med=median(Abs_Change)) %>%
-    ungroup() %>% group_by(MP) %>% summarize(med=median(med))
-  max <- DF %>% group_by(MP) %>% summarize(max=max(Abs_Change))
-
-  text_df <- data.frame(x=rep(min(DF$Year),2),
-                        y=rep(max(DF$Abs_Change),2),
-                        MP=DF$MP %>% unique())
-
-  text_df <- left_join(text_df, med, by='MP')
-  text_df <- left_join(text_df, max, by='MP')
-
-  text_df$med <- round(text_df$med*100, 2)
-  text_df$lab <- paste('Median = ', paste0(text_df$med, "%"))
-
-  text_df$max <- round(text_df$max*100, 2)
-  text_df$lab <- paste('Median = ', paste0(text_df$med, "%, Maximum = ", paste0(text_df$max, "%")))
+  varCdf <- data.frame(Sim=1:nsim,
+                       Management_Year=rep(1:nmanyr, each=nsim),
+                       MP=rep(MMSE@MPs[[1]], each=nmanyr*nsim),
+                       Value=vals)
 
 
-  p <- ggplot(DF) +
-    facet_wrap(~MP, ncol=ncol) +
-    expand_limits(y=c(0)) +
-    geom_violin(aes(x=Year, y=Change, group=Year, fill=MP), scale='width') +
+  p <- ggplot(varCdf, aes(x=MP, y=Value*100, fill=MP)) +
+    geom_violin(scale='width') +
     theme_bw() +
-    geom_hline(yintercept = 0, linetype=2) +
-    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-    guides(color='none') +
-    labs(y='Change in TAC (%)') +
-    geom_text(data=text_df,
-              aes(x=x, y=y, label=lab,  hjust=0,vjust=2)) +
-    scale_x_date(date_labels="%Y", breaks=breaks.vec)
+    expand_limits(y=0) +
+    guides(fill='none') +
+    labs(x='Candidate Management Procedure',
+         y='Absolute change in TAC (%)') +
+    theme(axis.text.x = element_text(angle=90))
 
   p
 }

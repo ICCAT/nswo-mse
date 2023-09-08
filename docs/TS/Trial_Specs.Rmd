@@ -717,16 +717,13 @@ knitr::include_graphics('../../img/PMs/AvTAC_long.png')
 
 ## Stability 
 
-### VarC and MaxVarC
+### VarC
 
-`VarC` calculates the median absolute change in the TAC between management cycles. `MaxVarC` reports the maximum change in TAC across all years and simulations.
+`VarC` calculates the mean absolute change in the TAC between management cycles, calculated across all years and simulations.
 
-These values are calculated as the absolute relative change in the TAC from one management cycle to the next. 
+Figure \@ref(fig:VarC) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `VarC` in this example are: `r PMlist$VarC`. 
 
-Figure \@ref(fig:VarC) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `VarC` in this example are: `r PMlist$VarC`. The value for `MaxVarC` in this example are: `r PMlist$MaxVarC`.
-
-
-```{r VarC, fig.cap='An example of time-series plots of the relative change in the TAC between management cycles for two CMPs. This OM has 10 simulations, shown as the colored lines. The median and maximum absolute change are shown in the top left corner'}
+```{r VarC, fig.cap='Violin plots of the relative absolute change in the TAC between management cycles for two CMPs.'}
 knitr::include_graphics('../../img/PMs/VarC.png')
 ```
 

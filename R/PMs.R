@@ -1260,7 +1260,7 @@ Time_Series_Plot <- function(ll, alpha=0.7) {
   df <- ll[[1]]
   PM_results_mp <- ll[[2]]
 
-  quantiles <- data.frame(Lower=1-percentiles, Upper=percentiles)
+  fills=c('#373737', '#363639', '#CDCDCD')
 
   F_FMSYdf <-  df %>% filter(name=='F_FMSY')
 

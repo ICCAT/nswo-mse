@@ -4,9 +4,6 @@ CMPPerf_Server <- function(id, results) {
                  ns <- NS(id)
 
                  output$Model_MP_Select <- renderUI({
-
-
-
                    tagList(
                      column(12,
                             fluidRow(

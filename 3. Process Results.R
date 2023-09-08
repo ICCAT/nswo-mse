@@ -402,38 +402,38 @@ R1TS_results <- readRDS('Results/R1_Increasing_q/TS_values.rda')
 
 final_TS_results <- TS_results %>% filter(MP %in% Non_Dom_MPs)
 final_R1TS_results <- R1TS_results %>% filter(MP %in% Non_Dom_MPs)
-
-Time_Series_Plot <- function(df) {
-
-  alpha <- 0.7
-  fill1 <- 'darkgrey'
-  fill2 <- 'lightgrey'
-  yline <- NULL
-
-  df <- df %>% filter(Year>=2024) %>%
-    tidyr::pivot_longer(., cols=c('SB_SBMSY','TAC')) %>%
-    group_by(Year, MP, name) %>%
-    summarise(Median=median(value),
-              Lower1=quantile(value, 0.1),
-              Lower2=quantile(value, 0.25),
-              Upper1=quantile(value, 0.9),
-              Upper2=quantile(value, 0.75))
-
-  p <- ggplot(df, aes(x=Year)) +
-    facet_grid(name~MP, scales='free') +
-    geom_ribbon(aes(ymin=Lower1 , ymax=Upper1), fill=fill1, alpha=alpha) +
-    geom_ribbon(aes(ymin=Lower2 , ymax=Upper2), fill=fill2, alpha=alpha) +
-    geom_line(aes(y=Median)) +
-    expand_limits(y=0) +
-    theme_bw() +
-    geom_hline(yintercept=yline, linetype=2) +
-    scale_x_continuous(expand = c(0, 0)) +
-    scale_y_continuous(expand = c(0, 0)) +
-    geom_hline(yintercept = c(0.4,1), linetype=2)
-  p
-
-
-}
+#
+# Time_Series_Plot <- function(df) {
+#
+#   alpha <- 0.7
+#   fill1 <- 'darkgrey'
+#   fill2 <- 'lightgrey'
+#   yline <- NULL
+#
+#   df <- df %>% filter(Year>=2024) %>%
+#     tidyr::pivot_longer(., cols=c('SB_SBMSY','TAC')) %>%
+#     group_by(Year, MP, name) %>%
+#     summarise(Median=median(value),
+#               Lower1=quantile(value, 0.1),
+#               Lower2=quantile(value, 0.25),
+#               Upper1=quantile(value, 0.9),
+#               Upper2=quantile(value, 0.75))
+#
+#   p <- ggplot(df, aes(x=Year)) +
+#     facet_grid(name~MP, scales='free') +
+#     geom_ribbon(aes(ymin=Lower1 , ymax=Upper1), fill=fill1, alpha=alpha) +
+#     geom_ribbon(aes(ymin=Lower2 , ymax=Upper2), fill=fill2, alpha=alpha) +
+#     geom_line(aes(y=Median)) +
+#     expand_limits(y=0) +
+#     theme_bw() +
+#     geom_hline(yintercept=yline, linetype=2) +
+#     scale_x_continuous(expand = c(0, 0)) +
+#     scale_y_continuous(expand = c(0, 0)) +
+#     geom_hline(yintercept = c(0.4,1), linetype=2)
+#   p
+#
+#
+# }
 
 Time_Series_Plot(final_TS_results)
 ggsave('img/August_2023/Ref_TS.png', width=12, height=4)
