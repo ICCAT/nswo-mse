@@ -684,7 +684,7 @@ class(rAvTAC_long) <- 'PM'
 
 ## Stability ----
 
-#' @describeIn PMs Median variation in TAC (\%) between management cycles over all years
+#' @describeIn PMs Mean variation in TAC (\%) between management cycles over all years and simulations
 #' @family Stability
 #' @export
 VarC <- function (MMSEobj = NULL, Ref=1, Yrs=c(4,33))  {
@@ -693,8 +693,8 @@ VarC <- function (MMSEobj = NULL, Ref=1, Yrs=c(4,33))  {
   Yrs <- ChkYrs(Yrs, MMSEobj)
 
   PMobj <- new("PMobj")
-  PMobj@Name <- 'VarC: Median Variation in TAC (%) between management cycles'
-  PMobj@Caption <- 'Median Variation in TAC (%)'
+  PMobj@Name <- 'VarC: Mean Variation in TAC (%) between management cycles'
+  PMobj@Caption <- 'Mean Variation in TAC (%)'
 
   TAC <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum, na.rm=TRUE)
 
@@ -705,77 +705,31 @@ VarC <- function (MMSEobj = NULL, Ref=1, Yrs=c(4,33))  {
     interval[mm] <- suppressWarnings(min(apply(TAC[,mm,], 1, firstChange), na.rm=TRUE))
   }
 
-  AAVY <- array(0, dim=c(MMSEobj@nsim, nMPs))
-
   yrs <- seq_along(Yrs[1]:Yrs[2])
+  change_yrs <- seq(1, by=interval[1], to=max(yrs))
+  varC <- array(NA, dim=c(MMSEobj@nsim, length(change_yrs)-1, MMSEobj@nMPs))
   for (mm in 1:nMPs) {
-    change_yrs <- seq(1, by=interval[mm], to=max(yrs))
-
     y1 <- change_yrs[1:(length(change_yrs)-1)]
     y2 <- change_yrs[2:length(change_yrs)]
+    mat <- (((TAC[, mm, y2] - TAC[, mm, y1])/TAC[,mm , y1])^2)^0.5
+
     if (interval[mm]==Inf) {
-      AAVY[,mm] <- 0
+      varC[,,mm] <- 0
     } else {
-      AAVY[,mm] <- apply(((((TAC[, mm, y2] - TAC[, mm, y1])/TAC[,mm , y1])^2)^0.5), 1, median, na.rm=TRUE)
+
+      varC[,,mm] <- ((((TAC[, mm, y2] - TAC[, mm, y1])/TAC[,mm , y1])^2)^0.5)
     }
   }
 
-
-  PMobj@Stat <- AAVY
+  PMobj@Stat <- varC
   PMobj@Ref <- Ref
   PMobj@Prob <- calcProb(PMobj@Stat, MMSEobj)
-  PMobj@Mean <- calcMedian(PMobj@Prob)
+  PMobj@Mean <- apply(PMobj@Stat, 3, mean)
   PMobj@MPs <- MMSEobj@MPs[[1]]
   PMobj
 }
 class(VarC) <- 'PM'
 
-
-#' @describeIn PMs Maximum variation in TAC (\%) between management cycles over all years
-#' @family Stability
-#' @export
-MaxVarC <- function (MMSEobj = NULL, Ref=1, Yrs=c(4,33))  {
-  if(!inherits(MMSEobj,'MMSE'))
-    stop('This PM method is designed for objects of class `MMSE`')
-  Yrs <- ChkYrs(Yrs, MMSEobj)
-
-  PMobj <- new("PMobj")
-  PMobj@Name <- 'MaxVarC: Maximum Variation in TAC (%) between management cycles'
-  PMobj@Caption <- 'Maximum Variation in TAC (%) between management cycles'
-
-  TAC <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum, na.rm=TRUE)
-
-  # get management cycle
-  nMPs <- MMSEobj@nMPs
-  interval <- rep(NA, nMPs)
-  for (mm in 1:nMPs) {
-    interval[mm] <- suppressWarnings(min(apply(TAC[,mm,], 1, firstChange), na.rm=TRUE))
-  }
-
-  AAVY <- array(0, dim=c(MMSEobj@nsim, nMPs))
-
-  yrs <- seq_along(Yrs[1]:Yrs[2])
-  for (mm in 1:nMPs) {
-    change_yrs <- seq(1, by=interval[mm], to=max(yrs))
-
-    y1 <- change_yrs[1:(length(change_yrs)-1)]
-    y2 <- change_yrs[2:length(change_yrs)]
-    if (interval[mm]==Inf) {
-      AAVY[,mm] <- 0
-    } else {
-      AAVY[,mm] <- apply(((((TAC[, mm, y2] - TAC[, mm, y1])/TAC[,mm , y1])^2)^0.5), 1, max, na.rm=TRUE)
-    }
-
-  }
-
-  PMobj@Stat <- AAVY
-  PMobj@Ref <- Ref
-  PMobj@Prob <- calcProb(PMobj@Stat, MMSEobj)
-  PMobj@Mean <- calcMax(PMobj@Prob)
-  PMobj@MPs <- MMSEobj@MPs[[1]]
-  PMobj
-}
-class(MaxVarC) <- 'PM'
 
 
 #' Calculate Performance Metrics
@@ -1204,6 +1158,7 @@ Process_MSE_Results <- function(PMs=NULL,
     MPs <- MSE_DF2$MP %>% unique()
     PM_results_list <- list()
     TS_results_list <- list()
+    VarC_results_list <- list()
 
     for (i in seq_along(MPs)) {
       df <- MSE_DF2 %>% filter(MP_name==MPs[i])
@@ -1216,7 +1171,25 @@ Process_MSE_Results <- function(PMs=NULL,
 
       PM_results_list[[i]] <- PM_table(MSE, PMs=PMs, msg=FALSE)
 
+      # Calc Var C statistics
       nsim <- MSE@nsim
+      temp <- VarC(MSE)
+      nmanyr <- dim(temp@Stat)[2]
+      if (nmanyr==0) {
+        vals <- 0
+        nmanyr <- 1
+      } else {
+        vals <- as.vector(temp@Stat)
+      }
+
+      varCdf <- data.frame(Sim=1:nsim,
+                           Management_Year=rep(1:nmanyr, each=nsim),
+                           MP=rep(MSE@MPs[[1]], each=nmanyr*nsim),
+                           Value=vals)
+
+      VarC_results_list[[i]] <- varCdf
+
+
       nyears <- MSE@proyears
       ts_mp <- list()
       for (mm in 1:MSE@nMPs) {
@@ -1237,12 +1210,14 @@ Process_MSE_Results <- function(PMs=NULL,
 
     PM_results <- do.call('rbind', PM_results_list)
     TS_results <- do.call('rbind', TS_results_list)
+    VarC_results <- do.call('rbind', VarC_results_list)
 
     message("Saving results to:", file.path(Results.dir, class))
     if(!dir.exists(file.path(Results.dir, class)))
       dir.create(file.path(Results.dir, class))
     saveRDS(PM_results, file.path(Results.dir, class, 'PM_values.rda'))
     saveRDS(TS_results, file.path(Results.dir, class, 'TS_values.rda'))
+    saveRDS(VarC_results, file.path(Results.dir, class, 'VarC_results.rda'))
 
   }
 
@@ -1276,33 +1251,18 @@ make_table <- function(PM_results_mp, pms, rnd=2) {
 #'
 #' @return
 #' @export
-Time_Series_Plot <- function(ll, alpha=0.7,
-                             percentiles=c(0.6, 0.7,  0.9),
-                             fills=c('#373737', '#363639', '#CDCDCD')) {
+Time_Series_Plot <- function(ll, alpha=0.7) {
 
   Year_df <- data.frame(Year=2025:2053, Period='Short')
   Year_df$Period[Year_df$Year%in% 2034:2044] <- 'Medium'
   Year_df$Period[Year_df$Year%in% 2044:2053] <- 'Long'
-
 
   df <- ll[[1]]
   PM_results_mp <- ll[[2]]
 
   quantiles <- data.frame(Lower=1-percentiles, Upper=percentiles)
 
-  # F_FMSY
-  FMSY_list <- list()
-  for (i in 1:nrow(quantiles)) {
-    FMSY_list[[i]] <- df %>% filter(Year>=2024) %>%
-      group_by(Year, MP) %>%
-      summarise(Median=median(F_FMSY),
-                Lower=quantile(F_FMSY, quantiles$Lower[i]),
-                Upper=quantile(F_FMSY, quantiles$Upper[i]),
-                fill=fills[i],
-                .groups = 'drop')
-  }
-
-  F_FMSYdf <- do.call('rbind', FMSY_list)
+  F_FMSYdf <-  df %>% filter(name=='F_FMSY')
 
   p1 <- ggplot(F_FMSYdf, aes(x=Year)) +
     facet_grid(~MP, scales='free') +
@@ -1323,18 +1283,7 @@ Time_Series_Plot <- function(ll, alpha=0.7,
 
 
   # B_BMSY
-  BMSY_list <- list()
-  for (i in 1:nrow(quantiles)) {
-    BMSY_list[[i]] <- df %>% filter(Year>=2024) %>%
-      group_by(Year, MP) %>%
-      summarise(Median=median(SB_SBMSY),
-                Lower=quantile(SB_SBMSY, quantiles$Lower[i]),
-                Upper=quantile(SB_SBMSY, quantiles$Upper[i]),
-                fill=fills[i],
-                .groups = 'drop')
-  }
-
-  B_BMSYdf <- do.call('rbind', BMSY_list)
+  B_BMSYdf <-df %>% filter(name=='SB_SBMSY')
 
   p2 <- ggplot(B_BMSYdf, aes(x=Year)) +
     facet_grid(~MP, scales='free') +
@@ -1354,18 +1303,9 @@ Time_Series_Plot <- function(ll, alpha=0.7,
                hjust = 'inward', vjust = 'inward')
 
   # TAC
-  TAC_list <- list()
-  for (i in 1:nrow(quantiles)) {
-    TAC_list[[i]] <- df %>% filter(Year>=2024) %>%
-      group_by(Year, MP) %>%
-      summarise(Median=median(TAC),
-                Lower=quantile(TAC, quantiles$Lower[i]),
-                Upper=quantile(TAC, quantiles$Upper[i]),
-                fill=fills[i],
-                .groups = 'drop')
-  }
 
-  TACdf <- do.call('rbind', TAC_list)
+  TACdf <-df %>% filter(name=='TAC')
+
   ymax <- max(TACdf$Upper) * 1.05
   p3 <- ggplot(TACdf, aes(x=Year)) +
     facet_grid(~MP, scales='free') +

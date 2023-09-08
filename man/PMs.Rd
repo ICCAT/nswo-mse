@@ -25,7 +25,6 @@
 \alias{AvTAC_long}
 \alias{rAvTAC_long}
 \alias{VarC}
-\alias{MaxVarC}
 \title{Swordfish Performance Metrics functions}
 \usage{
 PGK_short(MMSEobj = NULL, Ref = 1, Yrs = c(4, 13))
@@ -73,8 +72,6 @@ AvTAC_long(MMSEobj = NULL, Ref = 1, Yrs = c(24, 33))
 rAvTAC_long(MMSEobj = NULL, Ref = 1, Yrs = c(24, 33))
 
 VarC(MMSEobj = NULL, Ref = 1, Yrs = c(4, 33))
-
-MaxVarC(MMSEobj = NULL, Ref = 1, Yrs = c(4, 33))
 }
 \arguments{
 \item{MMSEobj}{An object of class `MMSE`}
@@ -135,9 +132,7 @@ Swordfish Performance Metrics functions
 
 \item \code{rAvTAC_long()}: Median TAC relative to MSY over years 21-30 (2034-2053)
 
-\item \code{VarC()}: Median variation in TAC (\%) between management cycles over all years
-
-\item \code{MaxVarC()}: Maximum variation in TAC (\%) between management cycles over all years
+\item \code{VarC()}: Mean variation in TAC (\%) between management cycles over all years and simulations
 
 }}
 \concept{Safety}

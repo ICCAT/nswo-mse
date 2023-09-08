@@ -4,12 +4,7 @@
 \alias{Time_Series_Plot}
 \title{Title}
 \usage{
-Time_Series_Plot(
-  ll,
-  alpha = 0.7,
-  percentiles = c(0.6, 0.7, 0.9),
-  fills = c("#373737", "#363639", "#CDCDCD")
-)
+Time_Series_Plot(ll, alpha = 0.7)
 }
 \description{
 Title

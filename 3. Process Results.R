@@ -1,13 +1,13 @@
 library(SWOMSE)
 
 PMs <- c("AvTAC_long", "AvTAC_med",  "AvTAC_short", "LRP", "LRP_long",
-         "LRP_med", "LRP_short", "MaxVarC", "nLRP", "nLRP_long", "nLRP_med",
+         "LRP_med", "LRP_short", "nLRP", "nLRP_long", "nLRP_med",
          "nLRP_short", "PGK", "PGK_30", "PGK_long", "PGK_med", "PGK_short",
          "PNOF", "POF", "TAC1", "VarC")
 
 
 # ---- Process Results ----
-Process_MSE_Results(PMs=PMs)
+# Process_MSE_Results(PMs=PMs)
 
 # ---- Save Results to Shiny App ----
 
@@ -16,6 +16,8 @@ Results_dirs <- Results_dirs[Results_dirs!='Results/Final_MP_Results']
 
 PM_list <- list()
 TS_list <- list()
+VarC_list <- list()
+
 for (d in seq_along(Results_dirs)) {
   dir <- basename(Results_dirs[d])
   if (dir!='Reference')
@@ -29,58 +31,66 @@ for (d in seq_along(Results_dirs)) {
   TS_results$Model <- dir
   TS_list[[d]] <- TS_results
 
+  VarC_results  <- readRDS(file.path(Results_dirs[d], 'VarC_results.rda'))
+  VarC_results$Model <- dir
+  VarC_list[[d]] <- VarC_results
+
 }
 
 PM_results <- do.call('rbind', PM_list)
-TS_results <- do.call('rbind', TS_list)
+TS_results <- do.call('rbind', TS_list) %>% filter(Year>=2024)
+VarC_results <- do.call('rbind', VarC_list)
 
 
 # manually drop CMPs
 # worse or equal performance to other variants
 PM_results <- PM_results %>% filter(!MP_name%in%c('MCC3', 'CE2'))
 TS_results <- TS_results %>% filter(!MP_name%in%c('MCC3', 'CE2'))
+VarC_results <- VarC_results %>% filter(!MP %in%c('MCC3_a', 'MCC3_b', 'MCC3_b',
+                                                 'CE2_a', 'CE2_b', 'CE2_c'))
 
-# Calculate values for violin plot
 
-firstChange <- function(vec) {
-  ll <- length(vec)-1
-  if (all(abs(diff(vec))<1E-1))
-    return(NA)
-  for (i in 1:ll) {
-    if (abs(vec[i]-vec[i+1]) > 0.1)
-      break()
-  }
-  i
+# process TS data
+summary_TS_results <- TS_results %>% tidyr::pivot_longer(., cols=c(SB_SBMSY, F_FMSY, TAC))
+
+percentiles <- c(0.6, 0.7,  0.9)
+fills <- c('#373737', '#363639', '#CDCDCD')
+quantiles <- data.frame(Lower=1-percentiles, Upper=percentiles)
+TS_list <- list()
+for (i in 1:nrow(quantiles)) {
+  TS_list[[i]] <- summary_TS_results %>%
+    group_by(Year, MP, MP_name, Model, name) %>%
+    summarise(Median=median(value),
+              Lower=quantile(value, quantiles$Lower[i]),
+              Upper=quantile(value, quantiles$Upper[i]),
+              fill=fills[i],
+              .groups = 'drop')
 }
 
+summary_TS_results <- do.call('rbind', TS_list)
 
-percentChange <- function(TAC, fc, Year) {
-  fc <- max(fc)
-  if (is.na(fc)) {
-    aavy <- 0
-  } else {
-    nyears <- Year %>% unique() %>% length()
-    change_yrs <- seq(1, by=fc, to=nyears)
-    y1 <- change_yrs[1:(length(change_yrs)-1)]
-    y2 <- change_yrs[2:length(change_yrs)]
-    aavy <- median((((TAC[y2] - TAC[y1])/TAC[y1])^2)^0.5)
-  }
-  aavy
-}
 
-TS_results <- TS_results %>% filter(Year>=2024)
-
-# Calculate variation in TAC between management cycles
-# calculate management interval
-TS_results <- TS_results %>% group_by(Sim, MP, Model) %>% mutate(fc=firstChange(TAC))
-
-# calculate % change
-Violin_Results <- TS_results %>% group_by(Sim, MP, Model) %>% summarise(pc=percentChange(TAC, fc, Year))
+# Kobe time results
+kobe_results <- TS_results %>%
+  group_by(Year, MP, MP_name, Model) %>%
+  summarise(nsim=sum(SB_SBMSY>0),
+            bl=sum(SB_SBMSY<1 & F_FMSY<1)/nsim*100,
+            tl=sum(SB_SBMSY<1 & F_FMSY>1)/nsim*100,
+            br=sum(SB_SBMSY>1 & F_FMSY<1)/nsim*100,
+            tr=sum(SB_SBMSY>1 & F_FMSY>1)/nsim*100,
+            .groups='drop')
 
 
 saveRDS(PM_results,'inst/shiny_apps/SWOMSE/data/PM_results.rda')
-saveRDS(TS_results,'inst/shiny_apps/SWOMSE/data/TS_results.rda')
-saveRDS(Violin_Results,'inst/shiny_apps/SWOMSE/data/Violin_results.rda')
+saveRDS(summary_TS_results,'inst/shiny_apps/SWOMSE/data/summary_TS_results.rda')
+saveRDS(kobe_results,'inst/shiny_apps/SWOMSE/data/kobe_results.rda')
+
+saveRDS(VarC_results,'inst/shiny_apps/SWOMSE/data/Violin_results.rda')
+
+
+
+
+
 
 PM_results <- readRDS('inst/shiny_apps/SWOMSE/data/PM_results.rda')
 head(PM_results)

@@ -14,5 +14,4 @@ Yield,TAC1,TAC (t) in the first implementation year (2024),
 ,AvTAC_short,Median TAC (t) over years 1-10 (2024-2033),
 ,AvTAC_med,Median TAC (t) over years 11-20 (2034-2043),
 ,AvTAC_long,Median TAC (t) over years 21-30 (2044-2053),
-Stability,VarC,Median variation in TAC (%) between management cycles over all years,
-,MaxVarC,Maximum variation in TAC (%) between management cycles over all years,No minimum value and 25
+Stability,VarC,Mean variation in TAC (%) between management cycles over all years and simulations,No minimum value and 25

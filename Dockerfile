@@ -23,7 +23,7 @@ RUN R -e "remotes::install_github(c('blue-matter/MSEtool'), dependencies=TRUE)"
 RUN R -e "remotes::install_github(c('blue-matter/openMSE'), dependencies=TRUE)"
 
 # install R package from shiny_live branch
-RUN R -e "remotes::install_github('blue-matter/nswo-mse2', 'shiny_live', dependencies=TRUE)"
+RUN R -e "options(timeout=9999999); remotes::install_github(c('ICCAT/nswo-mse'), 'shiny_live', dependencies=TRUE)"
 
 # instruct Docker to expose port 3838 to the outside world
 # (otherwise it will not be possible to connect to the Shiny application)

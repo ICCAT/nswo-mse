@@ -525,17 +525,6 @@ formals(FX1_c)$tunepar <- 0.994816100079258
 class(FX1_c) <- "MP"
 
 
-FX2_a <- FX2
-formals(FX2_a)$tunepar <- 0.972 # PGK_short 0.51 tuning
-class(FX2_a) <- "MP"#'
-
-FX2_b <- FX2
-formals(FX2_b)$tunepar <- 0.939 # PGK_short 0.6 tuning
-class(FX2_b) <- "MP"#'
-
-FX2_c <- FX2
-formals(FX2_c)$tunepar <- 0.902 # PGK_short 0.7 tuning
-class(FX2_c) <- "MP"#'
 
 
 #' @describeIn SP2 Tuned to PGK_short = 0.51 across Reference OMs.
@@ -578,5 +567,68 @@ class(SP4_b) <- "MP"
 SP4_c <- SP4
 formals(SP4_c)$tunepar <- 1.00188655458282
 class(SP4_c) <- "MP"
+
+
+#' @describeIn FX3 Tuned to PGK_short = 0.51 across Reference OMs.
+#' @export
+FX3_a <- FX3
+formals(FX3_a)$tunepar <- 0.931557989049278
+class(FX3_a) <- "MP"
+
+
+#' @describeIn FX3 Tuned to PGK_short = 0.6 across Reference OMs.
+#' @export
+FX3_b <- FX3
+formals(FX3_b)$tunepar <- 0.891251064268944
+class(FX3_b) <- "MP"
+
+
+#' @describeIn FX3 Tuned to PGK_short = 0.7 across Reference OMs.
+#' @export
+FX3_c <- FX3
+formals(FX3_c)$tunepar <- 0.853025936599424
+class(FX3_c) <- "MP"
+
+
+#' @describeIn FX4 Tuned to PGK_short = 0.51 across Reference OMs.
+#' @export
+FX4_a <- FX4
+formals(FX4_a)$tunepar <- 0.938825020404648
+class(FX4_a) <- "MP"
+
+
+#' @describeIn FX4 Tuned to PGK_short = 0.6 across Reference OMs.
+#' @export
+FX4_b <- FX4
+formals(FX4_b)$tunepar <- 0.896821686732088
+class(FX4_b) <- "MP"
+
+
+#' @describeIn FX4 Tuned to PGK_short = 0.7 across Reference OMs.
+#' @export
+FX4_c <- FX4
+formals(FX4_c)$tunepar <- 0.857142857142857
+class(FX4_c) <- "MP"
+
+
+#' @describeIn FX2 Tuned to PGK_short = 0.51 across Reference OMs.
+#' @export
+FX2_a <- FX2
+formals(FX2_a)$tunepar <- 0.96672729316317
+class(FX2_a) <- "MP"
+
+
+#' @describeIn FX2 Tuned to PGK_short = 0.6 across Reference OMs.
+#' @export
+FX2_b <- FX2
+formals(FX2_b)$tunepar <- 0.933710801393728
+class(FX2_b) <- "MP"
+
+
+#' @describeIn FX2 Tuned to PGK_short = 0.7 across Reference OMs.
+#' @export
+FX2_c <- FX2
+formals(FX2_c)$tunepar <- 0.894780159498842
+class(FX2_c) <- "MP"
 
 
