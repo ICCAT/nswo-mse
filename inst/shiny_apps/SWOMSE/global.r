@@ -62,7 +62,7 @@ quiltPMs <- c('AvTAC_short', 'AvTAC_med', 'AvTAC_long', 'TAC1',
 
 # Initial state
 pPM_results <- PM_results
-pTS_results <- summary_TS_results
+pTS_results <- TS_results
 
 
 fail_MPs <- PM_results %>% filter(Model=='Reference', PM=='LRP', Value>0.15) %>%
