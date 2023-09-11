@@ -51,7 +51,7 @@ Violin_Server <- function(id, results) {
                                                                       Max=round(max(Value),2),
                                                                       Mean=round(mean(Value),2),
                                                                       Median=round(median(Value),2),
-                                                                      `Prob>25%`=round(sum(Value>=0.25)/length(Value),2))
+                                                                      `Prob>=25%`=round(sum(Value>=0.25)/length(Value),2))
 
                  DT::renderDT(DT::datatable(tt,options = list(dom = 't', pageLength =20)))
 
