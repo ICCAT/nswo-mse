@@ -267,13 +267,13 @@ The R1 Robustness test evaluates the impact of a consistent increase in catchabi
 
 This test is implemented by assuming that the indices used in the OM conditioning were 'corrected' for an average 1% annual increase in catchability. This was done by decreasing the observed values of the indices by 1% per year. Figure \@ref(fig:r1-compare) shows the estimated F/FMSY and SB/SBMSY for the Reference model (R0) and the this robustness test (R1).
 
-```{r r1-compare, fig.cap='The fishing mortality and spawning biomass relative to MSY reference points for R0 (reference OM) and R1, the robustness test that assumed the indices were corrected for an assumed 1% annual increase in catchability.'}
+```{r r1-compare, fig.cap='The fishing mortality and spawning biomass relative to MSY reference points for R0 (reference OM) and R1, the robustness test that assumed the indices were corrected for an assumed 1 percent annual increase in catchability.', out.width = "400px"}
 knitr::include_graphics('../../img/R1_Increasing_q/Compare.png')
 ```
 
 The MPs were provided with the observed historical indices (rather than the 'corrected' indices). The unaccounted 1% annual increase in catchability was assumed to continue in the projection period. This was done by assuming 1% annual positive observation error for the indices in the projection period (Figure \@ref(fig:r1-index)).
 
-```{r r1-index, fig.cap='An example of the standardized biomass (blue) and the observed combined index (red) for R1, where an assumed 1% annual increase in catchability has not been accounted for in the standardization of the index.'}
+```{r r1-index, fig.cap='An example of the standardized biomass (blue) and the observed combined index (red) for R1, where an assumed 1 percent annual increase in catchability has not been accounted for in the standardization of the index.'}
 knitr::include_graphics('../../img/R1_Increasing_q/Index.png')
 ```
 
@@ -351,7 +351,7 @@ knitr::include_graphics('../../img/Combined_Index.png')
 The additional individual fishery-dependent and survey indices are also imported into the MSE framework and made available to the CMPs (Figure \@ref(fig:addindex-plot)).
 
 
-```{r addindex-plot, fig.cap='The additional individual fishery-dependent and survey indices for the North Atlantic swordfish fishery.'}
+```{r addindex-plot, fig.cap='The additional individual fishery-dependent and survey indices for the North Atlantic swordfish fishery.', out.width = "400px"}
 knitr::include_graphics('../../img/Individual_Indices.png')
 ```
 
@@ -555,7 +555,7 @@ PM_table %>% knitr::kable(escape = T,
 
 Figure \@ref(fig:PGKshort) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `PGK_short` in this example are: `r PMlist$PGK_short`.
 
-```{r PGKshort, fig.cap='An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in 2033 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.'}
+```{r PGKshort, fig.cap='An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in 2033 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.', out.width = "400px"}
 knitr::include_graphics('../../img/PMs/PGK_short.png')
 ```
 
@@ -568,7 +568,7 @@ knitr::include_graphics('../../img/PMs/PGK_short.png')
 
 Figure \@ref(fig:PGKmed) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `PGK_med` in this example are: `r PMlist$PGK_med`.
 
-```{r PGKmed, fig.cap='An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in years 2029--2033 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.'}
+```{r PGKmed, fig.cap='An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in years 2029--2033 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.', out.width = "400px"}
 knitr::include_graphics('../../img/PMs/PGK_med.png')
 ```
 
@@ -579,7 +579,7 @@ knitr::include_graphics('../../img/PMs/PGK_med.png')
 
 Figure \@ref(fig:PGKlong) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `PGK_long` in this example are: `r PMlist$PGK_long`.
 
-```{r PGKlong, fig.cap='An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in years 2034--2053 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.'}
+```{r PGKlong, fig.cap='An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in years 2034--2053 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.', out.width = "400px"}
 knitr::include_graphics('../../img/PMs/PGK_long.png')
 ```
 
@@ -590,7 +590,7 @@ knitr::include_graphics('../../img/PMs/PGK_long.png')
 
 Figure \@ref(fig:PGK) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `PGK` in this example are: `r PMlist[['PGK']]`.
 
-```{r PGK, fig.cap='An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.'}
+```{r PGK, fig.cap='An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.', out.width = "400px"}
 knitr::include_graphics('../../img/PMs/PGK.png')
 ```
 
@@ -601,7 +601,7 @@ knitr::include_graphics('../../img/PMs/PGK.png')
 
 Figure \@ref(fig:PGK30) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `PGK_30` in this example are: `r PMlist$PGK_30`.
 
-```{r PGK30, fig.cap='An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in 2053 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.'}
+```{r PGK30, fig.cap='An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in 2053 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.', out.width = "400px"}
 knitr::include_graphics('../../img/PMs/PGK_30.png')
 ```
 
@@ -613,7 +613,7 @@ Figure \@ref(fig:POF) shows an example of two CMPs (`r PMlist$MPs`) for an opera
 
 `PNOF` reports the probability of not overfishing, calculated as $1-\text{POF}$, i.e. `r 1-PMlist$POF`.
 
-```{r POF, fig.cap='An example of a time-series plot of F/FMSY for a two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where F<FMSY are indicated with a green point, and red points indicate F>FMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.'}
+```{r POF, fig.cap='An example of a time-series plot of F/FMSY for a two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where F<FMSY are indicated with a green point, and red points indicate F>FMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.', out.width = "400px"}
 knitr::include_graphics('../../img/PMs/POF.png')
 ```
 
@@ -628,7 +628,7 @@ This is calculated as the proportion of simulations where SB<0.4SBMSY in any of 
 
 Figure \@ref(fig:LRPshort) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `LRP_short` in this example are: `r PMlist$LRP_short`.
 
-```{r LRPshort, fig.cap='An example of a time-series plot of SB/SBMSY for a two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.'}
+```{r LRPshort, fig.cap='An example of a time-series plot of SB/SBMSY for a two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.', out.width = "400px"}
 knitr::include_graphics('../../img/PMs/LRP_short.png')
 ```
 
@@ -641,7 +641,7 @@ This is calculated as the proportion of simulations where SB<0.4SBMSY in any of 
 
 Figure \@ref(fig:LRP-med) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `LRP_med` in this example are: `r PMlist$LRP_med`.
 
-```{r LRP-med, fig.cap='An example of a time-series plot of SB/SBMSY for a two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.'}
+```{r LRP-med, fig.cap='An example of a time-series plot of SB/SBMSY for a two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.', out.width = "400px"}
 knitr::include_graphics('../../img/PMs/LRP_med.png')
 ```
 
@@ -654,7 +654,7 @@ This is calculated as the proportion of simulations where SB<0.4SBMSY in any of 
 
 Figure \@ref(fig:LRP-long) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The value for `LRP_long` in this example are: `r PMlist$LRP_long`.
 
-```{r LRP-long, fig.cap='An example of a time-series plot of SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.'}
+```{r LRP-long, fig.cap='An example of a time-series plot of SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.', out.width = "400px"}
 knitr::include_graphics('../../img/PMs/LRP_long.png')
 ```
 
@@ -666,7 +666,7 @@ This is calculated as the proportion of simulations where SB<0.4SBMSY in any yea
 
 Figure \@ref(fig:LRP) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The value for `LRP` in this example are: `r PMlist$LRP`.
 
-```{r LRP, fig.cap='An example of a time-series plot of SB/SBMSY for a two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.'}
+```{r LRP, fig.cap='An example of a time-series plot of SB/SBMSY for a two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.', out.width = "400px"}
 knitr::include_graphics('../../img/PMs/LRP.png')
 ```
 
@@ -679,7 +679,7 @@ knitr::include_graphics('../../img/PMs/LRP.png')
 
 Figure \@ref(fig:C1) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `TAC1` in this example are: `r round(PMlist$TAC1,0)`.
 
-```{r C1, fig.cap='An example of time-series plots of the TAC for two CMPs. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.'}
+```{r C1, fig.cap='An example of time-series plots of the TAC for two CMPs. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.', out.width = "400px"}
 knitr::include_graphics('../../img/PMs/C1.png')
 ```
 
@@ -689,7 +689,7 @@ knitr::include_graphics('../../img/PMs/C1.png')
 
 Figure \@ref(fig:AvC10) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `AvTAC_short` in this example are: `r round(PMlist$AvTAC_short,0)`.
 
-```{r AvC10, fig.cap='An example of time-series plots of the TAC for a two CMPs. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.'}
+```{r AvC10, fig.cap='An example of time-series plots of the TAC for a two CMPs. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.', out.width = "400px"}
 knitr::include_graphics('../../img/PMs/AvTAC_short.png')
 ```
 
@@ -700,7 +700,7 @@ knitr::include_graphics('../../img/PMs/AvTAC_short.png')
 
 Figure \@ref(fig:AvCmed) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `AvTAC_med` in this example are: `r round(PMlist$AvTAC_med,0)`.
 
-```{r AvCmed, fig.cap='An example of time-series plots of the TAC for a two CMPs. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.'}
+```{r AvCmed, fig.cap='An example of time-series plots of the TAC for a two CMPs. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.', out.width = "400px"}
 knitr::include_graphics('../../img/PMs/AvTAC_med.png')
 ```
 
@@ -711,7 +711,7 @@ knitr::include_graphics('../../img/PMs/AvTAC_med.png')
 
 Figure \@ref(fig:AvC30) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `AvTAC_long` in this example are: `r round(PMlist$AvTAC_long,0)`.
 
-```{r AvC30, fig.cap='An example of time-series plots of the TAC for a two CMPs. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.'}
+```{r AvC30, fig.cap='An example of time-series plots of the TAC for a two CMPs. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.', out.width = "400px"}
 knitr::include_graphics('../../img/PMs/AvTAC_long.png')
 ```
 
@@ -723,7 +723,7 @@ knitr::include_graphics('../../img/PMs/AvTAC_long.png')
 
 Figure \@ref(fig:VarC) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `VarC` in this example are: `r PMlist$VarC`. 
 
-```{r VarC, fig.cap='Violin plots of the relative absolute change in the TAC between management cycles for two CMPs.'}
+```{r VarC, fig.cap='Violin plots of the relative absolute change in the TAC between management cycles for two CMPs.', out.width = "400px"}
 knitr::include_graphics('../../img/PMs/VarC.png')
 ```
 

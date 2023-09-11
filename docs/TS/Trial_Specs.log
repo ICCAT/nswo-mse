@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.9.11)  11 SEP 2023 11:07
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.9.11)  11 SEP 2023 11:44
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -613,50 +613,40 @@ LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
 File: ../../img/R1_Increasing_q/Compare.png Graphic file (type png)
 <use ../../img/R1_Increasing_q/Compare.png>
 Package pdftex.def Info: ../../img/R1_Increasing_q/Compare.png  used on input line 449.
-(pdftex.def)             Requested size: 578.18504pt x 216.81938pt.
-
-Overfull \hbox (173.73544pt too wide) in paragraph at lines 448--451
-[]\T1/lmr/m/n/10 \begin{figure} []
- []
-
+(pdftex.def)             Requested size: 401.49803pt x 150.56175pt.
 <../../img/R1_Increasing_q/Index.png, id=351, 289.08pt x 216.81pt>
 File: ../../img/R1_Increasing_q/Index.png Graphic file (type png)
 <use ../../img/R1_Increasing_q/Index.png>
 Package pdftex.def Info: ../../img/R1_Increasing_q/Index.png  used on input line 455.
 (pdftex.def)             Requested size: 289.09251pt x 216.81938pt.
 [9 <../../img/R1_Increasing_q/Compare.png> <../../img/R1_Increasing_q/Index.png>]
-<../../img/R3/RecDevs_mean.png, id=361, 433.62pt x 180.675pt>
+<../../img/R3/RecDevs_mean.png, id=363, 433.62pt x 180.675pt>
 File: ../../img/R3/RecDevs_mean.png Graphic file (type png)
 <use ../../img/R3/RecDevs_mean.png>
 Package pdftex.def Info: ../../img/R3/RecDevs_mean.png  used on input line 475.
 (pdftex.def)             Requested size: 433.61894pt x 180.67455pt.
-<../../img/R3/RecDevs.png, id=362, 433.62pt x 180.675pt>
+<../../img/R3/RecDevs.png, id=364, 433.62pt x 180.675pt>
 File: ../../img/R3/RecDevs.png Graphic file (type png)
 <use ../../img/R3/RecDevs.png>
 Package pdftex.def Info: ../../img/R3/RecDevs.png  used on input line 479.
 (pdftex.def)             Requested size: 433.61894pt x 180.67455pt.
 [10 <../../img/R3/RecDevs_mean.png>]
-<../../img/Catch_TAC.png, id=377, 433.62pt x 289.08pt>
+<../../img/Catch_TAC.png, id=379, 433.62pt x 289.08pt>
 File: ../../img/Catch_TAC.png Graphic file (type png)
 <use ../../img/Catch_TAC.png>
 Package pdftex.def Info: ../../img/Catch_TAC.png  used on input line 518.
 (pdftex.def)             Requested size: 433.63878pt x 289.09251pt.
 [11 <../../img/R3/RecDevs.png>]
-<../../img/Combined_Index.png, id=390, 433.62pt x 289.08pt>
+<../../img/Combined_Index.png, id=392, 433.62pt x 289.08pt>
 File: ../../img/Combined_Index.png Graphic file (type png)
 <use ../../img/Combined_Index.png>
 Package pdftex.def Info: ../../img/Combined_Index.png  used on input line 530.
 (pdftex.def)             Requested size: 433.63878pt x 289.09251pt.
-<../../img/Individual_Indices.png, id=392, 578.16pt x 433.62pt>
+<../../img/Individual_Indices.png, id=394, 578.16pt x 433.62pt>
 File: ../../img/Individual_Indices.png Graphic file (type png)
 <use ../../img/Individual_Indices.png>
 Package pdftex.def Info: ../../img/Individual_Indices.png  used on input line 539.
-(pdftex.def)             Requested size: 578.18504pt x 433.63878pt.
-
-Overfull \hbox (108.43002pt too wide) in paragraph at lines 539--539
-[][] 
- []
-
+(pdftex.def)             Requested size: 401.49803pt x 301.12352pt.
 [12 <../../img/Catch_TAC.png>] [13 <../../img/Combined_Index.png>] [14 <../../img/Individual_Indices.png>] [15] [16]
 
 LaTeX Warning: Float too large for page by 35.43779pt on input line 718.
@@ -664,178 +654,85 @@ LaTeX Warning: Float too large for page by 35.43779pt on input line 718.
 
 LaTeX Warning: Float too large for page by 271.53905pt on input line 757.
 
-<../../img/PMs/PGK_short.png, id=479, 650.43pt x 867.24pt>
+<../../img/PMs/PGK_short.png, id=481, 650.43pt x 867.24pt>
 File: ../../img/PMs/PGK_short.png Graphic file (type png)
 <use ../../img/PMs/PGK_short.png>
 Package pdftex.def Info: ../../img/PMs/PGK_short.png  used on input line 770.
-(pdftex.def)             Requested size: 487.84114pt x 650.45488pt.
-
-Overfull \hbox (18.08612pt too wide) in paragraph at lines 770--770
-[][] 
- []
-
-
-LaTeX Warning: Float too large for page by 71.9693pt on input line 771.
-
-<../../img/PMs/PGK_med.png, id=482, 650.43pt x 867.24pt>
+(pdftex.def)             Requested size: 401.50575pt x 535.34102pt.
+<../../img/PMs/PGK_med.png, id=484, 650.43pt x 867.24pt>
 File: ../../img/PMs/PGK_med.png Graphic file (type png)
 <use ../../img/PMs/PGK_med.png>
 Package pdftex.def Info: ../../img/PMs/PGK_med.png  used on input line 781.
-(pdftex.def)             Requested size: 487.84114pt x 650.45488pt.
-
-Overfull \hbox (18.08612pt too wide) in paragraph at lines 781--781
-[][] 
- []
-
-
-LaTeX Warning: Float too large for page by 71.9693pt on input line 782.
-
-<../../img/PMs/PGK_long.png, id=484, 650.43pt x 867.24pt>
+(pdftex.def)             Requested size: 401.50575pt x 535.34102pt.
+<../../img/PMs/PGK_long.png, id=486, 650.43pt x 867.24pt>
 File: ../../img/PMs/PGK_long.png Graphic file (type png)
 <use ../../img/PMs/PGK_long.png>
 Package pdftex.def Info: ../../img/PMs/PGK_long.png  used on input line 792.
-(pdftex.def)             Requested size: 487.84114pt x 650.45488pt.
-
-Overfull \hbox (18.08612pt too wide) in paragraph at lines 792--792
-[][] 
- []
-
-
-LaTeX Warning: Float too large for page by 71.9693pt on input line 793.
-
-<../../img/PMs/PGK.png, id=486, 650.43pt x 867.24pt>
+(pdftex.def)             Requested size: 401.50575pt x 535.34102pt.
+<../../img/PMs/PGK.png, id=488, 650.43pt x 867.24pt>
 File: ../../img/PMs/PGK.png Graphic file (type png)
 <use ../../img/PMs/PGK.png>
 Package pdftex.def Info: ../../img/PMs/PGK.png  used on input line 803.
-(pdftex.def)             Requested size: 487.84114pt x 650.45488pt.
-
-Overfull \hbox (18.08612pt too wide) in paragraph at lines 803--803
-[][] 
- []
-
-
-LaTeX Warning: Float too large for page by 71.9693pt on input line 804.
-
+(pdftex.def)             Requested size: 401.50575pt x 535.34102pt.
 [17] [18] [19] [20 <../../img/PMs/PGK_short.png>] [21 <../../img/PMs/PGK_med.png>] [22 <../../img/PMs/PGK_long.png>] [23 <../../img/PMs/PGK.png>]
-<../../img/PMs/PGK_30.png, id=543, 650.43pt x 867.24pt>
+<../../img/PMs/PGK_30.png, id=545, 650.43pt x 867.24pt>
 File: ../../img/PMs/PGK_30.png Graphic file (type png)
 <use ../../img/PMs/PGK_30.png>
 Package pdftex.def Info: ../../img/PMs/PGK_30.png  used on input line 814.
-(pdftex.def)             Requested size: 487.84114pt x 650.45488pt.
-
-Overfull \hbox (18.08612pt too wide) in paragraph at lines 814--814
-[][] 
- []
-
-
-LaTeX Warning: Float too large for page by 71.9693pt on input line 815.
-
-<../../img/PMs/POF.png, id=545, 650.43pt x 578.16pt>
+(pdftex.def)             Requested size: 401.50575pt x 535.34102pt.
+<../../img/PMs/POF.png, id=547, 650.43pt x 578.16pt>
 File: ../../img/PMs/POF.png Graphic file (type png)
 <use ../../img/PMs/POF.png>
 Package pdftex.def Info: ../../img/PMs/POF.png  used on input line 827.
-(pdftex.def)             Requested size: 650.45818pt x 578.18504pt.
-
-Overfull \hbox (180.70316pt too wide) in paragraph at lines 827--827
-[][] 
- []
-
-<../../img/PMs/LRP_short.png, id=547, 650.43pt x 578.16pt>
+(pdftex.def)             Requested size: 401.50575pt x 356.894pt.
+<../../img/PMs/LRP_short.png, id=549, 650.43pt x 578.16pt>
 File: ../../img/PMs/LRP_short.png Graphic file (type png)
 <use ../../img/PMs/LRP_short.png>
 Package pdftex.def Info: ../../img/PMs/LRP_short.png  used on input line 843.
-(pdftex.def)             Requested size: 650.45818pt x 578.18504pt.
-
-Overfull \hbox (180.70316pt too wide) in paragraph at lines 843--843
-[][] 
- []
-
-<../../img/PMs/LRP_med.png, id=549, 650.43pt x 578.16pt>
+(pdftex.def)             Requested size: 401.50575pt x 356.894pt.
+<../../img/PMs/LRP_med.png, id=551, 650.43pt x 578.16pt>
 File: ../../img/PMs/LRP_med.png Graphic file (type png)
 <use ../../img/PMs/LRP_med.png>
 Package pdftex.def Info: ../../img/PMs/LRP_med.png  used on input line 856.
-(pdftex.def)             Requested size: 650.45818pt x 578.18504pt.
-
-Overfull \hbox (180.70316pt too wide) in paragraph at lines 856--856
-[][] 
- []
-
-<../../img/PMs/LRP_long.png, id=551, 650.43pt x 578.16pt>
+(pdftex.def)             Requested size: 401.50575pt x 356.894pt.
+<../../img/PMs/LRP_long.png, id=553, 650.43pt x 578.16pt>
 File: ../../img/PMs/LRP_long.png Graphic file (type png)
 <use ../../img/PMs/LRP_long.png>
 Package pdftex.def Info: ../../img/PMs/LRP_long.png  used on input line 869.
-(pdftex.def)             Requested size: 650.45818pt x 578.18504pt.
-
-Overfull \hbox (180.70316pt too wide) in paragraph at lines 869--869
-[][] 
- []
-
-<../../img/PMs/LRP.png, id=553, 650.43pt x 867.24pt>
+(pdftex.def)             Requested size: 401.50575pt x 356.894pt.
+<../../img/PMs/LRP.png, id=555, 650.43pt x 867.24pt>
 File: ../../img/PMs/LRP.png Graphic file (type png)
 <use ../../img/PMs/LRP.png>
 Package pdftex.def Info: ../../img/PMs/LRP.png  used on input line 882.
-(pdftex.def)             Requested size: 487.84114pt x 650.45488pt.
-
-Overfull \hbox (18.08612pt too wide) in paragraph at lines 882--882
-[][] 
- []
-
-
-LaTeX Warning: Float too large for page by 59.9693pt on input line 883.
-
+(pdftex.def)             Requested size: 401.50575pt x 535.34102pt.
 [24] [25 <../../img/PMs/PGK_30.png>] [26 <../../img/PMs/POF.png>] [27 <../../img/PMs/LRP_short.png>] [28 <../../img/PMs/LRP_med.png>] [29 <../../img/PMs/LRP_long.png>] [30 <../../img/PMs/LRP.png>]
-<../../img/PMs/C1.png, id=610, 650.43pt x 289.08pt>
+<../../img/PMs/C1.png, id=612, 650.43pt x 289.08pt>
 File: ../../img/PMs/C1.png Graphic file (type png)
 <use ../../img/PMs/C1.png>
 Package pdftex.def Info: ../../img/PMs/C1.png  used on input line 896.
-(pdftex.def)             Requested size: 650.45818pt x 289.09251pt.
-
-Overfull \hbox (180.70316pt too wide) in paragraph at lines 896--896
-[][] 
- []
-
-<../../img/PMs/AvTAC_short.png, id=612, 650.43pt x 289.08pt>
+(pdftex.def)             Requested size: 401.50575pt x 178.44699pt.
+<../../img/PMs/AvTAC_short.png, id=614, 650.43pt x 289.08pt>
 File: ../../img/PMs/AvTAC_short.png Graphic file (type png)
 <use ../../img/PMs/AvTAC_short.png>
 Package pdftex.def Info: ../../img/PMs/AvTAC_short.png  used on input line 907.
-(pdftex.def)             Requested size: 650.45818pt x 289.09251pt.
-
-Overfull \hbox (180.70316pt too wide) in paragraph at lines 907--907
-[][] 
- []
-
-<../../img/PMs/AvTAC_med.png, id=614, 650.43pt x 289.08pt>
+(pdftex.def)             Requested size: 401.50575pt x 178.44699pt.
+<../../img/PMs/AvTAC_med.png, id=616, 650.43pt x 289.08pt>
 File: ../../img/PMs/AvTAC_med.png Graphic file (type png)
 <use ../../img/PMs/AvTAC_med.png>
 Package pdftex.def Info: ../../img/PMs/AvTAC_med.png  used on input line 918.
-(pdftex.def)             Requested size: 650.45818pt x 289.09251pt.
-
-Overfull \hbox (180.70316pt too wide) in paragraph at lines 918--918
-[][] 
- []
-
-<../../img/PMs/AvTAC_long.png, id=616, 650.43pt x 289.08pt>
+(pdftex.def)             Requested size: 401.50575pt x 178.44699pt.
+[31 <../../img/PMs/C1.png> <../../img/PMs/AvTAC_short.png>]
+<../../img/PMs/AvTAC_long.png, id=631, 650.43pt x 289.08pt>
 File: ../../img/PMs/AvTAC_long.png Graphic file (type png)
 <use ../../img/PMs/AvTAC_long.png>
 Package pdftex.def Info: ../../img/PMs/AvTAC_long.png  used on input line 929.
-(pdftex.def)             Requested size: 650.45818pt x 289.09251pt.
-
-Overfull \hbox (180.70316pt too wide) in paragraph at lines 929--929
-[][] 
- []
-
-[31 <../../img/PMs/C1.png>]
-<../../img/PMs/VarC.png, id=634, 650.43pt x 289.08pt>
+(pdftex.def)             Requested size: 401.50575pt x 178.44699pt.
+<../../img/PMs/VarC.png, id=633, 650.43pt x 289.08pt>
 File: ../../img/PMs/VarC.png Graphic file (type png)
 <use ../../img/PMs/VarC.png>
 Package pdftex.def Info: ../../img/PMs/VarC.png  used on input line 943.
-(pdftex.def)             Requested size: 650.45818pt x 289.09251pt.
-
-Overfull \hbox (180.70316pt too wide) in paragraph at lines 943--943
-[][] 
- []
-
-[32 <../../img/PMs/AvTAC_short.png>] [33 <../../img/PMs/AvTAC_med.png>] [34 <../../img/PMs/AvTAC_long.png> <../../img/PMs/VarC.png>] [35] (./Trial_Specs.aux)
+(pdftex.def)             Requested size: 401.50575pt x 178.44699pt.
+[32 <../../img/PMs/AvTAC_med.png> <../../img/PMs/AvTAC_long.png>] [33 <../../img/PMs/VarC.png>] [34] (./Trial_Specs.aux)
  ***********
 LaTeX2e <2023-06-01> patch level 1
 L3 programming layer <2023-08-29>
@@ -844,8 +741,8 @@ Package rerunfilecheck Info: File `Trial_Specs.out' has not changed.
 (rerunfilecheck)             Checksum: E4DDF8EB84AD057DDB085E94D58C4686;7416.
  ) 
 Here is how much of TeX's memory you used:
- 14278 strings out of 476893
- 226243 string characters out of 5807600
+ 14279 strings out of 476893
+ 226254 string characters out of 5807600
  1948801 words of memory out of 5000000
  35072 multiletter control sequences out of 15000+600000
  615096 words of font info for 81 fonts, out of 8000000 for 9000
@@ -855,10 +752,10 @@ Here is how much of TeX's memory you used:
 pdfTeX warning (dest): name{R5} has been referenced but does not exist, replaced by a fixed one
 
 <c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi5.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr5.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtk10.pfb><c:/Users/User/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on Trial_Specs.pdf (35 pages, 9374576 bytes).
+Output written on Trial_Specs.pdf (34 pages, 9373784 bytes).
 PDF statistics:
- 807 PDF objects out of 1000 (max. 8388607)
- 691 compressed objects within 7 object streams
- 233 named destinations out of 1000 (max. 500000)
+ 805 PDF objects out of 1000 (max. 8388607)
+ 690 compressed objects within 7 object streams
+ 234 named destinations out of 1000 (max. 500000)
  460 words of extra memory for PDF output out of 10000 (max. 10000000)
 
