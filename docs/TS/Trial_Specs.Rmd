@@ -3,12 +3,12 @@ title: "Specifications for MSE Trials for North Atlantic Swordfish"
 author: "Adrian Hordyk <adrian@bluematterscience.com>"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
+  bookdown::pdf_book:
+    keep_tex: true
   rmdformats::robobook:
     highlight: kate
     toc_depth: 2
     use_bookdown: yes
-  bookdown::pdf_book:
-    keep_tex: true
 urlcolor: blue
 bibliography: "`r rbbt::bbt_write_bib('biblio.bib', overwrite = TRUE)`"
 csl: fish-and-fisheries.csl
@@ -296,7 +296,7 @@ knitr::include_graphics('../../img/R3/RecDevs_mean.png')
 ```
 
 
-```{r r3-2, fig.cap='An example of the recruitment deviations from three simulations. R0 is the reference model (MOM_005). R3a superimposes a cyclical pattern in recruitment deviations over those from R0. R3b superimposes negative recruitment deviations over those from R0 for the first fifteen years, before reverting back to the recruitment pattern used in R0.'}
+```{r r3-2, fig.cap='An example of the recruitment deviations from three simulations. R0 is the reference model (OM 5 from the Reference Set). R3a superimposes a cyclical pattern in recruitment deviations over those from R0. R3b superimposes negative recruitment deviations over those from R0 for the first fifteen years, before reverting back to the recruitment pattern used in R0.'}
 knitr::include_graphics('../../img/R3/RecDevs.png')
 ```
 

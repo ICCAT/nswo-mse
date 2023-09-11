@@ -6,16 +6,19 @@
 \documentclass[
 ]{article}
 \usepackage{amsmath,amssymb}
-\usepackage{lmodern}
 \usepackage{iftex}
 \ifPDFTeX
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{textcomp} % provide euro and other symbols
 \else % if luatex or xetex
-  \usepackage{unicode-math}
+  \usepackage{unicode-math} % this also loads fontspec
   \defaultfontfeatures{Scale=MatchLowercase}
   \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
 \fi
 % Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
@@ -46,13 +49,13 @@
 \newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
 \newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
 \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
 \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
 \newcommand{\BuiltInTok}[1]{#1}
 \newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
 \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
 \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
 \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
 \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
@@ -60,7 +63,7 @@
 \newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
 \newcommand{\ExtensionTok}[1]{#1}
 \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
 \newcommand{\ImportTok}[1]{#1}
 \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
@@ -69,7 +72,7 @@
 \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
 \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
 \newcommand{\RegionMarkerTok}[1]{#1}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
 \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
@@ -144,7 +147,7 @@
 \fi
 \IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
-\urlstyle{same} % disable monospaced font for URLs
+\urlstyle{same}
 \hypersetup{
   pdftitle={Specifications for MSE Trials for North Atlantic Swordfish},
   pdfauthor={Adrian Hordyk adrian@bluematterscience.com},
@@ -157,7 +160,7 @@
 
 \title{Specifications for MSE Trials for North Atlantic Swordfish}
 \author{Adrian Hordyk \href{mailto:adrian@bluematterscience.com}{\nolinkurl{adrian@bluematterscience.com}}}
-\date{01 March, 2023}
+\date{11 September, 2023}
 
 \begin{document}
 \maketitle
@@ -209,6 +212,19 @@ Group members can make edits to the document either \href{https://github.com/ICC
 Group members can also use the \href{https://github.com/ICCAT/nswo-mse/discussions}{Discussions} feature on the Github repository to post questions, comments, or points for discussion related to any aspect of this document or the MSE process in general.
 
 This document is available at the North Atlantic Swordfish MSE \href{https://iccat.github.io/nswo-mse/}{homepage}.
+
+\hypertarget{mse-framework}{%
+\section{MSE Framework}\label{mse-framework}}
+
+The \texttt{SWOMSE} R package has been developed to conduct the MSE for the Atlantic swordfish fishery. All code used for the MSE is open-source and reproducible. Group members can install the package and reproduce the analysis on their own machines.
+
+The \texttt{SWOMSE} package used for the swordfish MSE uses the \texttt{openMSE} framework. The \texttt{openMSE} package is automatically installed when \texttt{SWOMSE} is installed, and all \texttt{openMSE} functions are available to the user when the \texttt{SWOMSE} package is loaded.
+
+\texttt{openMSE} is an R package that has been developed for conducting fast, flexible, and transparent, MSE for a wide range of fisheries. \texttt{openMSE} is an umbrella package that includes the \texttt{MSEtool}, \texttt{SAMtool} and \texttt{DLMtool} packages. A non-technical description of \texttt{openMSE} and its key features is available on the \href{https://openmse.com/}{\texttt{openMSE} website}.
+
+The operating model in \texttt{openMSE}, including assumptions and equations, is described in detail in Carruthers \& Hordyk (2018).
+
+The \href{../UserManual/User_Manual.html}{\texttt{SWOMSE} User Manual} includes instructions for installing the \texttt{SWOMSE} package and running the MSE analyses.
 
 \hypertarget{stock-assessment}{%
 \section{Stock Assessment}\label{stock-assessment}}
@@ -266,9 +282,7 @@ Age 5 plus Survey & Age 5 plus\\
 \end{table}
 
 \begin{figure}
-\centering
-\includegraphics{../../img/Data_overview.png}
-\caption{\label{fig:data-fig} Summary of the data used in the 2022 stock assessment.}
+\includegraphics[width=400px]{../../img/Data_overview} \caption{Summary of the data used in the 2022 stock assessment.}\label{fig:data-fig}
 \end{figure}
 
 \hypertarget{model-structure}{%
@@ -286,8 +300,8 @@ Natural mortality for both male and female was fixed at 0.2 for all age classes.
 
 Selectivity was modeled as a function of length. Dome-shaped selectivity was allowed for five fleets: EU-Spain, USA, Japan, EU-Portugal, and Morocco. Asymptotic selectivity was assumed for Canada, Chinese-Taipei and Other. The age-specific survey CPUEs were modeled with a fixed age-based selectivity.
 
-\hypertarget{retention-and-discard-mortality}{%
-\subsection{Retention and Discard Mortality}\label{retention-and-discard-mortality}}
+\hypertarget{retention}{%
+\subsection{Retention and Discard Mortality}\label{retention}}
 
 The 2022 assessment assumed a minimum legal length of 119 cm lower jaw fork length (LFFL) for all fleets from 1993 - 2020, and estimated the selectivity and retention curves from the available data. Discard mortality was either estimated from the observer data (USA and Canada) or fixed at values taken from the literature (see SCRS/2022/124).
 
@@ -297,9 +311,9 @@ The 2022 assessment assumed a minimum legal length of 119 cm lower jaw fork leng
 Expected recruitment to age-0 was calculated from the total spawning stock biomass using the Beverton-Holt stock-recruit function. The standard error for the log-normally distributed recruitment deviations (sigmaR) was fixed to 0.2. Steepness (\emph{h}) was fixed at the value estimated in the 2017 assessment (0.88).
 
 \hypertarget{om-conditioning}{%
-\section{OM Conditioning}\label{om-conditioning}}
+\section{Overview of Operating Model Conditioning}\label{om-conditioning}}
 
-The 2022 stock assessment was used as a base case model for developing the operating models evaluated in the MSE.
+The 2022 stock assessment was used as the Base Case model for developing the operating models (OMs) evaluated in the MSE.
 
 \hypertarget{om-uncertainty-grid}{%
 \subsection{OM Uncertainty Grid}\label{om-uncertainty-grid}}
@@ -343,116 +357,10 @@ In both the 2017 and 2022 stock assessments, the catchability coefficient (\emph
 
 This same pattern in results was found when the analyses were re-conducted with the new OM grid based on the 2022 assessment.
 
-\hypertarget{reference-operating-models}{%
-\subsection{Reference Operating Models}\label{reference-operating-models}}
+\hypertarget{operating-models}{%
+\section{Operating Models}\label{operating-models}}
 
-Based on these analysis, a set of 9 operating models were identified as the main reference set. These operating models spanned the three levels of \emph{M} and \emph{h} and had the following assumptions:
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  Following the assessment, \(\sigma_R = 0.2\)
-\item
-  The Francis iterative re-weighting procedure was conducted on each operating model to find the appropriate weighting between the length compostion data and the indices of abundance
-\item
-  The standardized indices of abundance were used (i.e., no assumed 1\% increase in catchability)
-\end{enumerate}
-
-These 9 OMs are referred to as the Reference OMs.
-
-\hypertarget{robustness-operating-models}{%
-\subsection{Robustness Operating Models}\label{robustness-operating-models}}
-
-The remaining operating models were considered as Robustness Test OMs.
-
-\hypertarget{r1.-higher-sigmar}{%
-\subsubsection{R1. Higher sigmaR}\label{r1.-higher-sigmar}}
-
-This set of 9 operating models had the same structure and assumptions as the Reference Set, with the exception that the recruitment variability was assumed to higher \((\sigma_R = 0.6)\)
-
-\hypertarget{r2.-remove-cal}{%
-\subsubsection{R2. Remove CAL}\label{r2.-remove-cal}}
-
-This set of 9 operating models had the same structure and assumptions as the Reference Set, with the exception that the model was only fit to the indices of abundance (i.e., fits to the length composition data were not included in the total likelihood).
-
-\hypertarget{r3.-increase-q}{%
-\subsubsection{R3. Increase q}\label{r3.-increase-q}}
-
-This set of 9 operating models had the same structure and assumptions as the Reference Set, with the exception that the indices of abundance were modified to assume an average 1\% increase in catchability over the historical period. The Francis iterative re-weighting procedure has not yet been conducted for this operating models, and therefore these OMs have not yet been included in the MSE framework.
-
-\hypertarget{other-robustness-tests}{%
-\subsubsection{Other Robustness Tests}\label{other-robustness-tests}}
-
-Other robustness test, for example examining the impact of changing environmental conditions in the future projection period may be developed by the Group and will be described here.
-
-\hypertarget{om-validation}{%
-\subsection{OM Validation}\label{om-validation}}
-
-\hypertarget{om-summary-report}{%
-\subsubsection{OM Summary Report}\label{om-summary-report}}
-
-A \href{../Reports/OM_Summary/2022/OM_Summary_Report.html}{Summary Report} summarizes the diagnostic checks, the calculated biological reference points, and the estimated stock status relative to those reference points, across the Reference and Robustness operating models.
-
-\hypertarget{om-diagnostic-reports}{%
-\subsubsection{OM Diagnostic Reports}\label{om-diagnostic-reports}}
-
-Individual diagnostic reports with objective function values and plots of model fits and patterns in residuals are available for each of the Reference and Robustness OMs (and the 2022 assessment) on the North Atlantic Swordfish MSE \href{https://iccat.github.io/nswo-mse/}{homepage}.
-
-\hypertarget{mse-framework}{%
-\section{MSE Framework}\label{mse-framework}}
-
-The \texttt{SWOMSE} R package has been developed to conduct the MSE for the Atlantic swordfish fishery. All code used for the MSE is open-source and reproducible. Group members can install the package and reproduce the analysis on their own machines.
-
-\hypertarget{installing-the-package}{%
-\subsection{Installing the package}\label{installing-the-package}}
-
-\hypertarget{openmse}{%
-\subsection{openMSE}\label{openmse}}
-
-The \texttt{SWOMSE} package used for the swordfish MSE uses the \texttt{openMSE} framework. The \texttt{openMSE} package is automatically installed when \texttt{SWOMSE} is installed, and all \texttt{openMSE} functions are available to the user when the \texttt{SWOMSE} package is loaded.
-
-\texttt{openMSE} is an R package that has been developed for conducting fast, flexible, and transparent, MSE for a wide range of fisheries. \texttt{openMSE} is an umbrella package that includes the \texttt{MSEtool}, \texttt{SAMtool} and \texttt{DLMtool} packages. A non-technical description of \texttt{openMSE} and its key features is available on the \href{https://openmse.com/}{\texttt{openMSE} website}.
-
-The operating model in \texttt{openMSE}, including assumptions and equations, is described in detail in Carruthers \& Hordyk (2018).
-
-\hypertarget{installing-swomse}{%
-\subsection{\texorpdfstring{Installing \texttt{SWOMSE}}{Installing SWOMSE}}\label{installing-swomse}}
-
-The \texttt{SWOMSE} package requires the latest version of the \texttt{openMSE} packages. These can be installed directly from CRAN.
-
-It's usually best to remove existing packages before installing new versions (don't worry about the error message if these packages aren't already installed on your machine):
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{remove.packages}\NormalTok{(}\StringTok{\textquotesingle{}openMSE\textquotesingle{}}\NormalTok{)}
-\FunctionTok{remove.packages}\NormalTok{(}\StringTok{\textquotesingle{}DLMtool\textquotesingle{}}\NormalTok{)}
-\FunctionTok{remove.packages}\NormalTok{(}\StringTok{\textquotesingle{}MSEtool\textquotesingle{}}\NormalTok{)}
-\FunctionTok{remove.packages}\NormalTok{(}\StringTok{\textquotesingle{}SAMtool\textquotesingle{}}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-Then install the latest version of \texttt{openMSE} (this will also install the latest version of the other packages):
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{install.packages}\NormalTok{(}\StringTok{\textquotesingle{}openMSE\textquotesingle{}}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-The \texttt{SWOMSE} package can be installed directly from the \href{https://github.com/ICCAT/nswo-mse}{GitHub repository} using the \texttt{remotes} package:
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{\# install.packages("remotes")}
-\NormalTok{remotes}\SpecialCharTok{::}\FunctionTok{install\_github}\NormalTok{(}\StringTok{"ICCAT/nswo{-}mse"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\hypertarget{importing-oms-into-mse-framework}{%
-\subsection{Importing OMs into the MSE Framework}\label{importing-oms-into-mse-framework}}
-
-The OMs in the uncertainty grid, conditioned using SS3, were imported into MSE framework using the \texttt{SS2MOM} function in \texttt{MSEtool} (see \href{https://msetool.openmse.com/reference/SS2MOM.html}{here} for details on the function).
+The OMs, conditioned using SS3, were imported into MSE framework using the \texttt{SS2MOM} function in \texttt{MSEtool} (see \href{https://msetool.openmse.com/reference/SS2MOM.html}{here} for details on the function).
 
 Previously, the 2-sex SS3 models were imported into a combined single-sex operating model in the MSE framework. The MSE framework was updated in 2022, and the imported operating models now maintain the separate sexes in the same manner as the SS3 assessment. Since the fishery is managed with a single overall total allowable catch (TAC), the individual fishing fleets were aggregated together in the operating models.
 
@@ -469,10 +377,130 @@ The 2-sex operating model are available in the \texttt{SWOMSE} package as object
 ## [1] "M:0.2 sigmaR:0.2 steepness:0.88 Include CAL:TRUE llq:1 env:1 Class:Base Case"
 \end{verbatim}
 
+The operating models have been classified into two categories: Reference OMs and Robustness OMs. Table \ref{tab:OM-Description} provides a general overview of the operating models includes in the MSE analysis. The following sub-sections describe the Reference and Robustness OMs in more detail.
+
+\begin{table}
+
+\caption{\label{tab:OM-Description}Summary of the Base Case, Reference, and Robustness Operating Models.}
+\centering
+\begin{tabu} to \linewidth {>{\raggedright}X>{\raggedright}X}
+\toprule
+Class & Description\\
+\midrule
+Base Case & The 2022 Stock Assessment, considered the Base Case OM\\
+Reference & Nine models spanning the key plausible uncertainties in natural mortality (M) and steepness of the Beverton-Holt stock-recruit relationship (h). Same as Base Case with 3 levels of M (0.1, 0.2, 0.3) and 3 levels of h (0.69, 0.80, 0.88)\\
+R0 & Reference OM for the Robustness Tests. OM 5 of the Reference Set\\
+R1 & Evaluate impact of an assumed 1 percent annual increase catchability, that is not accounted for in the standardization of the indices of abundance (historical and projection)\\
+R2 & Same as R2, but only for the historical period\\
+\addlinespace
+R3a & Evaluate impact of cyclical pattern in recruitment deviations in projection period; a proxy for impact of climate change on stock productivity\\
+R3b & Evaluate impact of lower than expected recruitment deviations for first 15 years of projection period; a proxy for impact of climate change on stock productivity\\
+R4 & Evaluate impact of illegal, unreported, or unregulated catches\\
+\bottomrule
+\end{tabu}
+\end{table}
+
+\hypertarget{base-case}{%
+\subsection{Base Case}\label{base-case}}
+
+The Base Case operating model is the 2022 Stock Assessment. See the \protect\hyperlink{stock-assessment}{Stock Assessment section} for more details.
+
+\hypertarget{reference_models}{%
+\subsection{Reference Operating Models}\label{reference_models}}
+
+The Reference OMs are based on the Base Case Model and span the plausible range for the key uncertainties. The Candidate Management Procedures (CMPs) are tuned across the Reference OMs (see the \protect\hyperlink{tuning}{CMP Tuning section} for more details.
+
+Based on the analyses described \protect\hyperlink{om-conditioning}{above}, a set of 9 operating models were identified as the Reference OMs. These operating models spanned the three levels of \emph{M} (0.1, 0.2, and 0.3) and three levels \emph{h} (0.69, 0.80, and 0.88).
+
+The values for steepness in the Reference Set were determined at the 2023 Intersessional Meeting of the Swordfish Working Group. The lower and upper values were set at the 95\% confidence intervals of a prior distribution for the steepness parameter used in the 2022 assessment.
+
+The center value was calculated by first converting steepness to the Goodyear compensation ratio (CR) with \(\text{CR}=\frac{4h}{1-h}\). Using this equation, the CR for h = 0.69 and h = 0.88 are 8.90 and 29.33 respectively. A mid-point between these two CR values is calculated as:
+
+\(\text{CR}_\text{mid} = e^{\frac{\sum_i\log\text{CR}_i}{2}}=16.16\), where the lower and upper values are 16.16/1.815 and 16.16 x 1.815 respectively. Back-calculating to steepness with \(h=\frac{\text{CR}}{\text{CR}+4}\) gives \(h=0.80\).
+
+Initially the OMs with the lower steepness value \((h=0.6)\) was also considered to be in the Reference OMs. However, recent analysis and discussion with the MSE Technical Team has revealed that a such a low steepness is unlikely for North Atlantic swordfish. Consequently, the OMs with \(h=0.6\) have been re-classified into a Robustness Set.
+
+The Reference OMs had the following assumptions:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Following the assessment, \(\sigma_R = 0.2\)
+\item
+  The Francis iterative re-weighting procedure was conducted on each operating model to find the appropriate weighting between the length compostion data and the indices of abundance
+\item
+  The standardized indices of abundance were used (i.e., no assumed 1\% increase in catchability)
+\end{enumerate}
+
+\hypertarget{r0.-reference-model}{%
+\subsection{R0. Reference Model}\label{r0.-reference-model}}
+
+The robustness tests are conducted for a single operating model from center of the Reference Set (M=0.2, h=0.8). R0 describes the performance of the CMPs for this single operating model, and is used for evaluating the results of the other robustness tests.
+
+\hypertarget{r1.-hyperstable-indices-in-historical-and-projection-periods}{%
+\subsection{R1. Hyperstable Indices in Historical and Projection Periods}\label{r1.-hyperstable-indices-in-historical-and-projection-periods}}
+
+The R1 Robustness test evaluates the impact of a consistent increase in catchability that is not accounted for in the standardization of the indices, resulting in a hyper-stable index.
+
+This test is implemented by assuming that the indices used in the OM conditioning were `corrected' for an average 1\% annual increase in catchability. This was done by decreasing the observed values of the indices by 1\% per year. Figure \ref{fig:r1-compare} shows the estimated F/FMSY and SB/SBMSY for the Reference model (R0) and the this robustness test (R1).
+
+\textbackslash begin\{figure\}
+\includegraphics[width=33.33in]{../../img/R1_Increasing_q/Compare} \textbackslash caption\{The fishing mortality and spawning biomass relative to MSY reference points for R0 (reference OM) and R1, the robustness test that assumed the indices were corrected for an assumed 1\% annual increase in catchability.\}\label{fig:r1-compare}
+\textbackslash end\{figure\}
+
+The MPs were provided with the observed historical indices (rather than the `corrected' indices). The unaccounted 1\% annual increase in catchability was assumed to continue in the projection period. This was done by assuming 1\% annual positive observation error for the indices in the projection period (Figure \ref{fig:r1-index}).
+
+\textbackslash begin\{figure\}
+\includegraphics[width=16.67in]{../../img/R1_Increasing_q/Index} \textbackslash caption\{An example of the standardized biomass (blue) and the observed combined index (red) for R1, where an assumed 1\% annual increase in catchability has not been accounted for in the standardization of the index.\}\label{fig:r1-index}
+\textbackslash end\{figure\}
+
+\hypertarget{r2.-hyperstable-indices-in-historical-period}{%
+\subsection{R2. Hyperstable Indices in Historical Period}\label{r2.-hyperstable-indices-in-historical-period}}
+
+The R2 Robustness test is identical to R1 (Figure \ref{fig:r1-compare}), except that the indices in the projection period are assumed to be proportional to the population; i.e., the 1\% increase in catchability that was not accounted for the in the standardization of the historical indices no longer occurs in the projection period.
+
+\hypertarget{r3a-and-r3b.-effect-of-climate-change-on-recruitment-deviations-in-projection-period}{%
+\subsection{R3a and R3b. Effect of Climate Change on Recruitment Deviations in Projection Period}\label{r3a-and-r3b.-effect-of-climate-change-on-recruitment-deviations-in-projection-period}}
+
+Climate change is generally predicted to increase temperatures throughout the Atlantic Ocean, which could have significant effects on swordfish recruitment. The Atlantic Multidecadal Oscillation (AMO) is an indicator of long-duration changes in the sea surface temperature of the North Atlantic Ocean. Thus, it could serve as the basis for possible future patterns in recruitment. This is not postulating that the AMO is in fact driving swordfish recruitment. Rather it is using the 32-year time series as a representative of actual oceanographic conditions and one possible pattern of a cyclical productivity that we wish to test the robustness of a CMP. In essence, these robustness tests are asking whether the CMP is robust to an extended period (\textasciitilde15 years) of negative recruitment deviations without a change in the underlying productivity of the stock.
+
+The entire AMO long time series (1856-present) was considered and a 32-year period (1980-2011) was selected to represent a time series that contained an extended period of consecutive negative and consecutive positive deviations. The AMO values multiplied by an implied annual inflation factor of 2.0 to simulate the hypothesis that climate change could result in larger recruitment deviations in the future than in the past.
+
+Two versions of this approach were developed. R3a uses the AMO values directly, with a period of lower than average recruitment for the first fifteen years, followed by a period of higher than average deviations (Figure \ref{fig:r3} center panel). R3b considers the impact of just a period of negative recruitment deviations for the first fifteen years (Figure \ref{fig:r3} right panel).
+
+In both cases (R3a and R3b), the climate-induced pattern in recruitment deviations is multiplied by the recruitment deviations from the reference model (R0; Figure \ref{fig:r3-2}).
+
+\begin{figure}
+\includegraphics[width=25in]{../../img/R3/RecDevs_mean} \caption{The cyclical (R3a) and initial negative pattern (R3b) in recruitment deviations for the robustness tests that investigate the impact of climate change on the performance of the CMPs. R0 is the reference model where no additional recruitment variabililty is added.}\label{fig:r3}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=25in]{../../img/R3/RecDevs} \caption{An example of the recruitment deviations from three simulations. R0 is the reference model (OM 5 from the Reference Set). R3a superimposes a cyclical pattern in recruitment deviations over those from R0. R3b superimposes negative recruitment deviations over those from R0 for the first fifteen years, before reverting back to the recruitment pattern used in R0.}\label{fig:r3-2}
+\end{figure}
+
+\hypertarget{r4.-tac-implementation-error}{%
+\subsection{R4. TAC Implementation Error}\label{r4.-tac-implementation-error}}
+
+The R4 Robustness test evaluates the impact of a 10\% implementation error in the TAC. The catches are assumed to be 10\% higher than the TAC, but these catches are assumed to be unreported (i.e., the observed catches provided to the CMPs is equal to the TAC and \textasciitilde90\% of the actual landings).
+
+\hypertarget{om-validation}{%
+\section{OM Validation}\label{om-validation}}
+
+\hypertarget{om-summary-report}{%
+\subsection{OM Summary Report}\label{om-summary-report}}
+
+A \href{../Reports/OM_Summary/2023/OM_Summary_Report.html}{Summary Report} summarizes the diagnostic checks, the calculated biological reference points, and the estimated stock status relative to those reference points, across the Reference and Robustness operating models.
+
+\hypertarget{om-diagnostic-reports}{%
+\subsection{OM Diagnostic Reports}\label{om-diagnostic-reports}}
+
+Individual diagnostic reports with objective function values and plots of model fits and patterns in residuals are available for each of the Reference and Robustness OMs (and the 2022 assessment) on the North Atlantic Swordfish MSE \href{https://iccat.github.io/nswo-mse/}{homepage}.
+
 \hypertarget{historical-spool-up-period}{%
 \section{Historical Spool-Up Period}\label{historical-spool-up-period}}
 
-The historical spool-up period was generated by importing the output from the SS3 assessment models and running the MSE simulation framework to recreate the historical fishery dynamics. No additional uncertainty was added to the historical simulations; that is, all \(48\) simulations were identical (e.g., same recruitment deviations) for the historical spool-up period.
+The historical spool-up period was generated by importing the output from the SS3 assessment models and running the MSE simulation framework to recreate the historical fishery dynamics. No additional uncertainty was added to the historical simulations; that is, all \(50\) simulations were identical (e.g., same recruitment deviations) for the historical spool-up period.
 
 The operating models have been conditioned on data up to and including 2020 (see the \protect\hyperlink{data}{Data section}), and therefore the projection period for the MSE framework starts in the following year, i.e., 2021. Currently, model uses assumed catches for the first three years (2021 - 2023) and then implements the management procedures in the following year (i.e., 2024). See the \protect\hyperlink{future-catches}{Future Catches} section for more information.
 
@@ -487,9 +515,7 @@ The observed fishery data was imported into the MSE framework and made available
 The catch data used in the OM conditioning are made available in the simulated data that is provided to the CMPs (Figure \ref{fig:catch-plot}).
 
 \begin{figure}
-\centering
-\includegraphics{../../img/Catch_TAC.png}
-\caption{\label{fig:catch-plot} The historical total catch and total allowable catch (TAC) for the North Atlantic swordfish.}
+\includegraphics[width=25in]{../../img/Catch_TAC} \caption{The historical total catch and total allowable catch (TAC) for the North Atlantic swordfish.}\label{fig:catch-plot}
 \end{figure}
 
 \hypertarget{indices-of-abundance}{%
@@ -501,9 +527,7 @@ The catch data used in the OM conditioning are made available in the simulated d
 At the \href{../Meeting_Reports/2020_SWO_MSE_1_ENG.pdf}{2020 Swordfish MSE technical meeting (4 -- 5 June 2020)}, the Group chose to use the Combined Index (Ortiz et al., 2017) as the primary index for the development of CMPs. This index was updated for the 2022 assessment. The Combined Index was imported into the \texttt{SWOMSE} framework and made available to the CMPs (Figure \ref{fig:index-plot}).
 
 \begin{figure}
-\centering
-\includegraphics{../../img/Combined_Index.png}
-\caption{\label{fig:index-plot} The Combined Index for the North Atlantic swordfish fishery.}
+\includegraphics[width=25in]{../../img/Combined_Index} \caption{The Combined Index for the North Atlantic swordfish fishery.}\label{fig:index-plot}
 \end{figure}
 
 \hypertarget{other-indices}{%
@@ -512,9 +536,7 @@ At the \href{../Meeting_Reports/2020_SWO_MSE_1_ENG.pdf}{2020 Swordfish MSE techn
 The additional individual fishery-dependent and survey indices are also imported into the MSE framework and made available to the CMPs (Figure \ref{fig:addindex-plot}).
 
 \begin{figure}
-\centering
-\includegraphics{../../img/Individual_Indices.png}
-\caption{\label{fig:addindex-plot} The additional individual fishery-dependent and survey indices for the North Atlantic swordfish fishery.}
+\includegraphics[width=33.33in]{../../img/Individual_Indices} \caption{The additional individual fishery-dependent and survey indices for the North Atlantic swordfish fishery.}\label{fig:addindex-plot}
 \end{figure}
 
 \hypertarget{closed-loop-simulation-testing}{%
@@ -531,9 +553,9 @@ The current simulation specifications for the MSE are:
 \item
   Management interval: 3 (i.e., TAC updated every 3rd year)
 \item
-  Number of projection years: 30
+  Number of projection years: 33 (2021 -- 2053)
 \item
-  Number of simulations per OM: \(48\)
+  Number of simulations per OM: \(50\)
 \end{enumerate}
 
 \hypertarget{assumptions}{%
@@ -576,11 +598,26 @@ No time-varying catchability is assumed for the projection years.
 
 The total allowable catch (TAC) recommended by the CMPs is assumed to be implemented without error. That is, annual catches are equal to the TAC recommendations (provided sufficient vulnerable biomass was available). The Group determined that this assumption was appropriate based on the fact that historically the total landed catch has been below the total allowable catch (TAC) (see Figure \ref{fig:catch-plot}).
 
+A Robustness Test (R4) has been designed to evaluate the consequences of violating this assumption.
+
 The operating models also assume that the TACs recommended by the CMPs apply to the landed catch and do not include discards; that is, the actual removals will be higher than the TACs if there is discard mortality on the sub-legal fish.
 
-Since the MSE projection period begins in 2021 (the year after the conditioning), and the landed catches are typically below the TAC (Figure \ref{fig:catch-plot}), the MSE framework assumes that the catch in the first three projection years (2021 - 2023) is equal to specified TAC for those years (13,200 ton).
+The CMPs are first implemented in 2024, and every 3rd year after that, with the TAC held constant in the interim years. Since the MSE projection period begins in 2021 (the year after the conditioning), the landed catches for the first few projection years until the CMPS are implemented (2021, 2022, and 2023) are fixed and not set by the CMPs. The catch for 2021 is set at the reported level, and the catches for 2022 and 2023 are set to the mean from previous 10 years (2012 -- 2021) (Table \ref{tab:future-catches}).
 
-The CMPs are then first implemented in 2024, and every 3rd year after that, with the TAC held constant in the interim years.
+\begin{table}
+
+\caption{\label{tab:future-catches}The assumed landed catch (ton) for the first 3 projection years.}
+\centering
+\begin{tabu} to \linewidth {>{\raggedleft}X>{\raggedleft}X>{\raggedright}X}
+\toprule
+Year & Catch & Details\\
+\midrule
+2021 & 9729 & Reported Catch\\
+2022 & 10770 & Assumed Catch\\
+2023 & 10770 & Assumed Catch\\
+\bottomrule
+\end{tabu}
+\end{table}
 
 \hypertarget{generation-of-future-data}{%
 \subsection{Generation of Future Data}\label{generation-of-future-data}}
@@ -594,7 +631,9 @@ The additional individual indices were generated in the projection years in the 
 
 The observation error was generated by calculating the statistical properties of the residuals from the fit of each respective index to the simulated stock (biomass or abundance) during the historical period. The procedure for calculating the residuals for the projection years is described in detail in the \href{https://openmse.com/features-conditioning-oms/indices/}{openMSE documentation}.
 
-Following the assumptions of the stock assessment, it is assumed that all indices are proportional to the respective stock biomass or abundance (i.e., it is assumed that the indices are not hyper-stable or hyper-deplete).
+It was decided at the 2023 Intersessional Meeting of the Swordfish Working Group to calculate the statistical properties of the observation error for the Combined Index for the years 1999 -- 2020. This period was chosen as it includes only the years where the data used to generate the index included the majority of the fleets.
+
+Following the assumptions of the stock assessment, it is assumed that all indices are proportional to the respective stock biomass or abundance (i.e., it is assumed that the indices are not hyper-stable or hyper-deplete). The only exception to this is \protect\hyperlink{R5}{Robustness Set 5} where the indices are assumed to have a 1\% annual average increase in catchability.
 
 \hypertarget{catches}{%
 \subsubsection{Catches}\label{catches}}
@@ -604,69 +643,338 @@ Following the assumption of the stock assessment, the observed catches in the pr
 \hypertarget{data-lags}{%
 \subsubsection{Data Lags}\label{data-lags}}
 
-Data lags of several years are common for many fisheries. For example, the 2022 assessment used data up to and including 2020. Assuming a CMP will be used to generate a TAC recommendation for 2023 based on this data, this is a data lag of 3 years.
-
 In the MSE framework, the CMPs are always provided with the simulated fishery data up to the previous year. That is, if a CMP is implemented in year \(t\), the catch and indices of abundance data provided to the CMP are up to and including year \(t-1\).
 
-Data lags are then handled in the CMP code, where the default assumption is that the catch and index data are lagged by 3 years. See the CMP (see the \href{../cMPdevelopment/CMP-Development-Guide.html}{CMP Development Guide} for more details).
+Data lags are then handled in the CMP code, where the default assumption is that the catch and index data are lagged by 2 years from the year where the TAC will be implemented; e.g., for setting the TAC for 2024, the data is up to and including 2022. See the CMP (see the \href{../cMPdevelopment/CMP-Development-Guide.html}{CMP Development Guide} for more details).
 
-\hypertarget{management-interval}{%
-\subsection{Management Interval}\label{management-interval}}
+\hypertarget{interval}{%
+\subsection{Management Interval}\label{interval}}
 
 At the 2021 \href{/Meeting_Reports/2021_SWO_ENG.pdf}{Intersessional meeting}, the Group proposed a 3-year MP advice interval (see Table 5 in the \href{../Meeting_Reports//2021_SWO_ENG.pdf}{Report of the 2021 ICCAT Intersessional Meeting of the Swordfish Species Group}).
 
-The operating models have been conditioned on data up to 2020. As described \protect\hyperlink{future-catches}{above}, the model assumes that the catch in 2021 -- 2023 is equal to the current TAC (13,200 ton), and then begins applying the CMPs in 2024.
+The operating models have been conditioned on data up to 2020. As described \protect\hyperlink{future-catches}{above}, the catches in 2021 -- 2023 are fixed to assumed values and the CMPs are first applied in 2024.
 
 The 3-yr management interval is applied within the CMP code (see the \href{../cMPdevelopment/CMP-Development-Guide.html}{CMP Development Guide} for more details).
 
-\hypertarget{candidate-management-procedures}{%
-\section{Candidate Management Procedures}\label{candidate-management-procedures}}
-
-At this point, the candidate management procedures have not yet been developed.
-
-The Group decided that CMP development work should involve the national scientists. A small group was formed at the November 2020 MSE technical meeting, lead by Dr K. Gillespie, with the aim of continuing the CMP development work in 2021.
-
-A \href{../cMPdevelopment/CMP-Development-Guide.html}{CMP Development Guide} is available on the swordfish \href{https://iccat.github.io/}{MSE homepage}.
+Robustness Set 9 (R9) evaluates the impact of alternative management intervals.
 
 \hypertarget{performance-metrics}{%
 \section{Performance Metrics}\label{performance-metrics}}
 
-Based on feedback from the Commission's Panel 4, the following preliminary performance metrics have been proposed for swordfish:
+23 performance metrics (PMs) have been developed for the North Atlantic Swordfish MSE (Table \ref{tab:PM-Description}). These PMs are grouped into four families:
 
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1667}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1667}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1667}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1667}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1667}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1667}}@{}}
-\toprule()
-\begin{minipage}[b]{\linewidth}\raggedright
-Name
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Description
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Statistic
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Time Period (Years)
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Minimum Acceptable Probability
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Notes
-\end{minipage} \\
-\midrule()
-\endhead
-Safety - Short & Maintain low probability of stock declining to unacceptably low level & Prob. SB \textless{} SB\textsubscript{lim} & 1 - 10 & 5 - 10\% & SB\textsubscript{lim} defined as 0.4 SB\textsubscript{MSY} \\
-Safety - Medium & As above & As above & 11 - 30 & 5 - 10\% & \\
-Status - Short & Maintain stock in green quadrant of the Kobe matrix & Prob SB \textgreater{} SB\textsubscript{MSY} \& F \textless{} F\textsubscript{MSY} & 1 - 10 & 50 - 60\% & \\
-Status - Medium & As above & As above & 11 - 30 & 50 - 60\% & \\
-Stability & Minimize large inter-annual changes in yield & Average annual variability in yield (AAVY) & 1 - 30 & Maximum AAVY of 15 - 25\% & \\
-Short-term Yield & Maximize yield while meeting other objectives & Average catch & 1 - 10 & - & \\
-Long-term Yield & As above & As above & 11 - 30 & - & \\
-\bottomrule()
-\end{longtable}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Status}: the probability the stock is in the green quadrant of the Kobe matrix
+\item
+  \textbf{Safety}: the probability of the stock not falling below the biological limit reference point
+\item
+  \textbf{Yield}: the TAC in the projection years (ton)
+\item
+  \textbf{Stability}: the variation in the TAC between management cycles
+\end{enumerate}
 
-A Google sheet has also been created for the Group to add comments or additional \href{https://docs.google.com/spreadsheets/d/1NytREnFCZ6OPrhXT5E5Wi8Y22w-ZmENY8kEZqDH_FQE/edit?usp=sharing}{Performance Metrics}.
+\hypertarget{summary-of-performance-metrics}{%
+\subsection{Summary of Performance Metrics}\label{summary-of-performance-metrics}}
+
+The performance metrics are calculated over all the simulations (50) in each operating model. For example, \emph{PGK\_short} is calculated as the proportion of the 50 simulations where the spawning biomass (\(SB\)) is above \(SB_{MSY}\) and fishing mortality (\(F\)) is below \(F_{MSY}\).
+
+The performance metrics can also be calculated over several operating models, for example the entire \protect\hyperlink{reference_models}{Reference Set}. This is done by first combining the MSE results for each OM (e.g., the 9 Reference OMs) into a single set of results (in this example, resulting in 450 simulations (9 OMs multiplied by 50 simulations per OM)), and then calculating the performance metrics over all results.
+
+The Minimum Acceptable Performance values listed in Table \ref{tab:PM-Description} will be used as alternative values to determine if candidate management procedures meet the minimum performance criteria.
+
+More details on the individual performance metrics are in the sections below.
+
+\begin{table}
+
+\caption{\label{tab:PM-Description}Summary of the North Atlantic Swordfish Performance Metrics.}
+\centering
+\begin{tabu} to \linewidth {>{}l>{\raggedright}X>{\raggedright}X>{\raggedright}X}
+\toprule
+Family & Name & Description & Minimum Acceptable Values\\
+\midrule
+\textbf{Status} & PGK\_short & Probability of being in Green Zone of Kobe Space (SB>SBMSY \& F<FMSY) in years 1-10 (2024-2033) & 51, 60, 70\\
+\textbf{} & PGK\_med & Probability of being in Green Zone of Kobe Space (SB>SBMSY \& F<FMSY) in years 11-20 (2034-2043) & 51, 60, 70\\
+\textbf{} & PGK\_long & Probability of being in Green Zone of Kobe Space (SB>SBMSY \& F<FMSY) in years 21-30 (2044-2053) & 51, 60, 70\\
+\textbf{} & PGK & Probability of being in Green Zone of Kobe Space (SB>SBMSY \& F<FMSY) over all years (2024-2053) & 51, 60, 70\\
+\textbf{} & PGK\_30 & Probability of being in Green Zone of Kobe Space (SB>SBMSY \& F<FMSY) in year 30 (2053) & 51, 60, 70\\
+\addlinespace
+\textbf{} & POF & Probability of Overfishing (F>FMSY) over all years (2024-2053) & \\
+\textbf{} & PNOF & Probability of Not Overfishing (F<FMSY) over all years (2024-2053) & \\
+\textbf{Safety} & LRP\_short & Probability of breaching the limit reference point (SB<0.4SBMSY) in any of the first 10 years (2024-2033) & 5, 10, 15\\
+\textbf{} & LRP\_med & Probability of breaching the limit reference point (SB<0.4SBMSY) in any of years 11-20 (2034-2043) & 5, 10, 15\\
+\textbf{} & LRP\_long & Probability of breaching the limit reference point (SB<0.4SBMSY) in any of years 21-30 (2044-2053) & 5, 10, 15\\
+\addlinespace
+\textbf{} & LRP & Probability of breaching the limit reference point (SB<0.4SBMSY) in any year (2024-2053) & 5, 10, 15\\
+\textbf{Yield} & TAC1 & TAC (t) in the first implementation year (2024) & \\
+\textbf{} & AvTAC\_short & Median TAC (t) over years 1-10 (2024-2033) & \\
+\textbf{} & AvTAC\_med & Median TAC (t) over years 11-20 (2034-2043) & \\
+\textbf{} & AvTAC\_long & Median TAC (t) over years 21-30 (2044-2053) & \\
+\addlinespace
+\textbf{Stability} & VarC & Mean variation in TAC (\%) between management cycles over all years and simulations & No minimum value and 25\\
+\bottomrule
+\end{tabu}
+\end{table}
+
+\hypertarget{peformance-metrics-examples}{%
+\subsection{Peformance Metrics Examples}\label{peformance-metrics-examples}}
+
+The following sections show figures and statistics for examples from each family of Performance Metrics. These results include two example candidate management procedures (MP1, MP2) (see \protect\hyperlink{CMPs}{Candidate Management Procedures}), with a single operating model that includes 10 stochastic simulations.
+
+\hypertarget{summary-table}{%
+\subsubsection{Summary Table}\label{summary-table}}
+
+Table \ref{tab:PMtable} shows the summary performance statistics for the example CMPs. More details for each individual performance metric are in the sub-sections below.
+
+\begin{table}
+
+\caption{\label{tab:PMtable}Summary of Performance Metric values for some example CMPs.}
+\centering
+\begin{tabu} to \linewidth {>{}l>{\raggedright}X>{\raggedright}X>{\raggedleft}X>{\raggedleft}X}
+\toprule
+Family & Name & Description & MP1 & MP2\\
+\midrule
+\textbf{Status} & PGK\_short & Probability of being in Green Zone of Kobe Space (SB>SBMSY \& F<FMSY) in years 1-10 (2024-2033) & 0.06 & 0.31\\
+\textbf{} & PGK\_med & Probability of being in Green Zone of Kobe Space (SB>SBMSY \& F<FMSY) in years 11-20 (2034-2043) & 0.15 & 0.58\\
+\textbf{} & PGK\_long & Probability of being in Green Zone of Kobe Space (SB>SBMSY \& F<FMSY) in years 21-30 (2044-2053) & 0.16 & 0.66\\
+\textbf{} & PGK & Probability of being in Green Zone of Kobe Space (SB>SBMSY \& F<FMSY) over all years (2024-2053) & 0.12 & 0.52\\
+\textbf{} & PGK\_30 & Probability of being in Green Zone of Kobe Space (SB>SBMSY \& F<FMSY) in year 30 (2053) & 0.10 & 0.80\\
+\addlinespace
+\textbf{} & POF & Probability of Overfishing (F>FMSY) over all years (2024-2053) & 0.65 & 0.27\\
+\textbf{Safety} & LRP\_short & Probability of breaching the limit reference point (SB<0.4SBMSY) in any of the first 10 years (2024-2033) & 0.00 & 0.00\\
+\textbf{} & LRP\_med & Probability of breaching the limit reference point (SB<0.4SBMSY) in any of years 11-20 (2034-2043) & 0.30 & 0.10\\
+\textbf{} & LRP\_long & Probability of breaching the limit reference point (SB<0.4SBMSY) in any of years 21-30 (2044-2053) & 0.30 & 0.10\\
+\textbf{} & LRP & Probability of breaching the limit reference point (SB<0.4SBMSY) in any year (2024-2053) & 0.30 & 0.10\\
+\addlinespace
+\textbf{Yield} & TAC1 & TAC (t) in the first implementation year (2024) & 13462.50 & 11987.02\\
+\textbf{} & AvTAC\_short & Median TAC (t) over years 1-10 (2024-2033) & 13097.11 & 11201.15\\
+\textbf{} & AvTAC\_med & Median TAC (t) over years 11-20 (2034-2043) & 10332.16 & 10200.13\\
+\textbf{} & AvTAC\_long & Median TAC (t) over years 21-30 (2044-2053) & 9883.48 & 8793.29\\
+\textbf{Stability} & VarC & Mean variation in TAC (\%) between management cycles over all years and simulations & 0.15 & 0.14\\
+\bottomrule
+\end{tabu}
+\end{table}
+
+\hypertarget{status}{%
+\subsection{Status}\label{status}}
+
+\hypertarget{pgk_short}{%
+\subsubsection{PGK\_short}\label{pgk_short}}
+
+\texttt{PGK\_short} calculates the probability of being in Green Zone of Kobe Space (SB\textgreater SBMSY \& F\textless FMSY) in years 1-10 (2024-2033). This is calculated as the proportion of the total number of simulations that are in the Green Zone of Kobe Space in those years.
+
+Figure \ref{fig:PGKshort} shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for \texttt{PGK\_short} in this example are: 0.06, 0.31.
+
+\begin{figure}
+\includegraphics[width=37.5in]{../../img/PMs/PGK_short} \caption{An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in 2033 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.}\label{fig:PGKshort}
+\end{figure}
+
+\hypertarget{pgk_med}{%
+\subsubsection{PGK\_med}\label{pgk_med}}
+
+\texttt{PGK\_med} calculates the probability of being in Green Zone of Kobe Space (SB\textgreater SBMSY \& F\textless FMSY) over years 11--20 (2034--2043). This is calculated as the proportion of the total points (number of simulations x number of years) that are in the Green Zone of Kobe Space.
+
+Figure \ref{fig:PGKmed} shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for \texttt{PGK\_med} in this example are: 0.15, 0.58.
+
+\begin{figure}
+\includegraphics[width=37.5in]{../../img/PMs/PGK_med} \caption{An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in years 2029--2033 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.}\label{fig:PGKmed}
+\end{figure}
+
+\hypertarget{pgk_long}{%
+\subsubsection{PGK\_long}\label{pgk_long}}
+
+\texttt{PGK\_long} calculates the probability of being in Green Zone of Kobe Space (SB\textgreater SBMSY \& F\textless FMSY) over years 21--30 (2044--2053). This is calculated as the proportion of the total points (number of simulations x number of years) that are in the Green Zone of Kobe Space.
+
+Figure \ref{fig:PGKlong} shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for \texttt{PGK\_long} in this example are: 0.16, 0.66.
+
+\begin{figure}
+\includegraphics[width=37.5in]{../../img/PMs/PGK_long} \caption{An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in years 2034--2053 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.}\label{fig:PGKlong}
+\end{figure}
+
+\hypertarget{pgk}{%
+\subsubsection{PGK}\label{pgk}}
+
+\texttt{PGK} calculates the probability of being in Green Zone of Kobe Space (SB\textgreater SBMSY \& F\textless FMSY) over all years (2024--2053). This is calculated as the proportion of the total points (number of simulations x number of years) that are in the Green Zone of Kobe Space.
+
+Figure \ref{fig:PGK} shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for \texttt{PGK} in this example are: 0.12, 0.52.
+
+\begin{figure}
+\includegraphics[width=37.5in]{../../img/PMs/PGK} \caption{An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.}\label{fig:PGK}
+\end{figure}
+
+\hypertarget{pgk_30}{%
+\subsubsection{PGK\_30}\label{pgk_30}}
+
+\texttt{PGK\_30} calculates the probability of being in Green Zone of Kobe Space (SB\textgreater SBMSY \& F\textless FMSY) in year (2053). This is calculated as the proportion of the total number of simulations that are in the Green Zone of Kobe Space.
+
+Figure \ref{fig:PGK30} shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for \texttt{PGK\_30} in this example are: 0.1, 0.8.
+
+\begin{figure}
+\includegraphics[width=37.5in]{../../img/PMs/PGK_30} \caption{An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY in 2053 are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.}\label{fig:PGK30}
+\end{figure}
+
+\hypertarget{pof-and-pnof}{%
+\subsubsection{POF and PNOF}\label{pof-and-pnof}}
+
+\texttt{POF} calculates the probability of over-fishing (F\textgreater FMSY) over all years (2024--2053). This is calculated as the proportion of the total number of points (number of simulations x number of years) where F is greater than FMSY.
+
+Figure \ref{fig:POF} shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for \texttt{POF} in this example are: 0.65, 0.27.
+
+\texttt{PNOF} reports the probability of not overfishing, calculated as \(1-\text{POF}\), i.e.~0.35, 0.73.
+
+\begin{figure}
+\includegraphics[width=37.5in]{../../img/PMs/POF} \caption{An example of a time-series plot of F/FMSY for a two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where F<FMSY are indicated with a green point, and red points indicate F>FMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.}\label{fig:POF}
+\end{figure}
+
+\hypertarget{safety}{%
+\subsection{Safety}\label{safety}}
+
+\hypertarget{lrp_short}{%
+\subsubsection{LRP\_short}\label{lrp_short}}
+
+\texttt{LRP\_short} calculates the probability of breaching the limit reference point (LRP; SB\textless0.4SBMSY) in any of the first 10 years (2024-2033).
+
+This is calculated as the proportion of simulations where SB\textless0.4SBMSY in any of the first 10 years.
+
+Figure \ref{fig:LRPshort} shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for \texttt{LRP\_short} in this example are: 0, 0.
+
+\begin{figure}
+\includegraphics[width=37.5in]{../../img/PMs/LRP_short} \caption{An example of a time-series plot of SB/SBMSY for a two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.}\label{fig:LRPshort}
+\end{figure}
+
+\hypertarget{lrp_med}{%
+\subsubsection{LRP\_med}\label{lrp_med}}
+
+\texttt{LRP\_med} calculates the probability of breaching the limit reference point (LRP; SB\textless0.4SBMSY) in any of years 11-20 (2034-2043).
+
+This is calculated as the proportion of simulations where SB\textless0.4SBMSY in any of years 11-20.
+
+Figure \ref{fig:LRP-med} shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for \texttt{LRP\_med} in this example are: 0.3, 0.1.
+
+\begin{figure}
+\includegraphics[width=37.5in]{../../img/PMs/LRP_med} \caption{An example of a time-series plot of SB/SBMSY for a two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.}\label{fig:LRP-med}
+\end{figure}
+
+\hypertarget{lrp_long}{%
+\subsubsection{LRP\_long}\label{lrp_long}}
+
+\texttt{LRP\_long} calculates the probability of breaching the limit reference point (LRP; SB\textless0.4SBMSY) in any of years 21-30 (2044-2053).
+
+This is calculated as the proportion of simulations where SB\textless0.4SBMSY in any of the last 10 years.
+
+Figure \ref{fig:LRP-long} shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The value for \texttt{LRP\_long} in this example are: 0.3, 0.1.
+
+\begin{figure}
+\includegraphics[width=37.5in]{../../img/PMs/LRP_long} \caption{An example of a time-series plot of SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.}\label{fig:LRP-long}
+\end{figure}
+
+\hypertarget{lrp}{%
+\subsubsection{LRP}\label{lrp}}
+
+\texttt{LRP} calculates the probability of breaching the limit reference point (LRP; SB\textless0.4SBMSY) in any of the projection years (2024-2053).
+
+This is calculated as the proportion of simulations where SB\textless0.4SBMSY in any year.
+
+Figure \ref{fig:LRP} shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The value for \texttt{LRP} in this example are: 0.3, 0.1.
+
+\begin{figure}
+\includegraphics[width=37.5in]{../../img/PMs/LRP} \caption{An example of a time-series plot of SB/SBMSY for a two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.}\label{fig:LRP}
+\end{figure}
+
+\hypertarget{yield}{%
+\subsection{Yield}\label{yield}}
+
+\hypertarget{tac1}{%
+\subsubsection{TAC1}\label{tac1}}
+
+\texttt{TAC1} calculates the median TAC (t) in the first year (2024). This is calculated as the median across the simulations of the 2024 TAC.
+
+Figure \ref{fig:C1} shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for \texttt{TAC1} in this example are: 13462, 11987.
+
+\begin{figure}
+\includegraphics[width=37.5in]{../../img/PMs/C1} \caption{An example of time-series plots of the TAC for two CMPs. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.}\label{fig:C1}
+\end{figure}
+
+\hypertarget{avtac_short}{%
+\subsubsection{AvTAC\_short}\label{avtac_short}}
+
+\texttt{AvTAC\_short} calculates the median TAC (t) in the first 10 years (2024--2033). This is calculated as the median TAC across the simulations and years.
+
+Figure \ref{fig:AvC10} shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for \texttt{AvTAC\_short} in this example are: 13097, 11201.
+
+\begin{figure}
+\includegraphics[width=37.5in]{../../img/PMs/AvTAC_short} \caption{An example of time-series plots of the TAC for a two CMPs. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.}\label{fig:AvC10}
+\end{figure}
+
+\hypertarget{avtac_med}{%
+\subsubsection{AvTAC\_med}\label{avtac_med}}
+
+\texttt{AvTAC\_med} calculates the median TAC (t) in years 11 -- 20 (2034--2043). This is calculated as the median TAC across the simulations and years.
+
+Figure \ref{fig:AvCmed} shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for \texttt{AvTAC\_med} in this example are: 10332, 10200.
+
+\begin{figure}
+\includegraphics[width=37.5in]{../../img/PMs/AvTAC_med} \caption{An example of time-series plots of the TAC for a two CMPs. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.}\label{fig:AvCmed}
+\end{figure}
+
+\hypertarget{avtac_long}{%
+\subsubsection{AvTAC\_long}\label{avtac_long}}
+
+\texttt{AvTAC\_long} calculates the median TAC (t) in the last 10 years (2044--2053). This is calculated as the median TAC across the simulations and years.
+
+Figure \ref{fig:AvC30} shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for \texttt{AvTAC\_long} in this example are: 9883, 8793.
+
+\begin{figure}
+\includegraphics[width=37.5in]{../../img/PMs/AvTAC_long} \caption{An example of time-series plots of the TAC for a two CMPs. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.}\label{fig:AvC30}
+\end{figure}
+
+\hypertarget{stability}{%
+\subsection{Stability}\label{stability}}
+
+\hypertarget{varc}{%
+\subsubsection{VarC}\label{varc}}
+
+\texttt{VarC} calculates the mean absolute change in the TAC between management cycles, calculated across all years and simulations.
+
+Figure \ref{fig:VarC} shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for \texttt{VarC} in this example are: 0.15, 0.14.
+
+\begin{figure}
+\includegraphics[width=37.5in]{../../img/PMs/VarC} \caption{Violin plots of the relative absolute change in the TAC between management cycles for two CMPs.}\label{fig:VarC}
+\end{figure}
+
+\hypertarget{CMPs}{%
+\section{Candidate Management Procedures}\label{CMPs}}
+
+\hypertarget{tuning}{%
+\subsection{Tuning of Candidate Management Procedures}\label{tuning}}
+
+During development, the Candidate Management Procedures are tuned to achieve specific performance outcomes. These performance outcomes are calculated across all the Reference OMs; i.e, the MSE results from each Reference OM are aggregated together. 3 different tuning targets have been specified (Table \ref{tab:PM-tuning}).
+
+There will be 3 versions of each CMP corresponding to metrics and targets described in Table \ref{tab:PM-tuning}. The names of the CMPs include the tuning code (i.e., `a', `b').
+
+\begin{table}
+
+\caption{\label{tab:PM-tuning}The codes, metrics, and targets used for the tuning of the CMPs.}
+\centering
+\begin{tabu} to \linewidth {>{\raggedright}X>{\raggedright}X>{\raggedleft}X}
+\toprule
+Code & Metric & Target\\
+\midrule
+a & PGK short & 0.51\\
+b & PGK short & 0.60\\
+c & PGK short & 0.70\\
+\bottomrule
+\end{tabu}
+\end{table}
+
+\hypertarget{reporting-of-mse-results}{%
+\section{Reporting of MSE Results}\label{reporting-of-mse-results}}
+
+\hypertarget{interactive-application}{%
+\subsection{Interactive Application}\label{interactive-application}}
+
+The current MSE results are available in an \href{https://shiny.bluematterscience.com/app/swomse}{Interactive Application}
 
 \hypertarget{references}{%
 \section*{References}\label{references}}
@@ -675,22 +983,22 @@ A Google sheet has also been created for the Group to add comments or additional
 \hypertarget{refs}{}
 \begin{CSLReferences}{1}{0}
 \leavevmode\vadjust pre{\hypertarget{ref-anon.Report2017ICCAT2017}{}}%
-Anon. (2017). Report of the 2017 ICCAT Atlantic Swordfish Stock Assessment Session. SCRS/2017/008. \emph{Collect. Vol. Sci. Pap. ICCAT}, \emph{74}(3), 841--967. \url{https://www.iccat.int/Documents/CVSP/CV074_2017/n_3/CV074030841.pdf}
+Anon. (2017). Report of the 2017 {ICCAT Atlantic Swordfish Stock Assessment Session}. {SCRS}/2017/008. \emph{Collect. Vol. Sci. Pap. ICCAT}, \emph{74}(3), 841--967. \url{https://www.iccat.int/Documents/CVSP/CV074_2017/n_3/CV074030841.pdf}
 
 \leavevmode\vadjust pre{\hypertarget{ref-anon.PeerReviewNorth2021}{}}%
-Anon. (2021). Peer review of the North Atlantic Swordfish Management Strategy Evaluation (MSE) code and algorithms SCRS/2021/097. \emph{Collect. Vol. Sci. Pap. ICCAT,} \emph{78}(7).
+Anon. (2021). Peer review of the {North Atlantic Swordfish Management Strategy Evaluation} ({MSE}) code and algorithms {SCRS}/2021/097. \emph{Collect. Vol. Sci. Pap. ICCAT,} \emph{78}(7).
 
 \leavevmode\vadjust pre{\hypertarget{ref-carruthersDataLimitedMethodsToolkit2018}{}}%
-Carruthers, T., \& Hordyk, A. R. (2018). The Data-Limited Methods Toolkit (DLMtool): An R package for informing management of data-limited populations. \emph{Methods in Ecology and Evolution}, \emph{9}(12), 2388--2395. \url{https://doi.org/10.1111/2041-210X.13081}
+Carruthers, T., \& Hordyk, A. R. (2018). The {Data-Limited Methods Toolkit} ({DLMtool}): {An R} package for informing management of data-limited populations. \emph{Methods in Ecology and Evolution}, \emph{9}(12), 2388--2395. \url{https://doi.org/10.1111/2041-210X.13081}
 
 \leavevmode\vadjust pre{\hypertarget{ref-francisDataWeightingStatistical2011}{}}%
 Francis, R. I. C. C. (2011). Data weighting in statistical fisheries stock assessment models. \emph{Canadian Journal of Fisheries and Aquatic Sciences}, \emph{68}(6), 1124--1138. \url{https://doi.org/10.1139/f2011-025}
 
 \leavevmode\vadjust pre{\hypertarget{ref-methotStockSynthesisBiological2013}{}}%
-Methot, R. D., \& Wetzel, C. R. (2013). Stock synthesis: A biological and statistical framework for fish stock assessment and fishery management. \emph{Fisheries Research}, \emph{142}, 86--99. \url{https://doi.org/10.1016/j.fishres.2012.10.012}
+Methot, R. D., \& Wetzel, C. R. (2013). Stock synthesis: {A} biological and statistical framework for fish stock assessment and fishery management. \emph{Fisheries Research}, \emph{142}, 86--99. \url{https://doi.org/10.1016/j.fishres.2012.10.012}
 
 \leavevmode\vadjust pre{\hypertarget{ref-ortizUpdatedCombinedBiomass2017}{}}%
-Ortiz, M., Mejuto, J., Hanke, A., Ijima, H., Walter, J., Coelho, R., \& Ikkiss, A. (2017). Updated combined biomass index of abundance of North Atlantic swordfish stock 1963 - 2015. SCRS/2017/137. \emph{Collect. Vol. Sci. Pap. ICCAT}, \emph{74}(3), 1275--1294. \url{https://www.iccat.int/Documents/CVSP/CV074_2017/n_3/CV074031275.pdf}
+Ortiz, M., Mejuto, J., Hanke, A., Ijima, H., Walter, J., Coelho, R., \& Ikkiss, A. (2017). Updated combined biomass index of abundance of {North Atlantic} swordfish stock 1963 - 2015. {SCRS}/2017/137. \emph{Collect. Vol. Sci. Pap. ICCAT}, \emph{74}(3), 1275--1294. \url{https://www.iccat.int/Documents/CVSP/CV074_2017/n_3/CV074031275.pdf}
 
 \end{CSLReferences}
 
