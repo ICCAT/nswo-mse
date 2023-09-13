@@ -67,7 +67,7 @@ FiltersServer <- function(id, results) {
                                       )
                                       ),
                      sliderInput(session$ns('PGK_pass'), 'Minimum acceptable value',
-                                 min=0.1, max=1, value=0.51, step=0.01)
+                                 min=0.1, max=1, value=0.5, step=0.01)
                    )
 
                  })
