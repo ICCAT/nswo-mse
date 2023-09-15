@@ -14,7 +14,7 @@ server <- function(input, output, session) {
                             PGK_short=c('0.51', '0.60', '0.70'),
                             PGK_models='Reference + Robustness',
                             PGK_models_cb=levels(OMnames)[2:length(levels(OMnames))],
-                            PGK_pass=0.51,
+                            PGK_pass=0.50,
                             filterbuttonColor=1,
                             TO1x=tradeoffPMs$x[1],
                             TO1y=tradeoffPMs$y[1],
