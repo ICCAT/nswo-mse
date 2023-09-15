@@ -73,7 +73,7 @@ pTS_results <- pTS_results %>% filter(!MP %in% fail_MPs$MP)
 
 
 # PGK med
-fail_MPs_PGK <- PM_results %>% filter(Model=='Reference', PM=='PGK_med', Value<0.51) %>%
+fail_MPs_PGK <- PM_results %>% filter(Model=='Reference', PM=='PGK_med', Value<0.50) %>%
   distinct(MP)
 
 
