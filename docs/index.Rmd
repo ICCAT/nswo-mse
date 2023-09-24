@@ -54,6 +54,9 @@ The MSE is being conducted with the open-source [openMSE](https://openmse.com/) 
 
 3. SWOMSE User Manual [(HTML)](UserManual/User_Manual.html)
 
+## Shiny App with MSE Results
+
+The current results of the North Atlantic Swordfish MSE are available in an online interactive application available [here](https://shiny.bluematterscience.com/app/swomse).
 
 ## Operating Models
 
