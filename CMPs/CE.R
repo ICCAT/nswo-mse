@@ -140,48 +140,24 @@ CE2 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25,
 
 
 # ---- Tuned CMPs ----
-
-
 #' @describeIn CE Tuned to PGK_short = 0.51 across Reference OMs.
 #' @export
 CE_a <- CE
-formals(CE_a)$tunepar <- 0.925571834821299
+formals(CE_a)$tunepar <- 1.01590062111801
 class(CE_a) <- "MP"
 
 
 #' @describeIn CE Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 CE_b <- CE
-formals(CE_b)$tunepar <- 0.884296128218371
+formals(CE_b)$tunepar <- 0.964931283484743
 class(CE_b) <- "MP"
 
 
 #' @describeIn CE Tuned to PGK_short = 0.7 across Reference OMs.
 #' @export
 CE_c <- CE
-formals(CE_c)$tunepar <- 0.841284742755766
+formals(CE_c)$tunepar <- 0.919087959341184
 class(CE_c) <- "MP"
-
-
-
-#' @describeIn CE2 Tuned to PGK_short = 0.51 across Reference OMs.
-#' @export
-CE2_a <- CE2
-formals(CE2_a)$tunepar <- 0.827952887143968
-class(CE2_a) <- "MP"
-
-
-#' @describeIn CE2 Tuned to PGK_short = 0.6 across Reference OMs.
-#' @export
-CE2_b <- CE2
-formals(CE2_b)$tunepar <- 0.7642143570715
-class(CE2_b) <- "MP"
-
-
-#' @describeIn CE2 Tuned to PGK_short = 0.7 across Reference OMs.
-#' @export
-CE2_c <- CE2
-formals(CE2_c)$tunepar <- 0.69327418467387
-class(CE2_c) <- "MP"
 
 

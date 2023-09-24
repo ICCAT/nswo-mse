@@ -65,7 +65,8 @@ sidebar <- dashboardSidebar(
     menuItem("Trade-Off", tabName = "TradeOff", icon = icon("xmark")),
     menuItem("Kobe Time", tabName = "KobeTime", icon = icon("chart-line")),
     menuItem("Violin Plot", tabName = "ViolinPlot", icon = icon("bar-chart")),
-    menuItem("Quilt Plot", tabName = "QuiltPlot", icon = icon("table"))
+    menuItem("Quilt Plot", tabName = "QuiltPlot", icon = icon("table")),
+    menuItem("Additional Analyses", tabName = "add_analyses", icon = icon("plus"))
   )
 )
 
@@ -137,6 +138,9 @@ body <- dashboardBody(height = 800,
     ),
     tabItem(tabName = "QuiltPlot",
             QuiltPlot_UI('QuiltPlot')
+    ),
+    tabItem(tabName = "add_analyses",
+            add_analyses_UI('add_analyses')
     )
     # tabItem(tabName = "Pow",
     #        Pow_UI('Pow')

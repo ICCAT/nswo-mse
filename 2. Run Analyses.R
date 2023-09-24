@@ -26,7 +26,9 @@ Refs_OMs <- Refs_OMs$OM.object
 All_MPs <- get_MP_names() %>% sort()
 
 
-Test_MPs <-All_MPs
+Test_MPs <- c('CE', 'FX4', 'MCC5', 'MCC7', 'SPSSFox', 'C1320')
+
+TuneTargets$Metric <- 'PGK_short'
 
 # ---- Scoping and Tuning ----
 for (MP_name in Test_MPs) {
@@ -94,7 +96,6 @@ for (MP_name in Test_MPs) {
 
 
 ### R3a
-Test_MPs <- Test_MPs[c(4, 6:length(Test_MPs))]
 
 hist <- readRDS(file.path('Hist_Objects/R3a', 'MOM_005.hist'))
 
@@ -110,7 +111,7 @@ for (MP_name in Test_MPs) {
 }
 
 ### R3b
-Test_MPs <- c('AT1', 'C1320')
+
 hist <- readRDS(file.path('Hist_Objects/R3b', 'MOM_005.hist'))
 
 for (MP_name in Test_MPs) {

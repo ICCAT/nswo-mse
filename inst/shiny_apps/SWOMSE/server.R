@@ -95,6 +95,7 @@ server <- function(input, output, session) {
   KobeTime_Server('KobeTime',results)
   QuiltPlot_Server('QuiltPlot',results)
   Violin_Server('Violin',results)
+  add_analyses_Server('add_analyses',results)
 
 }
 

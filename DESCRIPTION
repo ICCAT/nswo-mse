@@ -1,7 +1,7 @@
 Package: SWOMSE
 Type: Package
 Title: Management strategy evaluation for North Atlantic Swordfish
-Version: 0.18.0
+Version: 0.19.0
 Authors@R: 
     person("Adrian", "Hordyk", email = "adrian@bluematterscience.com", role = c("aut", "cre"))
 Maintainer: A. Hordyk <adrian@bluematterscience.com>
@@ -14,7 +14,7 @@ Depends:
     R (>= 3.5.0),
     dplyr,
     ggplot2,
-    MSEtool (>= 3.7.1),
+    MSEtool (>= 3.7.2),
     openMSE (>= 1.1.0)
 Imports:
     devtools,

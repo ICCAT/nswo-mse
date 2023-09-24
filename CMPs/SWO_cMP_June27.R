@@ -482,153 +482,48 @@ FZ2_b <- FX2
 formals(FZ2_b)$tunepar <- 1.029
 class(FZ2_b) <- "MP"#'
 
+
+
 # ---- Tuned CMPs ----
-#' @describeIn C1320 Tuned to PGK_short = 0.51 across Reference OMs.
-#' @export
-C1320_a <- C1320
-formals(C1320_a)$tunepar <- 0.94962891987717
-class(C1320_a) <- "MP"
-
-
-#' @describeIn C1320 Tuned to PGK_short = 0.6 across Reference OMs.
-#' @export
-C1320_b <- C1320
-formals(C1320_b)$tunepar <- 0.91638901197777
-class(C1320_b) <- "MP"
-
-
-#' @describeIn C1320 Tuned to PGK_short = 0.7 across Reference OMs.
-#' @export
-C1320_c <- C1320
-formals(C1320_c)$tunepar <- 0.877126672732743
-class(C1320_c) <- "MP"
-
-
-#' @describeIn FX1 Tuned to PGK_short = 0.51 across Reference OMs.
-#' @export
-FX1_a <- FX1
-formals(FX1_a)$tunepar <- 1.04085116936232
-class(FX1_a) <- "MP"
-
-
-#' @describeIn FX1 Tuned to PGK_short = 0.6 across Reference OMs.
-#' @export
-FX1_b <- FX1
-formals(FX1_b)$tunepar <- 1.01885662754416
-class(FX1_b) <- "MP"
-
-
-#' @describeIn FX1 Tuned to PGK_short = 0.7 across Reference OMs.
-#' @export
-FX1_c <- FX1
-formals(FX1_c)$tunepar <- 0.994816100079258
-class(FX1_c) <- "MP"
-
-
-
-
-#' @describeIn SP2 Tuned to PGK_short = 0.51 across Reference OMs.
-#' @export
-SP2_a <- SP2
-formals(SP2_a)$tunepar <- 1.07988076899994
-class(SP2_a) <- "MP"
-
-
-#' @describeIn SP2 Tuned to PGK_short = 0.6 across Reference OMs.
-#' @export
-SP2_b <- SP2
-formals(SP2_b)$tunepar <- 1.05456111606014
-class(SP2_b) <- "MP"
-
-
-#' @describeIn SP2 Tuned to PGK_short = 0.7 across Reference OMs.
-#' @export
-SP2_c <- SP2
-formals(SP2_c)$tunepar <- 1.02864897701625
-class(SP2_c) <- "MP"
-
-
-#' @describeIn SP4 Tuned to PGK_short = 0.51 across Reference OMs.
-#' @export
-SP4_a <- SP4
-formals(SP4_a)$tunepar <- 1.04579842695447
-class(SP4_a) <- "MP"
-
-
-#' @describeIn SP4 Tuned to PGK_short = 0.6 across Reference OMs.
-#' @export
-SP4_b <- SP4
-formals(SP4_b)$tunepar <- 1.02626250031216
-class(SP4_b) <- "MP"
-
-
-#' @describeIn SP4 Tuned to PGK_short = 0.7 across Reference OMs.
-#' @export
-SP4_c <- SP4
-formals(SP4_c)$tunepar <- 1.00188655458282
-class(SP4_c) <- "MP"
-
-
-#' @describeIn FX3 Tuned to PGK_short = 0.51 across Reference OMs.
-#' @export
-FX3_a <- FX3
-formals(FX3_a)$tunepar <- 0.931557989049278
-class(FX3_a) <- "MP"
-
-
-#' @describeIn FX3 Tuned to PGK_short = 0.6 across Reference OMs.
-#' @export
-FX3_b <- FX3
-formals(FX3_b)$tunepar <- 0.891251064268944
-class(FX3_b) <- "MP"
-
-
-#' @describeIn FX3 Tuned to PGK_short = 0.7 across Reference OMs.
-#' @export
-FX3_c <- FX3
-formals(FX3_c)$tunepar <- 0.853025936599424
-class(FX3_c) <- "MP"
-
-
 #' @describeIn FX4 Tuned to PGK_short = 0.51 across Reference OMs.
 #' @export
 FX4_a <- FX4
-formals(FX4_a)$tunepar <- 0.938825020404648
+formals(FX4_a)$tunepar <- 1.02976944713521
 class(FX4_a) <- "MP"
 
 
 #' @describeIn FX4 Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 FX4_b <- FX4
-formals(FX4_b)$tunepar <- 0.896821686732088
+formals(FX4_b)$tunepar <- 0.985972762145045
 class(FX4_b) <- "MP"
 
 
 #' @describeIn FX4 Tuned to PGK_short = 0.7 across Reference OMs.
 #' @export
 FX4_c <- FX4
-formals(FX4_c)$tunepar <- 0.857142857142857
+formals(FX4_c)$tunepar <- 0.943166992824527
 class(FX4_c) <- "MP"
 
 
-#' @describeIn FX2 Tuned to PGK_short = 0.51 across Reference OMs.
+#' @describeIn C1320 Tuned to PGK_short = 0.51 across Reference OMs.
 #' @export
-FX2_a <- FX2
-formals(FX2_a)$tunepar <- 0.96672729316317
-class(FX2_a) <- "MP"
+C1320_a <- C1320
+formals(C1320_a)$tunepar <- 1.04515250000924
+class(C1320_a) <- "MP"
 
 
-#' @describeIn FX2 Tuned to PGK_short = 0.6 across Reference OMs.
+#' @describeIn C1320 Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
-FX2_b <- FX2
-formals(FX2_b)$tunepar <- 0.933710801393728
-class(FX2_b) <- "MP"
+C1320_b <- C1320
+formals(C1320_b)$tunepar <- 1.00705193023712
+class(C1320_b) <- "MP"
 
 
-#' @describeIn FX2 Tuned to PGK_short = 0.7 across Reference OMs.
+#' @describeIn C1320 Tuned to PGK_short = 0.7 across Reference OMs.
 #' @export
-FX2_c <- FX2
-formals(FX2_c)$tunepar <- 0.894780159498842
-class(FX2_c) <- "MP"
+C1320_c <- C1320
+formals(C1320_c)$tunepar <- 0.968692374444083
+class(C1320_c) <- "MP"
 
 

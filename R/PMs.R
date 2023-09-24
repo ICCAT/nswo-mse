@@ -709,22 +709,26 @@ VarC <- function (MMSEobj = NULL, Ref=1, Yrs=c(4,33))  {
   change_yrs <- seq(1, by=interval[1], to=max(yrs))
   varC <- array(NA, dim=c(MMSEobj@nsim, length(change_yrs)-1, MMSEobj@nMPs))
   for (mm in 1:nMPs) {
+    change_yrs <- seq(1, by=interval[mm], to=max(yrs))
     y1 <- change_yrs[1:(length(change_yrs)-1)]
     y2 <- change_yrs[2:length(change_yrs)]
     mat <- (((TAC[, mm, y2] - TAC[, mm, y1])/TAC[,mm , y1])^2)^0.5
+    if (dim(mat)[2] < dim(varC)[2]) {
+      dd <- dim(varC)[2] - dim(mat)[2]
+      mat <- abind::abind(mat, matrix(NA, nrow=MMSEobj@nsim, ncol=dd))
+    }
 
     if (interval[mm]==Inf) {
       varC[,,mm] <- 0
     } else {
-
-      varC[,,mm] <- ((((TAC[, mm, y2] - TAC[, mm, y1])/TAC[,mm , y1])^2)^0.5)
+      varC[,,mm] <- mat
     }
   }
 
   PMobj@Stat <- varC
   PMobj@Ref <- Ref
   PMobj@Prob <- calcProb(PMobj@Stat, MMSEobj)
-  PMobj@Mean <- apply(PMobj@Stat, 3, mean)
+  PMobj@Mean <- apply(PMobj@Stat, 3, mean, na.rm=TRUE)
   PMobj@MPs <- MMSEobj@MPs[[1]]
   PMobj
 }

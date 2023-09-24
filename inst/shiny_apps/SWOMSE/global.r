@@ -23,15 +23,8 @@ TS_results <- readRDS('./data/summary_TS_results.rda')
 kobe_results <- readRDS('./data/kobe_results.rda')
 Violin_results <- readRDS('./data/Violin_results.rda')
 
-# PM_results <- readRDS('C:/Users/User/Documents/GitHub/nswo-mse/inst/shiny_apps/SWOMSE/data/PM_results.rda')
-# TS_results <- readRDS('C:/Users/User/Documents/GitHub/nswo-mse/inst/shiny_apps/SWOMSE/data/TS_results.rda')
-
-# PM_results %>% filter(Model=='R3b') %>% distinct(MP_name)
-# PM_results %>% filter(Model=='R3a') %>% distinct(MP_name)
-#
-# TS_results %>% filter(Model=='R3a') %>% distinct(MP_name)
-# TS_results %>% filter(Model=='R3b') %>% distinct(MP_name)
-#
+DiffMngCycle <- readRDS('./data/DiffMngCycle.rda')
+MinTACChange <- readRDS('./data/MinTACChange.rda')
 
 OMnames <- unique(PM_results$Model)
 OMnames <- factor(OMnames, levels=c('Reference', 'R0', 'R1', 'R2', 'R3a', 'R3b', 'R4'), ordered = TRUE)

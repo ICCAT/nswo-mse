@@ -433,145 +433,45 @@ GSC2 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
 }
 
 # ---- Tuned CMPs ----
-
-
-
-#' @export
-MCC2_a <- MCC2
-formals(MCC2_a)$tunepar <- 0.915692574902301
-class(MCC2_a) <- "MP"
-
-
-#' @describeIn MCC2 Tuned to PGK_short = 0.6 across Reference OMs.
-#' @export
-MCC2_b <- MCC2
-formals(MCC2_b)$tunepar <- 0.874282556349426
-class(MCC2_b) <- "MP"
-
-
-#' @describeIn MCC2 Tuned to PGK_short = 0.7 across Reference OMs.
-#' @export
-MCC2_c <- MCC2
-formals(MCC2_c)$tunepar <- 0.829556622522945
-class(MCC2_c) <- "MP"
-#' @describeIn MCC3 Tuned to PGK_short = 0.51 across Reference OMs.
-#' @export
-MCC3_a <- MCC3
-formals(MCC3_a)$tunepar <- 0.848645609049336
-class(MCC3_a) <- "MP"
-
-
-#' @describeIn MCC3 Tuned to PGK_short = 0.6 across Reference OMs.
-#' @export
-MCC3_b <- MCC3
-formals(MCC3_b)$tunepar <- 0.805009867683337
-class(MCC3_b) <- "MP"
-
-
-#' @describeIn MCC3 Tuned to PGK_short = 0.7 across Reference OMs.
-#' @export
-MCC3_c <- MCC3
-formals(MCC3_c)$tunepar <- 0.770008155177527
-class(MCC3_c) <- "MP"
-#' @describeIn MCC4 Tuned to PGK_short = 0.51 across Reference OMs.
-#' @export
-MCC4_a <- MCC4
-formals(MCC4_a)$tunepar <- 0.842362105113113
-class(MCC4_a) <- "MP"
-
-
-#' @describeIn MCC4 Tuned to PGK_short = 0.6 across Reference OMs.
-#' @export
-MCC4_b <- MCC4
-formals(MCC4_b)$tunepar <- 0.801020257162754
-class(MCC4_b) <- "MP"
-
-
-#' @describeIn MCC4 Tuned to PGK_short = 0.7 across Reference OMs.
-#' @export
-MCC4_c <- MCC4
-formals(MCC4_c)$tunepar <- 0.766492585667095
-class(MCC4_c) <- "MP"
-
-#' @describeIn GSC2 Tuned to PGK_short = 0.51 across Reference OMs.
-#' @export
-GSC2_a <- GSC2
-formals(GSC2_a)$tunepar <- 0.859876965140123
-class(GSC2_a) <- "MP"
-
-
-#' @describeIn GSC2 Tuned to PGK_short = 0.6 across Reference OMs.
-#' @export
-GSC2_b <- GSC2
-formals(GSC2_b)$tunepar <- 0.820939334637965
-class(GSC2_b) <- "MP"
-
-
-#' @describeIn GSC2 Tuned to PGK_short = 0.7 across Reference OMs.
-#' @export
-GSC2_c <- GSC2
-formals(GSC2_c)$tunepar <- 0.778180803571429
-class(GSC2_c) <- "MP"
 #' @describeIn MCC5 Tuned to PGK_short = 0.51 across Reference OMs.
 #' @export
 MCC5_a <- MCC5
-formals(MCC5_a)$tunepar <- 0.848645609049336
+formals(MCC5_a)$tunepar <- 0.929504264392324
 class(MCC5_a) <- "MP"
 
 
 #' @describeIn MCC5 Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 MCC5_b <- MCC5
-formals(MCC5_b)$tunepar <- 0.805009867683337
+formals(MCC5_b)$tunepar <- 0.887968151300397
 class(MCC5_b) <- "MP"
 
 
 #' @describeIn MCC5 Tuned to PGK_short = 0.7 across Reference OMs.
 #' @export
 MCC5_c <- MCC5
-formals(MCC5_c)$tunepar <- 0.770008155177527
+formals(MCC5_c)$tunepar <- 0.850136705399863
 class(MCC5_c) <- "MP"
-
-
-#' @describeIn MCC6 Tuned to PGK_short = 0.51 across Reference OMs.
-#' @export
-MCC6_a <- MCC6
-formals(MCC6_a)$tunepar <- 0.803860693013934
-class(MCC6_a) <- "MP"
-
-
-#' @describeIn MCC6 Tuned to PGK_short = 0.6 across Reference OMs.
-#' @export
-MCC6_b <- MCC6
-formals(MCC6_b)$tunepar <- 0.773706773716748
-class(MCC6_b) <- "MP"
-
-
-#' @describeIn MCC6 Tuned to PGK_short = 0.7 across Reference OMs.
-#' @export
-MCC6_c <- MCC6
-formals(MCC6_c)$tunepar <- 0.741193495688517
-class(MCC6_c) <- "MP"
 
 
 #' @describeIn MCC7 Tuned to PGK_short = 0.51 across Reference OMs.
 #' @export
 MCC7_a <- MCC7
-formals(MCC7_a)$tunepar <- 0.797376093294461
+formals(MCC7_a)$tunepar <- 0.875151483261614
 class(MCC7_a) <- "MP"
 
 
 #' @describeIn MCC7 Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 MCC7_b <- MCC7
-formals(MCC7_b)$tunepar <- 0.758797909407665
+formals(MCC7_b)$tunepar <- 0.834354466598188
 class(MCC7_b) <- "MP"
 
 
 #' @describeIn MCC7 Tuned to PGK_short = 0.7 across Reference OMs.
 #' @export
 MCC7_c <- MCC7
-formals(MCC7_c)$tunepar <- 0.719196758526027
+formals(MCC7_c)$tunepar <- 0.793981595473693
 class(MCC7_c) <- "MP"
 
 

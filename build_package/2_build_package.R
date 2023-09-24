@@ -344,7 +344,7 @@ importOM <- function(i, nsim, proyears, OM_DF, SWOData) {
 
   MOM_com@cpars[[1]][[1]]$SLarray <- MOM_com@cpars[[1]][[1]]$SLarray_real
   MOM_com@cpars[[2]][[1]]$SLarray <- MOM_com@cpars[[2]][[1]]$SLarray_real
-
+  MOM_com@cpars$control$TAC="removals"
 
   name <- OM_DF$OM.object[i]
 
