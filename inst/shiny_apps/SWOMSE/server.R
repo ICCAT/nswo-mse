@@ -54,7 +54,7 @@ server <- function(input, output, session) {
 
   output$MPs <- function(){
     # CMP_desc <- read.csv('inst/CMP_description.csv')
-    CMP_desc <- read.csv('../../CMP_description.csv') %>% arrange(CMP.name)
+    CMP_desc <- read.csv('../../CMP_description2.csv') %>% arrange(CMP.name)
     colnames(CMP_desc)[1] <- 'Name'
     CMP_desc <- CMP_desc %>% filter(Name %in% c('CE', 'FX4',
                                               'MCC5', 'MCC7', 'SPSSFox'))
