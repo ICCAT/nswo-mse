@@ -4,6 +4,7 @@
 \alias{SameTAC}
 \alias{FixedTAC}
 \alias{MaxChange}
+\alias{MaxChange2}
 \title{Fixed TAC for the initial projection years}
 \usage{
 SameTAC(Initial_MP_Yr, Interval, Data)
@@ -11,6 +12,8 @@ SameTAC(Initial_MP_Yr, Interval, Data)
 FixedTAC(Rec, Data)
 
 MaxChange(TAC, LastTAC, mc)
+
+MaxChange2(TAC, LastTAC, mc, Brel)
 }
 \arguments{
 \item{Initial_MP_Yr}{The calendar year when the MP will first be implemented}

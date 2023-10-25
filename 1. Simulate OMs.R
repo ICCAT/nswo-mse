@@ -1,5 +1,7 @@
 library(SWOMSE)
 
+#setwd("C:/SWOMSE_analyses")
+
 # ---- Reference OMs ----
 Ref_OMs <- OM_DF %>% filter(Class=='Reference')
 
@@ -152,7 +154,7 @@ MOM <- get(MOM_Objects)
 multiHist <- SimulateMOM(MOM, parallel = FALSE, silent=TRUE)
 
 
-series <- read.csv('inst/R3_series.csv')
+series <- read.csv('inst/R3_series.csv') # series <- read.csv('C:/Users/tcarruth/Documents/GitHub/nswo-mse/inst/R3_series.csv')
 
 inflate <- 2
 

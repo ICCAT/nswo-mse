@@ -52,5 +52,36 @@ MaxChange <- function(TAC, LastTAC, mc) {
   LastTAC * deltaTAC
 }
 
+#' @export
+#' @rdname SameTAC
+MaxChange2 <- function(TAC, LastTAC, mc, Brel) {
+  deltaTAC <- TAC/ LastTAC
+  if (any(is.na(mc)))
+    return(TAC)
+
+  if(Brel > 1){ # if Bcurrent > BMSY
+    if (length(mc)==2) {
+      # different max increase/decrease
+      if (deltaTAC < (1 - mc[1])) deltaTAC <- 1 - mc[1]
+      if (deltaTAC > (1 + mc[2])) deltaTAC <- 1 + mc[2]
+    } else {
+      # same max increase/decrease
+      if (deltaTAC < (1 - mc)) deltaTAC <- 1 - mc
+      if (deltaTAC > (1 + mc)) deltaTAC <- 1 + mc
+    }
+  }else{ # no constraint on downward adjustment if Bcurrent < BMSY
+    if (length(mc)==2) {
+      # different max increase/decrease
+      if (deltaTAC > (1 + mc[2])) deltaTAC <- 1 + mc[2]
+    } else {
+      # same max increase/decrease
+      if (deltaTAC > (1 + mc)) deltaTAC <- 1 + mc
+    }
+
+  }
+  LastTAC * deltaTAC
+}
+
+
 
 
