@@ -1,5 +1,7 @@
 library(SWOMSE)
 
+# setwd("C:/Users/tcarruth/Documents/GitHub/nswo-mse")
+
 # Source CMPs
 source_CMPs()
 
@@ -25,10 +27,13 @@ Refs_OMs <- Refs_OMs$OM.object
 
 All_MPs <- get_MP_names() %>% sort()
 
-
-Test_MPs <- c('CE', 'FX4', 'MCC5', 'MCC7', 'SPSSFox', 'C1320')
+Test_MPs <- c('CE', 'MCC5', 'MCC7', 'SPSSFox', 'SPSSFox2')
 
 TuneTargets$Metric <- 'PGK_short'
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+TuneTargets = rbind(TuneTargets,data.frame(Code=c("d","e"),Metric = c("PGK_med","PGK_long"),Target = c(0.60,0.60)))
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 # ---- Scoping and Tuning ----
 for (MP_name in Test_MPs) {
@@ -39,10 +44,15 @@ for (MP_name in Test_MPs) {
 
 }
 
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# There is now a hack in here whereby the b tunings are manually (copy past in the .r files) set to the lowest tuning
+# value of the b, d, and e tuning such that PGK is at least 60% for all three time periods (annoying I know)
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 # ---- Run MSE for Reference OMs -----
 # Source new tuned CMPs
 source_CMPs()
+TuneTargets=TuneTargets[TuneTargets$Code %in% c("b","c"),]
 
 for (MP_name in Test_MPs) {
   MPs <- get_tune_MPs(MP_name)

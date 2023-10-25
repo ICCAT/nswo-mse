@@ -150,7 +150,7 @@ class(CE_a) <- "MP"
 #' @describeIn CE Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 CE_b <- CE
-formals(CE_b)$tunepar <- 0.964931283484743
+formals(CE_b)$tunepar <- 0.961762503743636  # copied from d, original was 0.96497454327643
 class(CE_b) <- "MP"
 
 
@@ -159,5 +159,19 @@ class(CE_b) <- "MP"
 CE_c <- CE
 formals(CE_c)$tunepar <- 0.919087959341184
 class(CE_c) <- "MP"
+
+
+#' @describeIn CE Tuned to PGK_med = 0.6 across Reference OMs.
+#' @export
+CE_d <- CE
+formals(CE_d)$tunepar <- 0.961762503743636
+class(CE_d) <- "MP"
+
+
+#' @describeIn CE Tuned to PGK_long = 0.6 across Reference OMs.
+#' @export
+CE_e <- CE
+formals(CE_e)$tunepar <- 0.988021953041276
+class(CE_e) <- "MP"
 
 

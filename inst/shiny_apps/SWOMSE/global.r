@@ -34,8 +34,8 @@ metadf <- data.frame(OMnames=OMnames) %>% arrange(OMnames)
 MPnames <- PM_results$MP_name %>% unique()
 allMPs <-   PM_results$MP %>% unique()
 
-short_list_mps <- c('CE', 'SPSSFox', 'MCC5', 'MCC7', 'FX2', 'FX4')
-short_list_mps <- paste(short_list_mps, rep(c('a', 'b', 'c'), each=length(short_list_mps)), sep='_')
+short_list_mps <- c('CE', 'SPSSFox','SPSSFox2', 'MCC5', 'MCC7')
+short_list_mps <- paste(short_list_mps, rep(c('b', 'c'), each=length(short_list_mps)), sep='_')
 
 
 # Trade-Off Options
@@ -81,8 +81,8 @@ pTS_results <- pTS_results %>% filter(MP %in% short_list_mps)
 pkobe_results <- kobe_results %>% filter(MP %in% unique(pPM_results$MP))
 pViolin_results <- Violin_results %>% filter(MP %in% unique(pPM_results$MP))
 
-short_list_mps <- c('CE', 'SPSSFox', 'MCC5', 'MCC7', 'FX2', 'FX4')
-short_list_mps <- paste(short_list_mps, rep(c('a', 'b', 'c'), each=length(short_list_mps)), sep='_')
+short_list_mps <- c('CE', 'SPSSFox','SPSSFox2', 'MCC5', 'MCC7')
+short_list_mps <- paste(short_list_mps, rep(c('b', 'c'), each=length(short_list_mps)), sep='_')
 
 short_list_mps <- list(default=short_list_mps)
 short_list <- short_list_mps
