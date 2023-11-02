@@ -34,9 +34,10 @@ metadf <- data.frame(OMnames=OMnames) %>% arrange(OMnames)
 MPnames <- PM_results$MP_name %>% unique()
 allMPs <-   PM_results$MP %>% unique()
 
-short_list_mps <- c('CE', 'SPSSFox','SPSSFox2', 'MCC5', 'MCC7')
-short_list_mps <- paste(short_list_mps, rep(c('b', 'c'), each=length(short_list_mps)), sep='_')
+#short_list_mps <- c('CE', 'SPSSFox','SPSSFox2', 'MCC5', 'MCC7')
+#short_list_mps <- paste(short_list_mps, rep(c('b', 'c'), each=length(short_list_mps)), sep='_')
 
+short_list_mps <- c('CE_b',"SPSSFox_b","SPSSFox2_b","MCC5_b","MCC5_c","MCC7_b","MCC7_c")
 
 # Trade-Off Options
 allPMs <- unique(PM_results$PM) %>% sort()
@@ -48,7 +49,7 @@ tradeoffPMs <- data.frame(TO=1:4,
 
 
 # Quilt plot options
-quiltPMs <- c('AvTAC_short', 'AvTAC_med', 'AvTAC_long', 'TAC1',
+quiltPMs <- c('AvTAC_short', 'AvTAC_med', 'AvTAC_long', #'TAC1',
               'nLRP', 'PNOF', 'PGK_short', 'PGK_med', 'PGK', 'VarC')
 
 
@@ -81,8 +82,9 @@ pTS_results <- pTS_results %>% filter(MP %in% short_list_mps)
 pkobe_results <- kobe_results %>% filter(MP %in% unique(pPM_results$MP))
 pViolin_results <- Violin_results %>% filter(MP %in% unique(pPM_results$MP))
 
-short_list_mps <- c('CE', 'SPSSFox','SPSSFox2', 'MCC5', 'MCC7')
-short_list_mps <- paste(short_list_mps, rep(c('b', 'c'), each=length(short_list_mps)), sep='_')
+#short_list_mps <- c('CE', 'SPSSFox','SPSSFox2', 'MCC5', 'MCC7')
+#short_list_mps <- paste(short_list_mps, rep(c('b', 'c'), each=length(short_list_mps)), sep='_')
+short_list_mps <- c('CE_b',"SPSSFox_b","SPSSFox2_b","MCC5_b","MCC5_c","MCC7_b","MCC7_c")
 
 short_list_mps <- list(default=short_list_mps)
 short_list <- short_list_mps
