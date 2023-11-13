@@ -1,6 +1,7 @@
 library(SWOMSE)
 
 # setwd("C:/Users/tcarruth/Documents/GitHub/nswo-mse")
+# setwd("C:/GitHub/nswo-mse")
 
 # Source CMPs
 source_CMPs()
@@ -31,9 +32,14 @@ Test_MPs <- c('CE', 'MCC5', 'MCC7', 'SPSSFox', 'SPSSFox2')
 
 TuneTargets$Metric <- 'PGK_short'
 
+
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+TuneTargets = TuneTargets[2:3,]
 TuneTargets = rbind(TuneTargets,data.frame(Code=c("d","e"),Metric = c("PGK_med","PGK_long"),Target = c(0.60,0.60)))
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+if (!dir.exists('Tuning_Objects'))
+  dir.create('Tuning_Objects')
 
 # ---- Scoping and Tuning ----
 for (MP_name in Test_MPs) {
@@ -47,6 +53,7 @@ for (MP_name in Test_MPs) {
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # There is now a hack in here whereby the b tunings are manually (copy past in the .r files) set to the lowest tuning
 # value of the b, d, and e tuning such that PGK is at least 60% for all three time periods (annoying I know)
+# was not necessary last update with teh new index
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 # ---- Run MSE for Reference OMs -----
@@ -54,8 +61,13 @@ for (MP_name in Test_MPs) {
 source_CMPs()
 TuneTargets=TuneTargets[TuneTargets$Code %in% c("b","c"),]
 
+if (!dir.exists('MSE_Objects'))
+  dir.create('MSE_Objects')
+
 for (MP_name in Test_MPs) {
+
   MPs <- get_tune_MPs(MP_name)
+
   for (i in seq_along(Refs_OMs)) {
 
     # load hist

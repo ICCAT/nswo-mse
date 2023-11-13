@@ -1,12 +1,16 @@
 library(SWOMSE)
 
 # setwd("C:/Users/tcarruth/Documents/GitHub/nswo-mse")
+# setwd("C:/GitHub/nswo-mse")
 
 PMs <- c("AvTAC_long", "AvTAC_med",  "AvTAC_short", "LRP", "LRP_long",
          "LRP_med", "LRP_short", "nLRP", "nLRP_long", "nLRP_med",
          "nLRP_short", "PGK", "PGK_30", "PGK_long", "PGK_med", "PGK_short",
          "PNOF", "POF", "TAC1", "VarC")
 
+
+if (!dir.exists('Results'))
+  dir.create('Results')
 
 # ---- Process Results ----
 Process_MSE_Results(PMs=PMs)
