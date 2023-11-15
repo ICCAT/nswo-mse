@@ -5,7 +5,7 @@ library(SWOMSE)
 PMs <- c("AvTAC_long", "AvTAC_med",  "AvTAC_short", "LRP", "LRP_long",
          "LRP_med", "LRP_short", "nLRP", "nLRP_long", "nLRP_med",
          "nLRP_short", "PGK", "PGK_30", "PGK_long", "PGK_med", "PGK_short",
-         "PNOF", "POF", "TAC1", "VarC")
+         "PNOF", "POF", "VarC") # !!!! removed TAC1 here - dont' need the ad-hoc adjustment below if going directly from MSE output files
 
 
 # ---- Process Results ----
@@ -89,17 +89,16 @@ saveRDS(kobe_results,'inst/shiny_apps/SWOMSE/data/kobe_results.rda')
 saveRDS(VarC_results,'inst/shiny_apps/SWOMSE/data/Violin_results.rda')
 
 
-
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # Post hoc removal of TAC1 metric
-
 PM_results <- readRDS('inst/shiny_apps/SWOMSE/data/PM_results.rda')
 saveRDS(PM_results[PM_results$PM!="TAC1",],'inst/shiny_apps/SWOMSE/data/PM_results.rda')
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 
 
 # ==== Now plotting for comms docs / SCRS etc ===============================================
-
 
 
 PM_results <- readRDS('inst/shiny_apps/SWOMSE/data/PM_results.rda')
