@@ -1,6 +1,22 @@
 library(SWOMSE)
 
 #setwd("C:/SWOMSE_analyses")
+#setwd("C:/GitHub/nswo-mse")
+
+# !!!!!!!!!!!!!!!!!!!!!!!
+overwrite_combined_index = function(MOM,plot=F){ # sorry this is so messy! had basically 30 mins to do this!
+  dat = read.csv("TAC1/SWOForTom.csv")
+  mu = dat$CombinedIndex
+  se = dat$se
+  cv = se/mu
+  OMyrs = MOM@Fleets[[1]][[1]]@CurrentYr - ((MOM@Fleets[[1]][[1]]@nyears-1):0)
+  yind = OMyrs %in% dat$Year
+  datyind = dat$Year %in%OMyrs
+  if(plot){matplot(OMyrs[yind],cbind(mu[datyind],MOM@cpars$Male[[1]]$Data@Ind[1,yind]),type="l",lty=1)}
+  MOM@cpars$Male[[1]]$Data@Ind[1,yind] = MOM@cpars$Female[[1]]$Data@Ind[1,yind] = mu[datyind]
+  MOM@cpars$Male[[1]]$Data@CV_Ind[1,yind] = MOM@cpars$Female[[1]]$Data@CV_Ind[1,yind] = cv[datyind]
+  MOM
+}
 
 # ---- Reference OMs ----
 Ref_OMs <- OM_DF %>% filter(Class=='Reference')
@@ -8,9 +24,13 @@ Ref_OMs <- OM_DF %>% filter(Class=='Reference')
 if (!dir.exists('Hist_Objects'))
   dir.create('Hist_Objects')
 
+if (!dir.exists('Hist_Objects/Reference'))
+  dir.create('Hist_Objects/Reference')
+
 MOM_Objects <- Ref_OMs$OM.object
 for (i in seq_along(MOM_Objects)) {
   MOM <- get(MOM_Objects[i])
+  MOM = overwrite_combined_index(MOM) # !!!!!
   multiHist <- SimulateMOM(MOM, parallel = FALSE, silent=TRUE)
   nm <- paste0(MOM_Objects[i], '.hist')
   saveRDS(multiHist, file.path('Hist_Objects/Reference', nm))
@@ -25,6 +45,7 @@ if (!dir.exists('Hist_Objects/R1_Increasing_q'))
 
 MOM_Objects <- R1_OMs$OM.object
 MOM <- get(MOM_Objects)
+MOM = overwrite_combined_index(MOM) # !!!!!!!!!!!!!!!
 multiHist <- SimulateMOM(MOM, parallel = FALSE, silent=TRUE)
 
 # Increase indices in projections by 1% per year
@@ -137,6 +158,7 @@ R1_OMs <- OM_DF %>% filter(Class=='R1. Increasing q')
 
 MOM_Objects <- R1_OMs$OM.object
 MOM <- get(MOM_Objects)
+MOM <- overwrite_combined_index(MOM) # !!!!!!!!!!!
 multiHist <- SimulateMOM(MOM, parallel = FALSE, silent=TRUE)
 
 if (!dir.exists('Hist_Objects/R2'))
@@ -151,6 +173,7 @@ R3_OM <- OM_DF %>% filter(Class=='Reference', M==0.2, steepness==0.8)
 
 MOM_Objects <- R3_OM$OM.object
 MOM <- get(MOM_Objects)
+MOM <- overwrite_combined_index(MOM) # !!!!!!!!!!!
 multiHist <- SimulateMOM(MOM, parallel = FALSE, silent=TRUE)
 
 
