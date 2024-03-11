@@ -7,3 +7,12 @@ Shiny <- function(...) {
   appDir <- system.file("shiny_apps", 'SWOMSE', package = "SWOMSE")
   shiny::runApp(appDir, ...)
 }
+
+
+#' Run the CMP_Explore Shiny Application
+#'
+#' @export
+CMP_Explore <- function(...) {
+  appDir <- system.file("shiny_apps", 'CMP_Explore', package = "SWOMSE")
+  shiny::runApp(appDir, ...)
+}
