@@ -88,3 +88,59 @@ short_list_mps <- c('CE_b',"SPSSFox_b","SPSSFox2_b","MCC5_b","MCC5_c","MCC7_b","
 
 short_list_mps <- list(default=short_list_mps)
 short_list <- short_list_mps
+
+
+
+### CMP Project ####
+
+fls <- list.files('../../../CMPs')
+
+for (fl in fls) source(file.path('../../../CMPs', fl))
+
+
+MCC5_60 <- MCC5_b
+
+
+MCC5_70 <- MCC5_c
+
+
+MCC7_60 <- MCC7_b
+
+MCC7_70 <- MCC7_c
+
+CE_60 <- CE_c
+
+CMPs <- c('MCC5_60',
+          'MCC5_70',
+          'MCC7_60',
+          'MCC7_70',
+          'CE_60')
+
+
+Data <- SWOMSE::SWOData
+
+data <- data.frame(Year=Data@Year,
+                   Catch=Data@Cat[1,],
+                   Index=Data@Ind[1,],
+                   Type='Reported',
+                   Period='Historical')
+
+
+## add extra years
+data <- rbind(data,
+              data.frame(Year=2021:2023,
+                         Catch=Catchdf$Catch,
+                         Index=NA,
+                         Type=c('Reported', 'Assumed', 'Assumed'),
+                         Period='Historical'
+              ))
+
+# update index
+dat = read.csv("../../../TAC1/SWOForTom.csv")
+
+data$Index[data$Year %in% dat$Year] <- dat$CombinedIndex
+data$Index[data$Year ==2023] <-data$Index[data$Year ==2022]
+
+# data <- data %>% dplyr::filter(is.na(Index) ==FALSE)
+
+

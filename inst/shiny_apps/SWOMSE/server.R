@@ -97,6 +97,7 @@ server <- function(input, output, session) {
   QuiltPlot_Server('QuiltPlot',results)
   Violin_Server('Violin',results)
   add_analyses_Server('add_analyses',results)
+  cmp_project_server('cmp_project_1')
 
 }
 

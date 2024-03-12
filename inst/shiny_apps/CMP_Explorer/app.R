@@ -1,61 +1,13 @@
-library(shiny)
-library(ggplot2)
-
-fls <- list.files('CMPs')
-for (fl in fls) source(file.path('CMPs', fl))
-
-MCC5_60 <- MCC5_b
 
 
-MCC5_70 <- MCC5_c
-
-
-MCC7_60 <- MCC7_b
-
-MCC7_70 <- MCC7_c
-
-CE_60 <- CE_c
-
-CMPs <- c('MCC5_60',
-          'MCC5_70',
-          'MCC7_60',
-          'MCC7_70',
-          'CE_60')
-
-
-Data <- SWOMSE::SWOData
-
-data <- data.frame(Year=Data@Year,
-                   Catch=Data@Cat[1,],
-                   Index=Data@Ind[1,],
-                   Type='Reported')
-
-## add extra years
-data <- rbind(data,
-              data.frame(Year=2021:2023,
-                         Catch=Catchdf$Catch,
-                         Index=NA,
-                         Type=c('Reported', 'Assumed', 'Assumed')
-              ))
-
-# update index
-dat = read.csv("../../../TAC1/SWOForTom.csv")
-
-data$Index[data$Year %in% dat$Year] <- dat$CombinedIndex
-
-
-p1 <- ggplot(data, aes(x=Year, y=Index)) +
-  expand_limits(y=0) +
-  geom_line() +
-  theme_bw()
-
-p2 <- ggplot(data, aes(x=Year, y=Catch)) +
-  expand_limits(y=0) +
-  geom_line() +
-  theme_bw()
-
-
-
+#
+# thisData <- new('Data')
+# thisData@Year <- data$Year
+# thisData@Cat <- matrix(data$Catch, nrow=1)
+# thisData@Ind <- matrix(data$Index, nrow=1)
+#
+# mp <- get(CMPs[3])
+# mp(1, thisData)
 
 
 # Define UI for application that draws a histogram
@@ -71,44 +23,106 @@ ui <- fluidPage(
                                     choices=CMPs,
                                     selected=CMPs),
           fluidRow(
-            column(6,                   )
+            column(6, sliderInput('IndTrend', 'Index Annual Change (%)', value=0, min=-5, max=5, step=0.5)),
+            # column(6, numericInput('pyears', 'N projection years', 10, 2, 20, step=1))
+            column(6, sliderInput('histyears', 'Historical Years', value=min(data$Year),
+                                  min=min(data$Year), max=max(data$Year), step=1, sep=''))
           ),
-
-
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
-        ),
-
-        # Show a plot of the generated distribution
-        mainPanel(
-          tabsetPanel(
-            tabPanel('Index Scenarios',
-                         plotOutput("distPlot")
-                         ),
-            tabPanel('Historical Data',
-                         plotOutput("distPlot1"))
+          uiOutput('index_trend_by_year'),
+          fluidRow(
+            column(6, sliderInput('interval', 'Interval', 1, 5, 2, step=1)),
+            column(6, sliderInput('lag', 'Data Lag', 1, 5, 2, step=1))
           )
-
+        ),
+        mainPanel(
+          fluidRow(
+            column(6, plotOutput('plot_index')),
+            column(6, plotOutput('plot_data2'))
+          )
         )
     )
 )
 
-# Define server logic required to draw a histogram
 server <- function(input, output) {
 
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
+  Data <- reactiveValues(Year=data$Year,
+                         Index=data$Index,
+                         Catch=data$Catch,
+                         Period=data$Period)
 
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white',
-             xlab = 'Waiting time to next eruption (in mins)',
-             main = 'Histogram of waiting times')
-    })
+
+
+  set_pyears <- reactive(10)
+  output$index_trend_by_year <- renderUI({
+    pyears <- set_pyears() # input$pyears
+    bsCollapse(
+      bsCollapsePanel('Modify Index by Year',
+                      lapply(1:pyears, function(i) {
+                        column(width=4,
+                               numericInput(inputId = paste0("ind", i), label = paste("Year", i),
+                                            min = 0.5, max = 2, value = 1, step = 0.1)
+                        )
+
+                      })
+      )
+    )
+  })
+
+  get_yr_vals <- reactive({
+    pyears <- set_pyears()
+    get_vals <- rep(NA, pyears)
+    ids <- paste0('ind', 1:pyears)
+    for (i in 1:pyears) {
+      req(input[[ids[i]]])
+      get_vals[i] <- input[[ids[i]]]
+    }
+    get_vals
+  })
+
+  update_index_data <- reactive({
+    pyears <- set_pyears()
+    lastInd <- data$Index[length(data$Index)]
+    p_index <- lastInd*((1+input$IndTrend/100)^(1:pyears))
+    year_mods <- get_yr_vals()
+    p_index <- p_index * year_mods
+
+    new_years <- seq(from=max(data$Year)+1, by=1, length.out=pyears)
+    Data$Year <- c(data$Year, new_years)
+    Data$Index <- c(data$Index, p_index)
+    Data$Period <- c(data$Period, rep('Projection', pyears))
+
+  })
+
+  plot_index <- function() {
+    mydf <- data.frame(Year=Data$Year,
+                     Index=Data$Index,
+                     Period=Data$Period)
+    sub <- mydf %>% dplyr::filter(Period=='Historical') %>%
+      filter(Year==max(Year))
+    sub$Period <- 'Projection'
+    mydf <- dplyr::bind_rows(mydf, sub) %>% dplyr::arrange(Year) %>%
+      dplyr::filter(Year>=as.numeric(input$histyears))
+
+
+    ggplot(mydf, aes(x=Year, y=Index, color=Period)) +
+      geom_line() +
+      expand_limits(y=c(0, 3)) +
+      theme_bw() +
+      theme(legend.position = 'bottom',
+            )
+
+
+  }
+  output$plot_index <- renderPlot({
+    update_index_data()
+    plot_index()
+      # par(mfrow=c(2,1))
+      # plot(Data$Year, Data$Index, type='l', ylim=c(0, max(Data$Index)), xlab='Year', ylab='Index',
+      #      xaxs='i', yaxs='i', bty='l')
+      # # plot(Data$Year, Data$Catch, type='l')
+
+  })
+
 }
 
 # Run the application
