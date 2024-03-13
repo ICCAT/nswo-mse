@@ -94,6 +94,7 @@ short_list <- short_list_mps
 ### CMP Project ####
 
 fls <- list.files('../../../CMPs')
+print(fls)
 
 for (fl in fls) source(file.path('../../../CMPs', fl))
 
