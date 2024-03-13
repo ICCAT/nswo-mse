@@ -93,10 +93,10 @@ short_list <- short_list_mps
 
 ### CMP Project ####
 
-fls <- list.files('../../../CMPs')
-print(fls)
+fls <- list.files('./CMPs')
 
-for (fl in fls) source(file.path('../../../CMPs', fl))
+
+for (fl in fls) source(file.path('./CMPs', fl))
 
 
 MCC5_60 <- MCC5_b
@@ -137,7 +137,7 @@ data <- rbind(data,
               ))
 
 # update index
-dat = read.csv("../../../TAC1/SWOForTom.csv")
+dat = read.csv("SWOForTom.csv")
 
 data$Index[data$Year %in% dat$Year] <- dat$CombinedIndex
 data$Index[data$Year ==2023] <-data$Index[data$Year ==2022]
