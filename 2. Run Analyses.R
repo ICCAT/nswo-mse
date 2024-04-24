@@ -35,7 +35,9 @@ TuneTargets$Metric <- 'PGK_short'
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 TuneTargets = TuneTargets[2:3,]
-TuneTargets = rbind(TuneTargets,data.frame(Code=c("d","e"),Metric = c("PGK_med","PGK_long"),Target = c(0.60,0.60)))
+TuneTargets = rbind(TuneTargets,data.frame(Code=c("d","e"),
+                                           Metric = c("PGK_med","PGK_long"),
+                                           Target = c(0.60,0.60)))
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 if (!dir.exists('Tuning_Objects'))
@@ -51,8 +53,10 @@ for (MP_name in Test_MPs) {
 }
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# There is now a hack in here whereby the b tunings are manually (copy past in the .r files) set to the lowest tuning
-# value of the b, d, and e tuning such that PGK is at least 60% for all three time periods (annoying I know)
+# There is now a hack in here whereby the b tunings are manually
+# (copy past in the .r files) set to the lowest tuning
+# value of the b, d, and e tuning such that PGK is at least 60% for all
+# three time periods (annoying I know)
 # was not necessary last update with teh new index
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
