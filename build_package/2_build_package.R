@@ -1,7 +1,7 @@
 # Import OMs and Data and add to SWOMSE package
 
 nsim <- 50 # number of simulations per OM
-proyears <- 33 # number of projection years
+proyears <- 34 # number of projection years
 
 OM.root <- 'G:/My Drive/1_Projects/North_Atlantic_Swordfish/OMs'
 OMgrid.dir <- file.path(OM.root,'grid_2022')
@@ -198,7 +198,7 @@ importOM <- function(i, nsim, proyears, OM_DF, SWOData) {
   # name the dimensions
   dimnames(Data@AddInd)[[1]] <- 1
   dimnames(Data@AddInd)[[2]] <- Fleet_DF$Code
-  dimnames(Data@AddInd)[[3]] <- SWOData@Year
+  dimnames(Data@AddInd)[[3]] <- SWOData@Year[1:nyears]
 
   # Calculate vulnerability schedules for fleet-specific indices
   nstock <- 2
@@ -446,12 +446,13 @@ usethis::use_data(OM_desc, overwrite = TRUE)
 # ---- Catches for Initial Projection Years ----
 
 catchdf <- data.frame(Year=SWOData@Year, Catch=SWOData@Cat[1,])
-catchdf <- bind_rows(catchdf, data.frame(Year=2021, Catch=9729))
 mean_catch <- catchdf %>% tail(10) %>% summarise(mean=round(mean(Catch),0))
 
-Catchdf <- data.frame(Year=c(2021, 2022, 2023),
-                 Catch=c(9729, mean_catch$mean, mean_catch$mean),
+catchdf <- catchdf |> dplyr::filter(Year%in% 2021:2022)
+Catchdf <- data.frame(Year=c(2021, 2022, 2023, 2024),
+                 Catch=c(catchdf$Catch, mean_catch$mean, mean_catch$mean),
                  Details=c('Reported Catch',
+                           'Reported Catch',
                            'Assumed Catch',
                            'Assumed Catch'))
 
@@ -461,7 +462,7 @@ usethis::use_data(Catchdf, overwrite = TRUE)
 load('data/MOM_000.rda')
 
 SWOData <- MOM_000@cpars[[1]][[1]]$Data
-SWOData@MPrec <- Catchdf$Catch[3]
+SWOData@MPrec <- Catchdf$Catch[2]
 
 usethis::use_data(SWOData, overwrite = TRUE)
 
@@ -486,7 +487,7 @@ Index_Code <- data.frame(Code=c('Comb', ind_names2),
 usethis::use_data(Index_Code, overwrite = TRUE)
 
 
-Initial_MP_Yr <- 2024
+Initial_MP_Yr <- 2025
 usethis::use_data(Initial_MP_Yr, overwrite = TRUE)
 
 

@@ -13,7 +13,7 @@
 #' @param ... Additional arguments (unused)
 #'
 #' @return An object of class `Rec` with the `TAC` slot populated
-SPS <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, ...) {
+SPS <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, ...) {
 
   Rec <- new('Rec')
 

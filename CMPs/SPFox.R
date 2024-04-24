@@ -1,6 +1,6 @@
 
 #' @describeIn SP Same as SP, but uses the Fox production model
-SPFox <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
+SPFox <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=NA, ...) {
 
   Rec <- new('Rec')
 

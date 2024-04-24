@@ -16,7 +16,7 @@
 #' @return An object of class `Rec` with the `TAC` slot populated
 #'
 
-MCC2 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
+MCC2 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=NA, ...) {
   Rec <- new('Rec')
 
   # Does TAC need to be updated? (or set a fixed catch if before Initial_MP_Yr)
@@ -66,7 +66,7 @@ MCC2 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
 
 
 
-MCC3 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
+MCC3 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=NA, ...) {
   Rec <- new('Rec')
 
   # Does TAC need to be updated? (or set a fixed catch if before Initial_MP_Yr)
@@ -118,7 +118,7 @@ MCC3 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
 
 
 
-MCC4 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
+MCC4 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=NA, ...) {
   Rec <- new('Rec')
 
   # Does TAC need to be updated? (or set a fixed catch if before Initial_MP_Yr)
@@ -178,7 +178,7 @@ MCC4 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
 
 
 
-MCC5 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
+MCC5 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=NA, ...) {
   Rec <- new('Rec')
 
   # Does TAC need to be updated? (or set a fixed catch if before Initial_MP_Yr)
@@ -237,7 +237,7 @@ MCC5 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
 }
 
 
-MCC6 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
+MCC6 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=NA, ...) {
   Rec <- new('Rec')
 
   # Does TAC need to be updated? (or set a fixed catch if before Initial_MP_Yr)
@@ -297,7 +297,7 @@ MCC6 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
 
 
 
-MCC7 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
+MCC7 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=NA, ...) {
   Rec <- new('Rec')
 
   # Does TAC need to be updated? (or set a fixed catch if before Initial_MP_Yr)
@@ -367,7 +367,7 @@ MCC7 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
   Rec
 }
 
-GSC2 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
+GSC2 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=NA, ...) {
   Rec <- new('Rec')
 
   # Does TAC need to be updated? (or set a fixed catch if before Initial_MP_Yr)

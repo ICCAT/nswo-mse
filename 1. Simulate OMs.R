@@ -1,22 +1,6 @@
 library(SWOMSE)
 
-#setwd("C:/SWOMSE_analyses")
-#setwd("C:/GitHub/nswo-mse")
 
-# !!!!!!!!!!!!!!!!!!!!!!!
-overwrite_combined_index = function(MOM,plot=F){ # sorry this is so messy! had basically 30 mins to do this!
-  dat = read.csv("TAC1/SWOForTom.csv")
-  mu = dat$CombinedIndex
-  se = dat$se
-  cv = se/mu
-  OMyrs = MOM@Fleets[[1]][[1]]@CurrentYr - ((MOM@Fleets[[1]][[1]]@nyears-1):0)
-  yind = OMyrs %in% dat$Year
-  datyind = dat$Year %in%OMyrs
-  if(plot){matplot(OMyrs[yind],cbind(mu[datyind],MOM@cpars$Male[[1]]$Data@Ind[1,yind]),type="l",lty=1)}
-  MOM@cpars$Male[[1]]$Data@Ind[1,yind] = MOM@cpars$Female[[1]]$Data@Ind[1,yind] = mu[datyind]
-  MOM@cpars$Male[[1]]$Data@CV_Ind[1,yind] = MOM@cpars$Female[[1]]$Data@CV_Ind[1,yind] = cv[datyind]
-  MOM
-}
 
 # ---- Reference OMs ----
 Ref_OMs <- OM_DF %>% filter(Class=='Reference')
@@ -28,10 +12,11 @@ if (!dir.exists('Hist_Objects/Reference'))
   dir.create('Hist_Objects/Reference')
 
 MOM_Objects <- Ref_OMs$OM.object
+
 for (i in seq_along(MOM_Objects)) {
   MOM <- get(MOM_Objects[i])
-  MOM = overwrite_combined_index(MOM) # !!!!!
   multiHist <- SimulateMOM(MOM, parallel = FALSE, silent=TRUE)
+
   nm <- paste0(MOM_Objects[i], '.hist')
   saveRDS(multiHist, file.path('Hist_Objects/Reference', nm))
 }
@@ -45,19 +30,20 @@ if (!dir.exists('Hist_Objects/R1_Increasing_q'))
 
 MOM_Objects <- R1_OMs$OM.object
 MOM <- get(MOM_Objects)
-MOM = overwrite_combined_index(MOM) # !!!!!!!!!!!!!!!
 multiHist <- SimulateMOM(MOM, parallel = FALSE, silent=TRUE)
 
 # Increase indices in projections by 1% per year
 increase_mat <- t(matrix(1.01^(0:(MOM@proyears-1)), nrow=MOM@proyears, ncol=50, byrow=F))
 
 # Combined Index
-multiHist$Female$`Fleet 1`@SampPars$Obs$Ierr_y[,72:104] <- multiHist$Female$`Fleet 1`@SampPars$Obs$Ierr_y[,72:104] * increase_mat
+dd <- dim(multiHist$Female$`Fleet 1`@SampPars$Obs$Ierr_y)
+yr_ind <- (MOM@Fleets[[1]][[1]]@nyears+1):dd[2]
+multiHist$Female$`Fleet 1`@SampPars$Obs$Ierr_y[,yr_ind] <- multiHist$Female$`Fleet 1`@SampPars$Obs$Ierr_y[,yr_ind] * increase_mat
 
 # Individual Indices
 increase_mat2 <- replicate(7,increase_mat)
 increase_mat2 <- aperm(increase_mat2, c(1,3,2))
-multiHist$Female$`Fleet 1`@SampPars$Obs$AddIerr[,, 72:104] <- multiHist$Female$`Fleet 1`@SampPars$Obs$AddIerr[,, 72:104] *increase_mat2
+multiHist$Female$`Fleet 1`@SampPars$Obs$AddIerr[,, yr_ind] <- multiHist$Female$`Fleet 1`@SampPars$Obs$AddIerr[,, yr_ind] *increase_mat2
 
 nm <- paste0(MOM_Objects, '.hist')
 saveRDS(multiHist, file.path('Hist_Objects/R1_Increasing_q', nm))
@@ -158,7 +144,6 @@ R1_OMs <- OM_DF %>% filter(Class=='R1. Increasing q')
 
 MOM_Objects <- R1_OMs$OM.object
 MOM <- get(MOM_Objects)
-MOM <- overwrite_combined_index(MOM) # !!!!!!!!!!!
 multiHist <- SimulateMOM(MOM, parallel = FALSE, silent=TRUE)
 
 if (!dir.exists('Hist_Objects/R2'))
@@ -173,7 +158,6 @@ R3_OM <- OM_DF %>% filter(Class=='Reference', M==0.2, steepness==0.8)
 
 MOM_Objects <- R3_OM$OM.object
 MOM <- get(MOM_Objects)
-MOM <- overwrite_combined_index(MOM) # !!!!!!!!!!!
 multiHist <- SimulateMOM(MOM, parallel = FALSE, silent=TRUE)
 
 
@@ -228,17 +212,17 @@ saveRDS(multiHist_R3b, file.path('Hist_Objects/R3b', 'MOM_005.hist'))
 
 
 df1 <-data.frame(Sim=1:MOM@nsim,
-                 Year=rep(2021:2053, each=MOM@nsim),
+                 Year=rep(2021:2054, each=MOM@nsim),
                  Rec_Dev=as.vector(devs),
                  Model='Reference')
 
 df2 <-data.frame(Sim=1:MOM@nsim,
-                 Year=rep(2021:2053, each=MOM@nsim),
+                 Year=rep(2021:2054, each=MOM@nsim),
                  Rec_Dev=as.vector(new_devs_R3a),
                  Model='R3a')
 
 df3 <-data.frame(Sim=1:MOM@nsim,
-                 Year=rep(2021:2053, each=MOM@nsim),
+                 Year=rep(2021:2054, each=MOM@nsim),
                  Rec_Dev=as.vector(new_devs_R3b),
                  Model='R3b')
 

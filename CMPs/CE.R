@@ -16,7 +16,7 @@
 #'
 #' @return An object of class `Rec` with the `TAC` slot populated
 #'
-CE <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25,
+CE <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
                yrs=c(5,3), ...) {
   Rec <- new('Rec')
 
@@ -72,7 +72,7 @@ CE <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25,
 }
 
 
-CE2 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25,
+CE2 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
                yrs=c(5,3), ...) {
   Rec <- new('Rec')
 

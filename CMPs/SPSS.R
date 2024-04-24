@@ -1,5 +1,5 @@
 
-SPSS <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25, ...) {
+SPSS <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25, ...) {
 
   Rec <- new('Rec')
 
@@ -98,7 +98,7 @@ class(SPSS) <- 'MP'
 # }
 # class(SPSS2) <- 'MP'
 
-SPSSFox <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25, ...) {
+SPSSFox <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25, ...) {
 
   Rec <- new('Rec')
 
@@ -149,7 +149,7 @@ class(SPSSFox) <- 'MP'
 
 
 
-SPSSFox2 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25, ...) {
+SPSSFox2 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25, ...) {
 
   Rec <- new('Rec')
 
