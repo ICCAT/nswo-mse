@@ -129,18 +129,18 @@ data <- data.frame(Year=Data@Year,
 
 ## add extra years
 data <- rbind(data,
-              data.frame(Year=2021:2023,
+              data.frame(Year=Catchdf$Year,
                          Catch=Catchdf$Catch,
                          Index=NA,
-                         Type=c('Reported', 'Assumed', 'Assumed'),
+                         Type=Catchdf$Details,
                          Period='Historical'
               ))
 
 # update index
-dat = read.csv("SWOForTom.csv")
-
-data$Index[data$Year %in% dat$Year] <- dat$CombinedIndex
-data$Index[data$Year ==2023] <-data$Index[data$Year ==2022]
+# dat = read.csv("SWOForTom.csv")
+#
+# data$Index[data$Year %in% dat$Year] <- dat$CombinedIndex
+# data$Index[data$Year ==2023] <-data$Index[data$Year ==2022]
 
 # data <- data %>% dplyr::filter(is.na(Index) ==FALSE)
 

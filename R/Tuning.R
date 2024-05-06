@@ -104,7 +104,8 @@ Scope <- function(MP_name, Tuning_OMs,
 
   runTuning_8 <- function(om, Tuning_OMs) {
     MOM <- get(Tuning_OMs[om])
-    multiHist <- SimulateMOM(MOM, silent=T, parallel=FALSE)
+    # multiHist <- SimulateMOM(MOM, silent=T, parallel=FALSE)
+    multiHist <- readRDS(file.path(Hist_dir, histFiles[om]))
     ProjectMOM(multiHist, MPs=c("MP1","MP2","MP3", 'MP4', 'MP5', 'MP6', 'MP7', 'MP8'),
                silent=TRUE,parallel = FALSE, checkMPs=FALSE)
 
@@ -322,15 +323,18 @@ Tune <- function(MP_name, Tuning_OMs, TuneTarget,
     if(file.exists(file.path(Tune_dir, paste0(MP_name, '.tune')))) {
       tune_obj <- readRDS(file.path(Tune_dir, paste0(MP_name, '.tune')))
       tune_obj$Name <- tune_obj$PM
-      tune_obj <- tune_obj %>% filter(PM==PMmetric)
+      tune_obj <- tune_obj %>% filter(PM==TuneTarget$Metric)
 
       scopedf <- data.frame(test_vals=test_vals, test_vals2=round(test_vals,2), PM_vals=PM_vals, type='Scope')
-      tunedf <- data.frame(test_vals=tune_obj$test_vals, test_vals2=round(tune_obj$test_vals,2), PM_vals=tune_obj$Value, type='Tune')
+      tunedf <- data.frame(test_vals=tune_obj$test_vals,
+                           test_vals2=round(tune_obj$test_vals,2),
+                           PM_vals=tune_obj$Value, type='Tune')
 
       ii <- which(scopedf$test_vals2 %in% tunedf$test_vals2)
       if (length(ii)>0) {
         scopedf <-scopedf[-ii,]
       }
+
       temp_df <- bind_rows(scopedf, tunedf)
       test_vals <- temp_df$test_vals
       PM_vals <- temp_df$PM_vals
@@ -346,6 +350,8 @@ Tune <- function(MP_name, Tuning_OMs, TuneTarget,
   } else {
     trial <- test_vals
   }
+
+  # temp_df |> dplyr::filter(PM_vals<0.65, PM_vals>0.55)
 
   MSEtool:::message('\nTuning', MP_name, 'across', n.OM, 'OM(s):', paste0(Tuning_OMs, collapse=', '))
   MSEtool:::message('Tuning for', PMmetric, '=', Target)

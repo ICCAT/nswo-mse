@@ -57,16 +57,22 @@ source_CMPs <- function(CMPdir='CMPs') {
 #' @return
 #' @export
 #'
-Tune_MP <- function(MP_name, Tuning_OMs,
+Tune_MP <- function(MP_name,
+                    Tuning_OMs,
+                    TuneTargets,
                     Hist_dir = "Hist_Objects/Reference",
                     Tune_dir = "Tuning_Objects",
                     test_vals = NULL,
-                    parallel = TRUE) {
+                    parallel = TRUE,
+                    skip_scope=NULL) {
 
   # Scope
-  tt <- try(Scope(MP_name, Tuning_OMs, test_vals=test_vals))
+  if (!MP_name %in% skip_scope) {
+    tt <- try(Scope(MP_name, Tuning_OMs, test_vals=test_vals))
+    try(Plot_Scope(MP_name))
+  }
 
-  try(Plot_Scope(MP_name))
+
 
   # Tune
   for (i in 1:nrow(TuneTargets)) {

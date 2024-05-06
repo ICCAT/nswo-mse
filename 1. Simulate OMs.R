@@ -160,15 +160,15 @@ MOM_Objects <- R3_OM$OM.object
 MOM <- get(MOM_Objects)
 multiHist <- SimulateMOM(MOM, parallel = FALSE, silent=TRUE)
 
-
 series <- read.csv('inst/R3_series.csv') # series <- read.csv('C:/Users/tcarruth/Documents/GitHub/nswo-mse/inst/R3_series.csv')
+
 
 inflate <- 2
 
 R3a <- c(exp(series$R3a * inflate),1)
 R3b <- c(exp(series$R3b * inflate),1)
 
-rec_devs <- data.frame(Year=2021:2053, R0=1, R3a=R3a, R3b=R3b) %>%
+rec_devs <- data.frame(Year=2021:2054, R0=1, R3a=R3a, R3b=R3b) %>%
   tidyr::pivot_longer(., cols=c(R0, R3a, R3b))
 rec_devs$name <- factor(rec_devs$name, levels=c('R0', 'R3a', 'R3b'), ordered = TRUE)
 

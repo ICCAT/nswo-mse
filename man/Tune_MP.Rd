@@ -7,10 +7,12 @@
 Tune_MP(
   MP_name,
   Tuning_OMs,
+  TuneTargets,
   Hist_dir = "Hist_Objects/Reference",
   Tune_dir = "Tuning_Objects",
   test_vals = NULL,
-  parallel = TRUE
+  parallel = TRUE,
+  skip_scope = NULL
 )
 }
 \arguments{

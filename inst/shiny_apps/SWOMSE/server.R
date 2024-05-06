@@ -5,7 +5,6 @@ server <- function(input, output, session) {
   useShinyjs()
 
 
-
   results <- reactiveValues(PM_results=PM_results,
                             LRP_value=0.15,
                             LRP_models='Reference Only',
@@ -97,7 +96,7 @@ server <- function(input, output, session) {
   QuiltPlot_Server('QuiltPlot',results)
   Violin_Server('Violin',results)
   add_analyses_Server('add_analyses',results)
-  cmp_project_server('cmp_project_1')
+  # cmp_project_server('cmp_project_1')
 
 }
 

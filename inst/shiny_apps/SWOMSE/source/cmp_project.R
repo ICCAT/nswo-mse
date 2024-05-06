@@ -143,7 +143,7 @@ cmp_project_server <- function(id) {
                    pyears <<- set_pyears()
                    CMPs <<- input$cmps
                    nCMPs <<- length(CMPs)
-                   hist_years <- SWOData@Year
+                   hist_years <- 1950:2024 # SWOData@Year
                    new_years <- seq(from=max(hist_years)+1, by=1, length.out=pyears+2)
                    all_years <<- c(hist_years, new_years)
                    # TTT <<- Index_Data$Year
@@ -154,9 +154,9 @@ cmp_project_server <- function(id) {
                               Index=NA)
 
                    hist_catches <- c(SWOData@Cat[1,] ,Catchdf$Catch)
-                   catches <- c(hist_catches, rep(NA, pyears-1))
+                   catches <- c(hist_catches, rep(NA, pyears))
                    df <- df %>% dplyr::mutate(TAC=rep(catches, nCMPs),
-                                              Period=ifelse(Year%in%1950:2023, 'Historical', 'Projection'))
+                                              Period=ifelse(Year%in%1950:2024, 'Historical', 'Projection'))
                    df
                  })
 

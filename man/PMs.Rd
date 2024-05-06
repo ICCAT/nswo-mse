@@ -27,51 +27,51 @@
 \alias{VarC}
 \title{Swordfish Performance Metrics functions}
 \usage{
-PGK_short(MMSEobj = NULL, Ref = 1, Yrs = c(4, 13))
+PGK_short(MMSEobj = NULL, Ref = 1, Yrs = c(5, 14))
 
-PGK_med(MMSEobj = NULL, Ref = 1, Yrs = c(14, 23))
+PGK_med(MMSEobj = NULL, Ref = 1, Yrs = c(15, 24))
 
-PGK_long(MMSEobj = NULL, Ref = 1, Yrs = c(24, 33))
+PGK_long(MMSEobj = NULL, Ref = 1, Yrs = c(25, 34))
 
-PGK(MMSEobj = NULL, Ref = 1, Yrs = c(4, 33))
+PGK(MMSEobj = NULL, Ref = 1, Yrs = c(5, 34))
 
-PGK_30(MMSEobj = NULL, Ref = 1, Yrs = c(33, 33))
+PGK_30(MMSEobj = NULL, Ref = 1, Yrs = c(34, 34))
 
-POF(MMSEobj = NULL, Ref = 1, Yrs = c(4, 33))
+POF(MMSEobj = NULL, Ref = 1, Yrs = c(5, 34))
 
-PNOF(MMSEobj = NULL, Ref = 1, Yrs = c(4, 33))
+PNOF(MMSEobj = NULL, Ref = 1, Yrs = c(5, 34))
 
-LRP_short(MMSEobj = NULL, Ref = 0.4, Yrs = c(4, 13))
+LRP_short(MMSEobj = NULL, Ref = 0.4, Yrs = c(5, 14))
 
-nLRP_short(MMSEobj = NULL, Ref = 0.4, Yrs = c(4, 13))
+nLRP_short(MMSEobj = NULL, Ref = 0.4, Yrs = c(5, 14))
 
-LRP_med(MMSEobj = NULL, Ref = 0.4, Yrs = c(14, 23))
+LRP_med(MMSEobj = NULL, Ref = 0.4, Yrs = c(15, 24))
 
-nLRP_med(MMSEobj = NULL, Ref = 0.4, Yrs = c(14, 23))
+nLRP_med(MMSEobj = NULL, Ref = 0.4, Yrs = c(15, 24))
 
-LRP_long(MMSEobj = NULL, Ref = 0.4, Yrs = c(24, 33))
+LRP_long(MMSEobj = NULL, Ref = 0.4, Yrs = c(25, 34))
 
-nLRP_long(MMSEobj = NULL, Ref = 0.4, Yrs = c(24, 33))
+nLRP_long(MMSEobj = NULL, Ref = 0.4, Yrs = c(25, 34))
 
-LRP(MMSEobj = NULL, Ref = 0.4, Yrs = c(4, 33))
+LRP(MMSEobj = NULL, Ref = 0.4, Yrs = c(5, 34))
 
-nLRP(MMSEobj = NULL, Ref = 0.4, Yrs = c(4, 33))
+nLRP(MMSEobj = NULL, Ref = 0.4, Yrs = c(5, 34))
 
-TAC1(MMSEobj = NULL, Ref = 1, Yrs = c(4, 4))
+TAC1(MMSEobj = NULL, Ref = 1, Yrs = c(5, 5))
 
-AvTAC_short(MMSEobj = NULL, Ref = NULL, Yrs = c(4, 13))
+AvTAC_short(MMSEobj = NULL, Ref = NULL, Yrs = c(5, 14))
 
-rAvTAC_short(MMSEobj = NULL, Ref = NULL, Yrs = c(4, 13))
+rAvTAC_short(MMSEobj = NULL, Ref = NULL, Yrs = c(5, 14))
 
-AvTAC_med(MMSEobj = NULL, Ref = 1, Yrs = c(14, 23))
+AvTAC_med(MMSEobj = NULL, Ref = 1, Yrs = c(15, 24))
 
-rAvTAC_med(MMSEobj = NULL, Ref = 1, Yrs = c(14, 23))
+rAvTAC_med(MMSEobj = NULL, Ref = 1, Yrs = c(15, 24))
 
-AvTAC_long(MMSEobj = NULL, Ref = 1, Yrs = c(24, 33))
+AvTAC_long(MMSEobj = NULL, Ref = 1, Yrs = c(25, 34))
 
-rAvTAC_long(MMSEobj = NULL, Ref = 1, Yrs = c(24, 33))
+rAvTAC_long(MMSEobj = NULL, Ref = 1, Yrs = c(25, 34))
 
-VarC(MMSEobj = NULL, Ref = 1, Yrs = c(4, 33))
+VarC(MMSEobj = NULL, Ref = 1, Yrs = c(5, 34))
 }
 \arguments{
 \item{MMSEobj}{An object of class `MMSE`}
@@ -88,49 +88,49 @@ Swordfish Performance Metrics functions
 }
 \section{Functions}{
 \itemize{
-\item \code{PGK_short()}: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 1-10 (2024-2033)
+\item \code{PGK_short()}: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 1-10 (2025-2034)
 
-\item \code{PGK_med()}: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 11-20 (2034-2043)
+\item \code{PGK_med()}: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 11-20 (2035-2044)
 
-\item \code{PGK_long()}: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 21-30 (2044-2053)
+\item \code{PGK_long()}: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 21-30 (2045-2054)
 
-\item \code{PGK()}: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) over all years (2024-2053)
+\item \code{PGK()}: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) over all years (2025-2054)
 
-\item \code{PGK_30()}: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Year 30 (2053)
+\item \code{PGK_30()}: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Year 30 (2054)
 
-\item \code{POF()}: Probability of Overfishing (F>FMSY) over all years (2024-2053)
+\item \code{POF()}: Probability of Overfishing (F>FMSY) over all years (2025-2054)
 
-\item \code{PNOF()}: Probability of Not Overfishing (F<FMSY) over all years (2024-2053)
+\item \code{PNOF()}: Probability of Not Overfishing (F<FMSY) over all years (2025-2054)
 
-\item \code{LRP_short()}: Probability of breaching the limit reference point (SSB<0.4SSB_MSY) in any of the first 10 years (2024-2033)
+\item \code{LRP_short()}: Probability of breaching the limit reference point (SSB<0.4SSB_MSY) in any of the first 10 years (2025-2034)
 
-\item \code{nLRP_short()}: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any of the first 10 years (2024-2033)
+\item \code{nLRP_short()}: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any of the first 10 years (2025-2034)
 
-\item \code{LRP_med()}: Probability of breaching the limit reference point (SSB<0.4SSB_MSY) in any of years 11-20 (2034-2043)
+\item \code{LRP_med()}: Probability of breaching the limit reference point (SSB<0.4SSB_MSY) in any of years 11-20 (2035-2043)
 
-\item \code{nLRP_med()}: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any of years 11-20 (2034-2043)
+\item \code{nLRP_med()}: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any of years 11-20 (2035-2044)
 
-\item \code{LRP_long()}: Probability of breaching the limit reference point (SSB<0.4SSB_MSY) in any of years 21-30 (2044-2053)
+\item \code{LRP_long()}: Probability of breaching the limit reference point (SSB<0.4SSB_MSY) in any of years 21-30 (2045-2054)
 
-\item \code{nLRP_long()}: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any of years 21-30 (2044-2053)
+\item \code{nLRP_long()}: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any of years 21-30 (2045-2054)
 
-\item \code{LRP()}: Probability of breaching the limit reference point (SSB<0.4SSB_MSY) in any year (2024-2053)
+\item \code{LRP()}: Probability of breaching the limit reference point (SSB<0.4SSB_MSY) in any year (2025-2054)
 
-\item \code{nLRP()}: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any year (2024-2053)
+\item \code{nLRP()}: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any year (2025-2054)
 
-\item \code{TAC1()}: TAC in the First Implementation Year (2024)
+\item \code{TAC1()}: TAC in the First Implementation Year (2025)
 
-\item \code{AvTAC_short()}: Median TAC (t) over years 1-10 (2024-2033)
+\item \code{AvTAC_short()}: Median TAC (t) over years 1-10 (2025-2034)
 
-\item \code{rAvTAC_short()}: Median TAC relative to MSY over years 1-10 (2024-2033)
+\item \code{rAvTAC_short()}: Median TAC relative to MSY over years 1-10 (2025-2034)
 
-\item \code{AvTAC_med()}: Median TAC (t) over years 11-20 (2034-2043)
+\item \code{AvTAC_med()}: Median TAC (t) over years 11-20 (2035-2044)
 
-\item \code{rAvTAC_med()}: Median TAC relative to MSY over years 11-20 (2034-2043)
+\item \code{rAvTAC_med()}: Median TAC relative to MSY over years 11-20 (2035-2044)
 
-\item \code{AvTAC_long()}: Median TAC (t) over years 21-30 (2034-2053)
+\item \code{AvTAC_long()}: Median TAC (t) over years 21-30 (2045-2054)
 
-\item \code{rAvTAC_long()}: Median TAC relative to MSY over years 21-30 (2034-2053)
+\item \code{rAvTAC_long()}: Median TAC relative to MSY over years 21-30 (2045-2054)
 
 \item \code{VarC()}: Mean variation in TAC (\%) between management cycles over all years and simulations
 

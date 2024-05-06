@@ -3,6 +3,7 @@
 export(AvTAC_long)
 export(AvTAC_med)
 export(AvTAC_short)
+export(CMP_Explore)
 export(Calc_Dominated)
 export(Catch_TS)
 export(Document_MP)

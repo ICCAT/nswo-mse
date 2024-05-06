@@ -66,8 +66,8 @@ sidebar <- dashboardSidebar(
     menuItem("Kobe Time", tabName = "KobeTime", icon = icon("chart-line")),
     menuItem("Violin Plot", tabName = "ViolinPlot", icon = icon("bar-chart")),
     menuItem("Quilt Plot", tabName = "QuiltPlot", icon = icon("table")),
-    menuItem("Additional Analyses", tabName = "add_analyses", icon = icon("plus")),
-    menuItem("CMP Project", tabName = "cmp_project", icon = icon("arrow-right"))
+    menuItem("Additional Analyses", tabName = "add_analyses", icon = icon("plus")) # ,
+    # menuItem("CMP Project", tabName = "cmp_project", icon = icon("arrow-right"))
   )
 )
 
@@ -142,9 +142,9 @@ body <- dashboardBody(height = 800,
     ),
     tabItem(tabName = "add_analyses",
             add_analyses_UI('add_analyses')
-    ),
-    tabItem(tabName='cmp_project',
-            cmp_project_UI('cmp_project_1'))
+    ) #,
+    # tabItem(tabName='cmp_project',
+    #         cmp_project_UI('cmp_project_1'))
     # tabItem(tabName = "Pow",
     #        Pow_UI('Pow')
     # )

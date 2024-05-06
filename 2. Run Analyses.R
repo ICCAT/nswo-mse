@@ -35,9 +35,10 @@ TuneTargets$Metric <- 'PGK_short'
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 TuneTargets = TuneTargets[2:3,]
-TuneTargets = rbind(TuneTargets,data.frame(Code=c("d","e"),
-                                           Metric = c("PGK_med","PGK_long"),
-                                           Target = c(0.60,0.60)))
+TuneTargets = dplyr::bind_rows(TuneTargets,
+                    data.frame(Code=c("d","e"),
+                               Metric = c("PGK_med","PGK_long"),
+                               Target = c(0.60,0.60)))
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 if (!dir.exists('Tuning_Objects'))
@@ -45,12 +46,16 @@ if (!dir.exists('Tuning_Objects'))
 
 # ---- Scoping and Tuning ----
 for (MP_name in Test_MPs) {
-  Tune_MP(MP_name, Refs_OMs)
+  Tune_MP(MP_name,
+          Tuning_OMs=Refs_OMs,
+          TuneTargets)
 
   # Create tuned CMPs
   Document_MP(MP_name=MP_name, MP_file=get_MP_locations(MP_name), plot=TRUE)
 
 }
+
+
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # There is now a hack in here whereby the b tunings are manually
@@ -122,7 +127,6 @@ for (MP_name in Test_MPs) {
 
 
 ### R3a
-
 hist <- readRDS(file.path('Hist_Objects/R3a', 'MOM_005.hist'))
 
 for (MP_name in Test_MPs) {
