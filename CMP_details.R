@@ -83,7 +83,7 @@ df <- data.frame(x=ind_ratio, y=TAC_adjust)
 ggplot(df, aes(x=x, y=y)) + geom_line() +
   expand_limits(y=0) +
   theme_bw() +
-  labs(x='ER Ratio', y='Historical ER Multiplier')
+  labs(x='Index Ratio', y='Historical ER Multiplier')
 
 ggsave('img/CE_HCR.png', width=5, height=4)
 
