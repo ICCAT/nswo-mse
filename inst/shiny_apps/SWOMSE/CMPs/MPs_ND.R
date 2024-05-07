@@ -16,7 +16,7 @@
 #' @return An object of class `Rec` with the `TAC` slot populated
 #'
 
-MCC2 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
+MCC2 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=NA, ...) {
   Rec <- new('Rec')
 
   # Does TAC need to be updated? (or set a fixed catch if before Initial_MP_Yr)
@@ -66,7 +66,7 @@ MCC2 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
 
 
 
-MCC3 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
+MCC3 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=NA, ...) {
   Rec <- new('Rec')
 
   # Does TAC need to be updated? (or set a fixed catch if before Initial_MP_Yr)
@@ -118,7 +118,7 @@ MCC3 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
 
 
 
-MCC4 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
+MCC4 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=NA, ...) {
   Rec <- new('Rec')
 
   # Does TAC need to be updated? (or set a fixed catch if before Initial_MP_Yr)
@@ -178,7 +178,7 @@ MCC4 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
 
 
 
-MCC5 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
+MCC5 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=NA, ...) {
   Rec <- new('Rec')
 
   # Does TAC need to be updated? (or set a fixed catch if before Initial_MP_Yr)
@@ -237,7 +237,7 @@ MCC5 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
 }
 
 
-MCC6 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
+MCC6 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=NA, ...) {
   Rec <- new('Rec')
 
   # Does TAC need to be updated? (or set a fixed catch if before Initial_MP_Yr)
@@ -297,7 +297,7 @@ MCC6 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
 
 
 
-MCC7 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
+MCC7 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=NA, ...) {
   Rec <- new('Rec')
 
   # Does TAC need to be updated? (or set a fixed catch if before Initial_MP_Yr)
@@ -367,7 +367,7 @@ MCC7 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
   Rec
 }
 
-GSC2 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
+GSC2 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=NA, ...) {
   Rec <- new('Rec')
 
   # Does TAC need to be updated? (or set a fixed catch if before Initial_MP_Yr)
@@ -435,59 +435,58 @@ GSC2 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
 # ---- Tuned CMPs ----
 
 
-#' @describeIn MCC5 Tuned to PGK_short = 0.6 across Reference OMs.
+
 #' @export
 MCC5_b <- MCC5
-formals(MCC5_b)$tunepar <- 0.880510954114037
+formals(MCC5_b)$tunepar <- 0.900008923118412
 class(MCC5_b) <- "MP"
 
 
 #' @describeIn MCC5 Tuned to PGK_short = 0.7 across Reference OMs.
 #' @export
 MCC5_c <- MCC5
-formals(MCC5_c)$tunepar <- 0.844258773002392
+formals(MCC5_c)$tunepar <- 0.862760267113022
 class(MCC5_c) <- "MP"
 
 
 #' @describeIn MCC5 Tuned to PGK_med = 0.6 across Reference OMs.
 #' @export
 MCC5_d <- MCC5
-formals(MCC5_d)$tunepar <- 0.885053280571488
+formals(MCC5_d)$tunepar <- 0.900902829693933
 class(MCC5_d) <- "MP"
 
 
 #' @describeIn MCC5 Tuned to PGK_long = 0.6 across Reference OMs.
 #' @export
 MCC5_e <- MCC5
-formals(MCC5_e)$tunepar <- 0.893061907751173
+formals(MCC5_e)$tunepar <- 0.902425133359796
 class(MCC5_e) <- "MP"
-
 
 #' @describeIn MCC7 Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 MCC7_b <- MCC7
-formals(MCC7_b)$tunepar <- 0.838618297712786
+formals(MCC7_b)$tunepar <- 0.87332415944634
 class(MCC7_b) <- "MP"
 
 
 #' @describeIn MCC7 Tuned to PGK_short = 0.7 across Reference OMs.
 #' @export
 MCC7_c <- MCC7
-formals(MCC7_c)$tunepar <- 0.795900012498438
+formals(MCC7_c)$tunepar <- 0.835610659697009
 class(MCC7_c) <- "MP"
 
 
 #' @describeIn MCC7 Tuned to PGK_med = 0.6 across Reference OMs.
 #' @export
 MCC7_d <- MCC7
-formals(MCC7_d)$tunepar <- 0.850763057602874
+formals(MCC7_d)$tunepar <- 0.886404876740284
 class(MCC7_d) <- "MP"
 
 
 #' @describeIn MCC7 Tuned to PGK_long = 0.6 across Reference OMs.
 #' @export
 MCC7_e <- MCC7
-formals(MCC7_e)$tunepar <- 0.86006913609483
+formals(MCC7_e)$tunepar <- 0.889163444040037
 class(MCC7_e) <- "MP"
 
 

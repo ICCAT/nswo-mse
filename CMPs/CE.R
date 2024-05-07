@@ -49,7 +49,7 @@ CE <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
 
   # Control Rule
   histInd <- mean(Data@Ind[x,hist.yrs])
-  curInd <- mean(Data@Ind[x,recent_yrs])
+  curInd <- mean(Data@Ind[x,recent_yrs], na.rm=TRUE)
 
   ind_ratio <- curInd/histInd
 

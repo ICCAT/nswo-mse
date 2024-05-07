@@ -99,23 +99,23 @@ fls <- list.files('./CMPs')
 for (fl in fls) source(file.path('./CMPs', fl))
 
 
-MCC5_60 <- MCC5_b
+# MCC5_60 <- MCC5_b
+#
+#
+# MCC5_70 <- MCC5_c
+#
+#
+# MCC7_60 <- MCC7_b
+#
+# MCC7_70 <- MCC7_c
+#
+# CE_60 <- CE_c
 
-
-MCC5_70 <- MCC5_c
-
-
-MCC7_60 <- MCC7_b
-
-MCC7_70 <- MCC7_c
-
-CE_60 <- CE_c
-
-CMPs <- c('MCC5_60',
-          'MCC5_70',
-          'MCC7_60',
-          'MCC7_70',
-          'CE_60')
+CMPs <- c('CE_b', 'CE_c',
+          'MCC5_b', 'MCC5_c',
+          'MCC7_b', 'MCC7_c',
+          'SPSSFox_b', 'SPSSFox_c',
+          'SPSSFox2_b', 'SPSSFox2_c')
 
 
 Data <- SWOMSE::SWOData
@@ -129,12 +129,13 @@ data <- data.frame(Year=Data@Year,
 
 ## add extra years
 data <- rbind(data,
-              data.frame(Year=Catchdf$Year,
-                         Catch=Catchdf$Catch,
+              data.frame(Year=Catchdf$Year[3:4],
+                         Catch=Catchdf$Catch[3:4],
                          Index=NA,
-                         Type=Catchdf$Details,
+                         Type=Catchdf$Details[3:4],
                          Period='Historical'
               ))
+data$Index[74:75] <- mean(data$Index[69:73])
 
 # update index
 # dat = read.csv("SWOForTom.csv")

@@ -5,7 +5,7 @@ cmp_project_UI <- function(id) {
   fluidPage(
     shinydashboard::box(collapsible = TRUE, width=4,
                         title = 'Projected Index Settings',
-                        sliderInput(ns('IndTrend'), 'Index Annual Change (%)', value=0, min=-10, max=10, step=0.5),
+                        sliderInput(ns('IndTrend'), 'Index Annual Change (%)', value=0, min=-25, max=25, step=0.5),
                         uiOutput(ns('index_trend_by_year')),
                         sliderInput(ns('histyears'), 'Historical Years', value=2005,
                                     min=min(data$Year), max=max(data$Year), step=1, sep='')
@@ -19,7 +19,7 @@ cmp_project_UI <- function(id) {
                         column(6,
                                shiny::checkboxGroupInput(ns('cmps'), 'CMPs',
                                                          choices=CMPs,
-                                                         selected=CMPs,
+                                                         selected=CMPs[c(1,3,4,5,6,8)],
                                                          inline=TRUE)
                         ),
                         column(6,
@@ -52,7 +52,7 @@ cmp_project_server <- function(id) {
 
 
 
-                 set_pyears <- reactive(10)
+                 set_pyears <- reactive(12)
                  output$index_trend_by_year <- renderUI({
                    pyears <- set_pyears() # input$pyears
                    bsCollapse(
@@ -94,14 +94,18 @@ cmp_project_server <- function(id) {
 
                  update_index_data <- reactive({
                    pyears <- set_pyears()
-                   lastInd <- data$Index[length(data$Index)]
-                   p_index <- lastInd*((1+input$IndTrend/100)^(1:pyears))
+
+                   index <- data$Index[!is.na(data$Index)]
+                   lastInd <- index[length(index)] # data$Index[length(data$Index)]
+                   p_index <- lastInd*((1+input$IndTrend/100)^(1:(pyears)))
                    year_mods <- get_yr_vals()
                    p_index <- p_index * year_mods
-                   new_years <- seq(from=max(data$Year)+1, by=1, length.out=pyears)
-                   Index_Data$Year <- c(data$Year, new_years)
+
+                   new_years <- seq(from=2025, by=1, length.out=pyears)
+                   Index_Data$Year <- c(data$Year, new_years) |> unique()
                    Index_Data$Index <- c(data$Index, p_index)
                    Index_Data$Period <- c(data$Period, rep('Projection', pyears))
+
                  })
 
                  plot_index <- function() {
@@ -116,6 +120,7 @@ cmp_project_server <- function(id) {
 
                    mydf$Year <- lubridate::ymd(mydf$Year, truncated = 2L)
 
+                   # mydf <<- mydf
                    ggplot(mydf, aes(x=Year, y=Index, color=Period)) +
                      geom_line(linewidth=1.2) +
                      expand_limits(y=c(0, 3)) +
@@ -140,12 +145,12 @@ cmp_project_server <- function(id) {
                  TAC_df <- reactiveValues(tac_df=NULL)
 
                  make_TAC_df <- reactive({
-                   pyears <<- set_pyears()
-                   CMPs <<- input$cmps
-                   nCMPs <<- length(CMPs)
+                   pyears <- set_pyears()
+                   CMPs <- input$cmps
+                   nCMPs <- length(CMPs)
                    hist_years <- 1950:2024 # SWOData@Year
-                   new_years <- seq(from=max(hist_years)+1, by=1, length.out=pyears+2)
-                   all_years <<- c(hist_years, new_years)
+                   new_years <- seq(from=max(hist_years)+1, by=1, length.out=pyears)
+                   all_years <- c(hist_years, new_years)
                    # TTT <<- Index_Data$Year
                    # TTTT <<- Index_Data$Index
                    df <- data.frame(Year=rep(all_years, nCMPs),
@@ -153,7 +158,7 @@ cmp_project_server <- function(id) {
                               TAC=NA,
                               Index=NA)
 
-                   hist_catches <- c(SWOData@Cat[1,] ,Catchdf$Catch)
+                   hist_catches <- c(SWOData@Cat[1,], Catchdf$Catch[3:4])
                    catches <- c(hist_catches, rep(NA, pyears))
                    df <- df %>% dplyr::mutate(TAC=rep(catches, nCMPs),
                                               Period=ifelse(Year%in%1950:2024, 'Historical', 'Projection'))
@@ -161,9 +166,16 @@ cmp_project_server <- function(id) {
                  })
 
                  run_MP <- function(mp_name, data, interval, lag) {
+
+                   # DDD <<- data
+                   # # lag <<- lag
+                   # # interval <<- interval
+                   # MM <<- mp_name
+
                    mp <- get(mp_name)
                    formals(mp)$Interval <- interval
                    formals(mp)$Data_Lag <- lag
+
                    mp(1, data)
                  }
 
@@ -173,7 +185,9 @@ cmp_project_server <- function(id) {
 
 
                  run_CMPs <- reactive({
+
                    TAC_df$tac_df <- make_TAC_df()
+
                    CMPs <- unique(TAC_df$tac_df$MP)
                    ProYears <- TAC_df$tac_df %>% dplyr::filter(Period=='Projection') %>%
                      dplyr::distinct(Year)
@@ -186,18 +200,22 @@ cmp_project_server <- function(id) {
                                          Index=Index_Data$Index)
 
                      proj_years <- max(data$Year):(max(data$Year)+y)
-                     sel_years <- max(proj_years)
+                     sel_years <- max(proj_years) - 1
                      mydf <- mydf %>% dplyr::filter(Year<=max(sel_years))
 
                      CMP_data <- new('Data')
-                     CMP_data@Year <- mydf$Year
+                     CMP_data@Year <- mydf$Year # [1:(length(mydf$Year)-1)]
                      CMP_data@Ind <- matrix(mydf$Index, nrow=1)
+                     CMP_data@CV_Ind <- array(0.2, dim=dim(CMP_data@Ind ))
 
                      for (mp in seq_along(CMPs)) {
                        # print(CMPs[mp])
 
+                       tac_df <- TAC_df$tac_df
+                       # mydf <<- mydf
+
                        # add MP specific catch/TAC
-                       this_mp <<- TAC_df$tac_df %>% dplyr::filter(MP==CMPs[mp], Year%in% mydf$Year)
+                       this_mp <- tac_df %>% dplyr::filter(MP==CMPs[mp], Year%in% mydf$Year)
                        CMP_data@Cat <- matrix(this_mp$TAC, nrow=1)
                        # last TAC
                        lastcatches <- CMP_data@Cat[!is.na(CMP_data@Cat)]
@@ -226,7 +244,7 @@ cmp_project_server <- function(id) {
 
 
                  observeEvent(input$runMPs, {
-                   out <<- run_CMPs()
+                   out <- run_CMPs()
                  })
 
 

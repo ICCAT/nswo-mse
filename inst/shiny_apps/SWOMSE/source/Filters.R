@@ -40,7 +40,7 @@ FiltersServer <- function(id, results) {
                  output$PGK_options <- renderUI ({
                    tagList(
                      hr(),
-                     h4('PGK_short: 2024-2033 (Ref Models)'),
+                     h4('PGK_short: 2025-2034 (Ref Models)'),
                      tags$div(align = 'left',
                               class = 'multicol',
                               checkboxGroupInput(session$ns('PGK_short'),
@@ -50,7 +50,7 @@ FiltersServer <- function(id, results) {
                                                  inline=TRUE)
                      ),
                      hr(),
-                     h4('PGK_med: 2034-2043'),
+                     h4('PGK_med: 2035-2044'),
                      radioButtons(session$ns("PGK_models"),
                                   label='Models',
                                   choices=c('Reference Only', 'Reference + Robustness'),

@@ -16,7 +16,7 @@
 #'
 #' @return An object of class `Rec` with the `TAC` slot populated
 #'
-CE <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25,
+CE <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
                yrs=c(5,3), ...) {
   Rec <- new('Rec')
 
@@ -72,7 +72,7 @@ CE <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25,
 }
 
 
-CE2 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25,
+CE2 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
                yrs=c(5,3), ...) {
   Rec <- new('Rec')
 
@@ -143,28 +143,28 @@ CE2 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=0.25,
 #' @describeIn CE Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 CE_b <- CE
-formals(CE_b)$tunepar <- 0.997201492537313
+formals(CE_b)$tunepar <- 1.00858704137393
 class(CE_b) <- "MP"
 
 
 #' @describeIn CE Tuned to PGK_short = 0.7 across Reference OMs.
 #' @export
 CE_c <- CE
-formals(CE_c)$tunepar <- 0.940521369838258
+formals(CE_c)$tunepar <- 0.95428130882294
 class(CE_c) <- "MP"
 
 
 #' @describeIn CE Tuned to PGK_med = 0.6 across Reference OMs.
 #' @export
 CE_d <- CE
-formals(CE_d)$tunepar <- 1.02950861195542
+formals(CE_d)$tunepar <- 1.06657420249653
 class(CE_d) <- "MP"
 
 
 #' @describeIn CE Tuned to PGK_long = 0.6 across Reference OMs.
 #' @export
 CE_e <- CE
-formals(CE_e)$tunepar <- 1.0693730729702
+formals(CE_e)$tunepar <- 1.12517293233083
 class(CE_e) <- "MP"
 
 
