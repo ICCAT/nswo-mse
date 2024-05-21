@@ -586,7 +586,7 @@ MCC97 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
 #' @describeIn MCC5 Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 MCC5_b <- MCC5
-formals(MCC5_b)$tunepar <- 0.869592831042283
+formals(MCC5_b)$tunepar <- 0.854893984366685# 0.869592831042283
 class(MCC5_b) <- "MP"
 
 

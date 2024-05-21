@@ -156,7 +156,7 @@ class(SPSSFox2) <- 'MP'
 #' @describeIn SPSSFox Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 SPSSFox_b <- SPSSFox
-formals(SPSSFox_b)$tunepar <- 0.605120864897348
+formals(SPSSFox_b)$tunepar <- 0.58657150368945 #0.605120864897348
 class(SPSSFox_b) <- "MP"
 
 
@@ -184,7 +184,7 @@ class(SPSSFox_e) <- "MP"
 #' @describeIn SPSSFox2 Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 SPSSFox2_b <- SPSSFox2
-formals(SPSSFox2_b)$tunepar <- 0.605135842401492
+formals(SPSSFox2_b)$tunepar <- 0.586729469688956 # 0.605135842401492
 class(SPSSFox2_b) <- "MP"
 
 
