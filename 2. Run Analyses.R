@@ -28,7 +28,11 @@ Refs_OMs <- Refs_OMs$OM.object
 
 All_MPs <- get_MP_names() %>% sort()
 
-Test_MPs <- c('CE', 'MCC5', 'MCC7', 'SPSSFox', 'SPSSFox2')
+Test_MPs <- c('CE', 'CE2',
+              'MCC5', 'MCC7', 'MCC85', 'MCC97',
+              'SPSSFox',
+              'SPSSFox2',
+              'SPSSFox3')
 
 TuneTargets$Metric <- 'PGK_short'
 

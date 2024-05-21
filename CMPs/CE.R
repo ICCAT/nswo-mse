@@ -72,7 +72,7 @@ CE <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
 }
 
 
-CE2 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
+CE2 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.8,
                yrs=c(5,3), ...) {
   Rec <- new('Rec')
 
@@ -88,7 +88,6 @@ CE2 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
 
   # smooth combined index
   index <- smoothed_index <- Data@Ind[x,]
-
   smoothed <- stats::smooth(index[!is.na(index)])
   smoothed_index[!is.na(smoothed_index)] <- smoothed
 
@@ -106,31 +105,21 @@ CE2 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
 
   # Control Rule
   histInd <- mean(Data@Ind[x,hist.yrs])
-  curInd <- mean(Data@Ind[x,recent_yrs])
+  curInd <- mean(Data@Ind[x,recent_yrs], na.rm=TRUE)
 
   ind_ratio <- curInd/histInd
 
-  # calculate slope
-  v <- Data@Ind[x,recent_yrs]
-  y <- 1:3
-  sl <- coef(lm(v~y))[2]
-
   if (ind_ratio>=0.8) {
-    if (ind_ratio>1.2) {
-      targER <- histER * ind_ratio
-    } else {
-      targER <- histER
-    }
+    targER <- histER
   } else if (ind_ratio> 0.5) {
     targER <- histER * ( -1.4+ 3 *ind_ratio)
   } else {
     targER <- 0.1 * histER
   }
-  targER <- targER * exp(sl) * tunepar
 
   # Exploitation Rate Ratio
   ER_ratio <- targER/curER
-  TAC <- ER_ratio * Data@MPrec[x]
+  TAC <- ER_ratio * tunepar * Data@MPrec[x]
 
   # Maximum allowed change in TAC
   Rec@TAC <- MaxChange(TAC, Data@MPrec[x], mc)
@@ -139,32 +128,61 @@ CE2 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
 }
 
 
+
 # ---- Tuned CMPs ----
 #' @describeIn CE Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 CE_b <- CE
-formals(CE_b)$tunepar <- 1.00858704137393
+formals(CE_b)$tunepar <- 0.913191681735986
 class(CE_b) <- "MP"
 
 
 #' @describeIn CE Tuned to PGK_short = 0.7 across Reference OMs.
 #' @export
 CE_c <- CE
-formals(CE_c)$tunepar <- 0.95428130882294
+formals(CE_c)$tunepar <- 0.852642639318388
 class(CE_c) <- "MP"
 
 
 #' @describeIn CE Tuned to PGK_med = 0.6 across Reference OMs.
 #' @export
 CE_d <- CE
-formals(CE_d)$tunepar <- 1.06657420249653
+formals(CE_d)$tunepar <- 0.977741637293524
 class(CE_d) <- "MP"
 
 
 #' @describeIn CE Tuned to PGK_long = 0.6 across Reference OMs.
 #' @export
 CE_e <- CE
-formals(CE_e)$tunepar <- 1.12517293233083
+formals(CE_e)$tunepar <- 1.02462422359226
 class(CE_e) <- "MP"
+
+
+#' @describeIn CE2 Tuned to PGK_short = 0.6 across Reference OMs.
+#' @export
+CE2_b <- CE2
+formals(CE2_b)$tunepar <- 0.884349860693683
+class(CE2_b) <- "MP"
+
+
+#' @describeIn CE2 Tuned to PGK_short = 0.7 across Reference OMs.
+#' @export
+CE2_c <- CE2
+formals(CE2_c)$tunepar <- 0.852218803689163
+class(CE2_c) <- "MP"
+
+
+#' @describeIn CE2 Tuned to PGK_med = 0.6 across Reference OMs.
+#' @export
+CE2_d <- CE2
+formals(CE2_d)$tunepar <- 0.969390082612946
+class(CE2_d) <- "MP"
+
+
+#' @describeIn CE2 Tuned to PGK_long = 0.6 across Reference OMs.
+#' @export
+CE2_e <- CE2
+formals(CE2_e)$tunepar <- 0.915063256849899
+class(CE2_e) <- "MP"
 
 
