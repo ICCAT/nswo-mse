@@ -37,7 +37,7 @@ allMPs <-   PM_results$MP %>% unique()
 #short_list_mps <- c('CE', 'SPSSFox','SPSSFox2', 'MCC5', 'MCC7')
 #short_list_mps <- paste(short_list_mps, rep(c('b', 'c'), each=length(short_list_mps)), sep='_')
 
-short_list_mps <- c('CE_b',"SPSSFox_b","SPSSFox2_b","MCC5_b","MCC5_c","MCC7_b","MCC7_c")
+short_list_mps <- allMPs # c('CE_b',"SPSSFox_b","SPSSFox2_b","MCC5_b","MCC5_c","MCC7_b","MCC7_c")
 
 # Trade-Off Options
 allPMs <- unique(PM_results$PM) %>% sort()
