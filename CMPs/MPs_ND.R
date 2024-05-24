@@ -433,7 +433,7 @@ GSC2 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=NA, ...) {
 }
 
 
-MCC85 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
+MCC85 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=NA, ...) {
   Rec <- new('Rec')
 
   # Does TAC need to be updated? (or set a fixed catch if before Initial_MP_Yr)
@@ -501,7 +501,7 @@ MCC85 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
   Rec
 }
 
-MCC97 <- function(x, Data, Data_Lag=1, Interval=3, tunepar=1, mc=NA, ...) {
+MCC97 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=NA, ...) {
   Rec <- new('Rec')
 
   # Does TAC need to be updated? (or set a fixed catch if before Initial_MP_Yr)
@@ -639,59 +639,60 @@ formals(MCC7_e)$tunepar <- 0.818304110551717
 class(MCC7_e) <- "MP"
 
 
+
 #' @describeIn MCC85 Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 MCC85_b <- MCC85
-formals(MCC85_b)$tunepar <- 0.740524673208189
+formals(MCC85_b)$tunepar <- 0.732078720194901
 class(MCC85_b) <- "MP"
 
 
 #' @describeIn MCC85 Tuned to PGK_short = 0.7 across Reference OMs.
 #' @export
 MCC85_c <- MCC85
-formals(MCC85_c)$tunepar <- 0.707860998650472
+formals(MCC85_c)$tunepar <- 0.700498187696758
 class(MCC85_c) <- "MP"
 
 
 #' @describeIn MCC85 Tuned to PGK_med = 0.6 across Reference OMs.
 #' @export
 MCC85_d <- MCC85
-formals(MCC85_d)$tunepar <- 0.773109437056
+formals(MCC85_d)$tunepar <- 0.769013447861563
 class(MCC85_d) <- "MP"
 
 
 #' @describeIn MCC85 Tuned to PGK_long = 0.6 across Reference OMs.
 #' @export
 MCC85_e <- MCC85
-formals(MCC85_e)$tunepar <- 0.79314292478355
+formals(MCC85_e)$tunepar <- 0.791253668763103
 class(MCC85_e) <- "MP"
 
 
 #' @describeIn MCC97 Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 MCC97_b <- MCC97
-formals(MCC97_b)$tunepar <- 0.763613428522547
+formals(MCC97_b)$tunepar <- 0.717744725008647
 class(MCC97_b) <- "MP"
 
 
 #' @describeIn MCC97 Tuned to PGK_short = 0.7 across Reference OMs.
 #' @export
 MCC97_c <- MCC97
-formals(MCC97_c)$tunepar <- 0.732123943568182
+formals(MCC97_c)$tunepar <- 0.683939390647125
 class(MCC97_c) <- "MP"
 
 
 #' @describeIn MCC97 Tuned to PGK_med = 0.6 across Reference OMs.
 #' @export
 MCC97_d <- MCC97
-formals(MCC97_d)$tunepar <- 0.777100128186868
+formals(MCC97_d)$tunepar <- 0.765506775832863
 class(MCC97_d) <- "MP"
 
 
 #' @describeIn MCC97 Tuned to PGK_long = 0.6 across Reference OMs.
 #' @export
 MCC97_e <- MCC97
-formals(MCC97_e)$tunepar <- 0.791782889082875
+formals(MCC97_e)$tunepar <- 0.789295392953929
 class(MCC97_e) <- "MP"
 
 
