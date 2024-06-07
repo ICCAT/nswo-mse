@@ -71,8 +71,7 @@ CE <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
   Rec
 }
 
-
-CE2 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.8,
+CE2 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
                yrs=c(5,3), ...) {
   Rec <- new('Rec')
 
@@ -94,7 +93,7 @@ CE2 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.8,
   Data@Ind[x,] <- smoothed_index
 
   # Calculate Historical Relative Exploitation Rate
-  yr.ind <- which(Data@Year==2020)
+  yr.ind <- which(Data@Year==2012)
   hist.yrs <- (yr.ind-yrs[1]+1):yr.ind
   histER <- mean(Data@Cat[x,hist.yrs])/mean(Data@Ind[x,hist.yrs])
 
@@ -128,12 +127,11 @@ CE2 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.8,
 }
 
 
-
 # ---- Tuned CMPs ----
 #' @describeIn CE Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 CE_b <- CE
-formals(CE_b)$tunepar <- 0.913191681735986
+formals(CE_b)$tunepar <- 0.913732033578056
 class(CE_b) <- "MP"
 
 
@@ -161,28 +159,28 @@ class(CE_e) <- "MP"
 #' @describeIn CE2 Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 CE2_b <- CE2
-formals(CE2_b)$tunepar <- 0.884349860693683
+formals(CE2_b)$tunepar <- 0.917729871267917
 class(CE2_b) <- "MP"
 
 
 #' @describeIn CE2 Tuned to PGK_short = 0.7 across Reference OMs.
 #' @export
 CE2_c <- CE2
-formals(CE2_c)$tunepar <- 0.852218803689163
+formals(CE2_c)$tunepar <- 0.856005459508644
 class(CE2_c) <- "MP"
 
 
 #' @describeIn CE2 Tuned to PGK_med = 0.6 across Reference OMs.
 #' @export
 CE2_d <- CE2
-formals(CE2_d)$tunepar <- 0.969390082612946
+formals(CE2_d)$tunepar <- 0.985029282999688
 class(CE2_d) <- "MP"
 
 
 #' @describeIn CE2 Tuned to PGK_long = 0.6 across Reference OMs.
 #' @export
 CE2_e <- CE2
-formals(CE2_e)$tunepar <- 0.915063256849899
+formals(CE2_e)$tunepar <- 1.12357581069237
 class(CE2_e) <- "MP"
 
 

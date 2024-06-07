@@ -1,7 +1,78 @@
 
 library(Slick)
 library(SWOMSE)
-library(colorspace)
+
+slick <- Slick()
+Title(slick) <- 'June 2024 NSWO Results'
+Author(slick) <- 'NSWO Technical Team'
+
+
+# MPs ----
+mp_names <- c('CE', 'CE2', 'MCC5', 'MCC7', 'MCC85', 'MCC97', 'SPSSFox', 'SPSSFox2')
+
+mps <- MPs()
+Code(mps) <- mp_names
+Label(mps) <- c('Constant Exploitation Rate',
+                'Constant Exploitation Rate 2',
+                'Mostly Constant Catch 5',
+                'Mostly Constant Catch 7',
+                'Mostly Constant Catch 85',
+                'Mostly Constant Catch 97',
+                'Surplus Production Model + HCR',
+                'Surplus Production Model + HCR version 2')
+
+Description(mps) <- c('Aims to maintain a constant exploitation rate (ER) at mean of 2016 - 2020. A HCR linearly reduces the ER if the current index is between 50% - 80% of the mean index from this same time period. If the current index is less than 50% of the mean historical index, exploitation rate  is set to 10% of the mean historical ER. TAC is constrained to change no more than 25% between management cycles.',
+                      'Same as CE, except the historical ER is calculated as mean of 2008 - 2012.',
+                      'The goal of the MCC methods is to keep the TAC as constant as possible. The TAC changes by discrete steps according to the ratio the recent index (mean of three most recent years) to the historical target index (mean of 2017 - 2019). ',
+                      'Same as MCC5 but different stepped changes in TAC.',
+                      'Same as MCC5 but different stepped changes in TAC.',
+                      'Same as MCC5 but different stepped changes in TAC.',
+                      "A state-space surplus production model is fit to the index and catch data. A constant F (Ftarget) is set (determined as a tuning parameter) and the TAC calculated by applying the F to the model's estimate of abundance. A linear harvest control rule reduces Ftarget to 0.1Ftarget if estimated B/BMSY < BMSY. If estimated B/BMSY < 0.4BMSY, Ftarget set to 0.1Ftarget. TAC is constrained to change no more than 25% between management cycles.",
+                      'Same as SPSSFox, except there is no constraint on reduction in TAC if estimated B/BMSY < 1.'
+                      )
+
+MPs(slick) <- mps
+
+# OMs ----
+oms <- OMs()
+
+MOM_001@Name
+MOM_002@Name
+MOM_003@Name
+MOM_004@Name
+MOM_005@Name
+MOM_006@Name
+MOM_007@Name
+MOM_008@Name
+MOM_009@Name
+
+Factors(oms) <- data.frame(Factor=c(rep('M',3),
+                                    rep('h', 3)),
+                           Level=c(0.1,0.2,0.3, 0.69, 0.8, 0.88),
+                           Description=c('Natural Mortality = 0.1',
+                                         'Natural Mortality = 0.2',
+                                         'Natural Mortality = 0.3',
+                                         'Steepness = 0.69',
+                                         'Steepness = 0.80',
+                                         'Steepness = 0.88')
+)
+
+Design(oms) <- data.frame(M=rep(c(0.1,0.2,0.3), each=3),
+                          h=rep(c(0.69,0.8,0.88),3))
+
+OMs(slick) <- oms
+
+
+# Time Series ----
+
+
+
+timeseries <- Timeseries()
+
+
+
+# save Slick ----
+
 
 
 # Reference OMs
