@@ -10,7 +10,6 @@ Introduction(slick) <- 'Preliminary results for discussion with the NSWO Technic
 
 # MPs ----
 mp_names <- c('CE_b', 'CE_c',
-              'CE2_b', 'CE2_c',
               'MCC5_b', 'MCC5_c',
               'MCC7_b', 'MCC7_c',
               'MCC85_b', 'MCC85_c',
@@ -23,7 +22,6 @@ Code(mps) <- mp_names
 tunings <- c('- tuned to PGK 60%', '- tuned to PGK 70%')
 
 Label(mps) <- c(paste('Constant Exploitation Rate', tunings),
-                paste('Constant Exploitation Rate 2', tunings),
                 paste('Mostly Constant Catch 5', tunings),
                 paste('Mostly Constant Catch 7', tunings),
                 paste('Mostly Constant Catch 85', tunings),
@@ -33,8 +31,6 @@ Label(mps) <- c(paste('Constant Exploitation Rate', tunings),
 )
 
 Description(mps) <- c('Aims to maintain a constant exploitation rate (ER) at mean of 2016 - 2020. A HCR linearly reduces the ER if the current index is between 50% - 80% of the mean index from this same time period. If the current index is less than 50% of the mean historical index, exploitation rate  is set to 10% of the mean historical ER. TAC is constrained to change no more than 25% between management cycles.',
-                      'Same as previous but tuned to 70% PGK_short',
-                      'Same as CE, except the historical ER is calculated as mean of 2008 - 2012.',
                       'Same as previous but tuned to 70% PGK_short',
                       'The goal of the MCC methods is to keep the TAC as constant as possible. The TAC changes by discrete steps according to the ratio the recent index (mean of three most recent years) to the historical target index (mean of 2017 - 2019). ',
                       'Same as previous but tuned to 70% PGK_short',
@@ -149,7 +145,6 @@ populate_TS <- function(result_files, timeseries, omnums) {
     mp_files <- result_files[grepl(paste0('\\<', mp_codes[mm], '\\>'), result_files)]
     for (i in seq_along(mp_files)) {
       mse <- readRDS(file.path('MSE_objects', mp_files[i]))
-
       mm_ind <- mp_index %>% dplyr::filter(MP%in%mm)
 
       # SB/SBMSY
