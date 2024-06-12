@@ -54,9 +54,8 @@ server <- function(input, output, session) {
   output$MPs <- function(){
     # CMP_desc <- read.csv('inst/CMP_description.csv')
     CMP_desc <- read.csv('../../CMP_description2.csv') %>% arrange(CMP.name)
+    CMP_desc$Abundance.indicator <- NULL
     colnames(CMP_desc)[1] <- 'Name'
-    CMP_desc <- CMP_desc %>% filter(Name %in% c('CE', 'FX4',
-                                              'MCC5', 'MCC7', 'SPSSFox'))
     CMP_desc %>% knitr::kable(escape = T,
                              booktabs=TRUE) %>%
       kableExtra::kable_styling("striped", full_width = T) %>%

@@ -320,7 +320,7 @@ LRP_short <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(5,14))  {
   Yrs <- ChkYrs(Yrs, MMSEobj)
 
   PMobj <- new("PMobj")
-  PMobj@Name <- "LRP_short: Probability of breaching the limit reference point (SSB<0.4SSB_MSY) in any of the first 10 years (2025-2034)"
+  PMobj@Name <- "LRP_short: Probability of breaching the limit reference point (SSB<0.4SSB_MSY) in any of the first 10 years (2025-2033)"
   PMobj@Caption <- "Prob. SB < 0.4SBMSY (2025-2034)"
 
   PMobj@Ref <- Ref
@@ -368,7 +368,7 @@ LRP_med <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(15,24))  {
 
   PMobj <- new("PMobj")
   PMobj@Name <- "LRP_short: Probability of breaching the limit reference point (SSB<0.4SSB_MSY) in any of years 11-20 (2035-2044)"
-  PMobj@Caption <- "Prob. SB < 0.4SBMSY (2034-2043)"
+  PMobj@Caption <- "Prob. SB < 0.4SBMSY (2035-2044)"
 
   PMobj@Ref <- Ref
   PMobj@Stat <- MMSEobj@SB_SBMSY[, 1,, Yrs[1]:Yrs[2]]
@@ -391,7 +391,7 @@ nLRP_med <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(15,24))  {
 
   PMobj <- new("PMobj")
   PMobj@Name <- "nLRP_med: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any of years 11-20 (2035-2044)"
-  PMobj@Caption <- "Prob. of not breaching LRP (2034-2043)"
+  PMobj@Caption <- "Prob. of not breaching LRP (2035-2044)"
 
   PMobj@Ref <- Ref
   PMobj@Stat <- MMSEobj@SB_SBMSY[, 1,, Yrs[1]:Yrs[2]]
@@ -417,7 +417,7 @@ LRP_long <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(25,34))  {
 
   PMobj <- new("PMobj")
   PMobj@Name <- "LRP_long: Probability of breaching the limit reference point (SSB<0.4SSB_MSY) n any of years 21-30 (2045-2054))"
-  PMobj@Caption <- "Prob. SB < 0.4SBMSY (2044-2053)"
+  PMobj@Caption <- "Prob. SB < 0.4SBMSY (2045-2054)"
 
   PMobj@Ref <- Ref
   PMobj@Stat <- MMSEobj@SB_SBMSY[, 1,, Yrs[1]:Yrs[2]]
@@ -537,7 +537,7 @@ AvTAC_short <- function(MMSEobj=NULL, Ref=NULL, Yrs=c(5,14)) {
 
   PMobj <- new("PMobj")
   PMobj@Name <- 'Median TAC (t) over years 1-10'
-  PMobj@Caption <- 'Median TAC (t) 2024 - 2033'
+  PMobj@Caption <- 'Median TAC (t) 2025 - 2034'
 
   Stat_y <- apply(MMSEobj@TAC[,,,,Yrs[1]:Yrs[2], drop=FALSE], c(1,4,5), sum)
 

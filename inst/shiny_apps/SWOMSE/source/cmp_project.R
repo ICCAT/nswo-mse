@@ -19,7 +19,7 @@ cmp_project_UI <- function(id) {
                         column(6,
                                shiny::checkboxGroupInput(ns('cmps'), 'CMPs',
                                                          choices=CMPs,
-                                                         selected=CMPs[c(1,3,4,5,6,8)],
+                                                         selected=CMPs[grepl('_b', CMPs)],
                                                          inline=TRUE)
                         ),
                         column(6,
@@ -93,6 +93,7 @@ cmp_project_server <- function(id) {
                  })
 
                  update_index_data <- reactive({
+
                    pyears <- set_pyears()
 
                    index <- data$Index[!is.na(data$Index)]
@@ -148,6 +149,7 @@ cmp_project_server <- function(id) {
                    pyears <- set_pyears()
                    CMPs <- input$cmps
                    nCMPs <- length(CMPs)
+                   if (nCMPs<1) return(NULL)
                    hist_years <- 1950:2024 # SWOData@Year
                    new_years <- seq(from=max(hist_years)+1, by=1, length.out=pyears)
                    all_years <- c(hist_years, new_years)
@@ -157,7 +159,6 @@ cmp_project_server <- function(id) {
                               MP=rep(CMPs, each=length(all_years)),
                               TAC=NA,
                               Index=NA)
-
                    hist_catches <- c(SWOData@Cat[1,], Catchdf$Catch[3:4])
                    catches <- c(hist_catches, rep(NA, pyears))
                    df <- df %>% dplyr::mutate(TAC=rep(catches, nCMPs),

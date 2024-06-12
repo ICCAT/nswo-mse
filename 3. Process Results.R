@@ -45,16 +45,15 @@ for (d in seq_along(Results_dirs)) {
 }
 
 PM_results <- do.call('rbind', PM_list)
-TS_results <- do.call('rbind', TS_list) %>% filter(Year>=2024)
+TS_results <- do.call('rbind', TS_list) %>% filter(Year>=2025)
 VarC_results <- do.call('rbind', VarC_list)
 
 
 # manually drop CMPs
 # worse or equal performance to other variants
-PM_results <- PM_results %>% filter(!MP_name%in%c('MCC3', 'CE2'))
-TS_results <- TS_results %>% filter(!MP_name%in%c('MCC3', 'CE2'))
-VarC_results <- VarC_results %>% filter(!MP %in%c('MCC3_a', 'MCC3_b', 'MCC3_b',
-                                                 'CE2_a', 'CE2_b', 'CE2_c'))
+PM_results <- PM_results %>% filter(!MP_name%in%c('CE2'))
+TS_results <- TS_results %>% filter(!MP_name%in%c('CE2'))
+VarC_results <- VarC_results %>% filter(!MP %in%c('CE2_b', 'CE2_c'))
 
 
 # process TS data
