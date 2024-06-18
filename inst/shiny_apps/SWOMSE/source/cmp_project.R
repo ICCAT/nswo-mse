@@ -54,7 +54,7 @@ cmp_project_server <- function(id) {
 
                  set_pyears <- reactive(12)
                  output$index_trend_by_year <- renderUI({
-                   pyears <- set_pyears() # input$pyears
+                   pyears <- (set_pyears())  + 2 # input$pyears
                    bsCollapse(
                      bsCollapsePanel('Modify Index by Year',
                                      lapply(1:pyears, function(i) {
@@ -74,7 +74,7 @@ cmp_project_server <- function(id) {
                  })
 
                  observeEvent(input$reset_ind_years, {
-                   pyears <- set_pyears()
+                   pyears <- (set_pyears()) + 2
                    for (i in 1:pyears) {
                      updateNumericInput(session, inputId = paste0("ind", i), value = 1)
                    }
@@ -82,7 +82,7 @@ cmp_project_server <- function(id) {
 
 
                  get_yr_vals <- reactive({
-                   pyears <- set_pyears()
+                   pyears <- set_pyears()  +2
                    get_vals <- rep(NA, pyears)
                    ids <- paste0('ind', 1:pyears)
                    for (i in 1:pyears) {
@@ -93,18 +93,17 @@ cmp_project_server <- function(id) {
                  })
 
                  update_index_data <- reactive({
-
                    pyears <- set_pyears()
 
                    index <- data$Index[!is.na(data$Index)]
                    lastInd <- index[length(index)] # data$Index[length(data$Index)]
-                   p_index <- lastInd*((1+input$IndTrend/100)^(1:(pyears)))
+                   p_index <- lastInd*((1+input$IndTrend/100)^(1:(pyears+2)))
                    year_mods <- get_yr_vals()
                    p_index <- p_index * year_mods
 
                    new_years <- seq(from=2025, by=1, length.out=pyears)
                    Index_Data$Year <- c(data$Year, new_years) |> unique()
-                   Index_Data$Index <- c(data$Index, p_index)
+                   Index_Data$Index <- c(data$Index[1:73], p_index)
                    Index_Data$Period <- c(data$Period, rep('Projection', pyears))
 
                  })

@@ -136,9 +136,9 @@ data <- rbind(data,
                          Catch=Catchdf$Catch[3:4],
                          Index=NA,
                          Type=Catchdf$Details[3:4],
-                         Period='Historical'
+                         Period='Projection'
               ))
-data$Index[74:75] <- mean(data$Index[71:73])
+# data$Index[74:75] <- mean(data$Index[71:73])
 
 
 
