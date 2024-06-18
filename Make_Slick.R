@@ -6,7 +6,16 @@ slick <- Slick()
 Title(slick) <- 'June 2024 NSWO Results'
 Author(slick) <- 'NSWO Technical Team'
 Email(slick) <- "[adrian@bluematterscience.com](mailto:adrian@bluematterscience.com)"
-Introduction(slick) <- 'Preliminary results for discussion with the NSWO Technical Team'
+Introduction(slick) <- '
+
+Preliminary results for discussion with the NSWO Technical Team
+
+<strong>Note:</strong>These results were posted with permission from the International Commission for the Conservation of Atlantic Tunas (ICCAT) for the purpose of demonstrating the features of Slick. The North Atlantic Swordfish MSE process in still ongoing. The operating models, candidate management procedures, and performance metrics shown here are for demonstration purposes only and are subject to change as the MSE process contiunes. The results presented here do not necessarily reflect the point of view of ICCAT or other funders and in no ways anticipate ICCAT future policy in this area.
+
+'
+
+
+
 
 # MPs ----
 mp_names <- c('CE_b', 'CE_c',
@@ -19,30 +28,30 @@ mp_names <- c('CE_b', 'CE_c',
 
 mps <- MPs()
 Code(mps) <- mp_names
-tunings <- c('- tuned to PGK 60%', '- tuned to PGK 70%')
+tunings <- c('PGK_short 60%', 'PGK_short 70%')
 
 Label(mps) <- c(paste('Constant Exploitation Rate', tunings),
                 paste('Mostly Constant Catch 5', tunings),
                 paste('Mostly Constant Catch 7', tunings),
                 paste('Mostly Constant Catch 85', tunings),
                 paste('Mostly Constant Catch 97', tunings),
-                paste('Surplus Production Model + HCR', tunings),
-                paste('Surplus Production Model + HCR version 2', tunings)
+                paste('Surplus Production Model', tunings),
+                paste('Surplus Production Model v2', tunings)
 )
 
-Description(mps) <- c('Aims to maintain a constant exploitation rate (ER) at mean of 2016 - 2020. A HCR linearly reduces the ER if the current index is between 50% - 80% of the mean index from this same time period. If the current index is less than 50% of the mean historical index, exploitation rate  is set to 10% of the mean historical ER. TAC is constrained to change no more than 25% between management cycles.',
+Description(mps) <- c('Aims to maintain a constant exploitation rate (ER) at mean of 2016 - 2020. A HCR linearly reduces the ER if the current index is between 50% - 80% of the mean index from this same time period. If the current index is less than 50% of the mean historical index, exploitation rate  is set to 10% of the mean historical ER. TAC is constrained to change no more than 25% between management cycles. Tuned to 60% PGK_short.',
                       'Same as previous but tuned to 70% PGK_short',
-                      'The goal of the MCC methods is to keep the TAC as constant as possible. The TAC changes by discrete steps according to the ratio the recent index (mean of three most recent years) to the historical target index (mean of 2017 - 2019). ',
+                      'The goal of the MCC methods is to keep the TAC as constant as possible. The TAC changes by discrete steps according to the ratio the recent index (mean of three most recent years) to the historical target index (mean of 2017 - 2019). Tuned to 60% PGK_short.',
                       'Same as previous but tuned to 70% PGK_short',
-                      'Same as MCC5 but different stepped changes in TAC.',
+                      'Same as MCC5 but different stepped changes in TAC. Tuned to 60% PGK_short.',
                       'Same as previous but tuned to 70% PGK_short',
-                      'Same as MCC5 but different stepped changes in TAC.',
+                      'Same as MCC5 but different stepped changes in TAC. Tuned to 60% PGK_short.',
                       'Same as previous but tuned to 70% PGK_short',
-                      'Same as MCC5 but different stepped changes in TAC.',
+                      'Same as MCC5 but different stepped changes in TAC. Tuned to 60% PGK_short.',
                       'Same as previous but tuned to 70% PGK_short',
-                      "A state-space surplus production model is fit to the index and catch data. A constant F (Ftarget) is set (determined as a tuning parameter) and the TAC calculated by applying the F to the model's estimate of abundance. A linear harvest control rule reduces Ftarget to 0.1Ftarget if estimated B/BMSY < BMSY. If estimated B/BMSY < 0.4BMSY, Ftarget set to 0.1Ftarget. TAC is constrained to change no more than 25% between management cycles.",
+                      "A state-space surplus production model is fit to the index and catch data. A constant F (Ftarget) is set (determined as a tuning parameter) and the TAC calculated by applying the F to the model's estimate of abundance. A linear harvest control rule reduces Ftarget to 0.1Ftarget if estimated B/BMSY < BMSY. If estimated B/BMSY < 0.4BMSY, Ftarget set to 0.1Ftarget. TAC is constrained to change no more than 25% between management cycles. Tuned to 60% PGK_short.",
                       'Same as previous but tuned to 70% PGK_short',
-                      'Same as SPSSFox, except there is no constraint on reduction in TAC if estimated B/BMSY < 1.',
+                      'Same as SPSSFox, except there is no constraint on reduction in TAC if estimated B/BMSY < 1. Tuned to 60% PGK_short.',
                       'Same as previous but tuned to 70% PGK_short'
                       )
 
@@ -54,7 +63,6 @@ MPs(slick) <- mps
 Check(mps)
 
 
-Check(slick)
 
 
 # OMs ----
@@ -348,6 +356,8 @@ Kobe(slick) <- kobe
 # save Slick ----
 
 saveRDS(slick, 'NSWO.slick')
+saveRDS(slick, '../Slick/inst/NSWO.rda')
+
 
 #
 #
