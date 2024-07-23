@@ -3,7 +3,6 @@
 \docType{data}
 \name{SWO-OMs}
 \alias{SWO-OMs}
-\alias{MOM_000}
 \alias{MOM_001}
 \alias{MOM_002}
 \alias{MOM_003}
@@ -35,12 +34,8 @@ An object of class \code{MOM} of length 1.
 An object of class \code{MOM} of length 1.
 
 An object of class \code{MOM} of length 1.
-
-An object of class \code{MOM} of length 1.
 }
 \usage{
-MOM_000
-
 MOM_001
 
 MOM_002

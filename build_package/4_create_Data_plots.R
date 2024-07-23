@@ -25,7 +25,7 @@ WghtDat <- left_join(WghtDat, Fleet_DF, by="index")
 LenDat <- Data$lencomp %>% dplyr::filter(Yr>0) %>%
   dplyr::rename(year=Yr, index=FltSvy)
 cols <- names(LenDat)[7:length(names(LenDat))] # convert to long
-LenDat <- LenDat %>% tidyr::pivot_longer(all_of(cols), 'Length.Class', values_to="Length.Comp") %>%
+LenDat <- LenDat %>% tidyr::pivot_longer(all_of(cols), names_to='Length.Class', values_to="Length.Comp") %>%
   dplyr::select(year, index, Length.Class, Length.Comp, Nsamp) %>%
   dplyr::rename(Length.Nsamp=Nsamp)
 LenDat <- left_join(LenDat, Fleet_DF, by="index")
@@ -59,7 +59,7 @@ DataSummary$Data <- factor(DataSummary$Data, labels=Data.Names)
 # ---- Data summary plot -----
 p <- ggplot2::ggplot(DataSummary, ggplot2::aes(year2, Code, color=is.data)) +
   ggplot2::facet_wrap(~Data, ncol=2) +
-  ggplot2::geom_line(size=2) +
+  ggplot2::geom_line(linewidth=2) +
   ggplot2::labs(y="Fleet", x="Year", color='') +
   ggplot2::scale_color_manual(values='#357DE9') +
   ggplot2::theme_bw()+
@@ -85,10 +85,10 @@ ggsave('img/Combined_Index.png', p, width=6, height=4)
 
 
 # ---- Plot Additional Indices -----
-AddInd <- SWOMSE::MOM_000@cpars[[1]][[1]]$Data@AddInd
+AddInd <- SWOMSE::MOM_001@cpars[[1]][[1]]$Data@AddInd
 
 
-length(SWOMSE::MOM_000@cpars[[1]][[1]]$Data@AddIunits)
+length(SWOMSE::MOM_001@cpars[[1]][[1]]$Data@AddIunits)
 
 ni <- dim(AddInd)[2]
 yrs <- dimnames(AddInd)[[3]]

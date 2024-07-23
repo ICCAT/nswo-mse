@@ -32,8 +32,6 @@ NULL
 
 
 #' @rdname SWO-OMs 
-'MOM_000'
-#' @rdname SWO-OMs 
 'MOM_001'
 #' @rdname SWO-OMs 
 'MOM_002'

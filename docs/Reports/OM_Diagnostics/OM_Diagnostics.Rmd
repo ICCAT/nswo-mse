@@ -293,7 +293,7 @@ for (i in seq_along(Fleets)) {
   Fleet_LenDat <- Fleet_LenDat %>% group_by(Year=year, Bin) %>%
     summarise(Obs=sum(Obs), Exp=sum(Exp), .groups = 'drop') %>%
     group_by(Year) %>%
-    summarise(Bin=unique(Bin), Obs=Obs/sum(Obs), Exp=Exp/sum(Exp), .groups='drop')
+    reframe(Bin=unique(Bin), Obs=Obs/sum(Obs), Exp=Exp/sum(Exp), .groups='drop')
 
   n.yrs <- Fleet_LenDat$Year %>% unique() %>% length()
   ncol <- 6

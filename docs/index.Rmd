@@ -119,7 +119,7 @@ DT::datatable(DF, escape=1,
 
 ### OM Summary Report
 
-The overall [OM Summary Report](Reports/OM_Summary/2023/OM_Summary_Report.html) summarizes the diagnostic checks, the calculated biological reference points, and the estimated stock status relative to those reference points, for all operating models included in the OM Uncertainty Grid (currently only the Reference OMs).  
+The overall [OM Summary Report](Reports/OM_Summary/2024/OM_Summary_Report.html) summarizes the diagnostic checks, the calculated biological reference points, and the estimated stock status relative to those reference points, for all operating models included in the OM Uncertainty Grid (currently only the Reference OMs).  
 
 
 

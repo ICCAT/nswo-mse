@@ -4,12 +4,12 @@ nsim <- 50 # number of simulations per OM
 proyears <- 34 # number of projection years
 
 OM.root <- 'G:/My Drive/1_Projects/North_Atlantic_Swordfish/OMs'
-OMgrid.dir <- file.path(OM.root,'grid_2022')
+OMgrid.dir <- file.path(OM.root,'2024_OMs')
 OMgrid.dirs <- list.dirs(OMgrid.dir, recursive = TRUE)
 
 OMgrid.dirs <- OMgrid.dirs[!grepl('other_not_currently_used', OMgrid.dirs)]
 
-SSData <- r4ss::SS_readdat(file.path(OMgrid.dir, '000_base_case/SWOv5.dat'))
+SSData <- r4ss::SS_readdat(file.path(OMgrid.dir, 'SWOv8.dat'))
 
 # ---- Install latest version of r4ss ----
 # devtools::install_github("r4ss/r4ss", build_vignettes = TRUE, force=TRUE)
@@ -20,6 +20,7 @@ library(ggplot2)
 
 # ---- Delete existing data ----
 fls <- list.files('data')
+fls <- fls[!grepl('prev_', fls)]
 file.remove(file.path('data', fls))
 
 # ----- Documentation ----
@@ -140,6 +141,7 @@ OM_DF$Class <- factor(OM_DF$Class,
 OM_DF$`Include CAL` <- as.logical(OM_DF$`Include CAL`)
 
 OM_DF <- OM_DF %>% relocate(OM.object)
+
 
 # ---- Import OMs ----
 
@@ -333,7 +335,7 @@ importOM <- function(i, nsim, proyears, OM_DF, SWOData) {
 
   # Combined Index - years to calculate deviations
   years <- replist$startyr:replist$endyr
-  ind_yrs <- 1999:2020
+  ind_yrs <- 1999:2022
   MOM_com@cpars[[1]][[1]]$Ind_Yrs <-match(ind_yrs, years)
 
   # update selectivty & retention parameters
@@ -396,14 +398,14 @@ usethis::use_data(MOM_010, overwrite = TRUE)
 # ---- Make OM Table -----
 
 OM_desc <- read.csv(file.path(OMgrid.dir, 'OM_Description.csv'))
-# OM_desc$OM.objects <- NA
+#OM_desc$OM.objects <- NA
 
-# add MOM objects
-for (i in 1:nrow(OM_desc)) {
-  cl <- OM_desc$Class[i]
-  df <- OM_DF %>% dplyr::filter(Class==cl)
-  # OM_desc$OM.objects[i] <- paste(df$OM.object, collapse=', ')
-}
+# # add MOM objects
+# for (i in 1:nrow(OM_desc)) {
+#   cl <- OM_desc$Class[i]
+#   df <- OM_DF %>% dplyr::filter(Class==cl)
+#   OM_desc$OM.objects[i] <- paste(df$OM.object, collapse=', ')
+# }
 
 OM_desc$Class <- factor(OM_desc$Class, levels=unique(OM_desc$Class), ordered = TRUE)
 
@@ -459,10 +461,10 @@ Catchdf <- data.frame(Year=c(2021, 2022, 2023, 2024),
 usethis::use_data(Catchdf, overwrite = TRUE)
 
 # ---- Update SWO_Data with AddInd -----
-load('data/MOM_000.rda')
+load('data/MOM_001.rda')
 
-SWOData <- MOM_000@cpars[[1]][[1]]$Data
-SWOData@MPrec <- Catchdf$Catch[2]
+SWOData <- MOM_001@cpars[[1]][[1]]$Data
+SWOData@MPrec <- Catchdf$Catch[length(Catchdf$Catch)]
 
 usethis::use_data(SWOData, overwrite = TRUE)
 

@@ -4,12 +4,12 @@ library(dplyr)
 library(ggplot2)
 
 img_dir <- 'img/OM_Summary_Report'
-obj_dir <- 'docs/Reports/OM_Summary/2023'
+obj_dir <- 'docs/Reports/OM_Summary/2024'
 
 # Generate OM Summary Report ----
 
 OM.root <- 'G:/My Drive/1_Projects/North_Atlantic_Swordfish/OMs'
-OMs.dir <- file.path(OM.root, 'grid_2022')
+OMs.dir <- file.path(OM.root, '2024_OMs')
 OM.obj <- file.path(OM.root, 'OM_objects')
 Replist.dir <- file.path(OM.obj, 'Replists')
 RefPoint.dir <- file.path(OM.obj, 'Ref_Points')
@@ -87,37 +87,39 @@ Check_Convergence <- function(i) {
 Check_Convergence_List <- lapply(1:nrow(OM_DF), Check_Convergence)
 Check_Convergence_DF <- do.call('rbind', Check_Convergence_List)
 Check_Convergence_DF$dir <- NULL
-Check_Convergence_DF <- Check_Convergence_DF %>% relocate(., OM.num)
-Check_Convergence_DF <- Check_Convergence_DF %>%
-  mutate(across(c(1:7, ncol(Check_Convergence_DF)), as.factor))
+if (!is.null(Check_Convergence_DF)) {
+  Check_Convergence_DF <- Check_Convergence_DF %>% relocate(., OM.num)
+  Check_Convergence_DF <- Check_Convergence_DF %>%
+    mutate(across(c(1:7, ncol(Check_Convergence_DF)), as.factor))
+}
 saveRDS(Check_Convergence_DF, file.path(obj_dir, 'Check_Convergence_DF.rda'))
 
 
 # Check_Convergence_DF %>% filter(invertible==FALSE)
 # all invertible
+if (!is.null(Check_Convergence_DF)) {
+  high_grads <- Check_Convergence_DF %>% filter(high_grad==TRUE)
 
-high_grads <- Check_Convergence_DF %>% filter(high_grad==TRUE)
+  high_grads %>% summarise(OM.n=length(unique(OM.num)))
 
-high_grads %>% summarise(OM.n=length(unique(OM.num)))
+  grad_table <- high_grads %>% group_by(Parameter) %>%
+    summarize(nOM=length(unique(OM.num)),
+              max_gradient=max(abs(Gradient))) %>%
+    arrange(desc(nOM))
 
-grad_table <- high_grads %>% group_by(Parameter) %>%
-  summarize(nOM=length(unique(OM.num)),
-            max_gradient=max(abs(Gradient))) %>%
-  arrange(desc(nOM))
+  high_grads$Gradient %>% abs() %>%  boxplot()
 
-high_grads$Gradient %>% abs() %>%  boxplot()
+  high_grads %>% filter(abs(Gradient)>0.02)
 
-high_grads %>% filter(abs(Gradient)>0.02)
+  ggplot(high_grads %>% filter(Parameter=='SR_LN(R0)'), aes(x=Gradient)) +
+    facet_grid(M~steepness) +
+    geom_histogram()
 
-ggplot(high_grads %>% filter(Parameter=='SR_LN(R0)'), aes(x=Gradient)) +
-  facet_grid(M~steepness) +
-  geom_histogram()
+  tt <- high_grads %>% filter(Parameter=="SR_LN(R0)", abs(Gradient)>0.0001) %>% select(Gradient)
+  hist(tt$Gradient)
 
-tt <- high_grads %>% filter(Parameter=="SR_LN(R0)", abs(Gradient)>0.0001) %>% select(Gradient)
-hist(tt$Gradient)
-
-high_grads %>% group_by(M) %>% summarize(n=length(unique(OM.num)))
-
+  high_grads %>% group_by(M) %>% summarize(n=length(unique(OM.num)))
+}
 #
 # ### Check Correlations ----
 # Check_Correlations <- function(i) {
@@ -203,7 +205,7 @@ bc <- BC_TS  %>% select(cols)
 names(bc) <- cols2
 
 DF_TS <- TSBio %>% filter(Class!='Base Case')
-DF_TS <- cbind(DF_TS, bc)
+# DF_TS <- cbind(DF_TS, bc)
 DF_TS$Class <- factor(DF_TS$Class, levels=unique(DF_TS$Class),
                       ordered = TRUE)
 Ylabs <- list(expression(SB/SB[MSY]),
@@ -221,7 +223,7 @@ for (i in seq_along(Vars)) {
     geom_line() +
     expand_limits(y=c(0)) +
     geom_line() +
-    geom_line(aes_string(y=BC_Vars[i]), linetype=2, color='darkgray') +
+    # geom_line(aes_string(y=BC_Vars[i]), linetype=2, color='darkgray') +
     theme_bw() +
     labs(x="Year", y=Ylabs[[i]], color='OM Group') +
     scale_color_brewer(type='div', palette = 'PRGn')

@@ -9,7 +9,7 @@ library(ggplot2)
 
 OM.root <- 'G:/My Drive/1_Projects/North_Atlantic_Swordfish/OMs'
 OM.object <- file.path(OM.root, 'OM_objects')
-OMgrid.dir <- file.path(OM.root, "grid_2022")
+OMgrid.dir <- file.path(OM.root, "2024_OMs")
 OMgrid.dirs <- list.dirs(OMgrid.dir, recursive = TRUE)
 
 # ---- Save OM replist ----
@@ -36,8 +36,8 @@ for (i in seq_along(OMgrid.dirs)) {
 # ---- Save Data List ----
 
 # Only use Data from Base Case Model
-SS.dir <- file.path(OMgrid.dir, '000_base_case')
-SWO_Data <- r4ss::SS_readdat(file.path(SS.dir, 'SWOv5.dat'),
+SS.dir <- OMgrid.dir
+SWO_Data <- r4ss::SS_readdat(file.path(SS.dir, 'SWOv8.dat'),
                                   version='3.30',
                                   verbose = FALSE)
 
@@ -83,6 +83,7 @@ for (i in seq_along(rep.dirs)) {
   likelihoods <- list(replist$likelihoods_used %>% t() %>% data.frame(),
                       replist$likelihoods_by_fleet)
 
+  dir.create(file.path(OM.object, 'Likelihoods'))
   dir.create(file.path(OM.object, 'Likelihoods', basename(rep.dirs[i])))
   saveRDS(likelihoods, file.path(OM.object, 'Likelihoods', basename(rep.dirs[i]), 'likelihoods.rda'))
 }
@@ -96,7 +97,7 @@ for (i in seq_along(rep.dirs)) {
   cpues <- replist$cpue %>%
     dplyr::rename(index=Fleet, year=Yr) %>%
     select(year, index, Vuln_bio, Obs, Exp, Calc_Q, Eff_Q)
-
+  dir.create(file.path(OM.object, 'CPUEs'))
   dir.create(file.path(OM.object, 'CPUEs', basename(rep.dirs[i])))
   saveRDS(cpues, file.path(OM.object, 'CPUEs', basename(rep.dirs[i]), 'cpues.rda'))
 }
@@ -122,6 +123,7 @@ for (i in seq_along(rep.dirs)) {
   TSbio_dat <- dplyr::full_join(TSbio_dat, Kobe,by="year")
   TSbio_dat$F <- TSbio_dat$F.Fmsy*FMSY
 
+  dir.create(file.path(OM.object, 'Timeseries'))
   dir.create(file.path(OM.object, 'Timeseries', basename(rep.dirs[i])))
   saveRDS(TSbio_dat, file.path(OM.object, 'Timeseries', basename(rep.dirs[i]), 'timeseries.rda'))
 }
@@ -160,7 +162,7 @@ for (i in seq_along(rep.dirs)) {
                    Depletion=finalSB$Depletion)
 
 
-
+  dir.create(file.path(OM.object, 'Ref_Points'))
   dir.create(file.path(OM.object, 'Ref_Points', basename(rep.dirs[i])))
   saveRDS(df, file.path(OM.object, 'Ref_Points', basename(rep.dirs[i]), 'ref_points.rda'))
 }
@@ -184,6 +186,7 @@ for (i in seq_along(rep.dirs)) {
   SizeSelect$Factor[SizeSelect$Factor=='Lsel'] <- 'Selected'
   SizeSelect$Factor[SizeSelect$Factor=='Ret'] <- 'Retained'
 
+  dir.create(file.path(OM.object, 'Select_Retain'))
   dir.create(file.path(OM.object, 'Select_Retain', basename(rep.dirs[i])))
   saveRDS(SizeSelect, file.path(OM.object, 'Select_Retain', basename(rep.dirs[i]), 'select.rda'))
 }
@@ -199,7 +202,7 @@ for (i in seq_along(rep.dirs)) {
     dplyr::select(index, year, Obs, Exp, se)
   catch_dat <- dplyr::left_join(catch_dat, Fleet_DF, by="index")
 
-
+  dir.create(file.path(OM.object, 'Catch'))
   dir.create(file.path(OM.object, 'Catch', basename(rep.dirs[i])))
   saveRDS(catch_dat, file.path(OM.object, 'Catch', basename(rep.dirs[i]), 'catch.rda'))
 }
@@ -214,7 +217,7 @@ for (i in seq_along(rep.dirs)) {
     dplyr::select(year, index, Sex, Bin, Obs, Exp, Used, effN)
   predLen <- dplyr::left_join(predLen, Fleet_DF, by="index")
 
-
+  dir.create(file.path(OM.object, 'CAL'))
   dir.create(file.path(OM.object, 'CAL', basename(rep.dirs[i])))
   saveRDS(predLen, file.path(OM.object, 'CAL', basename(rep.dirs[i]), 'cal.rda'))
 }
