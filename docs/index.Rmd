@@ -60,11 +60,13 @@ The current results of the North Atlantic Swordfish MSE are available in an onli
 
 ## Operating Models
 
-The 2022 stock assessment was used as a base case model for developing the Operating Models (OMs) for the MSE. Based on previous analyses, and a recent analysis involving applying the Francis iterative re-weighting procedure to the operating models, the OMs in the grid have been placed into two categories: Reference and Robustness OMs. See the [Trial Specifications Doc](TS/Trial_Specs.html) for more details on the development of the OM uncertainty grid. 
+The 2022 stock assessment was used as a base case model for developing the Operating Models (OMs) for the MSE, using data up to 2020. Based on previous analyses, and a recent analysis involving applying the Francis iterative re-weighting procedure to the operating models, the OMs in the grid have been placed into two categories: Reference and Robustness OMs. See the [Trial Specifications Doc](TS/Trial_Specs.html) for more details on the development of the OM uncertainty grid. 
+
+In 2024, the operating models were reconditioned using data updated to 2022.
 
 ### Reference Operating Models
 
-A set of 9 operating models have been identified as the main reference set. These operating models had the same structural and data assumptions as the 2022 Base Case assessment, with the exception that the natural mortality (*M*) and steepness (*h*) of the Beverton-Holt stock-recruitment relationship each spanned three levels of uncertainty:
+A set of 9 operating models have been identified as the main reference set. These operating models had the same structural and data assumptions as the 2022 Base Case assessment, with the exception that the natural mortality (*M*) and steepness (*h*) of the Beverton-Holt stock-recruitment relationship each spanned three levels of uncertainty, and the data updated to 2022:
 
 1. *M* = 0.1, 0.2, and 0.3
 2. *h* = 0.69, 0.80, and 0.88
@@ -72,9 +74,7 @@ A set of 9 operating models have been identified as the main reference set. Thes
 
 ### Reference OM Diagnostic Reports
 
-The searchable table below displays the operating models in the `SWOMSE` package. The operating models can be accessed in the R package by the OM Object name, e.g., `SWOMSE::MOM_000` is the 2022 Base Case Stock Assessment.
-
-Individual OM diagnostic reports can be accessed by clicking the links in the table below. 
+The searchable table below displays the operating models in the `SWOMSE` package. Individual OM diagnostic reports can be accessed by clicking the links in the table below. 
 
 ```{r}
 DF <- SWOMSE::OM_DF
@@ -119,10 +119,10 @@ DT::datatable(DF, escape=1,
 
 ### OM Summary Report
 
-The overall [OM Summary Report](Reports/OM_Summary/2024/OM_Summary_Report.html) summarizes the diagnostic checks, the calculated biological reference points, and the estimated stock status relative to those reference points, for all operating models included in the OM Uncertainty Grid (currently only the Reference OMs).  
+The [OM Summary Report](Reports/OM_Summary/2024/OM_Summary_Report.html) summarizes the diagnostic checks, the calculated biological reference points, and the estimated stock status relative to those reference points, for the operating models that have been reconditioned with data up to 2022.  
 
-
-
+The OM Summary Report for the OMs conditioned on data up to 2022 is available [here](Reports/OM_Summary/2023/OM_Summary_Report.html).
+ 
 ## Related SCRS Papers
 
 ```{r, results='asis'}

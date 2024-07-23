@@ -217,17 +217,17 @@ Vars <- c('B.Bmsy', 'F.Fmsy', 'F', 'SSB', 'Depletion')
 BC_Vars <- paste0('BC_', Vars)
 
 for (i in seq_along(Vars)) {
-  p <- ggplot(DF_TS, aes_string(x='year', y=Vars[i],
-                                color='Class'))+
+  p <- ggplot(DF_TS, aes(x=year, y=.data[[Vars[i]]],
+                                color=Class,
+                                linetype=Class))+
     facet_grid(steepness~M) +
     geom_line() +
     expand_limits(y=c(0)) +
     geom_line() +
     # geom_line(aes_string(y=BC_Vars[i]), linetype=2, color='darkgray') +
     theme_bw() +
-    labs(x="Year", y=Ylabs[[i]], color='OM Group') +
-    scale_color_brewer(type='div', palette = 'PRGn')
-
+    labs(x="Year", y=Ylabs[[i]]) +
+    scale_color_manual(values=c('black', 'darkblue'))
 
   if (Vars[i] %in% c('B.Bmsy')){
     p <- p +
