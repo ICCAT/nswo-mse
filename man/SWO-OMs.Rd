@@ -13,8 +13,11 @@
 \alias{MOM_008}
 \alias{MOM_009}
 \alias{MOM_010}
+\alias{MOM_011}
 \title{Operating models}
 \format{
+An object of class \code{MOM} of length 1.
+
 An object of class \code{MOM} of length 1.
 
 An object of class \code{MOM} of length 1.
@@ -55,6 +58,8 @@ MOM_008
 MOM_009
 
 MOM_010
+
+MOM_011
 }
 \description{
 North Atlantic Swordfish Operating Models

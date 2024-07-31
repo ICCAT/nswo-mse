@@ -28,7 +28,15 @@ DiffMngCycle <- readRDS('./data/DiffMngCycle.rda')
 MinTACChange <- readRDS('./data/MinTACChange.rda')
 
 OMnames <- unique(PM_results$Model)
-OMnames <- factor(OMnames, levels=c('Reference', 'R0', 'R1', 'R2', 'R3a', 'R3b', 'R4'), ordered = TRUE)
+
+OMnames <- factor(OMnames, levels=c('Reference', 'R0',
+                                    'R1',
+                                    'R1a',
+                                    'R2',
+                                    'R2a',
+                                    'R3a',
+                                    'R3b',
+                                    'R4'), ordered = TRUE)
 
 metadf <- data.frame(OMnames=OMnames) %>% arrange(OMnames)
 

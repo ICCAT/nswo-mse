@@ -3,6 +3,11 @@ CE,Empirical,Combined index,"Aims to maintain a constant exploitation rate (ER) 
 MCC5,Empirical,Combined index,The goal of the MCC methods is to keep the TAC as constant as possible. The TAC changes by discrete steps according to the ratio the recent index (mean of three most recent years) to the historical target index (mean of 2017 - 2019).
 MCC7,Empirical,Combined index,Same as MCC5 but different stepped changes in TAC.
 MCC85,Empirical,Combined index,Same as MCC5 but with some additional higher TAC steps if the index ratio increases to higher levels
+MCC85a,Empirical,Combined index,A modified version of MCC85
+MCC85b,Empirical,Combined index,A modified version of MCC85
 MCC97,Empirical,Combined index,Same as MCC7 but with some additional higher TAC steps if the index ratio increases to higher levels
+MCC97a,Empirical,Combined index,A modified version of MCC97
+MCC97b,Empirical,Combined index,A modified version of MCC97
+MCC97c,Empirical,Combined index,A modified version of MCC97
 SPSSFox,Model,Combined index,"A state-space surplus production model is fit to the index and catch data. A constant F (Ftarget) is set (determined as a tuning parameter) and the TAC calculated by applying the F to the model's estimate of abundance. A linear harvest control rule reduces Ftarget to 0.1Ftarget if estimated B/BMSY < BMSY. If estimated B/BMSY < 0.4BMSY, Ftarget set to 0.1Ftarget. TAC is constrained to change no more than 25% between management cycles."
 SPSSFox2,Model,Combined index,"Same as SPSSFox, except there is no constraint on reduction in TAC if estimated B/BMSY < 1."

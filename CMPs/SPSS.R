@@ -105,56 +105,57 @@ class(SPSSFox2) <- 'MP'
 #' @describeIn SPSSFox Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 SPSSFox_b <- SPSSFox
-formals(SPSSFox_b)$tunepar <- 0.586507108283592 # 0.605114476976326
+formals(SPSSFox_b)$tunepar <- 0.683075458270019
 class(SPSSFox_b) <- "MP"
 
 
 #' @describeIn SPSSFox Tuned to PGK_short = 0.7 across Reference OMs.
 #' @export
 SPSSFox_c <- SPSSFox
-formals(SPSSFox_c)$tunepar <- 0.552094820956031
+formals(SPSSFox_c)$tunepar <- 0.638771904865842
 class(SPSSFox_c) <- "MP"
 
 
 #' @describeIn SPSSFox Tuned to PGK_med = 0.6 across Reference OMs.
 #' @export
 SPSSFox_d <- SPSSFox
-formals(SPSSFox_d)$tunepar <- 0.586507108283592
+formals(SPSSFox_d)$tunepar <- 0.637703351511754
 class(SPSSFox_d) <- "MP"
 
 
 #' @describeIn SPSSFox Tuned to PGK_long = 0.6 across Reference OMs.
 #' @export
 SPSSFox_e <- SPSSFox
-formals(SPSSFox_e)$tunepar <- 0.611114228356962
+formals(SPSSFox_e)$tunepar <- 0.674453009290427
 class(SPSSFox_e) <- "MP"
+
 
 
 #' @describeIn SPSSFox2 Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 SPSSFox2_b <- SPSSFox2
-formals(SPSSFox2_b)$tunepar <- 0.605119036650066
+formals(SPSSFox2_b)$tunepar <- 0.683373731425435
 class(SPSSFox2_b) <- "MP"
 
 
 #' @describeIn SPSSFox2 Tuned to PGK_short = 0.7 across Reference OMs.
 #' @export
 SPSSFox2_c <- SPSSFox2
-formals(SPSSFox2_c)$tunepar <- 0.552094820956031
+formals(SPSSFox2_c)$tunepar <- 0.638654797583369
 class(SPSSFox2_c) <- "MP"
 
 
 #' @describeIn SPSSFox2 Tuned to PGK_med = 0.6 across Reference OMs.
 #' @export
 SPSSFox2_d <- SPSSFox2
-formals(SPSSFox2_d)$tunepar <- 0.586868554034945
+formals(SPSSFox2_d)$tunepar <- 0.639831319924664
 class(SPSSFox2_d) <- "MP"
 
 
 #' @describeIn SPSSFox2 Tuned to PGK_long = 0.6 across Reference OMs.
 #' @export
 SPSSFox2_e <- SPSSFox2
-formals(SPSSFox2_e)$tunepar <- 0.61675444133959
+formals(SPSSFox2_e)$tunepar <- 0.695398508024926
 class(SPSSFox2_e) <- "MP"
 
 

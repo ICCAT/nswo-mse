@@ -27,12 +27,7 @@ Refs_OMs <- Refs_OMs$OM.object
 
 
 All_MPs <- get_MP_names() %>% sort()
-
-Test_MPs <- c('CE', 'CE2',
-              'MCC5', 'MCC7', 'MCC85', 'MCC97',
-              'SPSSFox',
-              'SPSSFox2',
-              'SPSSFox3')
+Test_MPs <- All_MPs
 
 TuneTargets$Metric <- 'PGK_short'
 
@@ -52,7 +47,8 @@ if (!dir.exists('Tuning_Objects'))
 for (MP_name in Test_MPs) {
   Tune_MP(MP_name,
           Tuning_OMs=Refs_OMs,
-          TuneTargets)
+          TuneTargets,
+          skip_scope = 'MCC5')
 
   # Create tuned CMPs
   Document_MP(MP_name=MP_name, MP_file=get_MP_locations(MP_name), plot=TRUE)
@@ -114,6 +110,22 @@ for (MP_name in Test_MPs) {
 }
 
 
+## R1a. Increasing Catchability  - Historical & Projection ----
+hist <- readRDS(file.path('Hist_Objects/R1a_Increasing_q', 'MOM_011.hist'))
+
+for (MP_name in Test_MPs) {
+  MPs <- get_tune_MPs(MP_name)
+  mmse <- ProjectMOM(hist, MPs)
+
+  # save MSE
+  nm <- paste0('MOM_011', '-', MP_name, '-R1a_Increasing_q', '.mse')
+  saveRDS(mmse, file=file.path('MSE_Objects', nm))
+
+}
+
+
+
+
 ## R2. Increasing Catchability  - Historical Only ----
 hist <- readRDS(file.path('Hist_Objects/R2', 'MOM_010.hist'))
 
@@ -125,6 +137,20 @@ for (MP_name in Test_MPs) {
   nm <- paste0('MOM_010', '-', MP_name, '-R2_Increasing_q', '.mse')
   saveRDS(mmse, file=file.path('MSE_Objects', nm))
 }
+
+## R2a. Increasing Catchability  - Historical Only ----
+hist <- readRDS(file.path('Hist_Objects/R2a', 'MOM_011.hist'))
+
+for (MP_name in Test_MPs) {
+  MPs <- get_tune_MPs(MP_name)
+  mmse <- ProjectMOM(hist, MPs)
+
+  # save MSE
+  nm <- paste0('MOM_011', '-', MP_name, '-R2a_Increasing_q', '.mse')
+  saveRDS(mmse, file=file.path('MSE_Objects', nm))
+}
+
+
 
 
 ## R3. Climate Change - Increased Recruitment Variability ----

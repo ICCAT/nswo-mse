@@ -1,7 +1,8 @@
 # Import OMs and Data and add to SWOMSE package
 
-nsim <- 50 # number of simulations per OM
-proyears <- 34 # number of projection years
+nsim <- 80 # number of simulations per OM
+proyears <- 32 # number of projection years
+
 
 OM.root <- 'G:/My Drive/1_Projects/North_Atlantic_Swordfish/OMs'
 OMgrid.dir <- file.path(OM.root,'2024_OMs')

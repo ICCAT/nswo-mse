@@ -118,7 +118,6 @@ firstChange <- function(vec) {
   i
 }
 
-# ProjYears <- data.frame(Index1=1:33, Index2=-2:30, Year=2021:2053)
 
 
 is_GK <- function(x, f, b) {
@@ -129,10 +128,14 @@ is_GK <- function(x, f, b) {
 
 ## Status ----
 
+data.frame(Yr_Ind=1:32,
+           Proj_Ind=seq(-1, by=1, length.out=32),
+           year=seq(2023, by=1, length.out=32))
+
 #' @describeIn PMs Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 1-10 (2025-2034)
 #' @family Status
 #' @export
-PGK_short <- function (MMSEobj = NULL, Ref = 1, Yrs = c(5,14))  {
+PGK_short <- function (MMSEobj = NULL, Ref = 1, Yrs = c(3,12))  {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
@@ -154,35 +157,10 @@ PGK_short <- function (MMSEobj = NULL, Ref = 1, Yrs = c(5,14))  {
 class(PGK_short) <- 'PM'
 
 
-# #' @describeIn PMs Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 6-10 (2029-2033)
-# #' @family Status
-# #' @export
-# PGK_6_10 <- function (MMSEobj = NULL, Ref = 1, Yrs = c(9,13))  {
-#   if(!inherits(MMSEobj,'MMSE'))
-#     stop('This PM method is designed for objects of class `MMSE`')
-#   Yrs <- ChkYrs(Yrs, MMSEobj)
-#   PMobj <- new("PMobj")
-#   PMobj@Name <- "PKG_6_10: Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 6-10 (2029-2033)"
-#   PMobj@Caption <- "Prob. Green Zone of Kobe Space (2029-2033)"
-#
-#   PMobj@Ref <- Ref
-#   tt <- MMSEobj@SB_SBMSY[, 1,, Yrs[1]:Yrs[2]] > 1 & MMSEobj@F_FMSY[, 1,1, , Yrs[1]:Yrs[2]] < 1
-#   if (is.null(dim(tt)))
-#     tt <- matrix(tt, nrow=MMSEobj@nsim, ncol=1)
-#   PMobj@Stat <- tt
-#   PMobj@Prob <- calcProb(PMobj@Stat, MMSEobj)
-#   PMobj@Mean <- calcMean(PMobj@Prob)
-#   PMobj@MPs <- MMSEobj@MPs[[1]]
-#   PMobj
-#
-# }
-# class(PGK_6_10) <- 'PM'
-#
-
 #' @describeIn PMs Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 11-20 (2035-2044)
 #' @family Status
 #' @export
-PGK_med <- function (MMSEobj = NULL, Ref = 1, Yrs = c(15,24))  {
+PGK_med <- function (MMSEobj = NULL, Ref = 1, Yrs = c(13,22))  {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
@@ -203,7 +181,7 @@ class(PGK_med) <- 'PM'
 #' @describeIn PMs Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 21-30 (2045-2054)
 #' @family Status
 #' @export
-PGK_long <- function (MMSEobj = NULL, Ref = 1, Yrs = c(25,34))  {
+PGK_long <- function (MMSEobj = NULL, Ref = 1, Yrs = c(23,32))  {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
@@ -224,7 +202,7 @@ class(PGK_long) <- 'PM'
 #' @describeIn PMs Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) over all years (2025-2054)
 #' @family Status
 #' @export
-PGK <- function (MMSEobj = NULL, Ref = 1, Yrs = c(5,34))  {
+PGK <- function (MMSEobj = NULL, Ref = 1, Yrs = c(3,32))  {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
@@ -245,7 +223,7 @@ class(PGK) <- 'PM'
 #' @describeIn PMs Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Year 30 (2054)
 #' @family Status
 #' @export
-PGK_30 <- function (MMSEobj = NULL, Ref = 1, Yrs = c(34,34))  {
+PGK_30 <- function (MMSEobj = NULL, Ref = 1, Yrs = c(32,32))  {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
@@ -269,7 +247,7 @@ class(PGK_30) <- 'PM'
 #' @describeIn PMs Probability of Overfishing (F>FMSY) over all years (2025-2054)
 #' @family Status
 #' @export
-POF <- function (MMSEobj = NULL, Ref = 1, Yrs = c(5,34))  {
+POF <- function (MMSEobj = NULL, Ref = 1, Yrs = c(3,32))  {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
@@ -290,7 +268,7 @@ class(POF) <- 'PM'
 #' @describeIn PMs Probability of Not Overfishing (F<FMSY) over all years (2025-2054)
 #' @family Status
 #' @export
-PNOF <- function (MMSEobj = NULL, Ref = 1, Yrs = c(5,34))  {
+PNOF <- function (MMSEobj = NULL, Ref = 1, Yrs = c(3,32))  {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
@@ -314,7 +292,7 @@ class(PNOF) <- 'PM'
 #' @describeIn PMs Probability of breaching the limit reference point (SSB<0.4SSB_MSY) in any of the first 10 years (2025-2034)
 #' @family Safety
 #' @export
-LRP_short <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(5,14))  {
+LRP_short <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(3,12))  {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
@@ -337,7 +315,7 @@ class(LRP_short) <- 'PM'
 #' @describeIn PMs Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any of the first 10 years (2025-2034)
 #' @family Safety
 #' @export
-nLRP_short <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(5,14))  {
+nLRP_short <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(3,12))  {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
@@ -358,10 +336,10 @@ nLRP_short <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(5,14))  {
 class(nLRP_short) <- 'PM'
 
 
-#' @describeIn PMs Probability of breaching the limit reference point (SSB<0.4SSB_MSY) in any of years 11-20 (2035-2043)
+#' @describeIn PMs Probability of breaching the limit reference point (SSB<0.4SSB_MSY) in any of years 11-20 (2035-2044)
 #' @family Safety
 #' @export
-LRP_med <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(15,24))  {
+LRP_med <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(13,22))  {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
@@ -384,7 +362,7 @@ class(LRP_med) <- 'PM'
 #' @describeIn PMs Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any of years 11-20 (2035-2044)
 #' @family Safety
 #' @export
-nLRP_med <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(15,24))  {
+nLRP_med <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(13,22))  {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
@@ -410,7 +388,7 @@ class(nLRP_med) <- 'PM'
 #' @describeIn PMs Probability of breaching the limit reference point (SSB<0.4SSB_MSY) in any of years 21-30 (2045-2054)
 #' @family Safety
 #' @export
-LRP_long <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(25,34))  {
+LRP_long <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(23,32))  {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
@@ -433,7 +411,7 @@ class(LRP_long) <- 'PM'
 #' @describeIn PMs Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any of years 21-30 (2045-2054)
 #' @family Safety
 #' @export
-nLRP_long <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(25,34))  {
+nLRP_long <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(23,32))  {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
@@ -458,7 +436,7 @@ class(nLRP_long) <- 'PM'
 #' @describeIn PMs Probability of breaching the limit reference point (SSB<0.4SSB_MSY) in any year (2025-2054)
 #' @family Safety
 #' @export
-LRP <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(5,34))  {
+LRP <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(3,32))  {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
@@ -481,7 +459,7 @@ class(LRP) <- 'PM'
 #' @describeIn PMs Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any year (2025-2054)
 #' @family Safety
 #' @export
-nLRP <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(5,34))  {
+nLRP <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(3,32))  {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
@@ -507,7 +485,7 @@ class(nLRP) <- 'PM'
 #' @describeIn PMs TAC in the First Implementation Year (2025)
 #' @family Yield
 #' @export
-TAC1 <- function(MMSEobj=NULL, Ref=1, Yrs=c(5,5)) {
+TAC1 <- function(MMSEobj=NULL, Ref=1, Yrs=c(3,3)) {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
@@ -530,7 +508,7 @@ class(TAC1) <- 'PM'
 #' @describeIn PMs Median TAC (t) over years 1-10 (2025-2034)
 #' @family Yield
 #' @export
-AvTAC_short <- function(MMSEobj=NULL, Ref=NULL, Yrs=c(5,14)) {
+AvTAC_short <- function(MMSEobj=NULL, Ref=NULL, Yrs=c(3,12)) {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
@@ -554,7 +532,7 @@ class(AvTAC_short) <- 'PM'
 #' @describeIn PMs Median TAC relative to MSY over years 1-10 (2025-2034)
 #' @family Yield
 #' @export
-rAvTAC_short <- function(MMSEobj=NULL, Ref=NULL, Yrs=c(5,14)) {
+rAvTAC_short <- function(MMSEobj=NULL, Ref=NULL, Yrs=c(3,12)) {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
@@ -583,7 +561,7 @@ class(rAvTAC_short) <- 'PM'
 #' @describeIn PMs Median TAC (t) over years 11-20 (2035-2044)
 #' @family Yield
 #' @export
-AvTAC_med <- function(MMSEobj=NULL, Ref=1, Yrs=c(15,24)) {
+AvTAC_med <- function(MMSEobj=NULL, Ref=1, Yrs=c(12,22)) {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
@@ -606,7 +584,7 @@ class(AvTAC_med) <- 'PM'
 #' @describeIn PMs Median TAC relative to MSY over years 11-20 (2035-2044)
 #' @family Yield
 #' @export
-rAvTAC_med <- function(MMSEobj=NULL, Ref=1, Yrs=c(15,24)) {
+rAvTAC_med <- function(MMSEobj=NULL, Ref=1, Yrs=c(13,22)) {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
@@ -634,7 +612,7 @@ class(rAvTAC_med) <- 'PM'
 #' @describeIn PMs Median TAC (t) over years 21-30 (2045-2054)
 #' @family Yield
 #' @export
-AvTAC_long <- function(MMSEobj=NULL, Ref=1, Yrs=c(25,34)) {
+AvTAC_long <- function(MMSEobj=NULL, Ref=1, Yrs=c(23,32)) {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
@@ -657,7 +635,7 @@ class(AvTAC_long) <- 'PM'
 #' @describeIn PMs Median TAC relative to MSY over years 21-30 (2045-2054)
 #' @family Yield
 #' @export
-rAvTAC_long <- function(MMSEobj=NULL, Ref=1, Yrs=c(25,34)) {
+rAvTAC_long <- function(MMSEobj=NULL, Ref=1, Yrs=c(23,32)) {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
@@ -687,7 +665,7 @@ class(rAvTAC_long) <- 'PM'
 #' @describeIn PMs Mean variation in TAC (\%) between management cycles over all years and simulations
 #' @family Stability
 #' @export
-VarC <- function (MMSEobj = NULL, Ref=1, Yrs=c(5,34))  {
+VarC <- function (MMSEobj = NULL, Ref=1, Yrs=c(3,32))  {
   if(!inherits(MMSEobj,'MMSE'))
     stop('This PM method is designed for objects of class `MMSE`')
   Yrs <- ChkYrs(Yrs, MMSEobj)
@@ -1201,7 +1179,7 @@ Process_MSE_Results <- function(PMs=NULL,
       for (mm in 1:MSE@nMPs) {
         mp <- MSE@MPs[[1]][mm]
         ts_mp[[mm]] <- data.frame(Sim=1:nsim,
-                                  Year=rep(2021:2054, each=nsim),
+                                  Year=rep(2023:2054, each=nsim),
                                   SB_SBMSY=as.vector(MSE@SB_SBMSY[,1,mm,]),
                                   F_FMSY=as.vector(MSE@F_FMSY[,1,1,mm,]),
                                   TAC=as.vector(apply(MSE@TAC[,,1,mm,], c(1,3), sum)),

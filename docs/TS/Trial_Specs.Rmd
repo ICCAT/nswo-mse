@@ -363,7 +363,7 @@ knitr::include_graphics('../../img/Individual_Indices.png')
 The current simulation specifications for the MSE are:
 
 1.  Management interval: 3 (i.e., TAC updated every 3rd year)
-2.  Number of projection years: 33 (2021 -- 2053)
+2.  Number of projection years: 32 (2023 -- 2054)
 3.  Number of simulations per OM: $`r MOM@nsim`$
 
 ## Assumptions
