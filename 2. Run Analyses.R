@@ -27,7 +27,7 @@ Refs_OMs <- Refs_OMs$OM.object
 
 
 All_MPs <- get_MP_names() %>% sort()
-Test_MPs <- All_MPs
+Test_MPs <- c('MCC85a', 'MCC85b', 'MCC97a', 'MCC97b', 'MCC97c') #
 
 TuneTargets$Metric <- 'PGK_short'
 
@@ -47,8 +47,7 @@ if (!dir.exists('Tuning_Objects'))
 for (MP_name in Test_MPs) {
   Tune_MP(MP_name,
           Tuning_OMs=Refs_OMs,
-          TuneTargets,
-          skip_scope = 'MCC5')
+          TuneTargets)
 
   # Create tuned CMPs
   Document_MP(MP_name=MP_name, MP_file=get_MP_locations(MP_name), plot=TRUE)
@@ -69,6 +68,8 @@ for (MP_name in Test_MPs) {
 # Source new tuned CMPs
 source_CMPs()
 TuneTargets=TuneTargets[TuneTargets$Code %in% c("b","c"),]
+
+Test_MPs <- c('MCC5', 'MCC85a', 'MCC85b', 'MCC97a', 'MCC97b', 'MCC97c') #
 
 if (!dir.exists('MSE_Objects'))
   dir.create('MSE_Objects')
