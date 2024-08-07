@@ -93,7 +93,7 @@ CE2 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
   Data@Ind[x,] <- smoothed_index
 
   # Calculate Historical Relative Exploitation Rate
-  yr.ind <- which(Data@Year==2005)
+  yr.ind <- which(Data@Year==2020)
   hist.yrs <- (yr.ind-yrs[1]+1):yr.ind
   histER <- mean(Data@Cat[x,hist.yrs])/mean(Data@Ind[x,hist.yrs])
 
@@ -121,65 +121,74 @@ CE2 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
   TAC <- ER_ratio * tunepar * Data@MPrec[x]
 
   # Maximum allowed change in TAC
-  Rec@TAC <- MaxChange(TAC, Data@MPrec[x], mc)
+  if (ind_ratio>=0.8) {
+    Rec@TAC <- MaxChange(TAC, Data@MPrec[x], mc)
+  } else if (ind_ratio> 0.5) {
+    Rec@TAC <- MaxChange(TAC, Data@MPrec[x], 0.4)
+  } else {
+    Rec@TAC <- MaxChange2(TAC, Data@MPrec[x], 0.6, Brel = ind_ratio/0.5)
+  }
+
+
+
   # Rec@Misc[[x]] <- data.frame(targER, histER, curInd, histInd, ind_ratio, Data@Ind[x,])
   Rec
 }
+
 
 # ---- Tuned CMPs ----
 #' @describeIn CE Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 CE_b <- CE
-formals(CE_b)$tunepar <- 0.943072525062657
+formals(CE_b)$tunepar <- 0.942838899038009
 class(CE_b) <- "MP"
 
 
 #' @describeIn CE Tuned to PGK_short = 0.7 across Reference OMs.
 #' @export
 CE_c <- CE
-formals(CE_c)$tunepar <- 0.914123952288846
+formals(CE_c)$tunepar <- 0.913885783164088
 class(CE_c) <- "MP"
 
 
 #' @describeIn CE Tuned to PGK_med = 0.6 across Reference OMs.
 #' @export
 CE_d <- CE
-formals(CE_d)$tunepar <- 0.982018103849495
+formals(CE_d)$tunepar <- 0.982079233030867
 class(CE_d) <- "MP"
 
 
 #' @describeIn CE Tuned to PGK_long = 0.6 across Reference OMs.
 #' @export
 CE_e <- CE
-formals(CE_e)$tunepar <- 1.14447526583449
+formals(CE_e)$tunepar <- 1.14455049261084
 class(CE_e) <- "MP"
 
 
 #' @describeIn CE2 Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 CE2_b <- CE2
-formals(CE2_b)$tunepar <- 0.980981794308869
+formals(CE2_b)$tunepar <- 0.942838899038009
 class(CE2_b) <- "MP"
-
 
 #' @describeIn CE2 Tuned to PGK_short = 0.7 across Reference OMs.
 #' @export
 CE2_c <- CE2
-formals(CE2_c)$tunepar <- 0.950875078085876
+formals(CE2_c)$tunepar <- 0.913885783164088
 class(CE2_c) <- "MP"
 
 
 #' @describeIn CE2 Tuned to PGK_med = 0.6 across Reference OMs.
 #' @export
 CE2_d <- CE2
-formals(CE2_d)$tunepar <- 1.02225913595826
+formals(CE2_d)$tunepar <- 0.983437000991285
 class(CE2_d) <- "MP"
 
 
 #' @describeIn CE2 Tuned to PGK_long = 0.6 across Reference OMs.
 #' @export
 CE2_e <- CE2
-formals(CE2_e)$tunepar <- 1.19815058890689
+formals(CE2_e)$tunepar <- 1.21809016549363
 class(CE2_e) <- "MP"
 
 

@@ -1134,10 +1134,10 @@ Process_MSE_Results <- function(PMs=NULL,
   classes <- unique(MSE_DF$Class)
   if (!is.null(class)) classes <- class
 
-  for (class in classes) {
-    message("Processing Results for", class)
+  for (cl in classes) {
+    message("Processing Results for", cl)
 
-    MSE_DF2 <- MSE_DF %>% filter(Class==class)
+    MSE_DF2 <- MSE_DF %>% filter(Class==cl)
 
     MPs <- MSE_DF2$MP %>% unique()
     PM_results_list <- list()
@@ -1151,7 +1151,7 @@ Process_MSE_Results <- function(PMs=NULL,
         MSElist[[j]] <- readRDS(file.path(MSE.dir, df$file[j]))
       }
 
-      MSE <- combine_MMSE(MSElist, class)
+      MSE <- combine_MMSE(MSElist, cl)
 
       PM_results_list[[i]] <- PM_table(MSE, PMs=PMs, msg=FALSE)
 
@@ -1196,12 +1196,12 @@ Process_MSE_Results <- function(PMs=NULL,
     TS_results <- do.call('rbind', TS_results_list)
     VarC_results <- do.call('rbind', VarC_results_list)
 
-    message("Saving results to:", file.path(Results.dir, class))
-    if(!dir.exists(file.path(Results.dir, class)))
-      dir.create(file.path(Results.dir, class))
-    saveRDS(PM_results, file.path(Results.dir, class, 'PM_values.rda'))
-    saveRDS(TS_results, file.path(Results.dir, class, 'TS_values.rda'))
-    saveRDS(VarC_results, file.path(Results.dir, class, 'VarC_results.rda'))
+    message("Saving results to:", file.path(Results.dir, cl))
+    if(!dir.exists(file.path(Results.dir, cl)))
+      dir.create(file.path(Results.dir, cl))
+    saveRDS(PM_results, file.path(Results.dir, cl, 'PM_values.rda'))
+    saveRDS(TS_results, file.path(Results.dir, cl, 'TS_values.rda'))
+    saveRDS(VarC_results, file.path(Results.dir, cl, 'VarC_results.rda'))
 
   }
 

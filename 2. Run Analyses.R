@@ -27,7 +27,8 @@ Refs_OMs <- Refs_OMs$OM.object
 
 
 All_MPs <- get_MP_names() %>% sort()
-Test_MPs <- c('MCC85a', 'MCC85b', 'MCC97a', 'MCC97b', 'MCC97c') #
+Test_MPs <- c('CE', 'CE2', 'SPSSFox', 'SPSSFox2', 'SPSSFox3') #
+Test_MPs <- c('CE2', 'SPSSFox', 'SPSSFox2', 'SPSSFox3') #
 
 TuneTargets$Metric <- 'PGK_short'
 
@@ -55,7 +56,7 @@ for (MP_name in Test_MPs) {
 }
 
 
-
+Test_MPs <- c('CE', 'CE2', 'SPSSFox', 'SPSSFox2') #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # There is now a hack in here whereby the b tunings are manually
 # (copy past in the .r files) set to the lowest tuning
@@ -67,9 +68,10 @@ for (MP_name in Test_MPs) {
 # ---- Run MSE for Reference OMs -----
 # Source new tuned CMPs
 source_CMPs()
+
+Test_MPs <- 'CE2'
 TuneTargets=TuneTargets[TuneTargets$Code %in% c("b","c"),]
 
-Test_MPs <- c('MCC5', 'MCC85a', 'MCC85b', 'MCC97a', 'MCC97b', 'MCC97c') #
 
 if (!dir.exists('MSE_Objects'))
   dir.create('MSE_Objects')
@@ -95,6 +97,8 @@ for (MP_name in Test_MPs) {
 }
 
 
+
+Test_MPs <- c('CE', 'CE2', 'SPSSFox', 'SPSSFox2') #
 # ---- Run MSE for Robustness Tests ----
 
 ## R1. Increasing Catchability  - Historical & Projection ----
@@ -112,19 +116,17 @@ for (MP_name in Test_MPs) {
 
 
 ## R1a. Increasing Catchability  - Historical & Projection ----
-hist <- readRDS(file.path('Hist_Objects/R1a_Increasing_q', 'MOM_011.hist'))
-
-for (MP_name in Test_MPs) {
-  MPs <- get_tune_MPs(MP_name)
-  mmse <- ProjectMOM(hist, MPs)
-
-  # save MSE
-  nm <- paste0('MOM_011', '-', MP_name, '-R1a_Increasing_q', '.mse')
-  saveRDS(mmse, file=file.path('MSE_Objects', nm))
-
-}
-
-
+# hist <- readRDS(file.path('Hist_Objects/R1a_Increasing_q', 'MOM_011.hist'))
+#
+# for (MP_name in Test_MPs) {
+#   MPs <- get_tune_MPs(MP_name)
+#   mmse <- ProjectMOM(hist, MPs)
+#
+#   # save MSE
+#   nm <- paste0('MOM_011', '-', MP_name, '-R1a_Increasing_q', '.mse')
+#   saveRDS(mmse, file=file.path('MSE_Objects', nm))
+#
+# }
 
 
 ## R2. Increasing Catchability  - Historical Only ----

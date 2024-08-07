@@ -465,7 +465,7 @@ usethis::use_data(Catchdf, overwrite = TRUE)
 load('data/MOM_001.rda')
 
 SWOData <- MOM_001@cpars[[1]][[1]]$Data
-SWOData@MPrec <- Catchdf$Catch[length(Catchdf$Catch)]
+SWOData@MPrec <- 13200
 
 usethis::use_data(SWOData, overwrite = TRUE)
 
