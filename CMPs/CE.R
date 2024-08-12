@@ -27,6 +27,10 @@ CE <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
     return(Rec)
   }
 
+  # update MPrec
+  if (max(Data@Year) == Initial_MP_Yr-1)
+    Data@MPrec[] <- SWOData@MPrec
+
   # Lag Data
   Data <- Lag_Data(Data, Data_Lag)
 
@@ -82,6 +86,10 @@ CE2 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
     return(Rec)
   }
 
+  # update MPrec
+  if (max(Data@Year) == Initial_MP_Yr-1)
+    Data@MPrec[] <- SWOData@MPrec
+
   # Lag Data
   Data <- Lag_Data(Data, Data_Lag)
 
@@ -136,59 +144,33 @@ CE2 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
 }
 
 
+
 # ---- Tuned CMPs ----
 #' @describeIn CE Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 CE_b <- CE
-formals(CE_b)$tunepar <- 0.942838899038009
+formals(CE_b)$tunepar <- 0.834885566858794
 class(CE_b) <- "MP"
 
 
 #' @describeIn CE Tuned to PGK_short = 0.7 across Reference OMs.
 #' @export
 CE_c <- CE
-formals(CE_c)$tunepar <- 0.913885783164088
+formals(CE_c)$tunepar <- 0.815701097645417
 class(CE_c) <- "MP"
 
 
 #' @describeIn CE Tuned to PGK_med = 0.6 across Reference OMs.
 #' @export
 CE_d <- CE
-formals(CE_d)$tunepar <- 0.982079233030867
+formals(CE_d)$tunepar <- 0.925689781490413
 class(CE_d) <- "MP"
 
 
 #' @describeIn CE Tuned to PGK_long = 0.6 across Reference OMs.
 #' @export
 CE_e <- CE
-formals(CE_e)$tunepar <- 1.14455049261084
+formals(CE_e)$tunepar <- 1.13785896037804
 class(CE_e) <- "MP"
-
-
-#' @describeIn CE2 Tuned to PGK_short = 0.6 across Reference OMs.
-#' @export
-CE2_b <- CE2
-formals(CE2_b)$tunepar <- 0.942838899038009
-class(CE2_b) <- "MP"
-
-#' @describeIn CE2 Tuned to PGK_short = 0.7 across Reference OMs.
-#' @export
-CE2_c <- CE2
-formals(CE2_c)$tunepar <- 0.913885783164088
-class(CE2_c) <- "MP"
-
-
-#' @describeIn CE2 Tuned to PGK_med = 0.6 across Reference OMs.
-#' @export
-CE2_d <- CE2
-formals(CE2_d)$tunepar <- 0.983437000991285
-class(CE2_d) <- "MP"
-
-
-#' @describeIn CE2 Tuned to PGK_long = 0.6 across Reference OMs.
-#' @export
-CE2_e <- CE2
-formals(CE2_e)$tunepar <- 1.21809016549363
-class(CE2_e) <- "MP"
 
 

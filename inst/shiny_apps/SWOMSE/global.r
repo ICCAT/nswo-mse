@@ -124,7 +124,12 @@ CMPs <- c('CE_b', 'CE_c',
           'MCC5_b', 'MCC5_c',
           'MCC7_b', 'MCC7_c',
           'MCC85_b', 'MCC85_c',
+          'MCC85a_b', 'MCC85a_c',
+          'MCC85b_b', 'MCC85b_c',
           'MCC97_b', 'MCC97_c',
+          'MCC97a_b', 'MCC97a_c',
+          'MCC97b_b', 'MCC97b_c',
+          'MCC97c_b', 'MCC97c_c',
           'SPSSFox_b', 'SPSSFox_c',
           'SPSSFox2_b', 'SPSSFox2_c')
 

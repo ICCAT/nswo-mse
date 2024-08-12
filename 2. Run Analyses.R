@@ -27,8 +27,8 @@ Refs_OMs <- Refs_OMs$OM.object
 
 
 All_MPs <- get_MP_names() %>% sort()
-Test_MPs <- c('CE', 'CE2', 'SPSSFox', 'SPSSFox2', 'SPSSFox3') #
-Test_MPs <- c('CE2', 'SPSSFox', 'SPSSFox2', 'SPSSFox3') #
+Test_MPs <- c('CE', 'SPSSFox', 'SPSSFox2') #
+
 
 TuneTargets$Metric <- 'PGK_short'
 
@@ -40,6 +40,7 @@ TuneTargets = dplyr::bind_rows(TuneTargets,
                                Metric = c("PGK_med","PGK_long"),
                                Target = c(0.60,0.60)))
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 
 if (!dir.exists('Tuning_Objects'))
   dir.create('Tuning_Objects')
@@ -56,7 +57,6 @@ for (MP_name in Test_MPs) {
 }
 
 
-Test_MPs <- c('CE', 'CE2', 'SPSSFox', 'SPSSFox2') #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # There is now a hack in here whereby the b tunings are manually
 # (copy past in the .r files) set to the lowest tuning
@@ -69,7 +69,6 @@ Test_MPs <- c('CE', 'CE2', 'SPSSFox', 'SPSSFox2') #
 # Source new tuned CMPs
 source_CMPs()
 
-Test_MPs <- 'CE2'
 TuneTargets=TuneTargets[TuneTargets$Code %in% c("b","c"),]
 
 
@@ -97,8 +96,6 @@ for (MP_name in Test_MPs) {
 }
 
 
-
-Test_MPs <- c('CE', 'CE2', 'SPSSFox', 'SPSSFox2') #
 # ---- Run MSE for Robustness Tests ----
 
 ## R1. Increasing Catchability  - Historical & Projection ----
