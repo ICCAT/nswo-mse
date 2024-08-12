@@ -17,7 +17,7 @@
 #' @return An object of class `Rec` with the `TAC` slot populated
 #'
 CE <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
-               yrs=c(5,3), ...) {
+               yrs=c(5,5), ...) {
   Rec <- new('Rec')
 
   # Does TAC need to be updated? (or set a fixed catch if before Initial_MP_Yr)
@@ -26,6 +26,10 @@ CE <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
     Rec <- FixedTAC(Rec, Data) # use actual catches if they are available
     return(Rec)
   }
+
+  # update MPrec
+  if (max(Data@Year) == Initial_MP_Yr-1)
+    Data@MPrec[] <- SWOData@MPrec
 
   # Lag Data
   Data <- Lag_Data(Data, Data_Lag)
@@ -72,7 +76,7 @@ CE <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
 }
 
 CE2 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
-               yrs=c(5,3), ...) {
+               yrs=c(5,5), ...) {
   Rec <- new('Rec')
 
   # Does TAC need to be updated? (or set a fixed catch if before Initial_MP_Yr)
@@ -81,6 +85,10 @@ CE2 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
     Rec <- FixedTAC(Rec, Data) # use actual catches if they are available
     return(Rec)
   }
+
+  # update MPrec
+  if (max(Data@Year) == Initial_MP_Yr-1)
+    Data@MPrec[] <- SWOData@MPrec
 
   # Lag Data
   Data <- Lag_Data(Data, Data_Lag)
@@ -93,7 +101,7 @@ CE2 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
   Data@Ind[x,] <- smoothed_index
 
   # Calculate Historical Relative Exploitation Rate
-  yr.ind <- which(Data@Year==2012)
+  yr.ind <- which(Data@Year==2020)
   hist.yrs <- (yr.ind-yrs[1]+1):yr.ind
   histER <- mean(Data@Cat[x,hist.yrs])/mean(Data@Ind[x,hist.yrs])
 
@@ -121,66 +129,48 @@ CE2 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25,
   TAC <- ER_ratio * tunepar * Data@MPrec[x]
 
   # Maximum allowed change in TAC
-  Rec@TAC <- MaxChange(TAC, Data@MPrec[x], mc)
+  if (ind_ratio>=0.8) {
+    Rec@TAC <- MaxChange(TAC, Data@MPrec[x], mc)
+  } else if (ind_ratio> 0.5) {
+    Rec@TAC <- MaxChange(TAC, Data@MPrec[x], 0.4)
+  } else {
+    Rec@TAC <- MaxChange2(TAC, Data@MPrec[x], 0.6, Brel = ind_ratio/0.5)
+  }
+
+
+
   # Rec@Misc[[x]] <- data.frame(targER, histER, curInd, histInd, ind_ratio, Data@Ind[x,])
   Rec
 }
+
 
 
 # ---- Tuned CMPs ----
 #' @describeIn CE Tuned to PGK_short = 0.6 across Reference OMs.
 #' @export
 CE_b <- CE
-formals(CE_b)$tunepar <- 0.913732033578056
+formals(CE_b)$tunepar <- 0.834885566858794
 class(CE_b) <- "MP"
 
 
 #' @describeIn CE Tuned to PGK_short = 0.7 across Reference OMs.
 #' @export
 CE_c <- CE
-formals(CE_c)$tunepar <- 0.852642639318388
+formals(CE_c)$tunepar <- 0.815701097645417
 class(CE_c) <- "MP"
 
 
 #' @describeIn CE Tuned to PGK_med = 0.6 across Reference OMs.
 #' @export
 CE_d <- CE
-formals(CE_d)$tunepar <- 0.977741637293524
+formals(CE_d)$tunepar <- 0.925689781490413
 class(CE_d) <- "MP"
 
 
 #' @describeIn CE Tuned to PGK_long = 0.6 across Reference OMs.
 #' @export
 CE_e <- CE
-formals(CE_e)$tunepar <- 1.02462422359226
+formals(CE_e)$tunepar <- 1.13785896037804
 class(CE_e) <- "MP"
-
-
-#' @describeIn CE2 Tuned to PGK_short = 0.6 across Reference OMs.
-#' @export
-CE2_b <- CE2
-formals(CE2_b)$tunepar <- 0.917729871267917
-class(CE2_b) <- "MP"
-
-
-#' @describeIn CE2 Tuned to PGK_short = 0.7 across Reference OMs.
-#' @export
-CE2_c <- CE2
-formals(CE2_c)$tunepar <- 0.856005459508644
-class(CE2_c) <- "MP"
-
-
-#' @describeIn CE2 Tuned to PGK_med = 0.6 across Reference OMs.
-#' @export
-CE2_d <- CE2
-formals(CE2_d)$tunepar <- 0.985029282999688
-class(CE2_d) <- "MP"
-
-
-#' @describeIn CE2 Tuned to PGK_long = 0.6 across Reference OMs.
-#' @export
-CE2_e <- CE2
-formals(CE2_e)$tunepar <- 1.12357581069237
-class(CE2_e) <- "MP"
 
 

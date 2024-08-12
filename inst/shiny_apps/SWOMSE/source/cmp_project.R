@@ -193,7 +193,7 @@ cmp_project_server <- function(id) {
                      dplyr::distinct(Year)
 
                    for (y in seq_along(ProYears$Year)) {
-                     # print(ProYears$Year[y])
+                     print(ProYears$Year[y])
 
                      # make data for this year
                      mydf <- data.frame(Year=Index_Data$Year,
@@ -206,10 +206,16 @@ cmp_project_server <- function(id) {
                      CMP_data <- new('Data')
                      CMP_data@Year <- mydf$Year # [1:(length(mydf$Year)-1)]
                      CMP_data@Ind <- matrix(mydf$Index, nrow=1)
-                     CMP_data@CV_Ind <- array(0.2, dim=dim(CMP_data@Ind ))
+                     cv_ind <- SWOData@CV_Ind
+                     addyrs <- length(mydf$Index) - length(cv_ind)
+                     cv_ind <- c(cv_ind, rep(cv_ind [1,length(cv_ind[1,])], addyrs))
+                     CMP_data@CV_Ind <- array(cv_ind, dim=dim(CMP_data@Ind ))
+                     CMP_data@Mort <- SWOData@Mort
+
 
                      for (mp in seq_along(CMPs)) {
                        # print(CMPs[mp])
+
 
                        tac_df <- TAC_df$tac_df
                        # mydf <<- mydf
@@ -220,7 +226,6 @@ cmp_project_server <- function(id) {
                        # last TAC
                        lastcatches <- CMP_data@Cat[!is.na(CMP_data@Cat)]
                        CMP_data@MPrec <- lastcatches[length(lastcatches)]
-
                        # run MP
                        # MYDATA <<- CMP_data
                        # interval <<- as.numeric(input$interval)
@@ -289,7 +294,7 @@ cmp_project_server <- function(id) {
                  })
 
                  output$tac_table <- DT::renderDataTable({
-                   df <- TAC_df$tac_df %>% dplyr::filter(Year>=2020)
+                   df <- TAC_df$tac_df %>% dplyr::filter(Year>=2025)
                    df$TAC <- round(df$TAC, 0)
 
                    # index <- df %>% dplyr::filter(MP==unique(df$MP)[1]) %>%
