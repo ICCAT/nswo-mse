@@ -29,14 +29,14 @@ MinTACChange <- readRDS('./data/MinTACChange.rda')
 
 OMnames <- unique(PM_results$Model)
 
-OMnames <- factor(OMnames, levels=c('Reference', 'R0',
+OMnames <- factor(OMnames, levels=c('Reference',
+                                    'R0',
                                     'R1',
-                                    'R1a',
                                     'R2',
-                                    'R2a',
-                                    'R3a',
-                                    'R3b',
-                                    'R4'), ordered = TRUE)
+                                    'R3',
+                                    'R4',
+                                    'R5',
+                                    'R6'), ordered = TRUE)
 
 metadf <- data.frame(OMnames=OMnames) %>% arrange(OMnames)
 
@@ -121,15 +121,8 @@ for (fl in fls) source(file.path('./CMPs', fl))
 # CE_60 <- CE_c
 
 CMPs <- c('CE_b', 'CE_c',
-          'MCC5_b', 'MCC5_c',
-          'MCC7_b', 'MCC7_c',
-          'MCC85_b', 'MCC85_c',
-          'MCC85a_b', 'MCC85a_c',
-          'MCC85b_b', 'MCC85b_c',
-          'MCC97_b', 'MCC97_c',
-          'MCC97a_b', 'MCC97a_c',
-          'MCC97b_b', 'MCC97b_c',
-          'MCC97c_b', 'MCC97c_c',
+          'MCC9_b', 'MCC9_c',
+          'MCC11_b', 'MCC11_c',
           'SPSSFox_b', 'SPSSFox_c',
           'SPSSFox2_b', 'SPSSFox2_c')
 

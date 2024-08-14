@@ -1,13 +1,6 @@
 CMP name,Type,Abundance indicator,Description
 CE,Empirical,Combined index,"Aims to maintain a constant exploitation rate (ER) at mean of 2016 - 2020. A HCR linearly reduces the ER if the current index is between 50% - 80% of the mean index from this same time period. If the current index is less than 50% of the mean historical index, exploitation rate is set to 10% of the mean historical ER. TAC is constrained to change no more than 25% between management cycles."
-MCC5,Empirical,Combined index,The goal of the MCC methods is to keep the TAC as constant as possible. The TAC changes by discrete steps according to the ratio the recent index (mean of three most recent years) to the historical target index (mean of 2017 - 2019).
-MCC7,Empirical,Combined index,Same as MCC5 but different stepped changes in TAC.
-MCC85,Empirical,Combined index,Same as MCC5 but with some additional higher TAC steps if the index ratio increases to higher levels
-MCC85a,Empirical,Combined index,A modified version of MCC85
-MCC85b,Empirical,Combined index,A modified version of MCC85
-MCC97,Empirical,Combined index,Same as MCC7 but with some additional higher TAC steps if the index ratio increases to higher levels
-MCC97a,Empirical,Combined index,A modified version of MCC97
-MCC97b,Empirical,Combined index,A modified version of MCC97
-MCC97c,Empirical,Combined index,A modified version of MCC97
+MCC9,Empirical,Combined index,Aims to maintain a mostly constant catch (MCC). The TAC is adjusted between a set of 9 steps based on the ratio of the mean index over the 3 most recent years compared to the mean index from 2017 - 2019
+MCC11,Empirical,Combined index,Similar to MCC9 but the 11 steps are used to adjust the TAC 
 SPSSFox,Model,Combined index,"A state-space surplus production model is fit to the index and catch data. A constant F (Ftarget) is set (determined as a tuning parameter) and the TAC calculated by applying the F to the model's estimate of abundance. A linear harvest control rule reduces Ftarget to 0.1Ftarget if estimated B/BMSY < BMSY. If estimated B/BMSY < 0.4BMSY, Ftarget set to 0.1Ftarget. TAC is constrained to change no more than 25% between management cycles."
 SPSSFox2,Model,Combined index,"Same as SPSSFox, except there is no constraint on reduction in TAC if estimated B/BMSY < 1."

@@ -2,8 +2,8 @@ Class,Description
 Reference,"Nine models spanning the key plausible uncertainties in natural mortality (M) and steepness of the Beverton-Holt stock-recruit relationship (h). Same as Base Case with 3 levels of M (0.1, 0.2, 0.3) and 3 levels of h (0.69, 0.80, 0.88)"
 R0,Reference OM for the Robustness Tests. OM 5 of the Reference Set
 R1,"Evaluate impact of an assumed 1% annual increase catchability, that is not accounted for in the standardization of the indices of abundance (historical and projection)"
-R2,"Same as R1, but only for the historical period"
-R2a,Robustness test to evaluate the ability of the CMPs to recover the stock from a low initial level. The historical indices were modified by adding a persistent slope such that the SB/SBMSY = 0.6 in the terminal year of the OM conditioning
-R3a,Evaluate impact of cyclical pattern in recruitment deviations in projection period; a proxy for impact of climate change on stock productivity
-R3b,Evaluate impact of lower than expected recruitment deviations for first 15 years of projection period; a proxy for impact of climate change on stock productivity
-R4,"Evaluate impact of illegal, unreported, or unregulated catches"
+R2,"Same as R1, but bias in the indices of abundance is only for the historical period "
+R3,Robustness test to evaluate the ability of the CMPs to recover the stock from a low initial level. The historical indices were modified by adding a persistent slope such that the SB/SBMSY = 0.6 in the terminal year of the OM conditioning
+R4,Evaluate impact of cyclical pattern in recruitment deviations in projection period; a proxy for impact of climate change on stock productivity
+R5,Evaluate impact of lower than expected recruitment deviations for first 15 years of projection period; a proxy for impact of climate change on stock productivity
+R6,"Evaluate impact of illegal, unreported, or unregulated catches"

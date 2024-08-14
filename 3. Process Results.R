@@ -22,7 +22,7 @@ Results_dirs <- list.dirs('Results', recursive = FALSE)
 Results_dirs <- Results_dirs[Results_dirs!='Results/Final_MP_Results']
 
 PM_list <- list()
-TS_list <- list()
+TS_list1 <- list()
 VarC_list <- list()
 
 for (d in seq_along(Results_dirs)) {
@@ -36,7 +36,7 @@ for (d in seq_along(Results_dirs)) {
 
   TS_results <- readRDS(file.path(Results_dirs[d], 'TS_values.rda'))
   TS_results$Model <- dir
-  TS_list[[d]] <- TS_results
+  TS_list1[[d]] <- TS_results
 
   VarC_results  <- readRDS(file.path(Results_dirs[d], 'VarC_results.rda'))
   VarC_results$Model <- dir
@@ -45,15 +45,51 @@ for (d in seq_along(Results_dirs)) {
 }
 
 PM_results <- do.call('rbind', PM_list)
-TS_results <- do.call('rbind', TS_list) %>% filter(Year>=2025)
+TS_results <- do.call('rbind', TS_list1) %>% filter(Year>=2025)
 VarC_results <- do.call('rbind', VarC_list)
 
 
-# manually drop CMPs
-# worse or equal performance to other variants
-PM_results <- PM_results %>% filter(!MP_name%in%c('CE2'))
-TS_results <- TS_results %>% filter(!MP_name%in%c('CE2'))
-VarC_results <- VarC_results %>% filter(!MP %in%c('CE2_b', 'CE2_c'))
+# Keep only the short-listed MPs
+MP_keep <- c('CE', 'MCC85a', 'MCC97c', 'SPSSFox', 'SPSSFox2')
+MP_keep_b <- paste0(MP_keep, '_b')
+MP_keep_c <- paste0(MP_keep, '_c')
+
+PM_results <- PM_results %>% filter(MP_name%in%MP_keep)
+TS_results <- TS_results %>% filter(MP_name%in%MP_keep)
+VarC_results <- VarC_results %>% filter(MP %in% c(MP_keep_b, MP_keep_c))
+
+
+# Rename MPs
+PM_results$MP <- gsub('MCC85a', 'MCC9', PM_results$MP)
+PM_results$MP <- gsub('MCC97c', 'MCC11', PM_results$MP)
+PM_results$MP_name <- gsub('MCC85a', 'MCC9', PM_results$MP_name)
+PM_results$MP_name <- gsub('MCC97c', 'MCC11', PM_results$MP_name)
+
+TS_results$MP <- gsub('MCC85a', 'MCC9', TS_results$MP)
+TS_results$MP <- gsub('MCC97c', 'MCC11', TS_results$MP)
+TS_results$MP_name  <- gsub('MCC85a', 'MCC9', TS_results$MP_name )
+TS_results$MP_name  <- gsub('MCC97c', 'MCC11', TS_results$MP_name )
+
+VarC_results$MP <- gsub('MCC85a', 'MCC9', VarC_results$MP)
+VarC_results$MP <- gsub('MCC97c', 'MCC11', VarC_results$MP)
+
+
+# Rename OMs
+PM_results$Model <- gsub('R2a', 'R3', PM_results$Model)
+PM_results$Model <- gsub('R3b', 'R5', PM_results$Model)
+PM_results$Model <- gsub('R4', 'R6', PM_results$Model)
+PM_results$Model <- gsub('R3a', 'R4', PM_results$Model)
+
+
+TS_results$Model <- gsub('R2a', 'R3', TS_results$Model)
+TS_results$Model <- gsub('R3b', 'R5', TS_results$Model)
+TS_results$Model <- gsub('R4', 'R6', TS_results$Model)
+TS_results$Model <- gsub('R3a', 'R4', TS_results$Model)
+
+VarC_results$Model <- gsub('R2a', 'R3', VarC_results$Model)
+VarC_results$Model <- gsub('R3b', 'R5', VarC_results$Model)
+VarC_results$Model <- gsub('R4', 'R6', VarC_results$Model)
+VarC_results$Model <- gsub('R3a', 'R4', VarC_results$Model)
 
 
 # process TS data

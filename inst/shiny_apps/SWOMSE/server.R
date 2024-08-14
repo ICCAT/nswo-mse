@@ -24,7 +24,7 @@ server <- function(input, output, session) {
                             TO4x=tradeoffPMs$x[4],
                             TO4y=tradeoffPMs$y[4],
                             QuiltPMs=quiltPMs,
-                            compare_MPs=allMPs[1:3],
+                            compare_MPs=unique(allMPs)[c(1,3,5)],
                             Selected_Model=metadf$OMnames[1],
                             show_dominated=FALSE,
                             select_MPs=allMPs,
@@ -53,7 +53,7 @@ server <- function(input, output, session) {
 
   output$MPs <- function(){
     # CMP_desc <- read.csv('inst/CMP_description.csv')
-    CMP_desc <- read.csv('../../CMP_description2.csv') %>% arrange(CMP.name)
+    CMP_desc <- read.csv('../../CMP_description2.csv')
     CMP_desc$Abundance.indicator <- NULL
     colnames(CMP_desc)[1] <- 'Name'
     CMP_desc %>% knitr::kable(escape = T,

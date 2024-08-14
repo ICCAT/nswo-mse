@@ -57,7 +57,9 @@ TradeOff_UI <- function(id, label="TradeOff") {
 }
 
 
-tradeoffplot <- function(df, tox, toy) {
+tradeoffplot <- function(df, tox, toy, size_point=1.2, size_text=6,
+                         size_axis_text=12,
+                         size_axis_title=14) {
   df <- df %>% filter(PM %in% c(tox, toy))
   caption_df <- df %>% distinct(PM, caption) %>%
     tidyr::pivot_wider(., names_from = PM, values_from = caption)
@@ -122,10 +124,12 @@ tradeoffplot <- function(df, tox, toy) {
   ggplot(df2, aes(x=x, y=y)) +
     theme_bw() +
     labs(x=caption_df$x, y=caption_df$y) +
-    geom_point(data=df2, aes(color=MP)) +
-    ggrepel::geom_text_repel(data=df2, aes(label=MP, color=MP)) +
+    geom_point(data=df2, aes(color=MP), size=size_point) +
+    ggrepel::geom_text_repel(data=df2, aes(label=MP, color=MP), size=size_text) +
     guides(color='none') +
-    expand_limits(x=xlim, y=ylim)
+    expand_limits(x=xlim, y=ylim) +
+    theme(axis.title = element_text(size=size_axis_title),
+          axis.text=element_text(size=size_axis_text))
 }
 
 

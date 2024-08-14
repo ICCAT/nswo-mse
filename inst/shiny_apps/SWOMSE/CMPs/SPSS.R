@@ -1,4 +1,5 @@
 
+
 SPSSFox <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25, ...) {
 
   Rec <- new('Rec')
@@ -26,8 +27,6 @@ SPSSFox <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=0.25, ...) {
 
   # apply SP_SS assessment model
   Mod <- SAMtool::SP_SS(x, Data, prior=list(r=c(0.21, 0.1)), start=list(n=1), fix_n=TRUE)
-
-
 
   # harvest control rule
   # based on: https://www.iccat.int/Documents/Recs/compendiopdf-e/2017-04-e.pdf
