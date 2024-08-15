@@ -57,6 +57,13 @@ Quilt <- function(PM_results, PMs=NULL, show_dominated=FALSE) {
   PM_results$Value <- round(PM_results$Value,2)
   tab <- PM_results %>% select(PM, MP, Value) %>% filter(PM %in% PMs)
 
+  tab$Value <- round(tab$Value,2)
+  ind <- grepl('TAC', tab$PM)
+
+  # copy_value <- tab$Value
+  # copy_value[which(ind)] <- format(round(tab$Value[which(ind)],0), nsmall=0)
+  # copy_value[which(!ind)] <- format(tab$Value[which(!ind)], nsmall=2)
+
   tab$PM <- factor(tab$PM, levels=PMs, ordered = TRUE)
   tab <- tab %>% group_by(PM) %>% arrange()
   tab <- tab  %>%
@@ -92,11 +99,17 @@ Quilt <- function(PM_results, PMs=NULL, show_dominated=FALSE) {
 
 
 
+  tac_cols <- colnames(tab)[grepl('TAC', colnames(tab))]
+  nontac_cols <- colnames(tab)[!grepl('TAC', colnames(tab))]
+  nontac_cols <- nontac_cols[!nontac_cols=='MP']
+
   quilt <-  DT::datatable(tab, extensions = 'Buttons',
                           options = list( dom = 'tB', pageLength =100, buttons=c('copy', 'csv')),
                           filter = list(
                             position = 'top', clear = FALSE
-                          ))
+                          )) |>
+    DT::formatRound(columns = tac_cols, digits=0) |>
+    DT::formatRound(columns = nontac_cols, digits=2)
 
   for (i in 2:ncol(tab)) {
     pm <- colnames(tab)[i]

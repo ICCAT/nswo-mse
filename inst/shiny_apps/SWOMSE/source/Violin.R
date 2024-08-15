@@ -107,7 +107,9 @@ Violin_Plot <- function(pViolin_results, byyear) {
       guides(fill='none') +
       labs(x='Candidate Management Procedure',
            y='Absolute change in TAC (%)') +
-      theme(axis.text.x = element_text(angle=90))
+      theme(axis.text.x = element_text(angle=90),
+            axis.title = element_text(size=16),
+            axis.text=element_text(size=14))
   }
  p
 }

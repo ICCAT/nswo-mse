@@ -58,8 +58,8 @@ TradeOff_UI <- function(id, label="TradeOff") {
 
 
 tradeoffplot <- function(df, tox, toy, size_point=1.2, size_text=6,
-                         size_axis_text=12,
-                         size_axis_title=14) {
+                         size_axis_text=14,
+                         size_axis_title=16) {
   df <- df %>% filter(PM %in% c(tox, toy))
   caption_df <- df %>% distinct(PM, caption) %>%
     tidyr::pivot_wider(., names_from = PM, values_from = caption)

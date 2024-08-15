@@ -1215,13 +1215,16 @@ make_table <- function(PM_results_mp, pms, rnd=2) {
     mutate(Value=round(Value,rnd)) %>%
     select(PM, MP, Value)
 
-
   ind <- grepl('TAC', pm_table$PM)
-  pm_table$Value[ind] <- round( pm_table$Value[ind],0)
+  if (sum(ind)>0) {
+    pm_table$Value[which(ind)] <- round(pm_table$Value[which(ind)],0)
+    pm_table$Value[which(ind)] <- format(pm_table$Value[which(ind)], nsmall=0)
+  } else {
+    pm_table$Value <- format(signif(pm_table$Value,rnd), nsmall=2)
+  }
 
 
   tbs <- lapply(split(pm_table, pm_table$MP), '[', -2)
-
 
   tibble(x = rep(-Inf, length(tbs)),
          y = rep(-Inf, length(tbs)),
@@ -1230,18 +1233,27 @@ make_table <- function(PM_results_mp, pms, rnd=2) {
 }
 
 
+# mp_TS_results <- TS_results |> filter(MP=='CE_b', Model=='Reference')
+# mp_PM_results <- PM_results |> filter(MP=='CE_b', Model=='Reference')
+# ll <- list(mp_TS_results, mp_PM_results)
+
+# PM_results <- PM_results |> filter(MP=='CE_b', Model=='Reference')
+
 #' Title
 #'
 #'
 #' @return
 #' @export
-Time_Series_Plot <- function(ll, alpha=0.7) {
+Time_Series_Plot <- function(ll, alpha=0.7, size.axis.title=16, size.axis.text=14,
+                             size.strip.text=16) {
 
   Year_df <- data.frame(Year=2025:2054, Period='Short')
   Year_df$Period[Year_df$Year%in% 2035:2044] <- 'Medium'
   Year_df$Period[Year_df$Year%in% 2045:2054] <- 'Long'
 
-
+  addtheme <- ggplot2::theme(axis.title = element_text(size=size.axis.title),
+                          axis.text = element_text(size=size.axis.text),
+                          strip.text=element_text(size=size.strip.text))
   df <- ll[[1]]
   PM_results_mp <- ll[[2]]
 
@@ -1264,7 +1276,8 @@ Time_Series_Plot <- function(ll, alpha=0.7) {
     labs(y='F/FMSY') +
     geom_table(data = make_table(PM_results_mp, c('PNOF', 'PGK_short', 'PGK_med', 'PGK_long')),
                aes(x = x, y = y,label = tbl),
-               hjust = 'inward', vjust = 'inward')
+               hjust = 'inward', vjust = 'inward') +
+    addtheme
 
 
   # B_BMSY
@@ -1285,7 +1298,8 @@ Time_Series_Plot <- function(ll, alpha=0.7) {
     labs(y='SB/SBMSY') +
     geom_table(data = make_table(PM_results_mp, c('nLRP')),
                aes(x = x, y = y, label = tbl),
-               hjust = 'inward', vjust = 'inward')
+               hjust = 'inward', vjust = 'inward') +
+    addtheme
 
   # TAC
 
@@ -1308,7 +1322,8 @@ Time_Series_Plot <- function(ll, alpha=0.7) {
                                  c('TAC1', 'AvTAC_short', 'AvTAC_med', 'AvTAC_long',
                                    'VarC')),
                aes(x = x, y = y, label = tbl),
-               hjust = 'inward', vjust = 'inward')
+               hjust = 'inward', vjust = 'inward') +
+    addtheme
 
   cowplot::plot_grid(p1,p2,p3, nrow=3, align='v')
 

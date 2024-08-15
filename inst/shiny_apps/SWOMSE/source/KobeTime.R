@@ -34,7 +34,10 @@ KobeTime_Server <- function(id, results) {
                                                      guides(fill='none') +
                                                      labs(y="Percent of total simulatons (%)",
                                                           x='Projection Year') +
-                                                     theme_bw()
+                                                     theme_bw() +
+                                                     theme(strip.text = element_text(size=14),
+                                                           axis.title = element_text(size=16),
+                                                           axis.text=element_text(size=14))
                                                  }, height=1000, width=600*nMPs)
 
 
