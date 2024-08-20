@@ -49,36 +49,63 @@ nm <- paste0(MOM_Objects, '.hist')
 saveRDS(multiHist, file.path('Hist_Objects/R1_Increasing_q', nm))
 
 
-# ---- R1a. Increasing Catchability 2% ----
+# # ---- R1a. Increasing Catchability 2% ----
+#
+# R1a_OMs <- OM_DF %>% filter(Class=='R1a. Increasing Q2')
+#
+# if (!dir.exists('Hist_Objects/R1a_Increasing_q'))
+#   dir.create('Hist_Objects/R1a_Increasing_q')
+#
+# MOM_Objects <- R1a_OMs$OM.object
+# MOM <- get(MOM_Objects)
+# multiHist <- SimulateMOM(MOM, parallel = FALSE, silent=TRUE)
+#
+# # Increase indices in projections by 1% per year
+# increase_mat <- t(matrix(1.01^(0:(MOM@proyears-1)), nrow=MOM@proyears, ncol=MOM@nsim, byrow=F))
+#
+# # Combined Index
+# dd <- dim(multiHist$Female$`Fleet 1`@SampPars$Obs$Ierr_y)
+# yr_ind <- (MOM@Fleets[[1]][[1]]@nyears+1):dd[2]
+# multiHist$Female$`Fleet 1`@SampPars$Obs$Ierr_y[,yr_ind] <- multiHist$Female$`Fleet 1`@SampPars$Obs$Ierr_y[,yr_ind] * increase_mat
+#
+# # Individual Indices
+# increase_mat2 <- replicate(7,increase_mat)
+# increase_mat2 <- aperm(increase_mat2, c(1,3,2))
+# multiHist$Female$`Fleet 1`@SampPars$Obs$AddIerr[,, yr_ind] <- multiHist$Female$`Fleet 1`@SampPars$Obs$AddIerr[,, yr_ind] *increase_mat2
+#
+# nm <- paste0(MOM_Objects, '.hist')
+# saveRDS(multiHist, file.path('Hist_Objects/R1a_Increasing_q', nm))
 
-R1a_OMs <- OM_DF %>% filter(Class=='R1a. Increasing Q2')
 
-if (!dir.exists('Hist_Objects/R1a_Increasing_q'))
-  dir.create('Hist_Objects/R1a_Increasing_q')
 
-MOM_Objects <- R1a_OMs$OM.object
+# R2 ---- Historical Only
+R1_OMs <- OM_DF %>% filter(Class=='R1. Increasing q')
+
+MOM_Objects <- R1_OMs$OM.object
 MOM <- get(MOM_Objects)
 multiHist <- SimulateMOM(MOM, parallel = FALSE, silent=TRUE)
 
-# Increase indices in projections by 1% per year
-increase_mat <- t(matrix(1.01^(0:(MOM@proyears-1)), nrow=MOM@proyears, ncol=MOM@nsim, byrow=F))
+if (!dir.exists('Hist_Objects/R2'))
+  dir.create('Hist_Objects/R2')
 
-# Combined Index
-dd <- dim(multiHist$Female$`Fleet 1`@SampPars$Obs$Ierr_y)
-yr_ind <- (MOM@Fleets[[1]][[1]]@nyears+1):dd[2]
-multiHist$Female$`Fleet 1`@SampPars$Obs$Ierr_y[,yr_ind] <- multiHist$Female$`Fleet 1`@SampPars$Obs$Ierr_y[,yr_ind] * increase_mat
+saveRDS(multiHist, file.path('Hist_Objects/R2', 'MOM_010.hist'))
 
-# Individual Indices
-increase_mat2 <- replicate(7,increase_mat)
-increase_mat2 <- aperm(increase_mat2, c(1,3,2))
-multiHist$Female$`Fleet 1`@SampPars$Obs$AddIerr[,, yr_ind] <- multiHist$Female$`Fleet 1`@SampPars$Obs$AddIerr[,, yr_ind] *increase_mat2
+# R2a ---- (new R3)
 
-nm <- paste0(MOM_Objects, '.hist')
-saveRDS(multiHist, file.path('Hist_Objects/R1a_Increasing_q', nm))
+R1_OMs <- OM_DF %>% filter(Class=='R1a. Increasing Q2')
+
+MOM_Objects <- R1_OMs$OM.object
+MOM <- get(MOM_Objects)
+multiHist <- SimulateMOM(MOM, parallel = FALSE, silent=TRUE)
+
+if (!dir.exists('Hist_Objects/R2a'))
+  dir.create('Hist_Objects/R2a')
+
+saveRDS(multiHist, file.path('Hist_Objects/R2a', 'MOM_011.hist'))
 
 
 
-# Plot of Reference and R1 & R1a SB_SBMSY and F_FMSY
+# Plot of Reference and R1 & R1a SB_SBMSY and F_FMSY ----
 
 Ref_OM <- OM_DF %>% filter(M==0.2, steepness==0.8, Class=='Reference')
 Rob_OM <- OM_DF %>% filter(M==0.2, steepness==0.8, Class=='R1. Increasing q')
@@ -117,13 +144,13 @@ Rob_DF_F_a$F_FMSY <- Rob_DF_F_a$Value/Rob_Hist$Female$`Fleet 1`@Ref$ReferencePoi
 
 Rob_DF_a <- left_join(Rob_DF_SB_a %>% select(Year, SB_SBMSY),
                       Rob_DF_F_a %>% select(Year, F_FMSY) )
-Rob_DF_a$Model <- 'R1a'
+Rob_DF_a$Model <- 'R3'
 
 
 DF <- bind_rows(Ref_DF, Rob_DF, Rob_DF_a) %>%
   tidyr::pivot_longer(., cols=c(SB_SBMSY, F_FMSY))
 DF$Model[DF$Model=='Reference'] <- 'R0'
-DF$Model <- factor(DF$Model, levels=c('R0', 'R1', 'R1a', ordered=TRUE))
+DF$Model <- factor(DF$Model, levels=c('R0', 'R1', 'R3', ordered=TRUE))
 
 ggplot(DF, aes(x=Year, y=value, color=Model)) +
   facet_wrap(~name, scales='free_y') +
@@ -133,7 +160,6 @@ ggplot(DF, aes(x=Year, y=value, color=Model)) +
   theme_bw()
 
 ggsave('img/R1_Increasing_q/Compare.png', width=8, height=3)
-
 
 
 # ---- Plot Indices and Biomass ----
@@ -188,33 +214,7 @@ ggplot(df, aes(x=Year)) +
 ggsave('img/R1_Increasing_q/Index.png', width=4, height=3)
 
 
-# R2 ----
-R1_OMs <- OM_DF %>% filter(Class=='R1. Increasing q')
-
-MOM_Objects <- R1_OMs$OM.object
-MOM <- get(MOM_Objects)
-multiHist <- SimulateMOM(MOM, parallel = FALSE, silent=TRUE)
-
-if (!dir.exists('Hist_Objects/R2'))
-  dir.create('Hist_Objects/R2')
-
-saveRDS(multiHist, file.path('Hist_Objects/R2', 'MOM_010.hist'))
-
-# R2a ----
-
-R1_OMs <- OM_DF %>% filter(Class=='R1a. Increasing Q2')
-
-MOM_Objects <- R1_OMs$OM.object
-MOM <- get(MOM_Objects)
-multiHist <- SimulateMOM(MOM, parallel = FALSE, silent=TRUE)
-
-if (!dir.exists('Hist_Objects/R2a'))
-  dir.create('Hist_Objects/R2a')
-
-saveRDS(multiHist, file.path('Hist_Objects/R2a', 'MOM_011.hist'))
-
-
-# R3a and R3b ----
+# R3a and R3b ---- (new R4 and R5)
 R3_OM <- OM_DF %>% filter(Class=='Reference', M==0.2, steepness==0.8)
 
 series <- read.csv('inst/R3_series.csv') # series <- read.csv('C:/Users/tcarruth/Documents/GitHub/nswo-mse/inst/R3_series.csv')
@@ -225,9 +225,9 @@ inflate <- 2
 R3a <- c(exp(series$R3a * inflate))
 R3b <- c(exp(series$R3b * inflate))
 
-rec_devs <- data.frame(Year=2023:2054, R0=1, R3a=R3a, R3b=R3b) %>%
-  tidyr::pivot_longer(., cols=c(R0, R3a, R3b))
-rec_devs$name <- factor(rec_devs$name, levels=c('R0', 'R3a', 'R3b'), ordered = TRUE)
+rec_devs <- data.frame(Year=2023:2054, R0=1, R4=R3a, R5=R3b) %>%
+  tidyr::pivot_longer(., cols=c(R0, R4, R5))
+rec_devs$name <- factor(rec_devs$name, levels=c('R0', 'R4', 'R5'), ordered = TRUE)
 
 ggplot(rec_devs, aes(x=Year, y=value)) +
   facet_wrap(~name) +
@@ -283,12 +283,12 @@ df1 <-data.frame(Sim=1:MOM@nsim,
 df2 <-data.frame(Sim=1:MOM@nsim,
                  Year=rep(2023:2054, each=MOM@nsim),
                  Rec_Dev=as.vector(new_devs_R3a),
-                 Model='R3a')
+                 Model='R4')
 
 df3 <-data.frame(Sim=1:MOM@nsim,
                  Year=rep(2023:2054, each=MOM@nsim),
                  Rec_Dev=as.vector(new_devs_R3b),
-                 Model='R3b')
+                 Model='R5')
 
 df <- bind_rows(df1, df2, df3)
 
@@ -296,7 +296,7 @@ sims <- sample(1:MOM@nsim, 3)
 pdf <- df %>% filter(Sim%in%sims)
 pdf$Sim <- factor(pdf$Sim)
 pdf$Model[pdf$Model=='Reference'] <- 'R0'
-pdf$Model <- factor(pdf$Model, levels=c('R0', 'R3a', 'R3b'), ordered = TRUE)
+pdf$Model <- factor(pdf$Model, levels=c('R0', 'R4', 'R5'), ordered = TRUE)
 pdf$Sim <- 1:3
 ggplot(pdf, aes(x=Year, y=Rec_Dev, linetype=Model, color=Model)) +
   facet_grid(~Sim) +
@@ -310,7 +310,7 @@ ggplot(pdf, aes(x=Year, y=Rec_Dev, linetype=Model, color=Model)) +
 ggsave('img/R3/RecDevs.png', width=6, height=2.5)
 
 
-# R4 ----
+# R4 ---- new R6
 multiHist <- readRDS(file.path('Hist_Objects/Reference', 'MOM_005.hist'))
 
 multiHist_mod <- multiHist
