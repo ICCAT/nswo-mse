@@ -1245,7 +1245,7 @@ make_table <- function(PM_results_mp, pms, rnd=2) {
 #' @return
 #' @export
 Time_Series_Plot <- function(ll, alpha=0.7, size.axis.title=16, size.axis.text=14,
-                             size.strip.text=16) {
+                             size.strip.text=16, ymax=NULL) {
 
   Year_df <- data.frame(Year=2025:2054, Period='Short')
   Year_df$Period[Year_df$Year%in% 2035:2044] <- 'Medium'
@@ -1261,7 +1261,7 @@ Time_Series_Plot <- function(ll, alpha=0.7, size.axis.title=16, size.axis.text=1
 
   F_FMSYdf <-  df %>% filter(name=='F_FMSY')
 
-  p1 <- ggplot(F_FMSYdf, aes(x=Year)) +
+  p1 <<- ggplot(F_FMSYdf, aes(x=Year)) +
     facet_grid(~MP, scales='free') +
     geom_ribbon(aes(ymin=Lower , ymax=Upper, fill=fill), alpha=alpha) +
     # geom_line(aes(y=Median), linewidth=0.5) +
@@ -1279,6 +1279,10 @@ Time_Series_Plot <- function(ll, alpha=0.7, size.axis.title=16, size.axis.text=1
                hjust = 'inward', vjust = 'inward') +
     addtheme
 
+  if (!is.null(ymax)) {
+    max <- ymax |> dplyr::filter(name=='F_FMSY')
+    p1 <- p1 + expand_limits(y=c(0,max$Max))
+  }
 
   # B_BMSY
   B_BMSYdf <-df %>% filter(name=='SB_SBMSY')
@@ -1301,16 +1305,27 @@ Time_Series_Plot <- function(ll, alpha=0.7, size.axis.title=16, size.axis.text=1
                hjust = 'inward', vjust = 'inward') +
     addtheme
 
+  if (!is.null(ymax)) {
+    max <- ymax |> dplyr::filter(name=='SB_SBMSY')
+    p2 <- p2 +  expand_limits(y=c(0,max$Max))
+  }
+
   # TAC
 
   TACdf <-df %>% filter(name=='TAC')
 
-  ymax <- max(TACdf$Upper) * 1.05
+  if (!is.null(ymax)) {
+    max <- ymax |> dplyr::filter(name=='TAC')
+    max <- max$Max
+  } else {
+    max <- max(TACdf$Upper) * 1.05
+  }
+
   p3 <- ggplot(TACdf, aes(x=Year)) +
     facet_grid(~MP, scales='free') +
     geom_ribbon(aes(ymin=Lower , ymax=Upper, fill=fill), alpha=alpha) +
     geom_line(aes(y=Median)) +
-    expand_limits(y=c(0, ymax)) +
+    expand_limits(y=c(0, max)) +
     theme_bw() +
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
@@ -1324,6 +1339,8 @@ Time_Series_Plot <- function(ll, alpha=0.7, size.axis.title=16, size.axis.text=1
                aes(x = x, y = y, label = tbl),
                hjust = 'inward', vjust = 'inward') +
     addtheme
+
+
 
   cowplot::plot_grid(p1,p2,p3, nrow=3, align='v')
 

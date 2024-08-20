@@ -64,21 +64,24 @@ CMPCompare_Server <- function(id, results) {
                    l3 <- list(mp_TS_results3, mp_PM_results3)
 
 
+                   ymax <- dplyr::bind_rows(l1[[1]], l2[[1]], l3[[1]]) |>
+                     group_by(name) |> summarize(Max=max(Upper))
+
                    tagList(
                      h4(paste('Selected Model:', results$Selected_Model)),
                      column(4,
                             renderPlot({
-                              Time_Series_Plot(l1)
+                              Time_Series_Plot(l1, ymax=ymax)
                             }, height=800, width=500)
                      ),
                      column(4,
                             renderPlot({
-                              Time_Series_Plot(l2)
+                              Time_Series_Plot(l2, ymax=ymax)
                             }, height=800, width=500)
                      ),
                      column(4,
                             renderPlot({
-                              Time_Series_Plot(l3)
+                              Time_Series_Plot(l3, ymax=ymax)
                             }, height=800, width=500)
                      )
                    )
