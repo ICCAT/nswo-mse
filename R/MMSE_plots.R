@@ -194,13 +194,14 @@ Proj_plot <- function(MMSE, sl='SB_SBMSY', quants=c(0.05, 0.95), MPs=NULL,
 #' @return A dataframe
 #' @export
 MakePerformanceDF <- function(MSE) {
+  openMSE::get_Years(MSE)
   all.yrs <- c(MSE@PPD[[1]][[1]][[1]]@Year, max(MSE@PPD[[1]][[1]][[1]]@Year)+1)
-  p.yrs <- all.yrs[all.yrs>2020]
-  yr.ind <- which(p.yrs %in% 2024:2053)
+  p.yrs <- all.yrs[all.yrs>2022]
+  yr.ind <- which(p.yrs %in% 2025:2054)
   years <- p.yrs[yr.ind]
   nyears <- length(years)
 
-  YearDF <- data.frame(ind=1:33, Year=2021:2053, ind2=-2:30)
+  YearDF <- data.frame(ind=1:32, Year=2023:2054, ind2=-1:30)
 
   mps <- MSE@MPs[[1]]
   nMPs <- length(mps)
@@ -398,6 +399,7 @@ Kobe <- function(MMSE, year_range=NULL, mp=NA, fill='GK', ptsize=2,
 
   valdf <- valdf %>% tidyr::pivot_longer(., cols=2:5)
 
+
   valdf$x <- -Inf
   valdf$y <- -Inf
   valdf$y[valdf$name=='TL'] <- Inf
@@ -405,7 +407,7 @@ Kobe <- function(MMSE, year_range=NULL, mp=NA, fill='GK', ptsize=2,
   valdf$x[valdf$name=='BR'] <- Inf
   valdf$x[valdf$name=='TR'] <- Inf
 
-  valdf$value  <- round(valdf$value, 2)
+  valdf$value  <- signif(valdf$value, 2)
   valdf$value <- paste0(valdf$value, '%')
 
   valdf$hjustvar <- -2

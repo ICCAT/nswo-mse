@@ -36,7 +36,8 @@ OMnames <- factor(OMnames, levels=c('Reference',
                                     'R3',
                                     'R4',
                                     'R5',
-                                    'R6'), ordered = TRUE)
+                                    'R6',
+                                    'R7'), ordered = TRUE)
 
 metadf <- data.frame(OMnames=OMnames) %>% arrange(OMnames)
 

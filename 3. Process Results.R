@@ -50,7 +50,8 @@ VarC_results <- do.call('rbind', VarC_list)
 
 
 # Keep only the short-listed MPs
-MP_keep <- c('CE', 'MCC85a', 'MCC97c', 'SPSSFox', 'SPSSFox2')
+MP_keep <- c('CE', 'MCC85a', 'MCC97c', 'SPSSFox', 'SPSSFox2',
+             'MCC9', 'MCC11')
 MP_keep_b <- paste0(MP_keep, '_b')
 MP_keep_c <- paste0(MP_keep, '_c')
 
