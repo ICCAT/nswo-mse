@@ -218,6 +218,34 @@ for (i in seq_along(sheets)) {
   df_list[[i]]$Model <- sheets[i]
 }
 
+
+DF <- do.call('rbind', df_list) |>
+  dplyr::mutate(Mean=mean(Index[Model=='Base'])) |>
+  mutate(Index=Index/Mean) |> group_by(Year) |>
+  dplyr::mutate(Dev=Index/Index[Model=='Base'],
+                logDev=log(Dev))
+
+p1 <- ggplot(DF |> dplyr::filter(Year>2017), aes(x=Year, y=Index, color=Model, linetype=Model)) +
+  expand_limits(y=0) +
+  geom_line() +
+  theme_bw()
+
+p2 <- ggplot(DF |> dplyr::filter(Year>2017), aes(x=Year, y=logDev, color=Model, linetype=Model)) +
+  geom_line() +
+  theme_bw() +
+  expand_limits(y=c(-0.25, 0.25)) +
+  labs(y='Deviation from Base')
+
+library(patchwork)
+p <- p1 /(p2+guides(color='none', linetype='none'))
+p
+
+ggsave('img/R7/index.png', height=4, width=5)
+
+
+
+
+
 DF <- do.call('rbind', df_list) |>
   dplyr::mutate(Mean=mean(Index[Model=='Base'])) |>
   mutate(Index=Index/Mean) |> group_by(Year) |>

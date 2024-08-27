@@ -1,7 +1,7 @@
 Package: SWOMSE
 Type: Package
 Title: Management strategy evaluation for North Atlantic Swordfish
-Version: 0.35.0
+Version: 0.36.0
 Authors@R: 
     person("Adrian", "Hordyk", email = "adrian@bluematterscience.com", role = c("aut", "cre"))
 Maintainer: A. Hordyk <adrian@bluematterscience.com>
