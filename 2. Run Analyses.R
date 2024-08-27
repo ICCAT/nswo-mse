@@ -112,19 +112,6 @@ for (MP_name in Test_MPs) {
 }
 
 
-## R1a. Increasing Catchability  - Historical & Projection ----
-# hist <- readRDS(file.path('Hist_Objects/R1a_Increasing_q', 'MOM_011.hist'))
-#
-# for (MP_name in Test_MPs) {
-#   MPs <- get_tune_MPs(MP_name)
-#   mmse <- ProjectMOM(hist, MPs)
-#
-#   # save MSE
-#   nm <- paste0('MOM_011', '-', MP_name, '-R1a_Increasing_q', '.mse')
-#   saveRDS(mmse, file=file.path('MSE_Objects', nm))
-#
-# }
-
 
 ## R2. Increasing Catchability  - Historical Only ----
 hist <- readRDS(file.path('Hist_Objects/R2', 'MOM_010.hist'))
@@ -138,7 +125,7 @@ for (MP_name in Test_MPs) {
   saveRDS(mmse, file=file.path('MSE_Objects', nm))
 }
 
-## R2a. Increasing Catchability  - Historical Only ----
+## R3. Increasing Catchability  - Historical Only ----
 hist <- readRDS(file.path('Hist_Objects/R2a', 'MOM_011.hist'))
 
 for (MP_name in Test_MPs) {
@@ -153,10 +140,9 @@ for (MP_name in Test_MPs) {
 
 
 
-## R3. Climate Change - Increased Recruitment Variability ----
+## Climate Change - Increased Recruitment Variability ----
 
-
-### R3a
+### R4
 hist <- readRDS(file.path('Hist_Objects/R3a', 'MOM_005.hist'))
 
 for (MP_name in Test_MPs) {
@@ -170,7 +156,7 @@ for (MP_name in Test_MPs) {
   saveRDS(mmse, file=file.path('MSE_Objects', nm))
 }
 
-### R3b
+### R5
 
 hist <- readRDS(file.path('Hist_Objects/R3b', 'MOM_005.hist'))
 
@@ -186,7 +172,7 @@ for (MP_name in Test_MPs) {
 }
 
 
-## R4. Implementation Error - 10% Overages in Unreported Catch ----
+## R6. Implementation Error - 10% Overages in Unreported Catch ----
 
 hist <- readRDS(file.path('Hist_Objects/R4', 'MOM_005.hist'))
 
@@ -214,6 +200,82 @@ for (MP_name in Test_MPs) {
 
 
 
+## R7. Impact of some fleets not updating indices on time -----
+
+library(SWOMSE)
+
+library(dplyr)
+
+Hist <- readRDS('Hist_Objects/Reference/MOM_005.hist')
+
+xlfile <- 'DataGapTest.xlsx'
+
+sheets <- readxl::excel_sheets(xlfile)
+df_list <- list()
+for (i in seq_along(sheets)) {
+  df_list[[i]] <- readxl::read_excel(xlfile, sheet=sheets[i]) |>
+    dplyr::select(Year=YearC, Index=response)
+  df_list[[i]]$Model <- sheets[i]
+}
+
+DF <- do.call('rbind', df_list) |>
+  dplyr::mutate(Mean=mean(Index[Model=='Base'])) |>
+  mutate(Index=Index/Mean) |> group_by(Year) |>
+  dplyr::mutate(Dev=Index/Index[Model=='Base'],
+                logDev=log(Dev)) |>
+  dplyr::filter(Model!='Base') |>
+  dplyr::filter(Year>=2020, Model=='Spain')
+
+sd <- sd(DF$logDev)
+mu <-  -0.5 * sd^2
+
+dd <- dim(Hist[[1]][[1]]@TSdata$Find)
+nsim <- dd[1]
+nyears <- dd[2]
+proyears <- Hist[[1]][[1]]@Misc$MOM@proyears
+
+Ierr_y <- Hist[[1]][[1]]@SampPars$Obs$Ierr_y[,(nyears+1):(nyears+proyears)]
+
+interval <- 3
+
+devs <- exp(rnorm(nsim*proyears, mu, sd)) |> matrix(nrow=nsim, ncol=proyears)
+
+for (sim in 1:nsim) {
+  ntimes <- sample(1:4, 1)
+  years <- sample(seq(2025, to=2054, by=interval), ntimes) |> sort()
+
+  yr_df <- data.frame(ind=1:proyears, Year=seq(2023, by=1, length.out=32))
+  ind <- match(years, yr_df$Year)
+
+  post <- Ierr_y[sim,]
+  for (j in 1:ntimes) {
+    index <- seq(ind[j], by=1, length.out=3)
+    post[index] <- post[index] * devs[sim, index]
+  }
+  Ierr_y[sim,] <- post
+}
+
+Hist[[1]][[1]]@SampPars$Obs$Ierr_y[,(nyears+1):(nyears+proyears)] <- Ierr_y
+
+
+# Run Projections
+source_CMPs()
+Test_MPs <- c('CE', 'MCC9', 'MCC11', 'SPSSFox', 'SPSSFox2')
+
+
+for (MP_name in Test_MPs) {
+
+  MPs <- get_tune_MPs(MP_name)
+
+  # run mse
+  mmse <- ProjectMOM(Hist, MPs)
+
+  # save MSE
+  nm <- paste0('MOM_005', '-', MP_name, '-R7', '.mse')
+  saveRDS(mmse, file=file.path('MSE_Objects', nm))
+
+
+}
 
 
 
