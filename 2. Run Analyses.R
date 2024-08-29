@@ -202,94 +202,138 @@ for (MP_name in Test_MPs) {
 
 ## R7. Impact of some fleets not updating indices on time -----
 
-library(SWOMSE)
+# library(SWOMSE)
+#
+# library(dplyr)
+#
+# Hist <- readRDS('Hist_Objects/Reference/MOM_005.hist')
 
-library(dplyr)
+# xlfile <- 'DataGapTest.xlsx'
+#
+# sheets <- readxl::excel_sheets(xlfile)
+# df_list <- list()
+# for (i in seq_along(sheets)) {
+#   df_list[[i]] <- readxl::read_excel(xlfile, sheet=sheets[i]) |>
+#     dplyr::select(Year=YearC, Index=response)
+#   df_list[[i]]$Model <- sheets[i]
+# }
+#
+#
+# DF <- do.call('rbind', df_list) |>
+#   dplyr::mutate(Mean=mean(Index[Model=='Base'])) |>
+#   mutate(Index=Index/Mean) |> group_by(Year) |>
+#   dplyr::mutate(Dev=Index/Index[Model=='Base'],
+#                 logDev=log(Dev))
+#
+# p1 <- ggplot(DF |> dplyr::filter(Year>2017), aes(x=Year, y=Index, color=Model, linetype=Model)) +
+#   expand_limits(y=0) +
+#   geom_line() +
+#   theme_bw()
+#
+# p2 <- ggplot(DF |> dplyr::filter(Year>2017), aes(x=Year, y=logDev, color=Model, linetype=Model)) +
+#   geom_line() +
+#   theme_bw() +
+#   expand_limits(y=c(-0.25, 0.25)) +
+#   labs(y='Deviation from Base')
+#
+# library(patchwork)
+# p <- p1 /(p2+guides(color='none', linetype='none'))
+# p
+#
+# ggsave('img/R7/index.png', height=4, width=5)
+#
+#
+# DF <- do.call('rbind', df_list) |>
+#   dplyr::mutate(Mean=mean(Index[Model=='Base'])) |>
+#   mutate(Index=Index/Mean) |> group_by(Year) |>
+#   dplyr::mutate(Dev=Index/Index[Model=='Base'],
+#                 logDev=log(Dev)) |>
+#   dplyr::filter(Model!='Base') |>
+#   dplyr::filter(Year>=2020, Model=='Spain')
+#
+# sd <- sd(DF$logDev)
+# mu <-  -0.5 * sd^2
+#
+# dd <- dim(Hist[[1]][[1]]@TSdata$Find)
+# nsim <- dd[1]
+# nyears <- dd[2]
+# proyears <- Hist[[1]][[1]]@Misc$MOM@proyears
+#
+# Ierr_y <- Hist[[1]][[1]]@SampPars$Obs$Ierr_y[,(nyears+1):(nyears+proyears)]
+#
+# interval <- 3
+#
+# devs <- exp(rnorm(nsim*proyears, mu, sd)) |> matrix(nrow=nsim, ncol=proyears)
+#
+# for (sim in 1:nsim) {
+#   ntimes <- sample(1:4, 1)
+#   years <- sample(seq(2025, to=2054, by=interval), ntimes) |> sort()
+#
+#   yr_df <- data.frame(ind=1:proyears, Year=seq(2023, by=1, length.out=32))
+#   ind <- match(years, yr_df$Year)
+#
+#   post <- Ierr_y[sim,]
+#   for (j in 1:ntimes) {
+#     index <- seq(ind[j], by=1, length.out=3)
+#     post[index] <- post[index] * devs[sim, index]
+#   }
+#   Ierr_y[sim,] <- post
+# }
+#
+# Hist[[1]][[1]]@SampPars$Obs$Ierr_y[,(nyears+1):(nyears+proyears)] <- Ierr_y
+#
+#
+# # Run Projections
+# source_CMPs()
+# Test_MPs <- c('CE', 'MCC9', 'MCC11', 'SPSSFox', 'SPSSFox2')
+#
+#
+# for (MP_name in Test_MPs) {
+#
+#   MPs <- get_tune_MPs(MP_name)
+#
+#   # run mse
+#   mmse <- ProjectMOM(Hist, MPs)
+#
+#   # save MSE
+#   nm <- paste0('MOM_005', '-', MP_name, '-R7', '.mse')
+#   saveRDS(mmse, file=file.path('MSE_Objects', nm))
+#
+# }
+#
+# r7_old <- list.files('MSE_Objects')[grepl('R7', list.files('MSE_Objects'))]
+# file.copy(file.path('MSE_Objects', r7_old),
+#           file.path('dev', r7_old))
+
+
+# ---- New R7 - Increased Observation Error on Index  ----
 
 Hist <- readRDS('Hist_Objects/Reference/MOM_005.hist')
-
-xlfile <- 'DataGapTest.xlsx'
-
-sheets <- readxl::excel_sheets(xlfile)
-df_list <- list()
-for (i in seq_along(sheets)) {
-  df_list[[i]] <- readxl::read_excel(xlfile, sheet=sheets[i]) |>
-    dplyr::select(Year=YearC, Index=response)
-  df_list[[i]]$Model <- sheets[i]
-}
-
-
-DF <- do.call('rbind', df_list) |>
-  dplyr::mutate(Mean=mean(Index[Model=='Base'])) |>
-  mutate(Index=Index/Mean) |> group_by(Year) |>
-  dplyr::mutate(Dev=Index/Index[Model=='Base'],
-                logDev=log(Dev))
-
-p1 <- ggplot(DF |> dplyr::filter(Year>2017), aes(x=Year, y=Index, color=Model, linetype=Model)) +
-  expand_limits(y=0) +
-  geom_line() +
-  theme_bw()
-
-p2 <- ggplot(DF |> dplyr::filter(Year>2017), aes(x=Year, y=logDev, color=Model, linetype=Model)) +
-  geom_line() +
-  theme_bw() +
-  expand_limits(y=c(-0.25, 0.25)) +
-  labs(y='Deviation from Base')
-
-library(patchwork)
-p <- p1 /(p2+guides(color='none', linetype='none'))
-p
-
-ggsave('img/R7/index.png', height=4, width=5)
-
-
-
-
-
-DF <- do.call('rbind', df_list) |>
-  dplyr::mutate(Mean=mean(Index[Model=='Base'])) |>
-  mutate(Index=Index/Mean) |> group_by(Year) |>
-  dplyr::mutate(Dev=Index/Index[Model=='Base'],
-                logDev=log(Dev)) |>
-  dplyr::filter(Model!='Base') |>
-  dplyr::filter(Year>=2020, Model=='Spain')
-
-sd <- sd(DF$logDev)
-mu <-  -0.5 * sd^2
 
 dd <- dim(Hist[[1]][[1]]@TSdata$Find)
 nsim <- dd[1]
 nyears <- dd[2]
 proyears <- Hist[[1]][[1]]@Misc$MOM@proyears
 
+ac <- Hist[[1]][[1]]@SampPars$Obs$Ind_Stat$AC
+sd <- Hist[[1]][[1]]@SampPars$Obs$Ind_Stat$SD * 2
+
+mu <- -0.5 * sd^2
+
 Ierr_y <- Hist[[1]][[1]]@SampPars$Obs$Ierr_y[,(nyears+1):(nyears+proyears)]
 
-interval <- 3
+lst.err<- log(Hist[[1]][[1]]@SampPars$Obs$Ierr_y[,nyears])
 
-devs <- exp(rnorm(nsim*proyears, mu, sd)) |> matrix(nrow=nsim, ncol=proyears)
+Res <- matrix(rnorm(proyears*nsim, mu, sd), nrow=proyears, ncol=nsim, byrow=TRUE)
+Res <- exp(t(sapply(1:nsim, MSEtool:::applyAC, res=Res, ac=ac, max.years=proyears, lst.err=lst.err)))
 
-for (sim in 1:nsim) {
-  ntimes <- sample(1:4, 1)
-  years <- sample(seq(2025, to=2054, by=interval), ntimes) |> sort()
+Ierr_y_increased <- Res
 
-  yr_df <- data.frame(ind=1:proyears, Year=seq(2023, by=1, length.out=32))
-  ind <- match(years, yr_df$Year)
-
-  post <- Ierr_y[sim,]
-  for (j in 1:ntimes) {
-    index <- seq(ind[j], by=1, length.out=3)
-    post[index] <- post[index] * devs[sim, index]
-  }
-  Ierr_y[sim,] <- post
-}
-
-Hist[[1]][[1]]@SampPars$Obs$Ierr_y[,(nyears+1):(nyears+proyears)] <- Ierr_y
-
+Hist[[1]][[1]]@SampPars$Obs$Ierr_y[,(nyears+1):(nyears+proyears)] <- Ierr_y_increased
 
 # Run Projections
 source_CMPs()
 Test_MPs <- c('CE', 'MCC9', 'MCC11', 'SPSSFox', 'SPSSFox2')
-
 
 for (MP_name in Test_MPs) {
 
@@ -302,8 +346,22 @@ for (MP_name in Test_MPs) {
   nm <- paste0('MOM_005', '-', MP_name, '-R7', '.mse')
   saveRDS(mmse, file=file.path('MSE_Objects', nm))
 
-
 }
 
-
-
+# MSE1 <- readRDS('MSE_Objects/MOM_005-CE-Reference.mse')
+# MSE2 <- readRDS('MSE_Objects/MOM_005-CE-R7.mse')
+#
+# plot(MSE1@multiHist$Female$`Fleet 1`@SampPars$Obs$Ierr_y[1,], type='l')
+# lines(MSE2@multiHist$Female$`Fleet 1`@SampPars$Obs$Ierr_y[1,], col='blue')
+#
+# PGK_short(MSE1)
+# PGK_short(MSE2)
+#
+# AvTAC_long(MSE1)
+# AvTAC_long(MSE2)
+#
+# PM_values <- readRDS("Results/R7/PM_values.rda")
+#
+# PM_values |> filter(MP=='CE_b', PM=='AvTAC_long')
+#
+# PM_results |> filter(MP=='CE_b', PM=='AvTAC_long', Model=='R7')

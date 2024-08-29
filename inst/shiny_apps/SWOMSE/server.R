@@ -25,7 +25,7 @@ server <- function(input, output, session) {
                             TO4y=tradeoffPMs$y[4],
                             QuiltPMs=quiltPMs,
                             compare_MPs=unique(allMPs)[c(1,3,5)],
-                            Selected_Model=metadf$OMnames[1],
+                            Selected_Model=rep(metadf$OMnames[1],3),
                             show_dominated=FALSE,
                             select_MPs=allMPs,
                             mp_select=short_list_mps[[1]],
