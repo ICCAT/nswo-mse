@@ -3,7 +3,7 @@ library(Slick)
 library(SWOMSE)
 
 slick <- Slick()
-Title(slick) <- 'June 2024 NSWO Results'
+Title(slick) <- 'August 2024 NSWO Results'
 Author(slick) <- 'NSWO Technical Team'
 Email(slick) <- "[adrian@bluematterscience.com](mailto:adrian@bluematterscience.com)"
 Introduction(slick) <- '
@@ -19,10 +19,8 @@ Preliminary results for discussion with the NSWO Technical Team
 
 # MPs ----
 mp_names <- c('CE_b', 'CE_c',
-              'MCC5_b', 'MCC5_c',
-              'MCC7_b', 'MCC7_c',
-              'MCC85_b', 'MCC85_c',
-              'MCC97_b', 'MCC97_c',
+              'MCC9_b', 'MCC9_c',
+              'MCC11_b', 'MCC11_c',
               'SPSSFox_b', 'SPSSFox_c',
               'SPSSFox2_b', 'SPSSFox2_c')
 
@@ -31,10 +29,8 @@ Code(mps) <- mp_names
 tunings <- c('PGK_short 60%', 'PGK_short 70%')
 
 Label(mps) <- c(paste('Constant Exploitation Rate', tunings),
-                paste('Mostly Constant Catch 5', tunings),
-                paste('Mostly Constant Catch 7', tunings),
-                paste('Mostly Constant Catch 85', tunings),
-                paste('Mostly Constant Catch 97', tunings),
+                paste('Mostly Constant Catch 9', tunings),
+                paste('Mostly Constant Catch 11', tunings),
                 paste('Surplus Production Model', tunings),
                 paste('Surplus Production Model v2', tunings)
 )
@@ -43,18 +39,13 @@ Description(mps) <- c('Aims to maintain a constant exploitation rate (ER) at mea
                       'Same as previous but tuned to 70% PGK_short',
                       'The goal of the MCC methods is to keep the TAC as constant as possible. The TAC changes by discrete steps according to the ratio the recent index (mean of three most recent years) to the historical target index (mean of 2017 - 2019). Tuned to 60% PGK_short.',
                       'Same as previous but tuned to 70% PGK_short',
-                      'Same as MCC5 but different stepped changes in TAC. Tuned to 60% PGK_short.',
-                      'Same as previous but tuned to 70% PGK_short',
-                      'Same as MCC5 but different stepped changes in TAC. Tuned to 60% PGK_short.',
-                      'Same as previous but tuned to 70% PGK_short',
-                      'Same as MCC5 but different stepped changes in TAC. Tuned to 60% PGK_short.',
+                      'Same as MCC9 but different stepped changes in TAC. Tuned to 60% PGK_short.',
                       'Same as previous but tuned to 70% PGK_short',
                       "A state-space surplus production model is fit to the index and catch data. A constant F (Ftarget) is set (determined as a tuning parameter) and the TAC calculated by applying the F to the model's estimate of abundance. A linear harvest control rule reduces Ftarget to 0.1Ftarget if estimated B/BMSY < BMSY. If estimated B/BMSY < 0.4BMSY, Ftarget set to 0.1Ftarget. TAC is constrained to change no more than 25% between management cycles. Tuned to 60% PGK_short.",
                       'Same as previous but tuned to 70% PGK_short',
                       'Same as SPSSFox, except there is no constraint on reduction in TAC if estimated B/BMSY < 1. Tuned to 60% PGK_short.',
                       'Same as previous but tuned to 70% PGK_short'
                       )
-
 
 Preset(mps) <- list('PGK 60'=which(grepl('_b',Code(mps))),
                     'PGK 70'=which(grepl('_c',Code(mps))))
@@ -64,48 +55,50 @@ Check(mps)
 
 
 
-
 # OMs ----
 oms <- OMs()
 
+om_desc <- read.csv('inst/OM_Description.csv')
+
+om_desc <- om_desc |> filter(Class!='R0')
+
 Factors(oms) <- data.frame(Factor=c(rep('M',3),
                                     rep('h', 3),
-                                    rep('Set',6)),
+                                    rep('Set',8)),
                            Level=c(0.1, 0.2, 0.3,
                                    0.69, 0.8, 0.88,
                                    'Reference',
                                    'R1',
                                    'R2',
-                                   'R3a',
-                                   'R3b',
-                                   'R4'),
+                                   'R3',
+                                   'R4',
+                                   'R5',
+                                   'R6',
+                                   'R7'),
                            Description=c('Natural Mortality = 0.1',
                                          'Natural Mortality = 0.2',
                                          'Natural Mortality = 0.3',
                                          'Steepness = 0.69',
                                          'Steepness = 0.80',
                                          'Steepness = 0.88',
-                                         'Reference OMs',
-                                         'Robustness 1: Assumed 1 percent annual increase catchability (q), that is not accounted for in the standardization of the indices of abundance (historical and projection)',
-                                         'Robustness 2: Same as R1, except only in the historical period',
-                                         'Robustness 3a: Cyclical pattern in recruitment deviations in projection period; a proxy for impact of climate change on stock productivity',
-                                         'Lower than expected recruitment deviations for first 15 years of projection period; a proxy for impact of climate change on stock productivity',
-                                         'Illegal, unreported, or unregulated catches')
+                                         om_desc$Description)
 )
 
-Design(oms) <- data.frame(M=c(rep(c(0.1,0.2,0.3), each=3), rep(0.2, 5)),
-                          h=c(rep(c(0.69,0.8,0.88),3), rep(0.8,5)),
+Design(oms) <- data.frame(M=c(rep(c(0.1,0.2,0.3), each=3), rep(0.2, 7)),
+                          h=c(rep(c(0.69,0.8,0.88),3), rep(0.8,7)),
                           Set=c(rep('Reference', 9),
-                                'R1', 'R2', 'R3a', 'R3b', 'R4'))
+                                'R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7'))
 
 
 Preset(oms) <- list('Reference'=list(1:3, 1:3, 1),
                     'R0'=list(2, 2, 1),
                     'R1'=list(2, 2, 2),
                     'R2'=list(2, 2, 3),
-                    'R3a'=list(2, 2, 4),
-                    'R3b'=list(2, 2, 5),
-                    'R4'=list(2, 2, 6))
+                    'R3'=list(2, 2, 4),
+                    'R4'=list(2, 2, 5),
+                    'R5'=list(2, 2, 6),
+                    'R6'=list(2, 2, 7),
+                    'R7'=list(2, 2, 8))
 
 Check(oms)
 
@@ -131,8 +124,8 @@ years <- c(rev(seq(MOM_001@Fleets[[1]][[1]]@CurrentYr, by=-1, length.out=MOM_001
            seq(MOM_001@Fleets[[1]][[1]]@CurrentYr+1, by=1, length.out=MOM_001@proyears))
 
 Time(timeseries) <- years
-TimeNow(timeseries) <- 2024
-Value(timeseries) <- array(NA, dim=c(MOM_000@nsim,
+TimeNow(timeseries) <- 2025
+Value(timeseries) <- array(NA, dim=c(MOM_001@nsim,
                                      nrow(oms@Design),
                                      length(mps@Code),
                                      length(Code(timeseries)),
@@ -147,6 +140,9 @@ mp_codes <- unlist(lapply(strsplit(Code(mps), '_'), '[[', 1)) |> unique()
 mp_index <- data.frame(MP=rep(1:length(mp_codes), each=2),
                        MP_index=seq_along(Code(mps)))
 
+
+mp_codes[mp_codes=='MCC9'] <- 'MCC85'
+mp_codes[mp_codes=='MCC11'] <- 'MCC97'
 
 populate_TS <- function(result_files, timeseries, omnums) {
   for (mm in seq_along(mp_codes)) {
@@ -203,17 +199,24 @@ timeseries <- populate_TS(result_files, timeseries, omnums=1:9)
 result_files <- mse_files[grepl('-R1', mse_files)]
 timeseries <- populate_TS(result_files, timeseries, omnums=10)
 
-result_files <- mse_files[grepl('-R2', mse_files)]
+result_files <- mse_files[grepl('-R2', mse_files) & grepl('MOM_010', mse_files)]
 timeseries <- populate_TS(result_files, timeseries, omnums=11)
 
-result_files <- mse_files[grepl('-R3a', mse_files)]
+result_files <- mse_files[grepl('-R2', mse_files) & grepl('MOM_011', mse_files)]
 timeseries <- populate_TS(result_files, timeseries, omnums=12)
 
-result_files <- mse_files[grepl('-R3b', mse_files)]
+result_files <- mse_files[grepl('-R3a', mse_files)]
 timeseries <- populate_TS(result_files, timeseries, omnums=13)
 
-result_files <- mse_files[grepl('-R4', mse_files)]
+result_files <- mse_files[grepl('-R3b', mse_files)]
 timeseries <- populate_TS(result_files, timeseries, omnums=14)
+
+result_files <- mse_files[grepl('-R4', mse_files)]
+timeseries <- populate_TS(result_files, timeseries, omnums=15)
+
+result_files <- mse_files[grepl('-R7', mse_files)]
+timeseries <- populate_TS(result_files, timeseries, omnums=16)
+
 
 Target(timeseries) <- c(1, NA, NA, NA)
 Limit (timeseries) <- c(0.4, NA, NA, NA)
@@ -225,7 +228,7 @@ Timeseries(slick) <- timeseries
 
 
 # ---- Quilt -----
-quilt <- Quilt()
+quilt <- Slick::Quilt()
 Code(quilt) <- c('AvTAC_long', 'AvTAC_med', 'AvTAC_short',
                  'nLRP', 'PGK', 'PGK_med', 'PGK_short',
                  'PNOF', 'VarC')
@@ -245,8 +248,6 @@ Description(quilt) <- desc
 
 Value(quilt) <- array(NA, dim=c(nrow(Design(oms)), length(Code(mps)), length(Code(quilt))))
 
-
-
 mse_files <- list.files(MSE_dir, pattern='.mse')
 mp_codes <- unlist(lapply(strsplit(Code(mps), '_'), '[[', 1)) |> unique()
 
@@ -255,7 +256,6 @@ populate_Quilt <- function(result_files, quilt, omnums) {
   for (mm in seq_along(mp_codes)) {
     mp_files <- result_files[grepl(paste0('\\<', mp_codes[mm], '\\>'), result_files)]
     for (i in seq_along(mp_files)) {
-
       mse <- readRDS(file.path('MSE_objects', mp_files[i]))
       mm_ind <- mp_index %>% dplyr::filter(MP%in%mm)
       pms <- Code(quilt)
@@ -276,27 +276,38 @@ result_files <- mse_files[grepl('-R1', mse_files)]
 quilt <- populate_Quilt(result_files, quilt, 10)
 
 # R2
-result_files <- mse_files[grepl('-R2', mse_files)]
+result_files <- mse_files[grepl('-R2', mse_files) & grepl('MOM_010', mse_files)]
 quilt <- populate_Quilt(result_files, quilt, 11)
 
+# R2a
+result_files <- mse_files[grepl('-R2a', mse_files) & grepl('MOM_011', mse_files)]
+quilt <- populate_Quilt(result_files, quilt, 12)
 
 # R3a
 result_files <- mse_files[grepl('-R3a', mse_files)]
-quilt <- populate_Quilt(result_files, quilt, 12)
+quilt <- populate_Quilt(result_files, quilt, 13)
 
 
 # R3b
 result_files <- mse_files[grepl('-R3b', mse_files)]
-quilt <- populate_Quilt(result_files, quilt, 13)
+quilt <- populate_Quilt(result_files, quilt, 14)
 
 # R4
 result_files <- mse_files[grepl('-R4', mse_files)]
-quilt <- populate_Quilt(result_files, quilt, 14)
+quilt <- populate_Quilt(result_files, quilt, 15)
+
+# R7
+result_files <- mse_files[grepl('-R7', mse_files)]
+quilt <- populate_Quilt(result_files, quilt, 16)
 
 Color(quilt) <- c('darkblue','white' )
-Quilt(slick) <- quilt
+Slick::Quilt(slick) <- quilt
 
+mps = MPs(slick)
+mps
+Design(OMs(slick))
 
+Value(quilt)[1,,1]
 
 # ---- Kobe ----
 kobe <- Slick::Kobe()
@@ -332,22 +343,28 @@ result_files <- mse_files[grepl('-R1', mse_files)]
 kobe <- populateKobe(result_files, kobe, 10)
 
 # R2
-result_files <- mse_files[grepl('-R2', mse_files)]
+result_files <- mse_files[grepl('-R2', mse_files) & grepl('MOM_010', mse_files)]
 kobe <- populateKobe(result_files, kobe, 11)
 
+# R2a
+result_files <- mse_files[grepl('-R2a', mse_files) & grepl('MOM_011', mse_files)]
+quilt <- populate_Quilt(result_files, quilt, 12)
 
 # R3a
 result_files <- mse_files[grepl('-R3a', mse_files)]
-kobe <- populateKobe(result_files, kobe, 12)
+kobe <- populateKobe(result_files, kobe, 13)
 
 
 # R3b
 result_files <- mse_files[grepl('-R3b', mse_files)]
-kobe <- populateKobe(result_files, kobe, 13)
+kobe <- populateKobe(result_files, kobe, 14)
 
 # R4
 result_files <- mse_files[grepl('-R4', mse_files)]
-kobe <- populateKobe(result_files, kobe, 14)
+kobe <- populateKobe(result_files, kobe, 15)
+
+result_files <- mse_files[grepl('-R7', mse_files)]
+kobe <- populateKobe(result_files, kobe, 16)
 
 Kobe(slick) <- kobe
 
