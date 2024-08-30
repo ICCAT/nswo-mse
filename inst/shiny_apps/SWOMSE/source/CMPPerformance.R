@@ -3,30 +3,61 @@ CMPPerf_Server <- function(id, results) {
                function(input, output, session) {
                  ns <- NS(id)
 
+                 selected_OM <- reactiveVal(1)
                  output$Model_MP_Select <- renderUI({
                    tagList(
                      column(12,
                             fluidRow(
-                              column(6,
-                                     selectInput(session$ns('Model_Select'),
-                                                 'Select Model',
-                                                 choices=metadf$OMnames,
-                                                 selected = results$Selected_Model))
+                              shinyWidgets::actionGroupButtons(inputIds = ns(paste0('btn',seq_along(OMnames))),
+                                                             labels=sort(OMnames))
                             )
                      )
                    )
                  })
+
+                 observeEvent(input$btn1, {
+                   selected_OM(1)
+                 })
+
+                 observeEvent(input$btn2, {
+                   selected_OM(2)
+                 })
+
+                 observeEvent(input$btn3, {
+                   selected_OM(3)
+                 })
+
+                 observeEvent(input$btn4, {
+                   selected_OM(4)
+                 })
+                 observeEvent(input$btn5, {
+                   selected_OM(5)
+                 })
+                 observeEvent(input$btn6, {
+                   selected_OM(6)
+                 })
+                 observeEvent(input$btn7, {
+                   selected_OM(7)
+                 })
+
+                 observeEvent(input$btn8, {
+                   selected_OM(8)
+                 })
+
+                 observeEvent(input$btn9, {
+                   selected_OM(9)
+                 })
+
+
 
                  output$CMPPerf <- renderUI({
 
                    Models <- metadf$OMnames %>% unique()
                    nModels <- length(Models)
 
-                   if (length(input$Model_Select)==0) {
-                     return(NULL)
-                   }
-                   pPM_results <- results$pPM_results %>% filter(Model==input$Model_Select)
-                   pTS_results <- results$pTS_results %>% filter(Model==input$Model_Select)
+
+                   pPM_results <- results$pPM_results %>% filter(Model==sort(OMnames)[selected_OM()])
+                   pTS_results <- results$pTS_results %>% filter(Model==sort(OMnames)[selected_OM()])
 
                    MPs <- unique(pPM_results$MP)
                    MPnames <- unique(pPM_results$MP_name)
@@ -76,19 +107,22 @@ CMPPerf_UI <- function(id, label="Viz") {
   ns <- NS(id)
 
   tagList(
-
-    fluidRow(
-      h4('CMP Performance'),
-      p('Only showing results for CMPs that pass filters and are selected in `CMP Filters`'),
-      fluidRow(
-        column(12, htmlOutput(ns('Model_MP_Select')))
-      ),
-      fluidRow(
-        column(12,
-               htmlOutput(ns('CMPPerf'))
+    box(title='CMP Performance', width=12,
+        p('Only showing results for CMPs that pass filters and are selected in `CMP Filters`'),
+        fluidRow(
+          column(12,
+          h4('Select Operating Model'),
+          htmlOutput(ns('Model_MP_Select'))
+          )
+        ),
+        fluidRow(
+          column(12,
+                 h4('Select Candidate Management Procedure'),
+                 htmlOutput(ns('CMPPerf'))
+          )
         )
-      )
-    )
+
+        )
   )
 }
 

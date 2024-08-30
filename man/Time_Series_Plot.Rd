@@ -2,10 +2,33 @@
 % Please edit documentation in R/PMs.R
 \name{Time_Series_Plot}
 \alias{Time_Series_Plot}
+\alias{TimeSeriesPlot2}
 \title{Title}
 \usage{
-Time_Series_Plot(ll, alpha = 0.7)
+Time_Series_Plot(
+  ll,
+  alpha = 0.7,
+  size.axis.title = 16,
+  size.axis.text = 14,
+  size.strip.text = 16,
+  ymax = NULL
+)
+
+TimeSeriesPlot2(
+  DF,
+  PM_ResultsMP,
+  alpha = 0.7,
+  size.axis.title = 16,
+  size.axis.text = 14,
+  size.strip.text = 16,
+  text.size = 6
+)
 }
 \description{
 Title
 }
+\section{Functions}{
+\itemize{
+\item \code{TimeSeriesPlot2()}: Another time series plot
+
+}}

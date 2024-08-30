@@ -44,14 +44,9 @@ TradeOff_UI <- function(id, label="TradeOff") {
   ns <- NS(id)
 
   tagList(
-
-    fluidRow(
-      h4('Trade-Off Plots'),
+    box(title='Trade-Off Plots', width=12,
       p('Only showing results for CMPs that pass filters and are selected in `CMP Filters`'),
       htmlOutput(ns('TradeOff'))
-
-
-
     )
   )
 }
@@ -86,25 +81,25 @@ tradeoffplot <- function(df, tox, toy, size_point=1.2, size_text=6,
   xlim <- c(0,1)
   ylim <- c(0,1)
   if (grepl('PGK', caption_df$x))
-    xlim <- c(0.5, 1)
+    xlim <- c(0, 1)
 
   if (grepl('PGK', caption_df$y))
-    ylim <- c(0.5, 1)
+    ylim <- c(0, 1)
 
   # TAC
   if (grepl('TAC', caption_df$x))
-    xlim <- c(-Inf, Inf)
+    xlim <- c(0, Inf)
 
   if (grepl('TAC', caption_df$y))
-    ylim <- c(-Inf, Inf)
+    ylim <- c(0, Inf)
 
 
   # LRP
   if (grepl('LRP', caption_df$x))
-    xlim <- c(0.8, 1)
+    xlim <- c(0, 1)
 
   if (grepl('LRP', caption_df$y))
-    ylim <- c(0.8, 1)
+    ylim <- c(0, 1)
 
   # VarC
   if (grepl('VarC', caption_df$x))

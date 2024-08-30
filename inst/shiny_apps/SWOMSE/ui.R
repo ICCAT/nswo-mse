@@ -58,7 +58,7 @@ controlbar <- dashboardControlbar(overlay = FALSE, width=450,skin='light', colla
 
 # -- lhs sidebar ----
 sidebar <- dashboardSidebar(
-  collapsed = FALSE,
+  collapsed = TRUE,
   sidebarMenu(id='sidebar',
     menuItem("CMP Performance", tabName = "CMPPerf", icon = icon("stats",lib="glyphicon")),
     menuItem("CMP Compare", tabName = "CMPCompare", icon = icon("transfer",lib="glyphicon")),

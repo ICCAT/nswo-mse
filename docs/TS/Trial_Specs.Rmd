@@ -303,6 +303,12 @@ knitr::include_graphics('../../img/R3/RecDevs.png')
 
 The R6 Robustness test evaluates the impact of a 10% implementation error in the TAC. The catches are assumed to be 10% higher than the TAC, but these catches are assumed to be unreported (i.e., the observed catches provided to the CMPs is equal to the TAC and ~90% of the actual landings).
 
+## R7. Increased Observation Error in the Combined Index
+
+The R7 Robustness tests aims to evaluate the impact on the performance of the CMPs when there is greater observation error in the Combined Index due to data from one or more fleets not being available when the index is updated.
+
+This OM added additional multiplicative observation error to the Combined Index that was simulated in the projection years. The additional observation error was generated from a log-normal distribution with the standard deviation doubled from the base case (R0).
+
 # OM Validation
 
 ## OM Summary Report
