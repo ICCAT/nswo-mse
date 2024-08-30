@@ -27,51 +27,51 @@
 \alias{VarC}
 \title{Swordfish Performance Metrics functions}
 \usage{
-PGK_short(MMSEobj = NULL, Ref = 1, Yrs = c(5, 14))
+PGK_short(MMSEobj = NULL, Ref = 1, Yrs = c(3, 12))
 
-PGK_med(MMSEobj = NULL, Ref = 1, Yrs = c(15, 24))
+PGK_med(MMSEobj = NULL, Ref = 1, Yrs = c(13, 22))
 
-PGK_long(MMSEobj = NULL, Ref = 1, Yrs = c(25, 34))
+PGK_long(MMSEobj = NULL, Ref = 1, Yrs = c(23, 32))
 
-PGK(MMSEobj = NULL, Ref = 1, Yrs = c(5, 34))
+PGK(MMSEobj = NULL, Ref = 1, Yrs = c(3, 32))
 
-PGK_30(MMSEobj = NULL, Ref = 1, Yrs = c(34, 34))
+PGK_30(MMSEobj = NULL, Ref = 1, Yrs = c(32, 32))
 
-POF(MMSEobj = NULL, Ref = 1, Yrs = c(5, 34))
+POF(MMSEobj = NULL, Ref = 1, Yrs = c(3, 32))
 
-PNOF(MMSEobj = NULL, Ref = 1, Yrs = c(5, 34))
+PNOF(MMSEobj = NULL, Ref = 1, Yrs = c(3, 32))
 
-LRP_short(MMSEobj = NULL, Ref = 0.4, Yrs = c(5, 14))
+LRP_short(MMSEobj = NULL, Ref = 0.4, Yrs = c(3, 12))
 
-nLRP_short(MMSEobj = NULL, Ref = 0.4, Yrs = c(5, 14))
+nLRP_short(MMSEobj = NULL, Ref = 0.4, Yrs = c(3, 12))
 
-LRP_med(MMSEobj = NULL, Ref = 0.4, Yrs = c(15, 24))
+LRP_med(MMSEobj = NULL, Ref = 0.4, Yrs = c(13, 22))
 
-nLRP_med(MMSEobj = NULL, Ref = 0.4, Yrs = c(15, 24))
+nLRP_med(MMSEobj = NULL, Ref = 0.4, Yrs = c(13, 22))
 
-LRP_long(MMSEobj = NULL, Ref = 0.4, Yrs = c(25, 34))
+LRP_long(MMSEobj = NULL, Ref = 0.4, Yrs = c(23, 32))
 
-nLRP_long(MMSEobj = NULL, Ref = 0.4, Yrs = c(25, 34))
+nLRP_long(MMSEobj = NULL, Ref = 0.4, Yrs = c(23, 32))
 
-LRP(MMSEobj = NULL, Ref = 0.4, Yrs = c(5, 34))
+LRP(MMSEobj = NULL, Ref = 0.4, Yrs = c(3, 32))
 
-nLRP(MMSEobj = NULL, Ref = 0.4, Yrs = c(5, 34))
+nLRP(MMSEobj = NULL, Ref = 0.4, Yrs = c(3, 32))
 
-TAC1(MMSEobj = NULL, Ref = 1, Yrs = c(5, 5))
+TAC1(MMSEobj = NULL, Ref = 1, Yrs = c(3, 3))
 
-AvTAC_short(MMSEobj = NULL, Ref = NULL, Yrs = c(5, 14))
+AvTAC_short(MMSEobj = NULL, Ref = NULL, Yrs = c(3, 12))
 
-rAvTAC_short(MMSEobj = NULL, Ref = NULL, Yrs = c(5, 14))
+rAvTAC_short(MMSEobj = NULL, Ref = NULL, Yrs = c(3, 12))
 
-AvTAC_med(MMSEobj = NULL, Ref = 1, Yrs = c(15, 24))
+AvTAC_med(MMSEobj = NULL, Ref = 1, Yrs = c(12, 22))
 
-rAvTAC_med(MMSEobj = NULL, Ref = 1, Yrs = c(15, 24))
+rAvTAC_med(MMSEobj = NULL, Ref = 1, Yrs = c(13, 22))
 
-AvTAC_long(MMSEobj = NULL, Ref = 1, Yrs = c(25, 34))
+AvTAC_long(MMSEobj = NULL, Ref = 1, Yrs = c(23, 32))
 
-rAvTAC_long(MMSEobj = NULL, Ref = 1, Yrs = c(25, 34))
+rAvTAC_long(MMSEobj = NULL, Ref = 1, Yrs = c(23, 32))
 
-VarC(MMSEobj = NULL, Ref = 1, Yrs = c(5, 34))
+VarC(MMSEobj = NULL, Ref = 1, Yrs = c(3, 32))
 }
 \arguments{
 \item{MMSEobj}{An object of class `MMSE`}
@@ -106,7 +106,7 @@ Swordfish Performance Metrics functions
 
 \item \code{nLRP_short()}: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any of the first 10 years (2025-2034)
 
-\item \code{LRP_med()}: Probability of breaching the limit reference point (SSB<0.4SSB_MSY) in any of years 11-20 (2035-2043)
+\item \code{LRP_med()}: Probability of breaching the limit reference point (SSB<0.4SSB_MSY) in any of years 11-20 (2035-2044)
 
 \item \code{nLRP_med()}: Probability of not breaching the limit reference point (SSB>0.4SSB_MSY) in any of years 11-20 (2035-2044)
 

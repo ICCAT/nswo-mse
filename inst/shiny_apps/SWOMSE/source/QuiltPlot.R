@@ -42,8 +42,7 @@ QuiltPlot_UI <- function(id, label="QuiltPlot") {
 
   tagList(
 
-    fluidRow(
-      h4('Quilt Plots'),
+    box(title='Quilt Plots', width=12,
       p('Only showing results for CMPs that pass filters and are selected in `CMP Filters`'),
       htmlOutput(ns('QuiltPlots'))
     )

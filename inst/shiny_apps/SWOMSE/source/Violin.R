@@ -69,8 +69,7 @@ Violin_UI <- function(id, label="Violin") {
 
   ns <- NS(id)
   tagList(
-    fluidRow(
-      h4('Violin Plots'),
+    box(title='Violin Plots', width=12,
       p('Only showing results for CMPs that pass filters and are selected in `CMP Filters`'),
       fluidRow(
         column(12, htmlOutput(ns('Model_MP_Select')))

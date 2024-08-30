@@ -1261,7 +1261,7 @@ Time_Series_Plot <- function(ll, alpha=0.7, size.axis.title=16, size.axis.text=1
 
   F_FMSYdf <-  df %>% filter(name=='F_FMSY')
 
-  p1 <<- ggplot(F_FMSYdf, aes(x=Year)) +
+  p1 <- ggplot(F_FMSYdf, aes(x=Year)) +
     facet_grid(~MP, scales='free') +
     geom_ribbon(aes(ymin=Lower , ymax=Upper, fill=fill), alpha=alpha) +
     # geom_line(aes(y=Median), linewidth=0.5) +
@@ -1420,5 +1420,91 @@ Quilt <- function(PM_results, PMs=NULL) {
 
   }
   quilt
+}
+
+#' @describeIn Time_Series_Plot Another time series plot
+#' @export
+TimeSeriesPlot2 <- function(DF, PM_ResultsMP, alpha=0.7, size.axis.title=16, size.axis.text=14,
+                            size.strip.text=16, text.size=6) {
+
+  fills <- c('#373737', '#363639', '#CDCDCD')
+
+  addtheme <- ggplot2::theme(axis.title = element_text(size=size.axis.title),
+                             axis.text = element_text(size=size.axis.text),
+                             strip.text=element_text(size=size.strip.text))
+
+  DF$plot <- rep(1:3, each=270)
+  DF$name[DF$name=='F_FMSY'] <- 'F/FMSY'
+  DF$name[DF$name=='SB_SBMSY'] <- 'SB/SBMSY'
+
+  Year_df <- data.frame(Year=2025:2054, Period='Short')
+  Year_df$Period[Year_df$Year%in% 2035:2044] <- 'Medium'
+  Year_df$Period[Year_df$Year%in% 2045:2054] <- 'Long'
+  Year_df$name <- 'F/FMSY'
+  Year_df$y <- 1
+
+  Year_df2 <- Year_df
+  Year_df2$name <- 'SB/SBMSY'
+  Year_df2$y <- 1
+
+  Year_df3 <- Year_df
+  Year_df3$name <- 'TAC'
+  Year_df3$y <- 10000
+
+  Year_df <- bind_rows(Year_df, Year_df2, Year_df3)
+
+  ref_table <- DF |> filter(Year==2025, name=='F/FMSY') |>
+    group_by(plot, MP, name) |>
+    distinct(Model)
+
+
+  PM_ResultsMP$plot <- rep(1:3, each=20)
+
+  table_list <- list()
+  mps <- PM_ResultsMP |> group_by(plot) |>
+    distinct(MP)
+
+  for (p in 1:3) {
+    tab1 <- make_table(PM_ResultsMP |> filter(plot==p), pms= c('PNOF', 'PGK_short', 'PGK_med', 'PGK_long'))
+    tab1$name <- 'F/FMSY'
+    tab1$plot <- p
+
+    tab2 <- make_table(PM_ResultsMP |> filter(plot==p), pms= c('nLRP'))
+    tab2$name <- 'SB/SBMSY'
+    tab2$plot <- p
+
+    tab3 <- make_table(PM_ResultsMP |> filter(plot==p), pms= c('TAC1', 'AvTAC_short', 'AvTAC_med', 'AvTAC_long',
+                                                               'VarC'))
+    tab3$name <- 'TAC'
+    tab3$plot <- p
+
+    table_list[[p]] <- bind_rows(tab1, tab2, tab3)
+  }
+  tableDF <- do.call('rbind', table_list)
+
+  mpnames <- c('1'=mps$MP[1],
+               '2'=mps$MP[2],
+               '3'=mps$MP[3])
+
+  ggplot(DF, aes(x=Year)) +
+    facet_grid(name~plot, scales='free',
+               labeller = labeller(plot = mpnames)) +
+
+    geom_ribbon(aes(ymin=Lower , ymax=Upper, fill=fill), alpha=alpha) +
+    geom_line(aes(y=Median)) +
+    expand_limits(y=0) +
+    geom_text(data=ref_table, aes(x=2025, y=Inf, label=ref_table$Model),
+              vjust=1.2, hjust=-0.1, size=text.size) +
+    geom_line(data=Year_df, aes(x=Year, y=y, col=Period), linetype=2, lwd=2)  +
+    theme_bw() +
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+    scale_fill_manual(values=fills) +
+    guides(fill='none', color='none') +
+    geom_table(data = tableDF,
+               aes(x = x, y = y,label = tbl),
+               hjust = 'inward', vjust = 'inward') +
+    addtheme
+
 }
 

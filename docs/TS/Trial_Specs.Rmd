@@ -303,23 +303,11 @@ knitr::include_graphics('../../img/R3/RecDevs.png')
 
 The R6 Robustness test evaluates the impact of a 10% implementation error in the TAC. The catches are assumed to be 10% higher than the TAC, but these catches are assumed to be unreported (i.e., the observed catches provided to the CMPs is equal to the TAC and ~90% of the actual landings).
 
-## R7. Missing Data when Combined Index is updated.
+## R7. Increased Observation Error in the Combined Index
 
 The R7 Robustness tests aims to evaluate the impact on the performance of the CMPs when there is greater observation error in the Combined Index due to data from one or more fleets not being available when the index is updated.
 
-This OM added additional multiplicative observation error to the Combined Index that was simulated in the projection years. The additional observation error was generated using the following methodology:
-
-An analysis was conducted where the model to generate the Combined Index was re-run seven times, each time leaving out the data from the 3 most recent years for one of the fleets: Canada, Chinese-Taipei, Portugal, Spain, Japan, Morocco, and USA (Figure \@ref(fig:r7)).
-
-```{r r7, fig.cap='The Combined Index for years 2018 -- 2022 for the Base model (all fleets) and when the data from each fleet (colored lines) were removed from the analysis. The lower plot shows the deviation from the Base model.'}
-knitr::include_graphics('../../img/R7/index.png')
-
-```
-
-The deviation from the Base model was largest when the Spain data were removed from the analysis (Figure \@ref(fig:r7)). Log-normal observation error was generated using the standard deviation of the log deviations for the model where the Spain data were removed.
-
-For each simulation, an integer between 1 and 4 inclusive was sampled to represent the number of times in the projection period that data were missing when the index was updated. This value was used to sample the projection years where the index was updated. The additional observation error was added to the simulated Combined Index in these years. 
-
+This OM added additional multiplicative observation error to the Combined Index that was simulated in the projection years. The additional observation error was generated from a log-normal distribution with the standard deviation doubled from the base case (R0).
 
 # OM Validation
 

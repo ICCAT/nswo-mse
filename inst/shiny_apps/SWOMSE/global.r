@@ -60,7 +60,7 @@ tradeoffPMs <- data.frame(TO=1:4,
 
 # Quilt plot options
 quiltPMs <- c('AvTAC_short', 'AvTAC_med', 'AvTAC_long', #'TAC1',
-              'nLRP', 'PNOF', 'PGK_short', 'PGK_med', 'PGK', 'VarC')
+              'nLRP', 'PNOF', 'PGK_short', 'PGK_med', 'PGK', 'TAC1', 'VarC')
 
 
 

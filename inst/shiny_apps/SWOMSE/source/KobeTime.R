@@ -65,12 +65,13 @@ KobeTime_UI <- function(id, label="KobeTime") {
   ns <- NS(id)
 
   tagList(
+    box(width=12, title='Kobe Time Plots',
 
-    fluidRow(
-      h4('Kobe Time Plots'),
-      p('Only showing results for CMPs that pass filters and are selected in `CMP Filters`'),
-      htmlOutput(ns('KobeTime'))
-    )
+
+          p('Only showing results for CMPs that pass filters and are selected in `CMP Filters`'),
+          htmlOutput(ns('KobeTime'))
+
+        )
   )
 }
 
