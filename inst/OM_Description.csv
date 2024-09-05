@@ -4,7 +4,7 @@ R0,Reference OM for the Robustness Tests. OM 5 of the Reference Set
 R1,"Evaluate impact of an assumed 1% annual increase catchability, that is not accounted for in the standardization of the indices of abundance (historical and projection)"
 R2,"Same as R1, but bias in the indices of abundance is only for the historical period "
 R3,Robustness test to evaluate the ability of the CMPs to recover the stock from a low initial level. The historical indices were modified by adding a persistent slope such that the SB/SBMSY = 0.6 in the terminal year of the OM conditioning
-R4,"Evaluate impact of cyclical pattern in recruitment deviations in projection period; a proxy for impact of climate change on stock productivity. Recruitment is lower than expected for the first 15 years of the projection period, and then higher than expected in the following 15 years"
-R5,"Evaluate impact of lower than expected recruitment deviations for first 15 years of projection period; a proxy for impact of climate change on stock productivity. Similar to R4, but recruitment returns to average after the first 15 years"
+R4,"Evaluate impact of cyclical pattern in recruitment deviations in projection period; a proxy for impact of climate change on stock productivity. The recruitment deviations are lower than expected for the first 15 years of the projection period, and then higher than expected in the following 15 years"
+R5,"Evaluate impact of lower than expected recruitment deviations for first 15 years of projection period; a proxy for impact of climate change on stock productivity. Similar to R4, but the recruitment deviations return to average after the first 15 years"
 R6,"Evaluate impact of illegal, unreported, or unregulated catches. The catch is consistently 10% higher than the TAC"
 R7,Evaluates impact of additional observation error in the index of abundance.  The standard deviation of the log-normal observation error is doubled from the base case (R0)
