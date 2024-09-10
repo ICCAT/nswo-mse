@@ -1425,15 +1425,17 @@ Quilt <- function(PM_results, PMs=NULL) {
 #' @describeIn Time_Series_Plot Another time series plot
 #' @export
 TimeSeriesPlot2 <- function(DF, PM_ResultsMP, alpha=0.7, size.axis.title=16, size.axis.text=14,
-                            size.strip.text=16, text.size=6) {
+                            size.strip.text=16, text.size=6, includeOM=TRUE) {
 
   fills <- c('#373737', '#363639', '#CDCDCD')
 
   addtheme <- ggplot2::theme(axis.title = element_text(size=size.axis.title),
                              axis.text = element_text(size=size.axis.text),
                              strip.text=element_text(size=size.strip.text))
+  n_mps <- DF$MP |> unique() |> length()
+  each <- (DF$Year |> length()) / n_mps
 
-  DF$plot <- rep(1:3, each=270)
+  DF$plot <- rep(1:n_mps, each=each)
   DF$name[DF$name=='F_FMSY'] <- 'F/FMSY'
   DF$name[DF$name=='SB_SBMSY'] <- 'SB/SBMSY'
 
@@ -1453,18 +1455,18 @@ TimeSeriesPlot2 <- function(DF, PM_ResultsMP, alpha=0.7, size.axis.title=16, siz
 
   Year_df <- bind_rows(Year_df, Year_df2, Year_df3)
 
-  ref_table <- DF |> filter(Year==2025, name=='F/FMSY') |>
+  ref_table <- DF |> dplyr::filter(Year==2025, name=='F/FMSY') |>
     group_by(plot, MP, name) |>
     distinct(Model)
 
 
-  PM_ResultsMP$plot <- rep(1:3, each=20)
+  PM_ResultsMP$plot <- rep(1:n_mps, each=20)
 
   table_list <- list()
   mps <- PM_ResultsMP |> group_by(plot) |>
     distinct(MP)
 
-  for (p in 1:3) {
+  for (p in 1:n_mps) {
     tab1 <- make_table(PM_ResultsMP |> filter(plot==p), pms= c('PNOF', 'PGK_short', 'PGK_med', 'PGK_long'))
     tab1$name <- 'F/FMSY'
     tab1$plot <- p
@@ -1484,27 +1486,38 @@ TimeSeriesPlot2 <- function(DF, PM_ResultsMP, alpha=0.7, size.axis.title=16, siz
 
   mpnames <- c('1'=mps$MP[1],
                '2'=mps$MP[2],
-               '3'=mps$MP[3])
+               '3'=mps$MP[3],
+               '4'=mps$MP[4],
+               '5'=mps$MP[5],
+               '6'=mps$MP[6],
+               '7'=mps$MP[7],
+               '8'=mps$MP[8],
+               '9'=mps$MP[9],
+               '10'=mps$MP[10]
+               )
 
-  ggplot(DF, aes(x=Year)) +
+  p <- ggplot(DF, aes(x=Year)) +
     facet_grid(name~plot, scales='free',
                labeller = labeller(plot = mpnames)) +
 
     geom_ribbon(aes(ymin=Lower , ymax=Upper, fill=fill), alpha=alpha) +
     geom_line(aes(y=Median)) +
     expand_limits(y=0) +
-    geom_text(data=ref_table, aes(x=2025, y=Inf, label=ref_table$Model),
-              vjust=1.2, hjust=-0.1, size=text.size) +
     geom_line(data=Year_df, aes(x=Year, y=y, col=Period), linetype=2, lwd=2)  +
     theme_bw() +
     scale_x_continuous(expand = c(0, 0)) +
-    scale_y_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0.01)) +
     scale_fill_manual(values=fills) +
     guides(fill='none', color='none') +
-    geom_table(data = tableDF,
+    ggpp::geom_table(data = tableDF,
                aes(x = x, y = y,label = tbl),
                hjust = 'inward', vjust = 'inward') +
     addtheme
 
+  if (includeOM) {
+    p <- p +   geom_text(data=ref_table, aes(x=2025, y=Inf, label=ref_table$Model),
+                         vjust=1.2, hjust=-0.1, size=text.size)
+  }
+  p
 }
 
