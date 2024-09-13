@@ -156,6 +156,54 @@ PGK_short <- function (MMSEobj = NULL, Ref = 1, Yrs = c(3,12))  {
 }
 class(PGK_short) <- 'PM'
 
+#' @describeIn PMs Probability of SB>SBMSY over all years
+#' @family Status
+#' @export
+PBMSY <- function (MMSEobj = NULL, Ref = 1, Yrs = c(3,32))  {
+  if(!inherits(MMSEobj,'MMSE'))
+    stop('This PM method is designed for objects of class `MMSE`')
+  Yrs <- ChkYrs(Yrs, MMSEobj)
+  PMobj <- new("PMobj")
+  PMobj@Name <- "PBMSY_short: Probability of SB>SBMSY "
+  PMobj@Caption <- "Prob. B>BMSY (2025-2054)"
+
+  PMobj@Ref <- Ref
+  tt <- MMSEobj@SB_SBMSY[, 1,, Yrs[1]:Yrs[2]] > 1
+  if (is.null(dim(tt)))
+    tt <- matrix(tt, nrow=MMSEobj@nsim, ncol=1)
+  PMobj@Stat <- tt
+  PMobj@Prob <- calcProb(PMobj@Stat, MMSEobj)
+  PMobj@Mean <- calcMean(PMobj@Prob)
+  PMobj@MPs <- MMSEobj@MPs[[1]]
+  PMobj
+
+}
+class(PBMSY) <- 'PM'
+
+#' @describeIn PMs Probability of SB>SBMSY in Years 1-10 (2025-2034)
+#' @family Status
+#' @export
+PBMSY_short <- function (MMSEobj = NULL, Ref = 1, Yrs = c(3,12))  {
+  if(!inherits(MMSEobj,'MMSE'))
+    stop('This PM method is designed for objects of class `MMSE`')
+  Yrs <- ChkYrs(Yrs, MMSEobj)
+  PMobj <- new("PMobj")
+  PMobj@Name <- "PBMSY_short: Probability of SB>SBMSY in Years 1-10 (2025-2034)"
+  PMobj@Caption <- "Prob. B>BMSY (2025-2034)"
+
+  PMobj@Ref <- Ref
+  tt <- MMSEobj@SB_SBMSY[, 1,, Yrs[1]:Yrs[2]] > 1
+  if (is.null(dim(tt)))
+    tt <- matrix(tt, nrow=MMSEobj@nsim, ncol=1)
+  PMobj@Stat <- tt
+  PMobj@Prob <- calcProb(PMobj@Stat, MMSEobj)
+  PMobj@Mean <- calcMean(PMobj@Prob)
+  PMobj@MPs <- MMSEobj@MPs[[1]]
+  PMobj
+
+}
+class(PBMSY_short) <- 'PM'
+
 
 #' @describeIn PMs Probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in Years 11-20 (2035-2044)
 #' @family Status

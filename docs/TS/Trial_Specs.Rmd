@@ -287,7 +287,7 @@ Climate change is generally predicted to increase temperatures throughout the At
 
 The entire AMO long time series (1856-present) was considered and a 32-year period (1980-2011) was selected to represent a time series that contained an extended period of consecutive negative and consecutive positive deviations. The AMO values multiplied by an implied annual inflation factor of 2.0 to simulate the hypothesis that climate change could result in larger recruitment deviations in the future than in the past.
 
-Two versions of this approach were developed. R4 uses the AMO values directly, with a period of lower than average recruitment for the first fifteen years, followed by a period of higher than average deviations (Figure \@ref(fig:r3) center panel). R4 considers the impact of just a period of negative recruitment deviations for the first fifteen years (Figure \@ref(fig:r3) right panel). 
+Two versions of this approach were developed. R4 uses the AMO values directly, with a period of lower than average recruitment for the first fifteen years, followed by a period of higher than average deviations (Figure \@ref(fig:r3) center panel). R5 considers the impact of just a period of negative recruitment deviations for the first fifteen years (Figure \@ref(fig:r3) right panel). 
 
 In both cases (R4 and R5), the climate-induced pattern in recruitment deviations is multiplied by the recruitment deviations from the reference model (R0; Figure \@ref(fig:r3-2)). 
 
