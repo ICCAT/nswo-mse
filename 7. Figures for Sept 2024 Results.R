@@ -520,7 +520,7 @@ ggsave('Figures/Robustness_Kobe.png', width=22, height=13)
 
 df <- summary_PM_results |> dplyr::filter(MP_name %in% c('SPSSFox', 'SPSSFox2'),
                                           Model!='Reference',
-                                          PM %in% c('PGK', 'AvTAC_short', 'AvTAC_med', 'TAC1', 'VarC')) |>
+                                          PM %in% c('PGK', 'AvTAC_short', 'AvTAC_med', 'AvTAC_long', 'TAC1', 'VarC')) |>
   select(Model, PM,MP, MP_name, Target, Value)
 
 
@@ -531,18 +531,32 @@ AvTAC <- df |> filter(PM%in% c('AvTAC_short', 'AvTAC_med', 'AvTAC_long')) |>
   arrange(MP)
 
 df <- bind_rows(df, AvTAC) |>
-  filter(PM %in% c('PGK', 'AvTAC', 'VarC'))
+  filter(PM %in% c('PGK', 'AvTAC_med', 'AvTAC_long', 'VarC'))
 
 stdf <- df |> group_by(Model, PM, Target) |>
   mutate(Value=Value/Value[MP_name=='SPSSFox']) |>
   ungroup()
 
+stdf |> filter(PM=='AvTAC_med', Target==0.6, Model=='R3')
 
 DF <- stdf |> tidyr::pivot_wider(names_from=Model, values_from = Value) |>
   select(PM,MP_name, Target, R0, R1, R2, R3, R4, R5, R6, R7) |>
   arrange(PM, Target, MP_name)
 
 DF
+DT::datatable(DF |> dplyr::filter(MP_name=='SPSSFox2'),
+              options = list(
+                dom = 't',
+                lengthChange = FALSE,
+                columnDefs = list(list(width = '50px', targets = 0:11)))) |>
+  DT::formatRound(columns=4:11, digits=2)
+
+
+  DT::formatStyle(
+    columns=0:11,
+    backgroundColor = styleEqual()
+  )
+
 
 
 
