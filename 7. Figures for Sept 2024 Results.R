@@ -74,6 +74,7 @@ ggsave('Figures/OM-Reference-SB_SBMSY-Historical-Comparison.png', p)
 
 # CMP Tuning ----
 
+
 MSE_files <- list.files('MSE_Objects')
 MPs <- c('CE', 'MCC85a', 'MCC97c', 'SPSSFox', 'SPSSFox2')
 # 'MCC85a' = MCC9, 'MCC97c = MCC11'
@@ -421,11 +422,155 @@ DT::datatable(DF,
 
 # Robustness ----
 
+summary_TS_results <- readRDS('inst/shiny_apps/SWOMSE/data/summary_TS_results.rda')
+summary_PM_results <- readRDS('inst/shiny_apps/SWOMSE/data/PM_results.rda')
+kobe_results <- readRDS('inst/shiny_apps/SWOMSE/data/kobe_results.rda')
+
+KobeDF <- kobe_results %>% filter(Model!='Reference') %>%
+  tidyr::pivot_longer(., cols=6:9)
+KobeDF$name <- factor(KobeDF$name, levels=c('br', 'tr', 'bl', 'tl'),
+                      ordered = TRUE)
+cols <- c('green', 'orange', 'yellow', 'red')
+
+KobeDF$Tuning <- 'b'
+KobeDF$Tuning[grepl('_c', KobeDF$MP)] <- 'c'
 
 
 
 
-## R1 -----
+kobe_df <- bind_rows(
+  data.frame(x=c(0,0, 1, 1), y=c(0,1, 1,0), fill='bl'),
+  data.frame(x=c(1,1, 2, 2), y=c(0,1, 1,0), fill='br'),
+  data.frame(x=c(0,0, 1, 1), y=c(1,2, 2,1), fill='tl'),
+  data.frame(x=c(1,1, 2, 2), y=c(1,2, 2,1), fill='tr'))
+
+
+ggplot(kobe_df) +
+  geom_polygon(aes(x=x, y=y, fill=fill)) +
+  scale_fill_manual(values=c('yellow',  'green', "red", 'orange')) +
+  theme_bw() +
+  guides(color='none', fill='none', alpha='none') +
+  labs(x=expression(SB/SB[MSY]), y=expression(F/F[MSY])) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 2)) +
+  scale_x_continuous(expand = c(0, 0), limits = c(0, 2)) +
+  theme(axis.title = element_text(size=14),
+        axis.text=element_text(size=12))
+
+ggsave('Figures/Kobe.png', width=4, height=4)
+
+
+
+getTimeSeriesDF <- function(model='R1') {
+  MPs <- summary_PM_results$MP |> unique()
+  b_MPs <- MPs[grepl('_b',MPs)]
+  c_MPs <- MPs[grepl('_c',MPs)]
+
+  b1_list <- b2_list <- list()
+  for (i in seq_along(b_MPs)) {
+    b1_list[[i]] <- summary_TS_results %>% filter(MP==b_MPs[i], Model==model)
+    b2_list[[i]]  <- summary_PM_results %>% filter(MP==b_MPs[i], Model==model)
+  }
+
+  c1_list <- c2_list <- list()
+  for (i in seq_along(b_MPs)) {
+    c1_list[[i]] <- summary_TS_results %>% filter(MP==c_MPs[i], Model==model)
+    c2_list[[i]]  <- summary_PM_results %>% filter(MP==c_MPs[i], Model==model)
+  }
+
+  list(PKG60=list(DF=do.call('rbind',b1_list),
+                    PM_ResultsMP=do.call('rbind',b2_list)),
+            PGK70=list(DF=do.call('rbind',c1_list),
+                    PM_ResultsMP=do.call('rbind',c2_list))
+  )
+}
+
+plotKobe <- function(df, models=c('R0', 'R1'), tuning='b') {
+  ggplot(df |> dplyr::filter(Tuning==tuning,
+                                  Model %in% models),
+         aes(x=Year, y=value, fill=name)) +
+    facet_grid(Model~MP) +
+    geom_bar(position="stack", stat="identity", width = 1) +
+    scale_x_continuous(expand = c(0, 0),
+                       breaks=seq(2025, by=10, to=2055),
+                       labels=seq(2025, by=10, to=2055)) +
+    scale_y_continuous(expand = c(0, 0)) +
+    scale_fill_manual(values=cols) +
+    guides(fill='none') +
+    labs(y="Percent of total simulatons (%)",
+         x='Projection Year') +
+    theme_bw() +
+    theme(strip.text = element_text(size=20),
+          axis.title = element_text(size=18),
+          axis.text=element_text(size=14))
+}
+
+make_TS_plot <- function(model, tuning='b', width=16, height=8) {
+  ind <- switch(tuning,
+                'b'=1,
+                'c'=2)
+
+  tsDF <- getTimeSeriesDF(model)[[ind]]
+
+  TimeSeriesPlot2(DF=tsDF$DF,
+                  PM_ResultsMP=tsDF$PM_ResultsMP,
+                  includeOM=FALSE,
+                  incTable=TRUE) +
+    labs(title=model) +
+    theme(title=element_text(size=14))
+
+  name <- paste0(paste('TS', model, tuning, sep='_'), '.png')
+  ggsave(file.path('Figures', name),
+         width=width, height=height)
+
+  TimeSeriesPlot2(DF=tsDF$DF,
+                  PM_ResultsMP=tsDF$PM_ResultsMP,
+                  includeOM=FALSE,
+                  incTable=FALSE) +
+    labs(title=model) +
+    theme(title=element_text(size=14))
+
+  name <- paste0(paste('TS', model, tuning, 'no_table', sep='_'), '.png')
+  ggsave(file.path('Figures', name),
+         width=width, height=height)
+}
+
+make_TS_plot('R0')
+make_TS_plot('R0', 'c')
+
+make_TS_plot('R1')
+make_TS_plot('R1', 'c')
+
+make_TS_plot('R2')
+make_TS_plot('R2', 'c')
+
+make_TS_plot('R3')
+make_TS_plot('R3', 'c')
+
+make_TS_plot('R4')
+make_TS_plot('R4', 'c')
+
+make_TS_plot('R5')
+make_TS_plot('R5', 'c')
+
+make_TS_plot('R6')
+make_TS_plot('R6', 'c')
+
+make_TS_plot('R7')
+make_TS_plot('R7', 'c')
+
+
+
+## R0 ----
+
+plotKobe(KobeDF, c('R0')) +
+  theme(axis.title = element_text(size=14),
+        strip.text = element_text(size=14))
+ggsave('Figures/Kobe_R0.png', width=12, height=3)
+
+
+
+
+## R1 & R2 -----
 
 R0 <- getTS(i=5)
 R1 <- getTS(i=10)
@@ -447,7 +592,13 @@ ggplot(DF, aes(x=year, y=value, color=Model)) +
 
 ggsave('Figures/R0_R1.png', width=8, height=4)
 
-## R2 ----
+
+
+plotKobe(KobeDF, c('R0', 'R1', 'R2'))
+ggsave('Figures/Kobe_R0_R1.png', width=12, height=6)
+
+
+## R3 ----
 
 Ref_OM <- OM_DF %>% filter(M==0.2, steepness==0.8, Class=='Reference')
 Rob_OM_a <- OM_DF %>% filter(M==0.2, steepness==0.8, Class=='R1a. Increasing Q2')
@@ -491,6 +642,143 @@ ggplot(DF, aes(x=Year, y=value, color=Model)) +
 ggsave('Figures/R0_R3.png', width=8, height=4)
 
 
+
+plotKobe(KobeDF, c('R0', 'R3'))
+ggsave('Figures/Kobe_R0_R3.png', width=12, height=4)
+
+
+
+
+## R4 & R5 ----
+
+plotKobe(KobeDF, c('R0', 'R4', 'R5'))
+ggsave('Figures/Kobe_R0_R4.png', width=12, height=6)
+
+
+
+## R6 ----
+
+plotKobe(KobeDF, c('R0', 'R6'))
+ggsave('Figures/Kobe_R0_R6.png', width=12, height=4)
+
+
+
+## R7 ----
+
+plotKobe(KobeDF, c('R0', 'R7'))
+ggsave('Figures/Kobe_R0_R7.png', width=12, height=4)
+
+
+
+## Barplot ----
+
+pms <- c('PGK',
+         'nLRP',
+         'AvTAC_short',
+         'AvTAC_med',
+         'AvTAC_long'
+         )
+
+df <- summary_PM_results |>
+  dplyr::filter(Model !='Reference',
+                PM %in% pms)
+
+df$PM <- factor(df$PM, levels=pms, ordered = TRUE)
+
+recode <- function(fact) {
+  out <- rep('PGK 60 (b)', length(fact))
+  out[fact==0.7] <- 'PGK 70 (c)'
+  out
+}
+
+df$Target <- forcats::fct_relabel(df$Target, recode)
+
+
+ggplot(df |> dplyr::filter(
+                           PM=='PGK'),
+       aes(x=Model, y=Value, fill=MP_name)) +
+  facet_grid(PM~Target, scales='free') +
+  geom_hline(yintercept = 0, color='lightgray') +
+  geom_col(position="dodge") +
+  theme_bw() +
+  geom_vline(xintercept = (0:7)+0.5, linewidth=0.4, color='darkgray') +
+  labs(fill='CMP', y='PI Value') +
+  theme(axis.title = element_text(size=14),
+        axis.text = element_text(size=12))
+
+ggsave('Figures/Robustness_Barplot_example.png', width=12, height=4)
+
+ggplot(df, aes(x=Model, y=Value, fill=MP_name)) +
+  facet_grid(PM~Target, scales='free') +
+  geom_hline(yintercept = 0, color='lightgray') +
+  geom_col(position="dodge") +
+  theme_bw() +
+  geom_vline(xintercept = (0:7)+0.5, linewidth=0.4, color='darkgray') +
+  labs(fill='CMP', y='PI Value') +
+  theme(axis.title = element_text(size=14),
+        axis.text = element_text(size=12))
+
+ggsave('Figures/Robustness_Barplot.png', width=12, height=6)
+
+
+# relative to R0
+
+ref_PM <- summary_PM_results |>
+  dplyr::filter(Model !='Reference',
+                PM%in%pms,
+                Model=='R0') |>
+  select(Reference=Value, Target, MP_name, PM)
+
+ref_PM$Target <- forcats::fct_relabel(ref_PM$Target, recode)
+
+df2 <- left_join(df, ref_PM) |>
+  group_by(Model, Target) |>
+  mutate(Value=(Value/Reference)-1)
+
+df2$PM <- factor(df2$PM, levels=pms, ordered = TRUE)
+
+ggplot(df2 |> dplyr::filter(Model!='R0'), aes(x=Model, y=Value, fill=MP_name)) +
+  facet_grid(PM~Target, scales='free') +
+  geom_hline(yintercept = 0, color='lightgray') +
+  geom_col(position="dodge") +
+  theme_bw() +
+  geom_vline(xintercept = (0:7)+0.5, linewidth=0.4, color='darkgray') +
+  labs(fill='CMP',
+       y='PI Value relative to R0') +
+  theme(axis.title = element_text(size=14),
+        axis.text = element_text(size=12))
+
+ggsave('Figures/Robustness_Barplot2.png', width=12, height=6)
+
+
+# relative to MCC11_b
+
+ref_PM <- summary_PM_results |>
+  dplyr::filter(Model !='Reference',
+                PM%in%pms,
+                MP=='MCC11_b') |>
+  select(PM, Reference=Value, Model)
+# ref_PM$Target <- forcats::fct_relabel(ref_PM$Target, recode)
+
+df2 <- left_join(df, ref_PM) |>
+  group_by(Model, Target) |>
+  mutate(Value=(Value/Reference)-1)
+
+df2$PM <- factor(df2$PM, levels=pms, ordered = TRUE)
+
+ggplot(df2, aes(x=Model, y=Value, fill=MP_name)) +
+  facet_grid(PM~Target, scales='free') +
+  geom_hline(yintercept = 0, color='lightgray') +
+  geom_col(position="dodge") +
+  theme_bw() +
+  geom_vline(xintercept = (0:7)+0.5, linewidth=0.4, color='darkgray') +
+  labs(fill='CMP',
+       y='PI Value relative to MCC11_b') +
+  theme(axis.title = element_text(size=14),
+        axis.text = element_text(size=12))
+
+ggsave('Figures/Robustness_Barplot3.png', width=12, height=6)
+
 ## Kobe ----
 
 kobe_results <- readRDS('inst/shiny_apps/SWOMSE/data/kobe_results.rda')
@@ -500,7 +788,78 @@ df <-kobe_results %>% filter(Model!='Reference') %>%
 df$name <- factor(df$name, levels=c('br', 'tr', 'bl', 'tl'), ordered = TRUE)
 cols <- c('green', 'orange', 'yellow', 'red')
 
-ggplot(df, aes(x=Year, y=value, fill=name)) +
+df$Tuning <- 'b'
+df$Tuning[grepl('_c', df$MP)] <- 'c'
+
+p <- ggplot(df |> dplyr::filter(Tuning=='b'), aes(x=Year, y=value, fill=name)) +
+  facet_grid(Model~MP) +
+  geom_bar(position="stack", stat="identity", width = 1) +
+  scale_x_continuous(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0)) +
+  scale_fill_manual(values=cols) +
+  guides(fill='none') +
+  labs(y="Percent of total simulatons (%)",
+       x='Projection Year') +
+  theme_bw() +
+  theme(strip.text = element_text(size=20),
+        axis.title = element_text(size=18),
+        axis.text=element_text(size=14))
+
+ggsave('Figures/Robustness_Kobe_b.png', p, width=16, height=10)
+
+p <- ggplot(df |> dplyr::filter(Tuning=='b'), aes(x=Year, y=value, fill=name)) +
+  facet_grid(MP~Model) +
+  geom_bar(position="stack", stat="identity", width = 1) +
+  scale_x_continuous(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0)) +
+  scale_fill_manual(values=cols) +
+  guides(fill='none') +
+  labs(y="Percent of total simulatons (%)",
+       x='Projection Year') +
+  theme_bw() +
+  theme(strip.text = element_text(size=20),
+        axis.title = element_text(size=18),
+        axis.text=element_text(size=14))
+
+ggsave('Figures/Robustness_Kobe_b_2.png', p, width=16, height=10)
+
+
+## R1 -----
+p <- ggplot(df |> dplyr::filter(Tuning=='b',
+                                Model %in% c('R0', 'R1')), aes(x=Year, y=value, fill=name)) +
+  facet_grid(Model~MP) +
+  geom_bar(position="stack", stat="identity", width = 1) +
+  scale_x_continuous(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0)) +
+  scale_fill_manual(values=cols) +
+  guides(fill='none') +
+  labs(y="Percent of total simulatons (%)",
+       x='Projection Year') +
+  theme_bw() +
+  theme(strip.text = element_text(size=20),
+        axis.title = element_text(size=18),
+        axis.text=element_text(size=14))
+p
+
+
+
+## R3 -----
+p <- ggplot(df |> dplyr::filter(Tuning=='b',
+                                Model %in% c('R0', 'R3')), aes(x=Year, y=value, fill=name)) +
+  facet_grid(Model~MP) +
+  geom_bar(position="stack", stat="identity", width = 1) +
+  scale_x_continuous(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0)) +
+  scale_fill_manual(values=cols) +
+  guides(fill='none') +
+  labs(y="Percent of total simulatons (%)",
+       x='Projection Year') +
+  theme_bw() +
+  theme(strip.text = element_text(size=20),
+        axis.title = element_text(size=18),
+        axis.text=element_text(size=14))
+p
+
+### SPSSFox vs SPSSFox2  ----
+
+ggplot(df |> dplyr::filter(MP %in% c('SPSSFox_b', 'SPSSFox2_b')),
+       aes(x=Year, y=value, fill=name)) +
   facet_grid(Model~MP) +
   geom_bar(position="stack", stat="identity", width = 1) +
   scale_x_continuous(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0)) +
@@ -513,10 +872,7 @@ ggplot(df, aes(x=Year, y=value, fill=name)) +
         axis.title = element_text(size=14),
         axis.text=element_text(size=12))
 
-ggsave('Figures/Robustness_Kobe.png', width=22, height=13)
 
-
-### SPSSFox vs SPSSFox2  ----
 
 df <- summary_PM_results |> dplyr::filter(MP_name %in% c('SPSSFox', 'SPSSFox2'),
                                           Model!='Reference',

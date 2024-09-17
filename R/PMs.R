@@ -1473,7 +1473,8 @@ Quilt <- function(PM_results, PMs=NULL) {
 #' @describeIn Time_Series_Plot Another time series plot
 #' @export
 TimeSeriesPlot2 <- function(DF, PM_ResultsMP, alpha=0.7, size.axis.title=16, size.axis.text=14,
-                            size.strip.text=16, text.size=6, includeOM=TRUE) {
+                            size.strip.text=16, text.size=6, includeOM=TRUE,
+                            incTable=TRUE) {
 
   fills <- c('#373737', '#363639', '#CDCDCD')
 
@@ -1551,16 +1552,22 @@ TimeSeriesPlot2 <- function(DF, PM_ResultsMP, alpha=0.7, size.axis.title=16, siz
     geom_ribbon(aes(ymin=Lower , ymax=Upper, fill=fill), alpha=alpha) +
     geom_line(aes(y=Median)) +
     expand_limits(y=0) +
-    geom_line(data=Year_df, aes(x=Year, y=y, col=Period), linetype=2, lwd=2)  +
+    geom_line(data=Year_df, aes(x=Year, y=y, col=Period),
+              linetype=2, lwd=1)  +
     theme_bw() +
-    scale_x_continuous(expand = c(0, 0)) +
+    scale_x_continuous(expand = c(0, 0),
+                       breaks=seq(2025, by=10, to=2055),
+                       labels=seq(2025, by=10, to=2055)) +
     scale_y_continuous(expand = c(0, 0.01)) +
     scale_fill_manual(values=fills) +
-    guides(fill='none', color='none') +
+    guides(fill='none', color='none')
+  if (incTable)
+    p <- p  +
     ggpp::geom_table(data = tableDF,
                aes(x = x, y = y,label = tbl),
-               hjust = 'inward', vjust = 'inward') +
-    addtheme
+               hjust = 'inward', vjust = 'inward')
+
+    p <- p + addtheme
 
   if (includeOM) {
     p <- p +   geom_text(data=ref_table, aes(x=2025, y=Inf, label=ref_table$Model),
