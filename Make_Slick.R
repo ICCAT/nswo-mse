@@ -3,12 +3,12 @@ library(Slick)
 library(SWOMSE)
 
 slick <- Slick()
-Title(slick) <- 'August 2024 NSWO Results'
+Title(slick) <- 'September 2024 NSWO Results'
 Author(slick) <- 'NSWO Technical Team'
 Email(slick) <- "[adrian@bluematterscience.com](mailto:adrian@bluematterscience.com)"
 Introduction(slick) <- '
 
-Preliminary results for discussion with the NSWO Technical Team
+Updated results for the North Atlantic Swordfish MSE Process.
 
 <strong>Note:</strong>These results were posted with permission from the International Commission for the Conservation of Atlantic Tunas (ICCAT) for the purpose of demonstrating the features of Slick. The North Atlantic Swordfish MSE process in still ongoing. The operating models, candidate management procedures, and performance metrics shown here are for demonstration purposes only and are subject to change as the MSE process contiunes. The results presented here do not necessarily reflect the point of view of ICCAT or other funders and in no ways anticipate ICCAT future policy in this area.
 
@@ -90,15 +90,8 @@ Design(oms) <- data.frame(M=c(rep(c(0.1,0.2,0.3), each=3), rep(0.2, 7)),
                                 'R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7'))
 
 
-Preset(oms) <- list('Reference'=list(1:3, 1:3, 1),
-                    'R0'=list(2, 2, 1),
-                    'R1'=list(2, 2, 2),
-                    'R2'=list(2, 2, 3),
-                    'R3'=list(2, 2, 4),
-                    'R4'=list(2, 2, 5),
-                    'R5'=list(2, 2, 6),
-                    'R6'=list(2, 2, 7),
-                    'R7'=list(2, 2, 8))
+Preset(oms) <- list('Reference'=list(1:3, 1:3, 1))
+
 
 Check(oms)
 
@@ -214,9 +207,15 @@ timeseries <- populate_TS(result_files, timeseries, omnums=14)
 result_files <- mse_files[grepl('-R4', mse_files)]
 timeseries <- populate_TS(result_files, timeseries, omnums=15)
 
+mp_codes[mp_codes=='MCC85'] <- 'MCC9'
+mp_codes[mp_codes=='MCC97'] <- 'MCC11'
+
 result_files <- mse_files[grepl('-R7', mse_files)]
 timeseries <- populate_TS(result_files, timeseries, omnums=16)
 
+slick |> MPs() |> Code()
+
+timeseries@Value[1,16,3,1,]
 
 Target(timeseries) <- c(1, NA, NA, NA)
 Limit (timeseries) <- c(0.4, NA, NA, NA)
@@ -225,6 +224,19 @@ Limit (timeseries) <- c(0.4, NA, NA, NA)
 Preset(timeseries)
 
 Timeseries(slick) <- timeseries
+
+
+# ---- Boxplot ----
+
+boxplot <- Boxplot()
+
+boxplot@Value
+
+
+
+
+saveRDS(slick, 'C:/users/user/desktop/nswo.slick')
+
 
 
 # ---- Quilt -----

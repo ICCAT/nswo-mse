@@ -2,18 +2,13 @@
 
 kobe_results <- readRDS('inst/shiny_apps/SWOMSE/data/kobe_results.rda')
 
-df <-kobe_results %>% filter(Model=='Reference',
-                             MP %in%c('CE_b',
-                                      'FX4_b',
-                                      'MCC5_b',
-                                      'MCC7_b',
-                                      'SPSSFox_b')) %>%
+df <-kobe_results %>% filter(Model=='Reference') %>%
   tidyr::pivot_longer(., cols=6:9)
 df$name <- factor(df$name, levels=c('br', 'tr', 'bl', 'tl'), ordered = TRUE)
 cols <- c('green', 'orange', 'yellow', 'red')
 
 ggplot(df, aes(x=Year, y=value, fill=name)) +
-  facet_grid(~MP) +
+  facet_wrap(~MP, nrow=2, dir="v") +
   geom_bar(position="stack", stat="identity", width = 1) +
   scale_x_continuous(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0)) +
   scale_fill_manual(values=cols) +
@@ -22,17 +17,49 @@ ggplot(df, aes(x=Year, y=value, fill=name)) +
        x='Projection Year') +
   theme_bw()
 
-ggsave('img/comm/kobe_time.png', width=10, height=2.7)
+ggsave('img/comm/kobe_time.png', width=10, height=3.5)
 
 # time-series plots
 summary_TS_results <- readRDS('inst/shiny_apps/SWOMSE/data/summary_TS_results.rda')
+summary_PM_results <- readRDS('inst/shiny_apps/SWOMSE/data/PM_results.rda')
 
-df <- summary_TS_results %>% filter(Model=='Reference',
-                                    MP %in%c('CE_b',
-                                             'FX4_b',
-                                             'MCC5_b',
-                                             'MCC7_b',
-                                             'SPSSFox_b'))
+MPs <- summary_PM_results$MP |> unique()
+b_MPs <- MPs[grepl('_b',MPs)]
+c_MPs <- MPs[grepl('_c',MPs)]
+
+b1_list <- b2_list <- list()
+for (i in seq_along(b_MPs)) {
+  b1_list[[i]] <- summary_TS_results %>% filter(MP==b_MPs[i],  Model=='Reference')
+  b2_list[[i]]  <- summary_PM_results %>% filter(MP==b_MPs[i],  Model=='Reference')
+}
+
+c1_list <- c2_list <- list()
+for (i in seq_along(b_MPs)) {
+  c1_list[[i]] <- summary_TS_results %>% filter(MP==c_MPs[i],  Model=='Reference')
+  c2_list[[i]]  <- summary_PM_results %>% filter(MP==c_MPs[i],  Model=='Reference')
+}
+
+
+# devtools::load_all()
+
+p1 <- TimeSeriesPlot2(DF=do.call('rbind',b1_list),
+                PM_ResultsMP=do.call('rbind',b2_list),
+                includeOM=FALSE)
+p1
+
+p2 <- TimeSeriesPlot2(DF=do.call('rbind',c1_list),
+                      PM_ResultsMP=do.call('rbind',c2_list),
+                      includeOM=FALSE)
+p2
+
+ggsave('img/comm/timeseries_b.png', p1, width=16, height=8)
+ggsave('img/comm/timeseries_c.png', p2, width=16, height=8)
+
+
+
+
+
+df <- summary_TS_results %>% filter(Model=='Reference')
 fills=c('#373737', '#363639', '#CDCDCD')
 ggplot(df, aes(x=Year)) +
   facet_grid(name~MP, scales='free_y') +
@@ -90,24 +117,23 @@ Quilt <- function(PM_results, PMs=NULL, show_dominated=FALSE) {
 
 
   quilt <-  DT::datatable(tab, extensions = 'Buttons',
-                          options = list( dom = 't', pageLength=100),
-)
+                          options = list( dom = 't', pageLength=100))
 
   for (i in 2:ncol(tab)) {
     pm <- colnames(tab)[i]
 
     if (grepl('TAC', pm)) {
-      cuts <- seq(min(tab[,i]), max(tab[,i])*1.1, length.out=10)
+      cuts <- seq(min(tab[,i]), max(tab[,i])+0.00, length.out=10)
       values <- rev(colorRampAlpha(cols, n=length(cuts)+1, alpha=0.5))
 
     } else if (grepl('VarC', pm)) {
       # variability
-      cuts <- seq(0, 1, length.out=100)
+      cuts <- seq(0, 1.001, length.out=100)
       values <- colorRampAlpha(cols, n=length(cuts)+1, alpha=0.5)
 
     } else {
       # probabilities
-      cuts <- seq(0, 1.01, length.out=50)
+      cuts <- seq(0, 1.001, length.out=50)
       values <- rev(colorRampAlpha(cols, n=length(cuts)+1, alpha=0.5) )
     }
     quilt <- quilt %>%

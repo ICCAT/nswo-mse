@@ -54,6 +54,7 @@ QuiltPlot_UI <- function(id, label="QuiltPlot") {
 Quilt <- function(PM_results, PMs=NULL, show_dominated=FALSE) {
 
   PM_results$Value <- round(PM_results$Value,2)
+
   tab <- PM_results %>% select(PM, MP, Value) %>% filter(PM %in% PMs)
 
   tab$Value <- round(tab$Value,2)
@@ -106,7 +107,8 @@ Quilt <- function(PM_results, PMs=NULL, show_dominated=FALSE) {
                           options = list( dom = 'tB', pageLength =100, buttons=c('copy', 'csv')),
                           filter = list(
                             position = 'top', clear = FALSE
-                          )) |>
+                          ),
+                          class = list(stripe = FALSE)) |>
     DT::formatRound(columns = tac_cols, digits=0) |>
     DT::formatRound(columns = nontac_cols, digits=2)
 
@@ -114,17 +116,19 @@ Quilt <- function(PM_results, PMs=NULL, show_dominated=FALSE) {
     pm <- colnames(tab)[i]
 
     if (grepl('TAC', pm)) {
-      cuts <- seq(min(tab[,i]), max(tab[,i])*1.1, length.out=10)
+      cuts <- seq(min(tab[,i]), max(tab[,i]), length.out=10)
       values <- rev(colorRampAlpha(cols, n=length(cuts)+1, alpha=0.5))
 
     } else if (grepl('VarC', pm)) {
       # variability
-      cuts <- seq(0, 1, length.out=100)
+      # cuts <- seq(0, 1.001, length.out=10)
+      cuts <- seq(min(tab[,i]), max(tab[,i]), length.out=10)
       values <- colorRampAlpha(cols, n=length(cuts)+1, alpha=0.5)
 
     } else {
       # probabilities
-      cuts <- seq(0, 1.01, length.out=50)
+      # cuts <- seq(0, 1.001, length.out=10)
+      cuts <- seq(min(tab[,i]), max(tab[,i]), length.out=10)
       values <- rev(colorRampAlpha(cols, n=length(cuts)+1, alpha=0.5) )
     }
     quilt <- quilt %>%
