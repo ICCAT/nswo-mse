@@ -117,24 +117,23 @@ Quilt <- function(PM_results, PMs=NULL, show_dominated=FALSE) {
 
 
   quilt <-  DT::datatable(tab, extensions = 'Buttons',
-                          options = list( dom = 't', pageLength=100),
-)
+                          options = list( dom = 't', pageLength=100))
 
   for (i in 2:ncol(tab)) {
     pm <- colnames(tab)[i]
 
     if (grepl('TAC', pm)) {
-      cuts <- seq(min(tab[,i]), max(tab[,i])*1.1, length.out=10)
+      cuts <- seq(min(tab[,i]), max(tab[,i])+0.00, length.out=10)
       values <- rev(colorRampAlpha(cols, n=length(cuts)+1, alpha=0.5))
 
     } else if (grepl('VarC', pm)) {
       # variability
-      cuts <- seq(0, 1, length.out=100)
+      cuts <- seq(0, 1.001, length.out=100)
       values <- colorRampAlpha(cols, n=length(cuts)+1, alpha=0.5)
 
     } else {
       # probabilities
-      cuts <- seq(0, 1.01, length.out=50)
+      cuts <- seq(0, 1.001, length.out=50)
       values <- rev(colorRampAlpha(cols, n=length(cuts)+1, alpha=0.5) )
     }
     quilt <- quilt %>%
