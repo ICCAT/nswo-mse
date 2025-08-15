@@ -520,8 +520,13 @@ nLRP <- function (MMSEobj = NULL, Ref = 0.4, Yrs = c(3,32))  {
   PMobj@Stat <- MMSEobj@SB_SBMSY[, 1,, Yrs[1]:Yrs[2]]
 
   PMobj@Prob <- calcProb(PMobj@Stat < PMobj@Ref, MMSEobj)
-  Prob  <- array(as.logical(PMobj@Prob), dim=dim(PMobj@Prob))
-  PMobj@Mean <- 1-colSums(Prob)/nrow(Prob)
+  if (is.null(dim(PMobj@Prob))) {
+    PMobj@Mean <- 1-mean(PMobj@Prob)
+  } else {
+    Prob  <- array(as.logical(PMobj@Prob), dim=dim(PMobj@Prob))
+    PMobj@Mean <- 1-colSums(Prob)/nrow(Prob)
+  }
+
   PMobj@MPs <- MMSEobj@MPs[[1]]
   PMobj
 }
