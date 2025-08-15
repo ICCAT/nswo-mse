@@ -13,14 +13,184 @@ OM <- ImportSS(SSDir, nSim=100)
 
 # TODO - Allocation for SS
 
+OM@Interval <- 3
+OM@DataLag <- 2
+
 Hist <- Simulate(OM)
 
+ArrayReduceDims <- MSEtool:::ArrayReduceDims
+ConvertDF <- MSEtool:::ConvertDF
+CheckClass <- MSEtool:::CheckClass
 
-MCC11_b <- function(Data,
-                    Data_Lag = 2,
-                    Interval = 3,
-                    tunepar = 0.756222283813747,
-                    mc = NA, ...) {
+slotName <- 'NaturalMortality'
+
+GetSchedule <- function(OM, Variable='Length', Slot='MeanAtAge', df=TRUE) {
+  CheckClass(OM, c('om', 'hist', 'mse'))
+
+  isStock <- Variable %in% slotNames('stock')
+  isFleet <- Variable %in% slotNames('fleet')
+
+  if (!isStock & !isFleet)
+    cli::cli_abort('{.val {Variable}} is not a slot in `stock` or `fleet` class objects')
+
+  if (inherits(OM, 'om')) {
+    Array <- GetScheduleOM(OM, Variable, Slot, isStock)
+  } else {
+    Array <- GetScheduleHist(OM, Variable, Slot, isStock)
+  }
+  if (!df)
+    return(Array)
+
+  DF <- Array |>
+    array2DF() |>
+    ConvertDF() |>
+    dplyr::mutate(Variable=Variable)
+
+  ColOrder <- c('Sim', 'Stock', 'Age', 'Class', 'TimeStep', 'Fleet', 'Value', 'Variable')
+  ColOrder <- ColOrder[ColOrder %in% colnames(DF)]
+
+  DF <- DF |> dplyr::select(dplyr::all_of(ColOrder))
+  class(DF) <- c('Schedule', class(DF))
+  DF
+
+}
+
+GetAtLength <- function(OM, Variable, df=TRUE) {
+  GetSchedule(OM, Variable, Slot='MeanAtLength', df=TRUE)
+}
+
+GetAtAge <- function(OM, slotName, df=TRUE) {
+  GetSchedule(OM, Variable, Slot='MeanAtAge', df=TRUE)
+}
+
+GetScheduleOM <- function(OM, slotName, Slot, isStock) {
+  CheckClass(OM, c('om', 'hist', 'mse'))
+  OM <- PopulateOM(OM, silent=TRUE)
+  if (isStock)
+    return(
+      purrr::map(OM@Stock, \(Stock)
+                 Stock |> slot(slotName) |> slot(Slot) |>
+                   ArrayReduceDims()) |>
+        List2Array("Stock")
+    )
+  purrr::map(OM@Fleet, \(Stock) {
+    purrr::map(Stock, \(Fleet) Fleet |> slot(slotName) |> slot(Slot) |>
+                 ArrayReduceDims()) |>
+      List2Array("Fleet")
+  }) |> List2Array("Stock")
+}
+
+GetScheduleHist <- function(Hist, slotName, Slot,isStock) {
+  CheckClass(Hist, c('hist', 'mse'))
+  OM <- Hist@OM
+  if (isStock)
+    return(
+      purrr::map(OM@Stock, \(Stock)
+                 Stock |> slot(slotName) |> slot(Slot) |>
+                   ArrayReduceDims())|>
+        List2Array("Stock")
+    )
+
+  purrr::map(OM@Fleet, \(Stock)
+             Stock |> slot(slotName) |> slot(Slot) |>
+               ArrayReduceDims())|>
+    List2Array("Stock")
+}
+
+
+GetSelectivityAtAge <- function(OM, df=TRUE) {
+  GetSchedule(OM, "Selectivity", df=df)
+}
+
+GetRetentionAtAge <- function(OM, df=TRUE) {
+  GetSchedule(OM, "Retention", df=df)
+}
+
+GetSelectivityAtLength <- function(OM, df=TRUE) {
+  GetSchedule(OM, "Selectivity", 'MeanAtLength', df=df)
+}
+
+GetRetentionAtLength <- function(OM, df=TRUE) {
+  GetSchedule(OM, "Retention", 'MeanAtLength', df=df)
+}
+
+plot.Schedule <- function(x, TimeLab='Year', color='TimeStep',
+                       ylab=NULL) {
+
+  if (is.null(ylab))
+    ylab <- x$Variable |> unique()
+  x[[color]] <- as.factor(x[[color]])
+
+  nColor <- unique(x[[color]]) |> length()
+  ColNames <- colnames(x)
+  if ("Age" %in% ColNames)
+    XVar <- "Age"
+  if ("Class" %in% ColNames)
+    XVar <- "Class"
+
+  nStock <- unique(x$Stock) |> length()
+  nFleet <- suppressWarnings(unique(x$Fleet)) |> length()
+
+  # TO DO - average over sims
+
+  if (nColor<2) {
+    p <- ggplot(x, aes(x=.data[[XVar]], y=Value))
+  } else {
+    p <- ggplot(x, aes(x=.data[[XVar]], y=Value, color=.data[[color]]))
+  }
+
+  if (nFleet<=1 & nStock>1 & color!='Stock')
+    p <- p + facet_wrap(~Stock)
+
+  if (nFleet>1 & nStock<=1 & color!='Fleet')
+    p <- p + facet_wrap(~Fleet)
+
+  if (nFleet>1 & nStock>1) {
+    if (color!='Stock' & color!='Fleet') {
+      p <- p + facet_grid(Fleet~Stock)
+    } else if (color=='Stock') {
+      p <- p + facet_wrap(~Fleet)
+    } else if (color=='Fleet') {
+      p <- p + facet_wrap(~Stock)
+    }
+  }
+
+  if (color=='TimeStep')
+    ColorLab <- TimeLab
+
+  if (color=='Stock')
+    ColorLab <- "Stock"
+
+  if (color=='Fleet')
+    ColorLab <- "Fleet"
+
+  p <- p + geom_line() +
+      expand_limits(y=0) +
+      theme_bw() +
+      labs(y=ylab,  color=ColorLab)
+
+  if (nColor<2)
+    p <- p + guides(color='none')
+  p
+
+}
+
+
+SelectivityAtAge <- GetSelectivityAtAge(Hist) |> dplyr::filter(TimeStep==max(TimeStep))
+SelectivityAtLength <- GetSelectivityAtLength(Hist) |> dplyr::filter(TimeStep==max(TimeStep))
+
+plot(SelectivityAtAge, color='Stock')
+plot(SelectivityAtLength, color='Stock')
+
+MaturityAtAge <- GetAtAge(Hist, 'Maturity')
+
+
+
+MCC11 <- function(Data,
+               Data_Lag = 2,
+               Interval = 3,
+               tunepar = 0.756222283813747,
+               mc = NA, ...) {
 
   advice <- Advice()
 
@@ -40,10 +210,8 @@ MCC11_b <- function(Data,
   }
 
 
-  # TODO - check if the TAC is applied every year ...
-  # add last TAC
 
-  # TODO Data Lag
+
 
   TACbase <- 12600 * tunepar
 
@@ -101,15 +269,18 @@ FullRetention <- function(Advice) {
   Advice
 }
 
+ShiftSelectivity <- function(Advice) {
+  Advice@Selectivity@Pars <- list
+}
 
-MCC11_b_FR <- function(Data,...) {
-  MCC11_b(Data, ...) |> FullRetention()
+MCC11_FR <- function(Data,...) {
+  MCC11(Data, ...) |> FullRetention()
 }
 
 
 Hist@OM@Interval <- 1
-MPs <- c('MCC11_b', 'MCC11_b_FR')
-MSE <- ProjectDEV(Hist, MPs)
+MPs <- c('MCC11', 'MCC11_FR')
+MSE <- Project(Hist, MPs)
 
 r = MSE@Landings |> apply(c('Sim', 'TimeStep', 'MP'), sum)
 r[5,,]
