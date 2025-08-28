@@ -9,12 +9,12 @@ library(SWOMSE)
 
 SSDir <- 'G:/My Drive/1_PROJECTS/North_Atlantic_Swordfish/OMs/2024_OMs/Reference/005_M0.2_sigmaR0.2_steepness0.80_cpuelambda1_llq1_env7'
 
-OM <- ImportSS(SSDir, nSim=100)
+OM <- ImportSS(SSDir, nSim=100, Interval = 3, DataLag = 2)
 
+OM@Obs$`Female Male`$SPN_1@Removals
+OM@Obs$`Female Male`$Combined_CPUE@Survey@Error
 # TODO - Allocation for SS
 
-OM@Interval <- 3
-OM@DataLag <- 2
 
 Hist <- Simulate(OM)
 
