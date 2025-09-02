@@ -1,23 +1,3 @@
-library(tidyverse)
-library(glmmTMB)
-library(car)
-library(emmeans)
-
-source('ECP/Functions.R')
-
-
-load("G:/Shared drives/BM shared/1. Projects/ICCAT NSWO/2025/ECP/NATL_7Fleets.RData")
-
-unique(NATL_7Fleets$FlagName) |> sort()
-
-#ensure data types are correct
-NATL_7Fleets$YearC=as.factor(NATL_7Fleets$YearC)
-NATL_7Fleets$Quarter=as.factor(NATL_7Fleets$Quarter)
-NATL_7Fleets$FlagName=as.factor(NATL_7Fleets$FlagName)
-NATL_7Fleets$AssignedClass=as.factor(NATL_7Fleets$AssignedClass)
-NATL_7Fleets$zone=as.factor(NATL_7Fleets$zone)
-NATL_7Fleets$fTarget2=as.factor(NATL_7Fleets$fTarget2)
-
 GenerateIndex <- function(IndexData, DropFlag) {
 
   Flags <- unique(IndexData$FlagName)
@@ -57,14 +37,4 @@ GenerateIndex <- function(IndexData, DropFlag) {
   ls.Mod20pred<-cbind(ls.Mod20pred, nom$Nominal, nom$NObs)
   ls.Mod20pred
 }
-
-
-Flags <- NATL_7Fleets$FlagName|> unique()
-
-for (fl in seq_along(Flags)) {
-  DropFlag <- Flags[fl]
-  Index <- GenerateIndex(NATL_7Fleets,DropFlag)
-  saveRDS(Index, file.path("ECP/Indices", paste0(DropFlag, '.rda')))
-}
-
 
