@@ -6,6 +6,9 @@ if (!packageVersion('MSEtool') >= '4.0.0') {
 
 library(MSEtool)
 library(SWOMSE)
+library(flextable)
+
+fig.dir <- 'Additional_Robustness_Tests/MinimumSizeLimits/Figures'
 
 # ---- Run MSE with Full Retention ----
 
@@ -13,6 +16,8 @@ SSDir <- 'G:/My Drive/1_PROJECTS/North_Atlantic_Swordfish/OMs/2024_OMs/Reference
 
 OM <- ImportSS(SSDir, nSim=100)
 
+
+saveRDS(OM, 'Additional_Robustness_Tests/MinimumSizeLimits/OM.om')
 Hist <- Simulate(OM)
 
 saveRDS(Hist, 'Additional_Robustness_Tests/MinimumSizeLimits/Hist.hist')
@@ -24,24 +29,61 @@ MPs <- c('MCC11', 'MCC11_FR')
 MSE <- Project(Hist, MPs)
 saveRDS(MSE, 'Additional_Robustness_Tests/MinimumSizeLimits/FullRetention.mse')
 
-
-# ---- Load MSE ----
+# ---- Plots and Tables ----
 Hist <- readRDS('Additional_Robustness_Tests/MinimumSizeLimits/Hist.hist')
 MSE <- readRDS('Additional_Robustness_Tests/MinimumSizeLimits/FullRetention.mse')
 
 
 
-# Plots
-Landings <- Landings(Hist, FALSE, TRUE)
+# Plot Landings & Discards
+Landings <- Landings(MSE, ByFleet=TRUE)
+Discards <- Discards(MSE, ByFleet=TRUE)
+
+DF <- dplyr::bind_rows(Landings, Discards) |>
+  dplyr::group_by(Sim, TimeStep, Period, Variable, Fleet) |>
+  dplyr::summarise(Value=sum(Value))
+
+DF$Variable <- factor(DF$Variable, levels=rev(unique(DF$Variable)), ordered = TRUE)
+
+DFHist <- DF |> dplyr::filter(Period=='Historical')
+
+ggplot(DFHist, aes(x=TimeStep, y=Value, color=Variable)) +
+  facet_wrap(~Fleet) +
+  geom_line() +
+  theme_bw() +
+  labs(x='Year', y='Metric Ton', color='') +
+  scale_color_manual(values=c('black', 'darkgray')) +
+  theme(strip.background = element_blank())
+
+ggsave(file.path(fig.dir, 'Landings_Discards.png'), width=7, height=4)
+
+
+FracDiscarded <- DFHist |> dplyr::ungroup() |>
+  dplyr::filter(TimeStep>=2020) |>
+  dplyr::mutate(Value=ifelse(Value<0,0, Value)) |>
+  dplyr::filter(Value>0) |>
+  tidyr::pivot_wider(values_from = Value, names_from = Variable) |>
+  dplyr::filter(`Discards (dead)`>0) |>
+  dplyr::mutate(Removals=Landings+`Discards (dead)`) |>
+  dplyr::group_by(Fleet) |>
+  dplyr::summarise(Removals=sum(Removals), Discards=sum(`Discards (dead)`)) |>
+  dplyr::mutate(FracDiscard=Discards/Removals) |>
+  dplyr::mutate(Removals=round(Removals,0),
+                Discards=round(Discards,0),
+                FracDiscard=round(FracDiscard,2)*100)
+
+table <- flextable::flextable(FracDiscarded)
+flextable::save_as_docx(table, path=file.path(fig.dir, '../FracDiscard.docx'))
+
+
+
 
 KeepFleets <- Landings |>
   dplyr::filter(TimeStep==max(TimeStep), Value>0) |>
   dplyr::reframe(Fleet=as.character(unique(Fleet))) |>
   dplyr::pull(Fleet)
 
-# Plot Selectivity & Retention
-
-SelectivityAtAge <- GetSelectivityAtAge(MSE) |>
+SelectivityAtAge <- GetSelectivityAtAge(Hist) |>
   dplyr::filter(TimeStep==max(TimeStep), Fleet %in% KeepFleets)
 
 SelectivityAtLength <- GetSelectivityAtLength(Hist) |>
@@ -54,9 +96,34 @@ RetentionAtLength <- GetRetentionAtLength(Hist) |>
   dplyr::filter(TimeStep==max(TimeStep), Fleet %in% KeepFleets)
 
 
+
+AtLength <- dplyr::bind_rows(SelectivityAtLength, RetentionAtLength) |>
+  dplyr::mutate(Variable=factor(Variable, ordered=TRUE))
+
+plot(AtLength |> dplyr::filter(Stock=='Female'), color='Variable', xlab='Length', ylab='Probability',
+     ColorLab='') +
+  scale_color_manual(values=c('black', 'darkgrey')) +
+  labs(x='Length (cm)')
+
+
+
+AtAge <- dplyr::bind_rows(SelectivityAtAge, RetentionAtAge) |>
+  dplyr::mutate(Variable=factor(Variable, ordered=TRUE))
+
+plot(AtAge |> dplyr::filter(Stock=='Female'), color='Variable', ylab='Probability',
+     ColorLab='') +
+  scale_color_manual(values=c('black', 'darkgrey'))
+
+
+
+# Plot Projections and Performance ....
+
+
+
+
 # Plot Landings & Discards
 
-Landings <- Landings(MSE, FALSE, TRUE)
+
 
 
 Landings <- Landings |>
@@ -72,7 +139,7 @@ Discards <- Discards(MSE, FALSE, TRUE) |>
 DF <- dplyr::bind_rows(Landings, Discards)
 DF$Variable <- factor(DF$Variable, levels=unique(DF$Variable), ordered = TRUE)
 
-ggplot(DF |> dplyr::filter(Sim==1),
+ggplot(DF |> dplyr::filter(Sim==1, Period=='Historical'),
        aes(x=TimeStep, y=Value, color=Variable)) +
   facet_grid(MP~Fleet) +
   geom_line() +

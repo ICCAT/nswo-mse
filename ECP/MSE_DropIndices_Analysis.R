@@ -47,6 +47,9 @@ for (fl in seq_along(Flags2)) {
 Dropped1_Indices <- MakeIndicesDF('DropYears/Dropped1', 'Dropped 1 Flag')
 Dropped2_Indices <- MakeIndicesDF('DropYears/Dropped2', 'USA + Dropped 1 Flag')
 
+Dropped1_Indices |> dplyr::filter(Year==2022)
+Dropped2_Indices |> dplyr::filter(Year==2022)
+
 df <- dplyr::bind_rows(Dropped1_Indices, Dropped2_Indices) |> dplyr::filter(Year>=2015)
 
 p <- ggplot(df, aes(x=Year)) +

@@ -71,11 +71,18 @@ MCC11 <- function(Data,
 class(MCC11) <- 'mp'
 
 FullRetention <- function(Advice) {
+
+
+
   Advice@Retention@Pars <- list(RL50=0, RL50_95=0)
   Advice
 }
 
 MCC11_FR <- function(Data,...) {
-  MCC11(Data, ...) |> FullRetention()
+  Advice <-  MCC11(Data, ...)
+  CurrentTS <- tail(Data@TimeSteps,1)
+  if (CurrentTS %in% Catchdf$Year)
+    return(Advice)
+  Advice |> FullRetention()
 }
 class(MCC11_FR) <- 'mp'
