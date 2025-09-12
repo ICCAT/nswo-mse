@@ -37,6 +37,7 @@ MSE <- readRDS('Additional_Robustness_Tests/MinimumSizeLimits/FullRetention.mse'
 
 # Plot Landings & Discards
 Landings <- Landings(MSE, ByFleet=TRUE)
+Discards <- Discards(MSE, ByFleet=TRUE, type='all')
 Discards <- Discards(MSE, ByFleet=TRUE)
 
 DF <- dplyr::bind_rows(Landings, Discards) |>
@@ -76,9 +77,8 @@ table <- flextable::flextable(FracDiscarded)
 flextable::save_as_docx(table, path=file.path(fig.dir, '../FracDiscard.docx'))
 
 
-
-
 KeepFleets <- Landings |>
+  dplyr::filter(Period=='Historical') |>
   dplyr::filter(TimeStep==max(TimeStep), Value>0) |>
   dplyr::reframe(Fleet=as.character(unique(Fleet))) |>
   dplyr::pull(Fleet)
@@ -98,25 +98,54 @@ RetentionAtLength <- GetRetentionAtLength(Hist) |>
 
 
 AtLength <- dplyr::bind_rows(SelectivityAtLength, RetentionAtLength) |>
-  dplyr::mutate(Variable=factor(Variable, ordered=TRUE))
+  dplyr::mutate(Variable=factor(Variable, c('Selectivity', 'Retention'), ordered=TRUE))
 
 plot(AtLength |> dplyr::filter(Stock=='Female'), color='Variable', xlab='Length', ylab='Probability',
      ColorLab='') +
   scale_color_manual(values=c('black', 'darkgrey')) +
   labs(x='Length (cm)')
 
-
+ggsave(file.path(fig.dir, 'AtLength.png'), width=6, height=4)
 
 AtAge <- dplyr::bind_rows(SelectivityAtAge, RetentionAtAge) |>
-  dplyr::mutate(Variable=factor(Variable, ordered=TRUE))
+  dplyr::mutate(Variable=factor(Variable, c('Selectivity', 'Retention'), ordered=TRUE))
 
 plot(AtAge |> dplyr::filter(Stock=='Female'), color='Variable', ylab='Probability',
      ColorLab='') +
   scale_color_manual(values=c('black', 'darkgrey'))
 
+ggsave(file.path(fig.dir, 'AtAge.png'), width=6, height=4)
 
 
 # Plot Projections and Performance ....
+library(Slick)
+
+Status <- function(MSE) {
+  FFMSY <- F_FMSY(MSE) |> dplyr::filter(Period=='Projection')
+  SBSBMSY <- SB_SBMSY(MSE) |> dplyr::filter(Period=='Projection')
+
+  dplyr::bind_rows(SBSBMSY, FFMSY) |>
+    dplyr::select(Sim, TimeStep, Value, Variable, MP) |>
+    tidyr::pivot_wider(names_from = Variable, values_from = Value) |>
+    dplyr::mutate(Green=SB_SBMSY>=1 & F_FMSY<=1) |>
+    dplyr::group_by(MP) |>
+    dplyr::summarise(Value=mean(Green),
+                     Variable="Status")
+
+}
+
+Status(MSE)
+
+
+Slick <- MSEtool::MSE2Slick(MSE)
+
+ggplot(Landings, aes(x=TimeStep, y=Value, color=MP)) +
+  geom_line()
+
+source('R/PMs.r')
+PMs <- c('TAC1' , "PGK_short", 'PGK_med',
+         'PBMSY', "PNOF",
+         "AvCatch",  "VarC")
 
 
 
