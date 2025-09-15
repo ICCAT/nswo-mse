@@ -48,6 +48,8 @@ DF$Variable <- factor(DF$Variable, levels=rev(unique(DF$Variable)), ordered = TR
 
 DFHist <- DF |> dplyr::filter(Period=='Historical')
 
+DFHist |> dplyr::filter(Variable=='Discards (dead)', Value>10)
+
 ggplot(DFHist, aes(x=TimeStep, y=Value, color=Variable)) +
   facet_wrap(~Fleet) +
   geom_line() +
@@ -75,6 +77,10 @@ FracDiscarded <- DFHist |> dplyr::ungroup() |>
 
 table <- flextable::flextable(FracDiscarded)
 flextable::save_as_docx(table, path=file.path(fig.dir, '../FracDiscard.docx'))
+
+
+sum(FracDiscarded$Discards)/sum(FracDiscarded$Removals)
+
 
 
 KeepFleets <- Landings |>
@@ -118,7 +124,103 @@ ggsave(file.path(fig.dir, 'AtAge.png'), width=6, height=4)
 
 
 # Plot Projections and Performance ....
-library(Slick)
+
+SBSBMSY <- SB_SBMSY(MSE) |>
+  dplyr::filter(Stock=='Female') |>
+  dplyr::group_by(TimeStep, Period, Variable, MP) |>
+  dplyr::summarise(Value=mean(Value))
+
+FFMSY <- F_FMSY(MSE) |>
+  dplyr::filter(Stock=='Female') |>
+  dplyr::group_by(TimeStep, Period, Variable, MP) |>
+  dplyr::summarise(Value=mean(Value))
+
+Landings <- Landings(MSE) |>
+  dplyr::group_by(Sim, TimeStep, Period, Variable, MP) |>
+  dplyr::summarise(Value=sum(Value)) |>
+  dplyr::group_by(TimeStep, Period, Variable, MP) |>
+  dplyr::summarise(Value=mean(Value))
+
+Discards <- Discards(MSE) |>
+  dplyr::group_by(Sim, TimeStep, Period, Variable, MP) |>
+  dplyr::summarise(Value=sum(Value)) |>
+  dplyr::group_by(TimeStep, Period, Variable, MP) |>
+  dplyr::summarise(Value=mean(Value))
+
+DF <- dplyr::bind_rows(SBSBMSY, FFMSY, Landings, Discards)
+DF$Variable <- factor(DF$Variable, c('SB_SBMSY', 'F_FMSY', 'Landings', 'Discards (dead)'), ordered = TRUE)
+
+ggplot(DF |> dplyr::filter(TimeStep>=2025), aes(x=TimeStep, y=Value, color=MP)) +
+  facet_wrap(~Variable, scales='free_y') +
+  expand_limits(y=0) +
+  geom_line() +
+  theme_bw() +
+  labs(x="Year", y='Mean', color='')
+
+ggsave(file.path(fig.dir, 'Projections.png'), width=6, height=4)
+
+
+SBiomass(MSE) |> dplyr::filter(Period=='Projection', Stock=='Female') |>
+  tidyr::pivot_wider(names_from = MP, values_from = Value) |>
+  dplyr::mutate(Rel=MCC11_FR/MCC11) |>
+  dplyr::summarise(Mean=mean(Rel))
+
+Landings(MSE) |> dplyr::filter(Period=='Projection') |>
+  dplyr::group_by(Sim, TimeStep, Stock, MP) |>
+  dplyr::summarise(Value=sum(Value)) |>
+  tidyr::pivot_wider(names_from = MP, values_from = Value) |>
+  dplyr::mutate(Rel=MCC11_FR/MCC11) |>
+  dplyr::ungroup() |>
+  dplyr::summarise(Mean=mean(Rel))
+
+
+t = TACs(MSE)
+t |> dplyr::filter(Sim==1, TimeStep%in% 2026:2027)
+
+
+tt <- SBiomass(MSE) |> dplyr::filter(Period=='Projection', Stock=='Female') |>
+  tidyr::pivot_wider(names_from = MP, values_from = Value) |>
+  dplyr::mutate(Rel=MCC11_FR/MCC11)
+
+tt |> dplyr::filter(Rel>1)
+
+R <- apply(MSE@Landings$Female[1,,,,1,], c(2,4), sum) + apply(MSE@Landings$Male[1,,,,1,], c(2,4), sum) +
+apply(MSE@Discards$Female[1,,,,1,], c(2,4), sum) + apply(MSE@Discards$Male[1,,,,1,], c(2,4), sum)
+
+
+MSE@SBiomass[1,1,,]
+R
+
+(MSE@SBiomass[1,1,,1]/MSE@SBiomass[1,1,,2])
+MSE@Biomass[1,1,,1]/MSE@Biomass[1,1,,2]
+
+colSums(MSE@Number$Female[1,,4,1,] + MSE@Number$Male[1,,4,1,])
+
+
+apply(MSE@FDeadAtAge$Female[1,,4,,], c(1,3), sum) |> apply('MP', max)
+
+
+L
+D
+
+
+yr <- MSE@PPD$MCC11$`1`$`Female Male`@TimeSteps
+ind <- MSE@PPD$MCC11$`1`$`Female Male`@Survey@Value[,8]
+
+
+plot(yr, ind, type='b', ylim=c(0,2))
+lines(yr[yr<=2022], ind[yr<=2022], col='blue')
+
+Data <- DataTrim(MSE@PPD$MCC11$`1`$`Female Male`, 2022)
+
+MSE@PPD$MCC11$`1`$`Female Male`@Survey@Value[1:73,8]
+
+tacs <- TACs(MSE)
+tacs |> dplyr::filter(TimeStep==2025)
+
+Removals |> dplyr::filter(TimeStep==2028)
+
+
 
 Status <- function(MSE) {
   FFMSY <- F_FMSY(MSE) |> dplyr::filter(Period=='Projection', Stock=='Female')
@@ -137,7 +239,32 @@ Status <- function(MSE) {
 
 }
 
+
+
+Safety <- function(MSE, Ref=0.4) {
+  SB_SBMSY(MSE) |>
+    dplyr::filter(Period=='Projection') |>
+    dplyr::mutate(Above=Value>=Ref) |>
+    dplyr::group_by(MP, Sim) |>
+    dplyr::mutate(AboveAll=prod(Above)) |>
+    dplyr::group_by(MP) |>
+    dplyr::summarise(Value=mean(AboveAll))
+}
+
+MeanLandings <- function(MSE) {
+  Landings(MSE) |> dplyr::filter(Period=='Projection') |>
+    dplyr::group_by(Sim, MP, Stock) |>
+    dplyr::summarise(Value=sum(Value)) |>
+    dplyr::group_by(MP) |>
+    dplyr::summarise(Value=mean(Value),
+                     Variable='Mean Landings')
+}
+
 Status(MSE)
+Safety(MSE)
+MeanLandings(MSE)
+
+
 
 t =   dplyr::bind_rows(SBSBMSY, FFMSY) |>
   dplyr::select(Sim, TimeStep, Value, Variable, MP)

@@ -5,7 +5,7 @@ MCC11 <- function(Data,
                   mc = NA, ...) {
   advice <- Advice()
   CurrentTS <- tail(Data@TimeSteps,1)
-  if (CurrentTS %in% Catchdf$Year) {
+  if ((CurrentTS+1) %in% Catchdf$Year) {
     advice@TAC <-  Catchdf$Catch[match(CurrentTS, Catchdf$Year)]
     return(advice)
   }
@@ -81,7 +81,7 @@ FullRetention <- function(Advice) {
 MCC11_FR <- function(Data,...) {
   Advice <-  MCC11(Data, ...)
   CurrentTS <- tail(Data@TimeSteps,1)
-  if (CurrentTS %in% Catchdf$Year)
+  if ((CurrentTS+1) %in% Catchdf$Year)
     return(Advice)
   Advice |> FullRetention()
 }
