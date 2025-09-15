@@ -121,8 +121,11 @@ ggsave(file.path(fig.dir, 'AtAge.png'), width=6, height=4)
 library(Slick)
 
 Status <- function(MSE) {
-  FFMSY <- F_FMSY(MSE) |> dplyr::filter(Period=='Projection')
-  SBSBMSY <- SB_SBMSY(MSE) |> dplyr::filter(Period=='Projection')
+  FFMSY <- F_FMSY(MSE) |> dplyr::filter(Period=='Projection', Stock=='Female')
+  SBSBMSY <- SB_SBMSY(MSE) |> dplyr::filter(Period=='Projection', Stock=='Female')
+
+  SBSBMSY |> dplyr::filter(is.na(Value)!=TRUE)
+  SBSBMSY$TimeStep |> unique()
 
   dplyr::bind_rows(SBSBMSY, FFMSY) |>
     dplyr::select(Sim, TimeStep, Value, Variable, MP) |>
@@ -136,6 +139,10 @@ Status <- function(MSE) {
 
 Status(MSE)
 
+t =   dplyr::bind_rows(SBSBMSY, FFMSY) |>
+  dplyr::select(Sim, TimeStep, Value, Variable, MP)
+
+t
 
 Slick <- MSEtool::MSE2Slick(MSE)
 
