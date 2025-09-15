@@ -1,5 +1,8 @@
 library(SWOMSE)
 
+Refs_OMs <- OM_DF %>% filter(Class=='Reference')
+Refs_OMs <- Refs_OMs$OM.object
+
 if (!dir.exists('MSE_Objects'))
   dir.create('MSE_Objects')
 
@@ -22,6 +25,7 @@ for (i in seq_along(Refs_OMs)) {
 
 
 
+
 MSEList <- list()
 
 for (i in 1:9) {
@@ -31,11 +35,15 @@ for (i in 1:9) {
 
 IndexList <- list()
 for (i in 1:9) {
-  IndexList[[i]] <- MSEList[[i]]@PPD[[1]][[1]][[1]]@Ind[,74]
+  IndexList[[i]] <- MSEList[[i]]@PPD[[1]][[1]][[1]]@Ind[,71:78]
 }
 
 # 2023 Simulated Index
-Index2023 <- do.call('rbind', IndexList)
+Index2020_2027 <- do.call('rbind', IndexList)
 
-hist(Index2023)
-quantile(Index2023, c(0.025, 0.975))
+data.frame(Year=2020:2027,
+           Lower=apply(Index2020_2027, 2, quantile, 0.025) |> round(2),
+           Mean=apply(Index2020_2027, 2, mean) |> round(2),
+           Upper=apply(Index2020_2027, 2, quantile, 0.975) |> round(2)
+)
+
