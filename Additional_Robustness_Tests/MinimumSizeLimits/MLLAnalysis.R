@@ -34,7 +34,6 @@ Hist <- readRDS('Additional_Robustness_Tests/MinimumSizeLimits/Hist.hist')
 MSE <- readRDS('Additional_Robustness_Tests/MinimumSizeLimits/FullRetention.mse')
 
 
-
 # Plot Landings & Discards
 Landings <- Landings(MSE, ByFleet=TRUE)
 Discards <- Discards(MSE, ByFleet=TRUE, type='all')
@@ -80,6 +79,32 @@ flextable::save_as_docx(table, path=file.path(fig.dir, '../FracDiscard.docx'))
 
 
 sum(FracDiscarded$Discards)/sum(FracDiscarded$Removals)
+
+
+
+
+FracDiscarded <- DFHist |> dplyr::ungroup() |>
+  dplyr::filter(TimeStep>=2020) |>
+  # dplyr::mutate(Value=ifelse(Value<0,0, Value)) |>
+  # dplyr::filter(Value>0) |>
+  tidyr::pivot_wider(values_from = Value, names_from = Variable) |>
+  dplyr::filter(Landings>0) |>
+  dplyr::mutate(Removals=Landings+`Discards (dead)`) |>
+  dplyr::group_by(Fleet, TimeStep) |>
+  dplyr::summarise(Removals=sum(Removals), Discards=sum(`Discards (dead)`)) |>
+  dplyr::mutate(FracDiscard=Discards/Removals) |>
+  dplyr::mutate(Removals=round(Removals,0),
+                Discards=round(Discards,0),
+                FracDiscard=round(FracDiscard,2)*100)
+
+table <- flextable::flextable(FracDiscarded)
+table
+
+
+flextable::save_as_docx(table, path=file.path(fig.dir, '../FracDiscard_2.docx'))
+
+
+
 
 
 

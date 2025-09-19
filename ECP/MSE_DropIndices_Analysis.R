@@ -111,8 +111,42 @@ ggplot(PlotDF, aes(x=Year, y=value, color=Run)) +
   theme_bw() +
   labs(color='', y='Mean')
 
- ggsave('ECP/Figures/TS_plot.png', width=12, height=4)
+ggsave('ECP/Figures/TS_plot.png', width=12, height=4)
 
+################################################################################
+
+ind <- MSE_Base@PPD[[1]][[1]][[1]]@Ind[1,]
+mcind <- MSE_Dropped1$Maroc@PPD[[1]][[1]][[1]]@Ind[1,]
+
+yrs <- 1950:2053
+plot(yrs, ind, type='l')
+lines(yrs, mcind, col='blue')
+
+data.frame(Year=yrs, Ind=ind, Mar=mcind)
+
+Data <-  MSE_Dropped1$Maroc@PPD[[1]][[1]][[1]]
+x <- 1
+Ibase <- mean(Data@Ind[x, match(2017:2019, Data@Year)], na.rm=TRUE)
+Ibase
+
+Icurr <- mean(Data@Ind[x,match(2020:2022, Data@Year)])
+Icurr/Ibase
+
+
+Data <- MSE_Base@PPD[[1]][[1]][[1]]
+x <- 1
+Ibase <- mean(Data@Ind[x, match(2017:2019, Data@Year)], na.rm=TRUE)
+
+Icurr <- mean(Data@Ind[x,match(2020:2022, Data@Year)])
+Icurr/Ibase
+
+apply(MSE_Base@TAC[1,,1,1,1:5], 2, sum)
+apply(MSE_Dropped1$Maroc@TAC[1,,1,1,1:5], 2, sum)
+
+
+
+
+################################################################################
 
 
 source('R/PMs.r')
