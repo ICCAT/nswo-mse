@@ -59,6 +59,27 @@ ggplot(DFHist, aes(x=TimeStep, y=Value, color=Variable)) +
 
 ggsave(file.path(fig.dir, 'Landings_Discards.png'), width=7, height=4)
 
+ggplot(DFHist |> dplyr::filter(Variable=='Landings'),
+       aes(x=TimeStep, y=Value)) +
+  facet_wrap(~Fleet) +
+  geom_line() +
+  theme_bw() +
+  labs(x='Year', y='Landings (Metric Ton)', color='') +
+  scale_color_manual(values=c('black', 'darkgray')) +
+  theme(strip.background = element_blank())
+
+ggsave(file.path(fig.dir, 'Landings.png'), width=7, height=4)
+
+ggplot(DFHist |> dplyr::filter(Variable!='Landings'),
+       aes(x=TimeStep, y=Value)) +
+  facet_wrap(~Fleet) +
+  geom_line() +
+  theme_bw() +
+  labs(x='Year', y='Dead Discards (Metric Ton)', color='') +
+  scale_color_manual(values=c('black', 'darkgray')) +
+  theme(strip.background = element_blank())
+
+ggsave(file.path(fig.dir, 'Discards.png'), width=7, height=4)
 
 FracDiscarded <- DFHist |> dplyr::ungroup() |>
   dplyr::filter(TimeStep>=2020) |>
