@@ -6,13 +6,11 @@ output:
   rmdformats::robobook:
     highlight: kate
     toc_depth: 2
-    use_bookdown: yes
-  bookdown::pdf_book:
-    keep_tex: true
+    use_bookdown: TRUE
 urlcolor: blue
-bibliography: "`r rbbt::bbt_write_bib('biblio.bib', overwrite = TRUE)`"
 csl: fish-and-fisheries.csl
 always_allow_html: true
+bibliography: references.bib
 ---
 
 ```{css, echo=FALSE}
@@ -75,10 +73,9 @@ The `SWOMSE` package used for the swordfish MSE uses the `openMSE` framework. Th
 
 `openMSE` is an R package that has been developed for conducting fast, flexible, and transparent, MSE for a wide range of fisheries. `openMSE` is an umbrella package that includes the `MSEtool`, `SAMtool` and `DLMtool` packages. A non-technical description of `openMSE` and its key features is available on the [`openMSE` website](https://openmse.com/).
 
-The operating model in `openMSE`, including assumptions and equations, is described in detail in @carruthers2018b
+The operating model in `openMSE`, including assumptions and equations, is described in detail in @carruthers2018.
 
-The [`SWOMSE` User Manual](../UserManual/User_Manual.html) includes instructions for installing the `SWOMSE` package and running the MSE analyses. 
-
+The [`SWOMSE` User Manual](../UserManual/User_Manual.html) includes instructions for installing the `SWOMSE` package and running the MSE analyses.
 
 # Stock Assessment {#stock-assessment}
 
@@ -127,7 +124,6 @@ DF %>% knitr::kable(escape = F,
 ```{r data-fig, fig.cap='Summary of the data used in the 2022 stock assessment.', out.width = "800px"}
 knitr::include_graphics('../../img/Data_overview.png')
 ```
-
 
 ## Model Structure {#model-structure}
 
@@ -189,13 +185,13 @@ In both the 2017 and 2022 stock assessments, the catchability coefficient (*q*) 
 
 This same pattern in results was found when the analyses were re-conducted with the new OM grid based on the 2022 assessment.
 
-# Operating Models 
+# Operating Models
 
 The OMs, conditioned using SS3, were imported into MSE framework using the `SS2MOM` function in `MSEtool` (see [here](https://msetool.openmse.com/reference/SS2MOM.html) for details on the function).
 
 Previously, the 2-sex SS3 models were imported into a combined single-sex operating model in the MSE framework. The MSE framework was updated in 2022, and the imported operating models now maintain the separate sexes in the same manner as the SS3 assessment. Since the fishery is managed with a single overall total allowable catch (TAC), the individual fishing fleets were aggregated together in the operating models.
 
-The 2-sex operating model are available in the `SWOMSE` package as objects of class `MOM` (multi-stock operating model). 
+The 2-sex operating model are available in the `SWOMSE` package as objects of class `MOM` (multi-stock operating model).
 
 The operating models have been classified into two categories: Reference OMs and Robustness OMs. Table \@ref(tab:OM-Description) provides a general overview of the operating models includes in the MSE analysis. The following sub-sections describe the Reference and Robustness OMs in more detail.
 
@@ -237,13 +233,13 @@ The Reference OMs are based on the Base Case Model and span the plausible range 
 
 Based on the analyses described [above](#om-conditioning), a set of 9 operating models were identified as the Reference OMs. These operating models spanned the three levels of *M* (0.1, 0.2, and 0.3) and three levels *h* (0.69, 0.80, and 0.88).
 
-The values for steepness in the Reference Set were determined at the 2023 Intersessional Meeting of the Swordfish Working Group. The lower and upper values were set at the 95% confidence intervals of a prior distribution for the steepness parameter used in the 2022 assessment. 
+The values for steepness in the Reference Set were determined at the 2023 Intersessional Meeting of the Swordfish Working Group. The lower and upper values were set at the 95% confidence intervals of a prior distribution for the steepness parameter used in the 2022 assessment.
 
-The center value was calculated by first converting steepness to the Goodyear compensation ratio (CR) with $\text{CR}=\frac{4h}{1-h}$. Using this equation, the CR for h = 0.69 and h = 0.88 are 8.90 and 29.33 respectively. A mid-point between these two CR values is calculated as: 
+The center value was calculated by first converting steepness to the Goodyear compensation ratio (CR) with $\text{CR}=\frac{4h}{1-h}$. Using this equation, the CR for h = 0.69 and h = 0.88 are 8.90 and 29.33 respectively. A mid-point between these two CR values is calculated as:
 
-$\text{CR}_\text{mid} = e^{\frac{\sum_i\log\text{CR}_i}{2}}=16.16$, where the lower and upper values are 16.16/1.815 and 16.16 x 1.815 respectively. Back-calculating to steepness with $h=\frac{\text{CR}}{\text{CR}+4}$ gives $h=0.80$. 
+$\text{CR}_\text{mid} = e^{\frac{\sum_i\log\text{CR}_i}{2}}=16.16$, where the lower and upper values are 16.16/1.815 and 16.16 x 1.815 respectively. Back-calculating to steepness with $h=\frac{\text{CR}}{\text{CR}+4}$ gives $h=0.80$.
 
-Initially the OMs with the lower steepness value $(h=0.6)$ was also considered to be in the Reference OMs. However, recent analysis and discussion with the MSE Technical Team has revealed that a such a low steepness is unlikely for North Atlantic swordfish. Consequently, the OMs with $h=0.6$ have been re-classified into a Robustness Set. 
+Initially the OMs with the lower steepness value $(h=0.6)$ was also considered to be in the Reference OMs. However, recent analysis and discussion with the MSE Technical Team has revealed that a such a low steepness is unlikely for North Atlantic swordfish. Consequently, the OMs with $h=0.6$ have been re-classified into a Robustness Set.
 
 The Reference OMs had the following assumptions:
 
@@ -251,14 +247,13 @@ The Reference OMs had the following assumptions:
 2.  The Francis iterative re-weighting procedure was conducted on each operating model to find the appropriate weighting between the length compostion data and the indices of abundance
 3.  The standardized indices of abundance were used (i.e., no assumed 1% increase in catchability)
 
-
 ## R0. Reference Model
 
-The robustness tests are conducted for a single operating model from center of the Reference Set (M=0.2, h=0.8). R0 describes the performance of the CMPs for this single operating model, and is used for evaluating the results of the other robustness tests. 
+The robustness tests are conducted for a single operating model from center of the Reference Set (M=0.2, h=0.8). R0 describes the performance of the CMPs for this single operating model, and is used for evaluating the results of the other robustness tests.
 
 ## R1. Hyperstable Indices in Historical and Projection Periods {#r1}
 
-The R1 Robustness test evaluates the impact of a consistent increase in catchability that is not accounted for in the standardization of the indices, resulting in a hyper-stable index. 
+The R1 Robustness test evaluates the impact of a consistent increase in catchability that is not accounted for in the standardization of the indices, resulting in a hyper-stable index.
 
 This test is implemented by assuming that the indices used in the OM conditioning were 'corrected' for an average 1% annual increase in catchability. This was done by decreasing the observed values of the indices by 1% per year. Figure \@ref(fig:r1-compare) shows the estimated F/FMSY and SB/SBMSY for the Reference model (R0) and the this robustness test (R1).
 
@@ -274,22 +269,21 @@ knitr::include_graphics('../../img/R1_Increasing_q/Index.png')
 
 ## R2. Hyperstable Indices in Historical Period
 
-The R2 Robustness test is identical to R1 (Figure \@ref(fig:r1-compare)), except that the indices in the projection period are assumed to be proportional to the population; i.e., the 1% increase in catchability that was not accounted for the in the standardization of the historical indices no longer occurs in the projection period. 
+The R2 Robustness test is identical to R1 (Figure \@ref(fig:r1-compare)), except that the indices in the projection period are assumed to be proportional to the population; i.e., the 1% increase in catchability that was not accounted for the in the standardization of the historical indices no longer occurs in the projection period.
 
 ## R3. Low initial spawning biomass
 
 A robustness test to evaluate the ability of the CMPs to recover the stock from a low initial level. The historical indices were modified by adding a persistent slope such that the SB/SBMSY = 0.6 in the terminal year of the OM conditioning (Figure \@ref(fig:r1-compare)).
 
-
 ## R4 & R5. Effect of Climate Change on Recruitment Deviations in Projection Period
 
-Climate change is generally predicted to increase temperatures throughout the Atlantic Ocean, which could have significant effects on swordfish recruitment. The Atlantic Multidecadal Oscillation (AMO) is an indicator of long-duration changes in the sea surface temperature of the North Atlantic Ocean. Thus, it could serve as the basis for possible future patterns in recruitment. This is not postulating that the AMO is in fact driving swordfish recruitment. Rather it is using the 32-year time series as a representative of actual oceanographic conditions and one possible pattern of a cyclical productivity that we wish to test the robustness of a CMP. In essence, these robustness tests are asking whether the CMP is robust to an extended period (~15 years) of negative recruitment deviations without a change in the underlying productivity of the stock.
+Climate change is generally predicted to increase temperatures throughout the Atlantic Ocean, which could have significant effects on swordfish recruitment. The Atlantic Multidecadal Oscillation (AMO) is an indicator of long-duration changes in the sea surface temperature of the North Atlantic Ocean. Thus, it could serve as the basis for possible future patterns in recruitment. This is not postulating that the AMO is in fact driving swordfish recruitment. Rather it is using the 32-year time series as a representative of actual oceanographic conditions and one possible pattern of a cyclical productivity that we wish to test the robustness of a CMP. In essence, these robustness tests are asking whether the CMP is robust to an extended period (\~15 years) of negative recruitment deviations without a change in the underlying productivity of the stock.
 
 The entire AMO long time series (1856-present) was considered and a 32-year period (1980-2011) was selected to represent a time series that contained an extended period of consecutive negative and consecutive positive deviations. The AMO values multiplied by an implied annual inflation factor of 2.0 to simulate the hypothesis that climate change could result in larger recruitment deviations in the future than in the past.
 
-Two versions of this approach were developed. R4 uses the AMO values directly, with a period of lower than average recruitment for the first fifteen years, followed by a period of higher than average deviations (Figure \@ref(fig:r3) center panel). R5 considers the impact of just a period of negative recruitment deviations for the first fifteen years (Figure \@ref(fig:r3) right panel). 
+Two versions of this approach were developed. R4 uses the AMO values directly, with a period of lower than average recruitment for the first fifteen years, followed by a period of higher than average deviations (Figure \@ref(fig:r3) center panel). R5 considers the impact of just a period of negative recruitment deviations for the first fifteen years (Figure \@ref(fig:r3) right panel).
 
-In both cases (R4 and R5), the climate-induced pattern in recruitment deviations is multiplied by the recruitment deviations from the reference model (R0; Figure \@ref(fig:r3-2)). 
+In both cases (R4 and R5), the climate-induced pattern in recruitment deviations is multiplied by the recruitment deviations from the reference model (R0; Figure \@ref(fig:r3-2)).
 
 ```{r r3, fig.cap='The cyclical (R4) and initial negative pattern (R5) in recruitment deviations for the robustness tests that investigate the impact of climate change on the performance of the CMPs. R0 is the reference model where no additional recruitment variabililty is added.'}
 knitr::include_graphics('../../img/R3/RecDevs_mean.png')
@@ -301,7 +295,7 @@ knitr::include_graphics('../../img/R3/RecDevs.png')
 
 ## R6. TAC Implementation Error
 
-The R6 Robustness test evaluates the impact of a 10% implementation error in the TAC. The catches are assumed to be 10% higher than the TAC, but these catches are assumed to be unreported (i.e., the observed catches provided to the CMPs is equal to the TAC and ~90% of the actual landings).
+The R6 Robustness test evaluates the impact of a 10% implementation error in the TAC. The catches are assumed to be 10% higher than the TAC, but these catches are assumed to be unreported (i.e., the observed catches provided to the CMPs is equal to the TAC and \~90% of the actual landings).
 
 ## R7. Increased Observation Error in the Combined Index
 
@@ -319,13 +313,11 @@ A [Summary Report](../Reports/OM_Summary/2024/OM_Summary_Report.html) summarizes
 
 Individual diagnostic reports with objective function values and plots of model fits and patterns in residuals are available for each of the Reference and Robustness OMs (and the 2022 assessment) on the North Atlantic Swordfish MSE [homepage](https://iccat.github.io/nswo-mse/).
 
-
-
 # Historical Spool-Up Period
 
 The historical spool-up period was generated by importing the output from the SS3 assessment models and running the MSE simulation framework to recreate the historical fishery dynamics. No additional uncertainty was added to the historical simulations; that is, all $`r MOM@nsim`$ simulations were identical (e.g., same recruitment deviations) for the historical spool-up period.
 
-The operating models have been conditioned on data up to and including 2022 (see the [OM Section](#om-conditioning)), and therefore the projection period for the MSE framework starts in the following year, i.e., 2023. 
+The operating models have been conditioned on data up to and including 2022 (see the [OM Section](#om-conditioning)), and therefore the projection period for the MSE framework starts in the following year, i.e., 2023.
 
 Currently, model uses assumed catches for the first two years (2023 & 2024) and then implements the management procedures in the following year (i.e., 2025). See the [Future Catches](#future-catches) section for more information.
 
@@ -341,7 +333,6 @@ The catch data used in the OM conditioning are made available in the simulated d
 knitr::include_graphics('../../img/Catch_TAC.png')
 ```
 
-
 ### Indices of Abundance
 
 #### Primary Index
@@ -356,11 +347,9 @@ knitr::include_graphics('../../img/Combined_Index.png')
 
 The additional individual fishery-dependent and survey indices are also imported into the MSE framework and made available to the CMPs (Figure \@ref(fig:addindex-plot)).
 
-
 ```{r addindex-plot, fig.cap='The additional individual fishery-dependent and survey indices for the North Atlantic swordfish fishery.', out.width = "800px"}
 knitr::include_graphics('../../img/Individual_Indices.png')
 ```
-
 
 # Closed-Loop Simulation Testing
 
@@ -406,7 +395,6 @@ A Robustness Test (R6) has been designed to evaluate the consequences of violati
 
 The CMPs are first implemented in 2025, and every 3rd year after that, with the TAC held constant in the interim years. Since the MSE projection period begins in 2023 (the year after the conditioning), the landed catches for 2023 and 2024 are fixed to the mean from 2013 -- 2022 (10,427 t).
 
-
 ## Generation of Future Data
 
 ### Indices
@@ -437,7 +425,6 @@ At the 2021 [Intersessional meeting](/Meeting_Reports/2021_SWO_ENG.pdf), the Gro
 
 The 3-yr management interval is applied within the CMP code (see the [CMP Development Guide](../cMPdevelopment/CMP-Development-Guide.html) for more details).
 
-
 # Performance Metrics
 
 ```{r PMcalc, include=FALSE}
@@ -448,21 +435,21 @@ ref <- OM_DF %>% filter(Class=='Reference')
 
 `r length(PMs)` performance metrics (PMs) have been developed for the North Atlantic Swordfish MSE (Table \@ref(tab:PM-Description)). These PMs are grouped into four families:
 
-1. **Status**: the probability the stock is in the green quadrant of the Kobe matrix
+1.  **Status**: the probability the stock is in the green quadrant of the Kobe matrix
 
-2. **Safety**: the probability of the stock not falling below the biological limit reference point
+2.  **Safety**: the probability of the stock not falling below the biological limit reference point
 
-3. **Yield**: the TAC in the projection years (ton)
+3.  **Yield**: the TAC in the projection years (ton)
 
-4. **Stability**: the variation in the TAC between management cycles
+4.  **Stability**: the variation in the TAC between management cycles
 
 ## Summary of Performance Metrics
 
-The performance metrics are calculated over all the simulations (`r MOM@nsim`) in each operating model. For example, *PGK_short* is calculated as the proportion of the `r MOM@nsim` simulations where the spawning biomass ($SB$) is above $SB_{MSY}$ and fishing mortality ($F$) is below $F_{MSY}$. 
+The performance metrics are calculated over all the simulations (`r MOM@nsim`) in each operating model. For example, *PGK_short* is calculated as the proportion of the `r MOM@nsim` simulations where the spawning biomass ($SB$) is above $SB_{MSY}$ and fishing mortality ($F$) is below $F_{MSY}$.
 
-The performance metrics can also be calculated over several operating models, for example the entire [Reference Set](#reference_models). This is done by first combining the MSE results for each OM (e.g., the `r nrow(ref)` Reference OMs) into a single set of results (in this example, resulting in `r nrow(ref)*MOM@nsim` simulations (`r nrow(ref)` OMs multiplied by `r MOM@nsim` simulations per OM)), and then calculating the performance metrics over all results. 
+The performance metrics can also be calculated over several operating models, for example the entire [Reference Set](#reference_models). This is done by first combining the MSE results for each OM (e.g., the `r nrow(ref)` Reference OMs) into a single set of results (in this example, resulting in `r nrow(ref)*MOM@nsim` simulations (`r nrow(ref)` OMs multiplied by `r MOM@nsim` simulations per OM)), and then calculating the performance metrics over all results.
 
-The Minimum Acceptable Performance values listed in Table \@ref(tab:PM-Description) will be used as alternative values to determine if candidate management procedures meet the minimum performance criteria. 
+The Minimum Acceptable Performance values listed in Table \@ref(tab:PM-Description) will be used as alternative values to determine if candidate management procedures meet the minimum performance criteria.
 
 More details on the individual performance metrics are in the sections below.
 
@@ -481,46 +468,83 @@ PM_desc %>% knitr::kable(escape = T,
 ```
 
 ```{r loadMSEs, cache=FALSE, include=FALSE}
-mselist <- readRDS('../../dev/PM_dev.mse')
-MSE_all <- combine_MMSE(mselist, 'Reference OMs')
+# mselist <- readRDS('../../dev/PM_dev.mse')
+# MSE_all <- combine_MMSE(mselist, 'Reference OMs')
+# 
+# MSE_1 <- mselist[[1]]
+# MSE_2 <- mselist[[2]]
+# MSE_3 <- mselist[[3]]
+# MSE_4 <- mselist[[4]]
+# MSE_5 <- mselist[[5]]
+# MSE_6 <- mselist[[6]]
+# 
+# PMlist <- readRDS('../../dev/PMlist.rda')
+# 
+# for (i in 1:length(PMlist)) {
+#   if (is.numeric(PMlist[[i]]))
+#     PMlist[[i]] <- round(PMlist[[i]],2)
+# }
 
-MSE_1 <- mselist[[1]]
-MSE_2 <- mselist[[2]]
-MSE_3 <- mselist[[3]]
-MSE_4 <- mselist[[4]]
-MSE_5 <- mselist[[5]]
-MSE_6 <- mselist[[6]]
-
-PMlist <- readRDS('../../dev/PMlist.rda')
-
-for (i in 1:length(PMlist)) {
-  if (is.numeric(PMlist[[i]]))
-    PMlist[[i]] <- round(PMlist[[i]],2)
-}
 
 ```
 
-## Peformance Metrics Examples
+## Performance Metrics Examples
 
-The following sections show figures and statistics for examples from each family of Performance Metrics. These results include two example candidate management procedures (`r PMlist$MPs`) (see [Candidate Management Procedures](#CMPs)), with a single operating model that includes `r MSE_1@nsim` stochastic simulations. 
+The following sections show figures and statistics for examples from each family of Performance Metrics. These results include two example candidate management procedures (MP1, MP2) (see [Candidate Management Procedures](#CMPs)), with a single operating model that includes 10 stochastic simulations.
 
-### Summary Table 
+### Summary Table
 
 Table \@ref(tab:PMtable) shows the summary performance statistics for the example CMPs. More details for each individual performance metric are in the sub-sections below.
 
 ```{r PMtable}
 
+
 caption <- 'Summary of Performance Metric values for some example CMPs.'
 
-PM_df <- do.call('rbind', PMlist)
-colnames(PM_df) <- PMlist$MPs
-PM_df <- PM_df[1:(nrow(PM_df)-1),]
+# PM_df <- do.call('rbind', PMlist)
 
-PM_df <- PM_df %>% data.frame() %>%
-  mutate_at(c(1,2), as.numeric) %>%
-  mutate_at(c(1,2), round, 2)
+PM_df <- data.frame(MP1=c(0.82, 
+                          0.78,
+                          0.94, 
+                          0.85,
+                          0.90, 
+                          0.10, 
+                          0.00,
+                          0.00,
+                          0.00,
+                          0.00,
+                          13033.75,
+                          12688.02,
+                          10588.28,
+                          11072.75,
+                          0.12),
+                    MP2=c(0.89,
+                          0.77, 
+                          0.86,
+                          0.84, 
+                          0.90,
+                          0.11, 
+                          0.00,
+                          0.00,
+                          0.00,
+                          0.00,
+                          12315.92,
+                          11882.22,
+                          10082.61,
+                          10922.99,
+                          0.11
+                          )
+  )
 
-PM_df$Name <- rownames(PM_df)
+# colnames(PM_df) <- PMlist$MPs
+# PM_df <- PM_df[1:(nrow(PM_df)-1),]
+
+# PM_df <- PM_df %>% data.frame() %>%
+#   mutate_at(c(1,2), as.numeric) %>%
+#   mutate_at(c(1,2), round, 2)
+
+PM_desc2 <- PM_desc |> dplyr::filter(Name!='PNOF')
+PM_df$Name <- PM_desc2$Name
 
 PM_table <- left_join(PM_desc, PM_df, by = join_by(Name))
 PM_table$`Minimum Acceptable Values` <- NULL
@@ -540,53 +564,49 @@ PM_table %>% knitr::kable(escape = T,
 
 ### PGK_short
 
-`PGK_short` calculates the probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in years 1-10 (2025-2034). This is calculated as the proportion of the total number of simulations that are in the Green Zone of Kobe Space in those years.
+`PGK_short` calculates the probability of being in Green Zone of Kobe Space (SB\>SBMSY & F\<FMSY) in years 1-10 (2025-2034). This is calculated as the proportion of the total number of simulations that are in the Green Zone of Kobe Space in those years.
 
-Figure \@ref(fig:PGKshort) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `PGK_short` in this example are: `r PMlist$PGK_short`.
+Figure \@ref(fig:PGKshort) shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for `PGK_short` in this example are: `r as.numeric(PM_df[1,1:2])`.
 
 ```{r PGKshort, fig.cap='An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.', out.width = "800px"}
 knitr::include_graphics('../../img/PMs/PGK_short.png')
 ```
 
-
 ### PGK_med
 
-`PGK_med` calculates the probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) over years 11--20 (2035--2044). This is calculated as the proportion of the total points (number of simulations x number of years) that are in the Green Zone of Kobe Space.
+`PGK_med` calculates the probability of being in Green Zone of Kobe Space (SB\>SBMSY & F\<FMSY) over years 11--20 (2035--2044). This is calculated as the proportion of the total points (number of simulations x number of years) that are in the Green Zone of Kobe Space.
 
-Figure \@ref(fig:PGKmed) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `PGK_med` in this example are: `r PMlist$PGK_med`.
+Figure \@ref(fig:PGKmed) shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for `PGK_med` in this example are: `r as.numeric(PM_df[2,1:2])`.
 
 ```{r PGKmed, fig.cap='An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.', out.width = "800px"}
 knitr::include_graphics('../../img/PMs/PGK_med.png')
 ```
 
-
 ### PGK_long
 
-`PGK_long` calculates the probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) over years 21--30 (2045--2054). This is calculated as the proportion of the total points (number of simulations x number of years) that are in the Green Zone of Kobe Space.
+`PGK_long` calculates the probability of being in Green Zone of Kobe Space (SB\>SBMSY & F\<FMSY) over years 21--30 (2045--2054). This is calculated as the proportion of the total points (number of simulations x number of years) that are in the Green Zone of Kobe Space.
 
-Figure \@ref(fig:PGKlong) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `PGK_long` in this example are: `r PMlist$PGK_long`.
+Figure \@ref(fig:PGKlong) shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for `PGK_long` in this example are: `r`as.numeric(PM_df[3,1:2])\`.
 
 ```{r PGKlong, fig.cap='An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.', out.width = "800px"}
 knitr::include_graphics('../../img/PMs/PGK_long.png')
 ```
 
-
 ### PGK
 
-`PGK` calculates the probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) over all years (2025--2054). This is calculated as the proportion of the total points (number of simulations x number of years) that are in the Green Zone of Kobe Space.
+`PGK` calculates the probability of being in Green Zone of Kobe Space (SB\>SBMSY & F\<FMSY) over all years (2025--2054). This is calculated as the proportion of the total points (number of simulations x number of years) that are in the Green Zone of Kobe Space.
 
-Figure \@ref(fig:PGK) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `PGK` in this example are: `r PMlist[['PGK']]`.
+Figure \@ref(fig:PGK) shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for `PGK` in this example are: `r as.numeric(PM_df[4,1:2])`.
 
 ```{r PGK, fig.cap='An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.', out.width = "800px"}
 knitr::include_graphics('../../img/PMs/PGK.png')
 ```
 
-
 ### PGK_30
 
-`PGK_30` calculates the probability of being in Green Zone of Kobe Space (SB>SBMSY & F<FMSY) in year (2054). This is calculated as the proportion of the total number of simulations that are in the Green Zone of Kobe Space.
+`PGK_30` calculates the probability of being in Green Zone of Kobe Space (SB\>SBMSY & F\<FMSY) in year (2054). This is calculated as the proportion of the total number of simulations that are in the Green Zone of Kobe Space.
 
-Figure \@ref(fig:PGK30) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `PGK_30` in this example are: `r PMlist$PGK_30`.
+Figure \@ref(fig:PGK30) shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for `PGK_30` in this example are: `r as.numeric(PM_df[5,1:2])`.
 
 ```{r PGK30, fig.cap='An example of time-series plots of F/FMSY and SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>SBMSY and F<FMSY are indicated with a green point, and those outside of the green space in the Kobe plot are indicated in red. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.', out.width = "800px"}
 knitr::include_graphics('../../img/PMs/PGK_30.png')
@@ -594,77 +614,73 @@ knitr::include_graphics('../../img/PMs/PGK_30.png')
 
 ### POF and PNOF
 
-`POF` calculates the probability of over-fishing (F>FMSY) over all years (2025--2054). This is calculated as the proportion of the total number of points (number of simulations x number of years) where F is greater than FMSY.
+`POF` calculates the probability of over-fishing (F\>FMSY) over all years (2025--2054). This is calculated as the proportion of the total number of points (number of simulations x number of years) where F is greater than FMSY.
 
-Figure \@ref(fig:POF) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `POF` in this example are: `r PMlist$POF`.
+Figure \@ref(fig:POF) shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for `POF` in this example are: `r as.numeric(PM_df[6,1:2])`.
 
-`PNOF` reports the probability of not overfishing, calculated as $1-\text{POF}$, i.e. `r 1-PMlist$POF`.
+`PNOF` reports the probability of not overfishing, calculated as $1-\text{POF}$, i.e. `r 1-as.numeric(PM_df[6,1:2])`.
 
 ```{r POF, fig.cap='An example of a time-series plot of F/FMSY for a two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where F<FMSY are indicated with a green point, and red points indicate F>FMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.', out.width = "800px"}
 knitr::include_graphics('../../img/PMs/POF.png')
 ```
 
-
 ## Safety
 
-### LRP_short 
+### LRP_short
 
-`LRP_short` calculates the probability of breaching the limit reference point (LRP; SB<0.4SBMSY) in any of the first 10 years (2025-2034). 
+`LRP_short` calculates the probability of breaching the limit reference point (LRP; SB\<0.4SBMSY) in any of the first 10 years (2025-2034).
 
-This is calculated as the proportion of simulations where SB<0.4SBMSY in any of the first 10 years.
+This is calculated as the proportion of simulations where SB\<0.4SBMSY in any of the first 10 years.
 
-Figure \@ref(fig:LRPshort) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `LRP_short` in this example are: `r PMlist$LRP_short`.
+Figure \@ref(fig:LRPshort) shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for `LRP_short` in this example are: `r as.numeric(PM_df[7,1:2])`.
 
 ```{r LRPshort, fig.cap='An example of a time-series plot of SB/SBMSY for a two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.', out.width = "800px"}
 knitr::include_graphics('../../img/PMs/LRP_short.png')
 ```
 
+### LRP_med
 
-### LRP_med 
+`LRP_med` calculates the probability of breaching the limit reference point (LRP; SB\<0.4SBMSY) in any of years 11-20 (2035-2044).
 
-`LRP_med` calculates the probability of breaching the limit reference point (LRP; SB<0.4SBMSY) in any of years 11-20 (2035-2044). 
+This is calculated as the proportion of simulations where SB\<0.4SBMSY in any of years 11-20.
 
-This is calculated as the proportion of simulations where SB<0.4SBMSY in any of years 11-20.
-
-Figure \@ref(fig:LRP-med) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `LRP_med` in this example are: `r PMlist$LRP_med`.
+Figure \@ref(fig:LRP-med) shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for `LRP_med` in this example are: `r as.numeric(PM_df[8,1:2])`.
 
 ```{r LRP-med, fig.cap='An example of a time-series plot of SB/SBMSY for a two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.', out.width = "800px"}
 knitr::include_graphics('../../img/PMs/LRP_med.png')
 ```
 
+### LRP_long
 
-### LRP_long 
+`LRP_long` calculates the probability of breaching the limit reference point (LRP; SB\<0.4SBMSY) in any of years 21-30 (2045-2054).
 
-`LRP_long` calculates the probability of breaching the limit reference point (LRP; SB<0.4SBMSY) in any of years 21-30 (2045-2054).
+This is calculated as the proportion of simulations where SB\<0.4SBMSY in any of the last 10 years.
 
-This is calculated as the proportion of simulations where SB<0.4SBMSY in any of the last 10 years.
-
-Figure \@ref(fig:LRP-long) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The value for `LRP_long` in this example are: `r PMlist$LRP_long`.
+Figure \@ref(fig:LRP-long) shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The value for `LRP_long` in this example are: `r as.numeric(PM_df[9,1:2])`.
 
 ```{r LRP-long, fig.cap='An example of a time-series plot of SB/SBMSY for two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.', out.width = "800px"}
 knitr::include_graphics('../../img/PMs/LRP_long.png')
 ```
 
-### LRP 
+### LRP
 
-`LRP` calculates the probability of breaching the limit reference point (LRP; SB<0.4SBMSY) in any of the projection years (2025-2054).
+`LRP` calculates the probability of breaching the limit reference point (LRP; SB\<0.4SBMSY) in any of the projection years (2025-2054).
 
-This is calculated as the proportion of simulations where SB<0.4SBMSY in any year.
+This is calculated as the proportion of simulations where SB\<0.4SBMSY in any year.
 
-Figure \@ref(fig:LRP) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The value for `LRP` in this example are: `r PMlist$LRP`.
+Figure \@ref(fig:LRP) shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The value for `LRP` in this example are: `r as.numeric(PM_df[10,1:2])`.
 
 ```{r LRP, fig.cap='An example of a time-series plot of SB/SBMSY for a two CMPs. This OM has 10 simulations, shown as the colored lines. Simulations where SB>0.4SBMSY are indicated with a green point, and red points indicate SB<0.4SBMSY. The Kobe plot on the bottom shows these points in the Kobe space. The numbers in the corners indicate the percent of points in each area of the Kobe space.', out.width = "800px"}
 knitr::include_graphics('../../img/PMs/LRP.png')
 ```
 
-
 ## Yield
 
 ### TAC1
 
-`TAC1` calculates the median TAC (t) in the first year (2025). This is calculated as the median across the simulations of the 2025 TAC.  
+`TAC1` calculates the median TAC (t) in the first year (2025). This is calculated as the median across the simulations of the 2025 TAC.
 
-Figure \@ref(fig:C1) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `TAC1` in this example are: `r round(PMlist$TAC1,0)`.
+Figure \@ref(fig:C1) shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for `TAC1` in this example are: `r as.numeric(PM_df[11,1:2])`.
 
 ```{r C1, fig.cap='An example of time-series plots of the TAC for two CMPs. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.', out.width = "800px"}
 knitr::include_graphics('../../img/PMs/C1.png')
@@ -672,48 +688,45 @@ knitr::include_graphics('../../img/PMs/C1.png')
 
 ### AvTAC_short
 
-`AvTAC_short` calculates the median TAC (t) in the first 10 years (2025--2034). This is calculated as the median TAC across the simulations and years. 
+`AvTAC_short` calculates the median TAC (t) in the first 10 years (2025--2034). This is calculated as the median TAC across the simulations and years.
 
-Figure \@ref(fig:AvC10) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `AvTAC_short` in this example are: `r round(PMlist$AvTAC_short,0)`.
+Figure \@ref(fig:AvC10) shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for `AvTAC_short` in this example are: `r as.numeric(PM_df[12,1:2])`.
 
 ```{r AvC10, fig.cap='An example of time-series plots of the TAC for a two CMPs. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.', out.width = "800px"}
 knitr::include_graphics('../../img/PMs/AvTAC_short.png')
 ```
 
-
 ### AvTAC_med
 
-`AvTAC_med` calculates the median TAC (t) in years 11 -- 20 (2035--2044). This is calculated as the median TAC across the simulations and years. 
+`AvTAC_med` calculates the median TAC (t) in years 11 -- 20 (2035--2044). This is calculated as the median TAC across the simulations and years.
 
-Figure \@ref(fig:AvCmed) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `AvTAC_med` in this example are: `r round(PMlist$AvTAC_med,0)`.
+Figure \@ref(fig:AvCmed) shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for `AvTAC_med` in this example are: `r as.numeric(PM_df[13,1:2])`.
 
 ```{r AvCmed, fig.cap='An example of time-series plots of the TAC for a two CMPs. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.', out.width = "800px"}
 knitr::include_graphics('../../img/PMs/AvTAC_med.png')
 ```
 
-
 ### AvTAC_long
 
-`AvTAC_long` calculates the median TAC (t) in the last 10 years (2045--2054). This is calculated as the median TAC across the simulations and years. 
+`AvTAC_long` calculates the median TAC (t) in the last 10 years (2045--2054). This is calculated as the median TAC across the simulations and years.
 
-Figure \@ref(fig:AvC30) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `AvTAC_long` in this example are: `r round(PMlist$AvTAC_long,0)`.
+Figure \@ref(fig:AvC30) shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for `AvTAC_long` in this example are: `r as.numeric(PM_df[14,1:2])`.
 
 ```{r AvC30, fig.cap='An example of time-series plots of the TAC for a two CMPs. This OM has 10 simulations, shown as the colored lines. The points indicate the values used to calculate the median value.', out.width = "800px"}
 knitr::include_graphics('../../img/PMs/AvTAC_long.png')
 ```
 
-## Stability 
+## Stability
 
 ### VarC
 
 `VarC` calculates the mean absolute change in the TAC between management cycles, calculated across all years and simulations.
 
-Figure \@ref(fig:VarC) shows an example of two CMPs (`r PMlist$MPs`) for an operating model with `r MSE_1@nsim` simulations. The values for `VarC` in this example are: `r PMlist$VarC`. 
+Figure \@ref(fig:VarC) shows an example of two CMPs (MP1, MP2) for an operating model with 10 simulations. The values for `VarC` in this example are: `r as.numeric(PM_df[15,1:2])`.
 
 ```{r VarC, fig.cap='Violin plots of the relative absolute change in the TAC between management cycles for two CMPs.', out.width = "800px"}
 knitr::include_graphics('../../img/PMs/VarC.png')
 ```
-
 
 # Candidate Management Procedures {#CMPs}
 
@@ -724,7 +737,7 @@ PM_tuning <- read.csv('../../build_package/Tuning_Target_Codes.csv')
 
 ```
 
-During development, the Candidate Management Procedures are tuned to achieve specific performance outcomes. These performance outcomes are calculated across all the Reference OMs; i.e, the MSE results from each Reference OM are aggregated together. `r nrow(PM_tuning)` different tuning targets have been specified (Table \@ref(tab:PM-tuning)). 
+During development, the Candidate Management Procedures are tuned to achieve specific performance outcomes. These performance outcomes are calculated across all the Reference OMs; i.e, the MSE results from each Reference OM are aggregated together. `r nrow(PM_tuning)` different tuning targets have been specified (Table \@ref(tab:PM-tuning)).
 
 There will be `r nrow(PM_tuning)` versions of each CMP corresponding to metrics and targets described in Table \@ref(tab:PM-tuning). The names of the CMPs include the tuning code (i.e., 'a', 'b').
 
@@ -739,110 +752,10 @@ PM_tuning %>% knitr::kable(escape = F,
 
 ```
 
-<!-- ## Overview of Candidate Management Procedures -->
-
-```{r MPoverview, results="asis"}
-
-# caption <- 'Summary of the Candidate Management Procedures.'
-# 
-# CMP_DF <- readRDS('../../dev/MP_description.rda')
-# CMP_DF$Author <- NULL
-# 
-# 
-# CMP_DF %>% knitr::kable(escape = F,
-#                     caption=caption,
-#                     booktabs=TRUE) %>%
-#   kableExtra::kable_styling("striped", full_width = T)
-
-```
-
-<!-- All MPs are subject to a constraint on the maximum absolute change in TAC between management cycles. -->
-
-<!-- ## Surplus Production (SP) -->
-
-<!-- ### SP -->
-
-<!-- A Schaefer surplus production model (`SAMtool::SP`) is fitted to the Combined Index and the catch data. The TAC is set according to a harvest control rule (HCR) based on the HCR developed for the [North Atlantic Albacore](https://www.iccat.int/Documents/Recs/compendiopdf-e/2021-04-e.pdf). -->
-
-<!-- $$ -->
-<!-- F_\text{set} =  -->
-<!-- \begin{cases} -->
-<!--     F_\text{targ} & \text{if } B_\text{curr} \geq B_\text{thresh} \\ -->
-<!--     F_\text{targ} (-0.367 + 1.167 \frac{B_\text{curr}}{ B_\text{thresh}}) & \text{if }  B_\text{lim} < B_\text{curr} < B_\text{thresh} \\ -->
-<!--     F_\text{min}  & \text{otherwise} -->
-<!-- \end{cases} -->
-<!--   (\#eq:SP1) -->
-<!-- $$ -->
-
-<!-- where $B_\text{curr}$ and $B_\text{thresh}$ are current biomass and $B_\text{MSY}$ estimated by the assessment model, $B_\text{lim}$ is $0.4B_\text{thresh}$, and  $F_\text{targ}$ and $F_\text{min}$ are $\delta 0.8 F_\text{MSY}$ and $\delta 0.1 F_\text{MSY}$ respectively, where $F_\text{MSY}$ is estimated by the assessment model, and $\delta$ is a tuning parameter (see Table \@ref(tab:PM-tuning)).  -->
-
-<!-- The TAC is then calculated as: -->
-<!-- $$ -->
-<!-- \text{TAC} = \frac{F_\text{set}}{Z}(1-e^{-Z}) B_\text{curr} -->
-<!-- $$ -->
-<!-- where $Z = 0.2 +F_\text{set}$.  -->
-
-<!-- ### SPFox  -->
-
-<!-- A Fox production model (`SAMtool::SP_Fox`) is used together with the HCR described for `SP1`. -->
-
-
-<!-- ## Index Ratio  (IR) -->
-
-<!-- ### IR1 -->
-
-<!-- Iteratively adjusts the TAC in each management cycle $(m)$ based on the ratio of the mean Combined Index $(I)$ over the last 3 years to the mean Combined Index over the 3 previous years:  -->
-
-<!-- \begin{equation}  -->
-<!--   \text{TAC}_{m} = \text{TAC}_{m-1} \delta I_{\text{rat}}  -->
-<!--   (\#eq:IR1) -->
-<!-- \end{equation}  -->
-
-<!-- where $\delta$ is a tuning parameter (see Table \@ref(tab:PM-tuning)) and $I_{\text{rat}} = \frac{\bar{I}_{[y-2:y]}}{\bar{I}_{[y-5:y-3]}}$.  -->
-
-
-
-<!-- ### IR2 -->
-
-<!-- Same as `IR1` except that the index ratio is calculated over the last 2 and the previous 2 years before that: -->
-
-<!-- \begin{equation}  -->
-<!--  I_{\text{rat}} = \frac{\bar{I}_{[y-1:y]}}{\bar{I}_{[y-3:y-2]}}  -->
-<!--   (\#eq:IR2) -->
-<!-- \end{equation}  -->
-
-
-<!-- ## Constant Exploitation (CE) -->
-
-<!-- ### CE  -->
-
-<!-- This MP aims to keep the exploitation rate at a constant level. The current relative exploitation rate is calculated as the mean of the catches from 2016 -- 2020 divided by the mean Combined Index over this same period. -->
-
-<!-- $$  -->
-<!--   \text{TAC}_{m} = \delta \text{TAC}_{m-1}  E_{\text{rat}}  -->
-<!--   (\#eq:CE) -->
-<!-- $$ -->
-
-<!-- $$ -->
-<!-- E_{\text{rat}} = \frac{\text{ER}_\text{hist}}{\text{ER}_\text{curr}} -->
-<!-- (\#eq:Erat) -->
-<!-- $$ -->
-<!-- $$ -->
-<!-- \text{ER}_\text{hist} = \frac{\bar{C}_{2016-2020}}{\bar{I}_{2016-2020}} -->
-<!-- (\#eq:Ehist) -->
-<!-- $$ -->
-<!-- $$ -->
-<!-- \text{ER}_\text{curr} = \frac{\bar{C}_{y-2:y}}{\bar{I}_{y-2:y}} -->
-<!-- (\#eq:Ecurr) -->
-<!-- $$ -->
-
-
-
 # Reporting of MSE Results
 
-## Interactive Application 
+## Interactive Application
 
-The current MSE results are available in an [Interactive Application](https://shiny.bluematterscience.com/app/swomse)
-
+The NSWO R Shiny App is accessible on the [ICCAT MSE website](https://iccat.github.io/iccat-mse-web/species/NSWO_MSE.html)
 
 # References
