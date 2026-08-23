@@ -55,9 +55,11 @@ for (i in seq_along(YearList)) {
 
 DF <- dplyr::bind_rows(DF_List)
 
+MSEtool::Save(DF, 'MLL Analysis/DF.rds')
+
 DF |> dplyr::filter(Model == 'Base Case') |> dplyr::arrange(MP)
 
-DF |> dplyr::arrange(Model) |> dplyr::select(PM,Period, Model, Ratio)
+DF |> dplyr::arrange(Model) |> dplyr::select(PM,Period, Model, Ratio) |> print(n=30)
 
 p1 <- PlotBiomass(MSE,
              Years = 2025:2054,
@@ -76,15 +78,20 @@ p3 <- PlotBiomass(MSE_Lorenzen,
              Years = 2025:2054,
              IncHist = FALSE,
              probs = FALSE,
-             Stock ='Female')
+             Stock ='Female') +
+  ggplot2::labs(y='Biomass (t)')
 
 p4 <- PlotLandings(MSE_Lorenzen,
              Years = 2025:2054,
              IncHist = FALSE,
              probs = FALSE,
              byStock ='sum',
-             byFleet = FALSE)
+             byFleet = FALSE) +
+  ggplot2::labs(y='Landings (t)')
 
-patchwork::wrap_plots(p1, p2, p3, p4, ncol = 2, guides = 'collect')
+patchwork::wrap_plots(p1, p2, p3, p4, ncol = 2,
+                      guides = 'collect') +
+  patchwork::plot_annotation(tag_levels = 'a',
+                             tag_suffix = ')')
 
-
+ggsave('MLL Analysis/RemoveMLL.png', width = 8, height = 6)
