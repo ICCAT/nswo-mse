@@ -6,9 +6,6 @@
 \usage{
 source_CMPs(CMPdir = "CMPs")
 }
-\arguments{
-\item{CMPdir}{}
-}
 \description{
 Source CMP Scripts
 }

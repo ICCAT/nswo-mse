@@ -21,3 +21,6 @@ Slick_objects/
 Additional_Robustness_Tests/MinimumSizeLimits/FullRetention.mse
 Additional_Robustness_Tests/MinimumSizeLimits/Hist.hist
 Additional_Robustness_Tests/MinimumSizeLimits/FullRetention.mse
+.positai
+*.hist
+*.mse

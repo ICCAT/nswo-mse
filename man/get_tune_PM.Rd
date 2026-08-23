@@ -6,9 +6,6 @@
 \usage{
 get_tune_PM(tune_dir = "Tuning_Objects", tune_PM = "PGK_short")
 }
-\arguments{
-\item{tune_PM}{}
-}
 \description{
 Get Performance Metrics from Tuning Objects
 }

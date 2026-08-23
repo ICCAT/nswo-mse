@@ -6,9 +6,6 @@
 \usage{
 Calc_Dominated(pms, PM_results)
 }
-\arguments{
-\item{PM_results}{}
-}
 \description{
 Title
 }

@@ -6,9 +6,6 @@
 \usage{
 process_results(dir)
 }
-\arguments{
-\item{dir}{}
-}
 \description{
 Process Results and Save to Disk
 }

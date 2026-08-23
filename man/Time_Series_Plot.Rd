@@ -21,7 +21,9 @@ TimeSeriesPlot2(
   size.axis.title = 16,
   size.axis.text = 14,
   size.strip.text = 16,
-  text.size = 6
+  text.size = 6,
+  includeOM = TRUE,
+  incTable = TRUE
 )
 }
 \description{

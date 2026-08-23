@@ -15,9 +15,6 @@ Tune_MP(
   skip_scope = NULL
 )
 }
-\arguments{
-\item{parallel}{}
-}
 \description{
 Wrapper for `Tune` and `Scope`
 }

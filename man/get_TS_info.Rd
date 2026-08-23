@@ -6,9 +6,6 @@
 \usage{
 get_TS_info(MMSE, OM)
 }
-\arguments{
-\item{MMSE}{}
-}
 \description{
 Get Time-Series information
 }

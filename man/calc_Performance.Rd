@@ -6,9 +6,6 @@
 \usage{
 calc_Performance(MMSE, Class = NULL, PMs = NULL, msg = TRUE)
 }
-\arguments{
-\item{MMSE}{}
-}
 \description{
 Get Performance Metrics from MMSE Object
 }
