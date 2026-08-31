@@ -1,10 +1,81 @@
 library(SWOMSE)
 
+# Observed Index
+index_exist <- data.frame(Year = SWOData@Year, Index = SWOData@Ind[1,])
+index_exist |> dplyr::filter(Year <= 2022) |> dplyr::summarise(mean(Index, na.rm = T))
+
+
+Index <- read.csv('CombinedIndex_Updates/NSWOCombinedIndex2026.csv') |>
+  dplyr::mutate(Ind=ifelse(YearC<=2022, TRUE, FALSE)) |>
+  dplyr::mutate(Mean=mean(response[Ind==TRUE])) |>
+  dplyr::mutate(StIndex=response/Mean)
+
+
+# https://www.iccat.int/Documents/Recs/compendiopdf-e/2024-10-e.pd
+theta <- 0.7562
+TAC_base <- 12600 * theta
+
+Ibase <- Index |>
+  dplyr::filter(YearC %in% 2017:2019) |>
+  dplyr::summarise(Mean = mean(StIndex)) |>
+  dplyr::pull(Mean)
+
+Ibase # 0.6826465
+
+# mean 2022 - 2024
+Icurr <- Index |> tail(3) |> dplyr::summarise(ind = mean(StIndex)) |> dplyr::pull(ind)
+Icurr # 1.402953
+Iratio <- Icurr/Ibase
+Iratio # 2.055167
+
+if (Iratio>=1.85) {
+  deltaTAC <- 1.85
+}
+if (Iratio>=1.75 & Iratio<1.85) {
+  deltaTAC <- 1.75
+}
+if (Iratio>=1.65 & Iratio<1.75) {
+  deltaTAC <- 1.65
+}
+if (Iratio>=1.55 & Iratio<1.65) {
+  deltaTAC <- 1.55
+}
+if (Iratio>=1.45 & Iratio<1.55) {
+  deltaTAC <- 1.45
+}
+if (Iratio>=1.35 & Iratio<1.45) {
+  deltaTAC <- 1.35
+}
+if (Iratio>=1.25 & Iratio<1.35) {
+  deltaTAC <- 1.25
+}
+if (Iratio>=1.15 & Iratio<1.25) {
+  deltaTAC <- 1.15
+}
+if (Iratio>=0.75 & Iratio<1.15) {
+  deltaTAC <- 1
+}
+if (Iratio>=0.5 & Iratio<0.75) {
+  deltaTAC <- 0.75
+}
+if (Iratio<0.5) {
+  deltaTAC <- 0.5
+}
+
+deltaTAC * TAC_base # 17627.02
+
+
+
+
+
 Refs_OMs <- OM_DF %>% filter(Class=='Reference')
 Refs_OMs <- Refs_OMs$OM.object
 
 if (!dir.exists('MSE_Objects'))
   dir.create('MSE_Objects')
+
+
+
 
 
 source('CMPs/MPs_ND.R')
@@ -31,23 +102,23 @@ MPs <- c('MCC11_b', 'MeanCatch')
 # Real 2023 and 2024 catches
 Catchdf$Catch[3:4] <- c(12215, 10921) # Update catches from call with Kyle 26 August 2026
 
-for (i in seq_along(Refs_OMs)) {
-
-  # load hist
-  om <- paste0(Refs_OMs[i], '.hist')
-  hist <- readRDS(file.path('Hist_Objects/Reference', om))
-
-  # V1
-  mmse_v1 <- ProjectMOM(hist, MPs = MPs[1])
-  nm <- paste0(Refs_OMs[i], '-MCC.mse')
-  saveRDS(mmse_v1, file=file.path('Update_MSE_Objects/2026', nm))
-
-  # V2
-  mmse_v2 <- ProjectMOM(hist, MPs = MPs[2])
-  nm <- paste0(Refs_OMs[i], '-MeanCatch.mse')
-  saveRDS(mmse_v2, file=file.path('Update_MSE_Objects/2026', nm))
-
-}
+# for (i in seq_along(Refs_OMs)) {
+#
+#   # load hist
+#   om <- paste0(Refs_OMs[i], '.hist')
+#   hist <- readRDS(file.path('Hist_Objects/Reference', om))
+#
+#   # V1
+#   mmse_v1 <- ProjectMOM(hist, MPs = MPs[1])
+#   nm <- paste0(Refs_OMs[i], '-MCC.mse')
+#   saveRDS(mmse_v1, file=file.path('Update_MSE_Objects/2026', nm))
+#
+#   # V2
+#   mmse_v2 <- ProjectMOM(hist, MPs = MPs[2])
+#   nm <- paste0(Refs_OMs[i], '-MeanCatch.mse')
+#   saveRDS(mmse_v2, file=file.path('Update_MSE_Objects/2026', nm))
+#
+# }
 
 
 MSEList_V1 <- list()
@@ -92,11 +163,9 @@ for (i in 1:9) {
 Index2020_2028_V1 <- do.call('rbind', IndexList_V1)
 Index2020_2028_V2 <- do.call('rbind', IndexList_V2)
 
-# Observed Index
-Index <- read.csv('CombinedIndex_Updates/NSWOCombinedIndex2026.csv') |>
-  dplyr::mutate(Ind=ifelse(YearC<=2022, TRUE, FALSE)) |>
-  dplyr::mutate(Mean=mean(response[Ind==TRUE])) |>
-  dplyr::mutate(StIndex=response/Mean)
+
+
+
 
 obs <- Index |> dplyr::filter(YearC %in% 2020: 2024) |>
   dplyr::pull(StIndex) |> round(2)
