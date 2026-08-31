@@ -118,8 +118,8 @@ MCC11 <- function(x, Data, Data_Lag=2, Interval=3, tunepar=1, mc=NA, ...) {
 
   # combined index averaged over last available 3 # years in time-series (y-4, y-3, y-2)
   Icurr <- mean(tail(Data@Ind[x,],3))
-
   Irat <- Icurr/Ibase
+
 
   # MCC97 adds more upper steps for Irat values compared to MCC7
 

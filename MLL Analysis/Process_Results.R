@@ -234,3 +234,26 @@ patchwork::wrap_plots(p1, p2, ncol = 1) +
   patchwork::plot_annotation(tag_levels = 'A', tag_suffix = ')')
 
 ggsave('MLL Analysis/RelDiffernce.png', width = 8, height = 5)
+
+
+Removals <- Removals(MSE_Lorenzen, byFleet = FALSE) |>
+  dplyr::filter(Year >= 2025) |>
+  dplyr::group_by(Sim, Year, MP) |>
+  dplyr::summarise(Value = sum(Value))
+
+
+Removals |> dplyr::filter(Year == 2052)
+d <- PPD(MSE_Lorenzen)
+d$MCC11$`1`$`Female Male`@Advice@TAC
+d$MCC11_FR$`1`$`Female Male`@Advice@TAC
+
+plot(d$MCC11$`1`$`Female Male`@Survey@Value[,8])
+lines(d$MCC11_FR$`1`$`Female Male`@Survey@Value[,8])
+
+
+B <- Biomass(MSE_Lorenzen) |>
+  dplyr::filter(Year >= 2025) |>
+  dplyr::group_by(Sim, Year, MP) |>
+  dplyr::summarise(Value = sum(Value))
+
+B |> dplyr::filter(Year == 2052)
